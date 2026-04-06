@@ -4,5 +4,6 @@
     "folder": "04_증빙/daily",
     "format": "YYYY-MM-DD",
     "template": ""
-  }
+  },
+  "showUnsupportedFiles": false
 }

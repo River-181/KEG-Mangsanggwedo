@@ -16,6 +16,7 @@ aliases:
 - **D-Day**: 제출 마감 2026-04-13 24:00
 - **현재 단계**: 워크스페이스 구축 / 리서치 준비
 - **오늘의 목표**: 워크스페이스 구조화 완료, 문제 리서치 시작
+- **운영 문서**: [[.agent/system/ops/PLAN|PLAN]] / [[.agent/system/ops/PROGRESS|PROGRESS]] / [[.agent/system/ops/project-manager|운영 대시보드]]
 
 ## 섹션
 
@@ -31,7 +32,8 @@ aliases:
 
 - `.agent/AGENTS.md` — 모든 AI 에이전트가 첫 번째로 읽는 문서
 - `.claude/CLAUDE.md` — Claude Code 전용 지시서
-- `.context/onboarding.md` — 온보딩 가이드
+- `.agent/system/README.md` — 운영 시스템 정본 인덱스
+- `.agent/skills/obsidian-workspace/SKILL.md` — Obsidian vault 작업 기준
 
 ## 제출물 체크리스트
 

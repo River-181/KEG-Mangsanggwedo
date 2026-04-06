@@ -1,0 +1,139 @@
+---
+name: github-workflow
+description: Use when working on GitHub operations in this KEG repo, including git status review, branch setup, commit, push, pull request, issue triage/creation, release/tag creation, and GitHub hygiene. Aligns every GitHub action with the repo's evidence and workspace-sync rules.
+---
+
+# GitHub Workflow
+
+이 스킬은 이 프로젝트의 GitHub 운영 전반을 다룬다.
+
+## 언제 사용하나
+
+- 커밋을 만들거나 푸시할 때
+- 새 브랜치를 만들 때
+- PR을 열거나 정리할 때
+- 이슈를 만들거나 업데이트할 때
+- 릴리즈/태그를 만들 때
+- GitHub 운영 상태를 점검할 때
+
+## 반드시 읽을 파일
+
+1. `.agent/AGENTS.md`
+2. `.agent/system/ops/PLAN.md`
+3. `.agent/system/ops/PROGRESS.md`
+4. `.agent/system/contracts/workspace-contract.md`
+5. `.agent/rules/logging.md`
+6. `04_증빙/_04_증빙_MOC.md`
+7. 필요 시 `.agent/skills/workspace-sync/SKILL.md`
+
+## 기본 원칙
+
+- GitHub 작업도 증빙의 일부다.
+- 의미 있는 GitHub 작업은 `04_증빙/01_핵심로그/`에 남긴다.
+- 사용자 승인 없이 destructive action을 하지 않는다.
+- release는 기본값이 `draft` 또는 보류다. 사용자가 명시적으로 원할 때만 final로 간다.
+- GitHub 관련 note, changelog, release note 초안도 Obsidian note 규칙에 맞춰 관리한다.
+
+## 표준 순서
+
+### 1. Preflight
+
+먼저 아래를 확인한다.
+
+1. `git status --short`
+2. 현재 브랜치와 원격
+3. 변경 범위가 요청과 맞는지
+4. 증빙 로그 업데이트 필요 여부
+
+### 2. Commit / Push
+
+커밋 전 체크:
+
+1. 변경 파일이 요청 범위 안에 있는지 확인
+2. `PROGRESS.md` 또는 관련 증빙 로그 반영 여부 확인
+3. 테스트/검증 가능하면 최소 1개 이상 수행
+4. 커밋 메시지는 의도와 범위를 짧게 설명
+
+푸시 전 체크:
+
+1. 브랜치명이 목적을 설명하는지 확인
+2. 원격이 올바른지 확인
+3. release 준비가 아닌데 main 직푸시는 피한다
+
+### 3. Pull Request
+
+PR 기본값:
+
+- 가능하면 `draft`로 시작
+- 본문에는 목적, 변경 범위, 검증, 남은 리스크를 쓴다
+- 증빙이 중요한 변경이면 관련 `04_증빙/01_핵심로그/` 파일을 함께 언급한다
+
+### 4. Issue
+
+이슈 생성/정리 원칙:
+
+- 중복 이슈를 먼저 확인
+- 제목은 문제 중심으로 쓴다
+- 본문은 `배경 / 해야 할 일 / 완료 조건 / 관련 문서` 순으로 쓴다
+- 전략, 제품, 증빙 중 어디에 속하는지 분명히 한다
+
+추천 템플릿:
+
+```markdown
+## 배경
+
+## 해야 할 일
+- [ ]
+
+## 완료 조건
+- [ ]
+
+## 관련 문서
+- 
+```
+
+### 5. Release / Tag
+
+release 전 체크:
+
+1. 무엇을 릴리즈하는지 명확한가
+2. 제출물 기준으로 재현 가능한 상태인가
+3. README, 제출 문서, 증빙 링크가 따라오는가
+4. 사용자 승인 또는 명시적 요청이 있는가
+
+release 노트 소스:
+
+- `05_제출/`
+- `04_증빙/01_핵심로그/decision-log.md`
+- `04_증빙/01_핵심로그/evolution-log.md`
+- `04_증빙/01_핵심로그/ai-usage-stats.md`
+
+## GitHub 작업과 증빙 연결
+
+아래 작업은 끝난 뒤 증빙 반영을 확인한다.
+
+- commit / push
+- PR 생성
+- issue 생성 또는 상태 전환
+- release / tag 생성
+
+최소 연결 대상:
+
+- `04_증빙/01_핵심로그/ai-usage-log.md`
+- `04_증빙/01_핵심로그/session-log.md`
+- 필요 시 `04_증빙/01_핵심로그/decision-log.md`
+- 필요 시 `.agent/system/logs/evidence-gate-log.md`
+- 필요 시 `.agent/skills/obsidian-workspace/SKILL.md` 기준으로 MOC/운영 note도 함께 갱신
+
+## 절대 규칙
+
+- 변경 범위를 모른 채 `git add .` 하지 않는다.
+- 사용자가 요청하지 않은 release를 만들지 않는다.
+- 증빙이 필요한 GitHub 작업을 로그 없이 끝내지 않는다.
+- 브랜치/PR/이슈/릴리즈 설명을 빈 상태로 두지 않는다.
+
+## 결과물
+
+- GitHub 상태가 명확해진다
+- commit / push / PR / issue / release가 요청 범위와 일치한다
+- 증빙 로그와 GitHub 작업이 서로 연결된다
