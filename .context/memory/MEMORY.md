@@ -1,0 +1,5 @@
+- [KEG 콘테스트 핵심 정보](project_contest_overview.md) — 주제·일정·심사·제출물·500팀 경쟁
+- [워크스페이스 목적과 구조](project_workspace_purpose.md) — AI native 협업 공간, 옵시디언+깃허브
+- [팀 프로필](user_team_profile.md) — 이승보(CEO)+김주용(COO), 둘 다 풀스택/AI네이티브
+- [핵심 파일 색인](reference_key_files.md) — 개요서·플레이북·분석자료 위치
+- [워크스페이스 독립성](feedback_workspace_independence.md) — 로컬 비연결, 스킬/MCP/메모리 프로젝트 내 자기완결
