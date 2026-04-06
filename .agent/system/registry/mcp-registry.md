@@ -14,4 +14,7 @@ date: 2026-04-06
 | Magic Patterns | UI 보조 | Standby |
 | Figma | 디자인 시스템/코드 연결 | Standby |
 
-세부 설정 정본은 이 문서다.
+세부 설정 정본:
+
+- Excalidraw — `_system/tools/excalidraw/excalidraw-mcp.md`
+- Figma — `_system/tools/figma/figma.md`

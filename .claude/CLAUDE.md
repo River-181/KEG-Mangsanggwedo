@@ -18,9 +18,9 @@ Canonical: `.agent/system/`
 **작업 완료 시 반드시:**
 - `.agent/system/ops/PROGRESS.md` 업데이트 (완료 항목 체크, 미완료 항목 추가)
 - `.agent/system/ops/PLAN.md` 업데이트 (우선순위 변경 있으면)
-- `04_증빙/01_핵심로그/session-log.md` 반영 필요 여부 확인
-- `04_증빙/01_핵심로그/ai-usage-log.md`에 1줄 append
-- Evidence Gate 통과 여부 확인
+- `04_증빙/01_핵심로그/master-evidence-ledger.md` 반영
+- 필요 시 `decision-log.md` 또는 `prompt-catalog.md` 승격 여부 확인
+- Evidence Gate는 필요한 경우에만 확인
 
 ---
 
@@ -46,7 +46,7 @@ Canonical: `.agent/system/`
 - 여러 AI(Claude, GPT, Codex, Perplexity 등)가 동시에 이 워크스페이스에서 작업한다
 - **`.agent/system/ops/PROGRESS.md`**가 단일 진실 소스(single source of truth)이다
 - 작업 시작 전: `PROGRESS.md`에서 "미완료" 항목 확인 → 중복 작업 방지
-- 작업 완료 후: `PROGRESS.md` 업데이트 + `ai-usage-log` append
+- 작업 완료 후: `PROGRESS.md` 업데이트 + `master-evidence-ledger` 반영
 - 충돌 발생 시: 사람(이승보 or 김주용)에게 에스컬레이션
 
 ## 옵시디언 규칙
@@ -62,10 +62,23 @@ Canonical: `.agent/system/`
 
 ## 자동 로깅 규칙
 
-작업 완료 시 `04_증빙/01_핵심로그/ai-usage-log.md`에 1줄 append:
+작업 완료 시 `04_증빙/01_핵심로그/master-evidence-ledger.md`에 세션 블록 1개를 추가:
 
 ```
-| ID | Session_ID | 시각 | Phase | 역할 | 작업 | 환경 | 클라이언트 | 모델 | 입력 | 출력 | Tokens_In | Tokens_Out | Tokens_Total | 채택 | 이유 | Artifact | Notes |
+### S-XXX
+- DateTime:
+- Phase:
+- Tool/Client:
+- Model:
+- Goal:
+- What changed:
+- Why it mattered:
+- Artifacts:
+- AI usage strategy:
+- Evidence value:
+- Report section hint:
+- Token note:
+- Follow-up:
 ```
 
 ## 사용 가능한 도구

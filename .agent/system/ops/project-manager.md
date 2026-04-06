@@ -9,11 +9,12 @@ aliases:
 ---
 # 프로젝트 매니저 대시보드
 
+> 사용자용 가시 대시보드: [[_system/dashboard/project-dashboard|project-dashboard]]
 > [[00 HOME|홈]] | [[.agent/system/ops/PLAN|PLAN]] | [[.agent/system/ops/PROGRESS|PROGRESS]] | [[_04_증빙_MOC|증빙]]
 
 ## 태스크 트래커
 
-![[project-dashboard.base]]
+![[_system/dashboard/project-dashboard.base]]
 
 ---
 
@@ -74,7 +75,7 @@ gantt
 - [ ] 접속 가능한 배포본
 - [ ] 오늘 변경 기능 설명
 - [ ] 스크린샷 3장 이상 (`assets/screenshots/`)
-- [ ] AI 사용 내역 기록 (`04_증빙/01_핵심로그/ai-usage-log.md`)
+- [ ] AI 리포트 재료 기록 (`04_증빙/01_핵심로그/master-evidence-ledger.md`)
 - [ ] 내일의 단일 목표
 
 ---
@@ -120,7 +121,7 @@ pie title 트랙별 태스크 비중 (예상)
 
 ## 태스크 생성 가이드
 
-태스크 노트를 만들 때 아래 frontmatter를 사용하면 `project-dashboard.base`에 자동 표시됩니다:
+태스크 노트를 만들 때 아래 frontmatter를 사용하면 `[[project-dashboard]]`의 `project-dashboard.base`에 자동 표시됩니다:
 
 ```yaml
 ---

@@ -29,6 +29,6 @@ aliases:
 1. `.agent/system/ops/PLAN.md` 확인
 2. `.agent/system/ops/PROGRESS.md` 확인
 3. `02_전략/problem-bank.md` 생성 또는 갱신
-4. 세션 종료 시 `04_증빙/01_핵심로그/session-log.md`
-5. 세션 종료 시 `04_증빙/01_핵심로그/ai-usage-log.md`
-6. 세션 종료 시 `.agent/system/logs/evidence-gate-log.md`
+4. 세션 종료 시 `04_증빙/01_핵심로그/master-evidence-ledger.md`
+5. 중요 결정이 있으면 `decision-log.md`
+6. 재사용 프롬프트가 있으면 `prompt-catalog.md`

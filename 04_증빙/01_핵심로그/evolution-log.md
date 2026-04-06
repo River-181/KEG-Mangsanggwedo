@@ -8,7 +8,7 @@ date: 2026-04-06
 
 > 이 워크스페이스 자체가 어떻게 발전했는지를 추적한다.
 > AI 리포트의 핵심 차별화 포인트: "시스템이 어떻게 진화했는가"
-> append-only.
+> archive/reference. 직접 입력 정본은 [[master-evidence-ledger]]다.
 
 ## 2026-04-06 (Day 0)
 

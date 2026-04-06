@@ -12,9 +12,9 @@ Handle GitHub operations for `$ARGUMENTS`.
 2. `.agent/system/ops/PLAN.md`
 3. `.agent/system/ops/PROGRESS.md`
 4. `.agent/rules/logging.md`
-5. `04_증빙/01_핵심로그/ai-usage-log.md`
-6. `04_증빙/01_핵심로그/session-log.md`
-7. `04_증빙/01_핵심로그/decision-log.md`
+5. `04_증빙/01_핵심로그/master-evidence-ledger.md`
+6. `04_증빙/01_핵심로그/decision-log.md`
+7. `.agent/skills/obsidian-workspace/SKILL.md`
 
 ## Task
 
@@ -37,7 +37,7 @@ Interpret `$ARGUMENTS` as the GitHub operation to prepare or execute.
 ```
 [GitHub intent]
 [Preflight checks]
-[Required files/logs]
+[Required files/ledger]
 [Execution plan]
 [Risks]
 ```

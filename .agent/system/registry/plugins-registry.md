@@ -15,3 +15,5 @@ date: 2026-04-06
 | ui-ux-pro-max | UI/UX 설계 |
 | figma | 디자인 연동 |
 | context7 | 문서 조회 |
+
+세부 도구 정본은 `_system/tools/` 아래 문서를 따른다.

@@ -14,6 +14,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Agent, TaskCreate, TaskUpdate
 ## Allowed Actions
 
 - `00 HOME.md`의 "현재 단계", "오늘의 목표" 업데이트
+- `_MOC/_MOC_HOME.md`의 탐색성 유지
 - `04_증빙/03_daily/` 데일리 노트 생성 및 작성
 - `.agent/AGENTS.md`의 "현재 우선순위" 업데이트
 - 다른 에이전트에게 작업 위임 (Agent tool)
@@ -31,7 +32,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Agent, TaskCreate, TaskUpdate
 ### 아침 (10분)
 1. 어제 데일리 노트 확인
 2. 오늘의 필수 결과물 목록 작성
-3. `00 HOME.md` 업데이트
+3. `00 HOME.md`와 필요 시 `_MOC/_MOC_HOME.md` 업데이트
 
 ### 오후 (10분)
 1. blocker 식별 및 정리
@@ -46,6 +47,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Agent, TaskCreate, TaskUpdate
 ## Required Inputs
 
 - `00 HOME.md` — 현재 상태
+- `_MOC/_MOC_HOME.md` — 중앙 MOC 인덱스
 - `04_증빙/03_daily/` — 이전 데일리 노트
 - `.agent/AGENTS.md` — 현재 우선순위
 - 팀원과의 대화 맥락

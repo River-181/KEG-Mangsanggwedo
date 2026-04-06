@@ -11,6 +11,15 @@ date: 2026-04-06
 | Codex | 구현/정리/감사 | `contracts/tools/codex.md` |
 | Claude Code | 구축/자동화/구현 | `contracts/tools/claude-code.md` |
 
+## Workspace Tool Stack
+
+| Tool | Role | Canonical Contract |
+|---|---|---|
+| Obsidian CLI + Skills | 볼트 조작, MOC 유지, base 관리 | `_system/tools/obsidian/obsidian-cli-and-skills.md` |
+| Excalidraw MCP | 시스템/프로세스 다이어그램 | `_system/tools/excalidraw/excalidraw-mcp.md` |
+| Figma MCP | 디자인 파일 읽기/쓰기 | `_system/tools/figma/figma.md` |
+| NotebookLM CLI (`nlm`) | 딥리서치/브리핑 | `_system/tools/nlm/nlm.md` |
+
 ## Claude Runtime Layer
 
 - Command structure and design notes: `.agent/system/registry/claude-command-stack.md`

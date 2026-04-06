@@ -28,8 +28,11 @@ skills/
 ## 현재 스킬
 
 - `obsidian-workspace/` — vault note, MOC, daily, `.base` 파일을 Obsidian 규칙에 맞춰 다루는 스킬
+- `moc-sync/` — 중앙 MOC 공간 `_MOC/` 유지 스킬
 - `workspace-sync/` — memory, maps, evidence를 함께 맞추는 정합성 스킬
 - `github-workflow/` — commit, push, PR, issue, release 운영 스킬
+- `github-issue-ops/` — issue 생성, triage, dedupe, 상태 전환 스킬
+- `github-project-ops/` — GitHub Project 보드, field, item, sprint 운영 스킬
 
 ## Obsidian 관련 글로벌 스킬
 
@@ -45,3 +48,7 @@ skills/
 
 글로벌 플러그인은 `.agent/system/registry/plugins-registry.md`에 기록되어 있으며,
 새 컴퓨터에서는 `.agent/adapters/claude/setup.sh`로 일괄 설치한다.
+
+## 저장소 내 도구 정본
+
+도구 설치/연결 정본은 `_system/tools/`에 둔다.

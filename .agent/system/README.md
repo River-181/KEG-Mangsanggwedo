@@ -19,6 +19,8 @@ aliases:
 - `04_증빙/` = AI 리포트 재료 정본
 - `.agent/system/memory/` = 운영 기억 보조 레이어
 - `.claude/` = Claude 전용 미러/어댑터
+- `_MOC/` = 중앙 MOC 공간
+- `_system/tools/` = 저장소 종속 도구 정본
 - `.context/` = 제거됨. 내용은 `.agent/system/`으로 흡수
 - 이 저장소의 문서 레이어 = Obsidian vault
 
@@ -53,4 +55,5 @@ aliases:
 ## 반드시 기억할 것
 
 - 리포트에 쓸 수 있는 사실은 최종적으로 `04_증빙/`에 있어야 한다.
+- 직접 입력 정본은 `04_증빙/01_핵심로그/master-evidence-ledger.md` 하나다.
 - 메모리에만 있고 증빙에 없는 상태는 세션 종료 시 `Done`으로 간주하지 않는다.

@@ -12,7 +12,8 @@ Sync the Obsidian workspace for `$ARGUMENTS`.
 - `.agent/skills/workspace-sync/SKILL.md`
 - `.agent/rules/obsidian-conventions.md`
 - `.agent/system/maps/workspace-atlas.md`
-- `04_증빙/_04_증빙_MOC.md`
+- `_MOC/_MOC_HOME.md`
+- `_MOC/_04_증빙_MOC.md`
 
 ## Task
 
@@ -28,7 +29,7 @@ Treat this repository as an Obsidian vault, not a generic Markdown folder.
    - `[[wikilink]]`
    - YAML frontmatter
    - correct MOC references
-3. If the structure changed, update `workspace-atlas.md`.
+3. If the structure changed, update `_MOC/_MOC_HOME.md` and `workspace-atlas.md`.
 4. If report-worthy facts changed, reflect them in `04_증빙/01_핵심로그/`.
 5. State whether Evidence Gate follow-up is required.
 

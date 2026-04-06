@@ -13,3 +13,4 @@ date: 2026-04-06
 | 2026-04-06 | S-OPS-004 | Passed | GitHub 운영 스킬 추가와 증빙 반영 완료 |
 | 2026-04-06 | S-OPS-005 | Passed | Obsidian-first 규칙, vault 스킬, registry, 공용 문서 반영 완료 |
 | 2026-04-06 | S-OPS-006 | Passed | Claude runtime commands, registry, atlas, 증빙 반영 완료 |
+| 2026-04-06 | S-OPS-007 | Passed | GitHub issue/project skills, registry, 증빙 반영 완료 |

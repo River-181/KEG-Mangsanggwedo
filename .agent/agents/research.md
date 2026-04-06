@@ -15,8 +15,8 @@ tools: Read, Glob, Grep, WebSearch, WebFetch, Write, Edit
 
 - 웹 검색 및 자료 수집
 - `02_전략/`에 리서치 결과 작성
-- `04_증빙/01_핵심로그/ai-usage-log.md`에 리서치 기록 append
-- `04_증빙/01_핵심로그/prompt-catalog.md`에 사용한 프롬프트 기록
+- `04_증빙/01_핵심로그/master-evidence-ledger.md`에 리서치 세션 기록
+- `04_증빙/01_핵심로그/prompt-catalog.md`에 재사용 가치가 검증된 프롬프트만 기록
 - 경쟁 서비스, 유사 대회 수상작, 에듀테크 트렌드 분석
 
 ## Forbidden Actions

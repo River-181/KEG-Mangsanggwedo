@@ -34,7 +34,7 @@ aliases:
 ### P0 — 지금 당장
 1. **Evidence Gate 운영 정착**
    - 담당: 모든 AI 에이전트
-   - 산출물: `04_증빙/01_핵심로그/session-log.md`, `04_증빙/01_핵심로그/ai-usage-log.md`, `evidence-gate-log.md` 누락 없는 append
+   - 산출물: `04_증빙/01_핵심로그/master-evidence-ledger.md` 누락 없는 기록, 필요 시 `decision-log.md`와 `prompt-catalog.md` 승격
 2. **문제 리서치 시작**
    - 담당: Research Agent
    - 산출물: `02_전략/problem-bank.md`, `02_전략/problem-scorecard.md`
@@ -51,7 +51,7 @@ aliases:
    - 산출물: `02_전략/problem-scorecard.md`
 6. **통계 수집 규칙 검증**
    - 담당: Evidence Agent
-   - 산출물: `04_증빙/01_핵심로그/ai-usage-stats.md`와 `ai-usage-log.md` 연결 규칙 점검
+   - 산출물: `04_증빙/01_핵심로그/ai-usage-stats.md`와 `master-evidence-ledger.md` 연결 규칙 점검
 
 ### P2 — Day 1 완료 목표
 7. **문제 후보 3개 축소** — scorecard 평가 완료
@@ -79,8 +79,8 @@ aliases:
 - Day 5: 중간 심사 시뮬레이션
 
 ### Evidence Agent
-- 상시: ai-usage-log append
-- 상시: session 종료 시 Evidence Gate 확인
+- 상시: master-evidence-ledger 기록
+- 상시: 필요 시 decision/prompt만 승격
 - Day 5: AI 리포트 초안 컴파일
 
 ### Product Agent
@@ -123,4 +123,4 @@ aliases:
 
 ---
 
-> 관련: [[.agent/system/ops/PROGRESS|PROGRESS]], [[.agent/system/ops/project-manager|project-manager]], [[00 HOME]]
+> 관련: [[.agent/system/ops/PROGRESS|PROGRESS]], [[_system/dashboard/project-dashboard|project-dashboard]], [[00 HOME]]

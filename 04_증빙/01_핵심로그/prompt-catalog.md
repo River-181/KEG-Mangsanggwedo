@@ -6,7 +6,8 @@ date: 2026-04-06
 ---
 # 프롬프트 카탈로그
 
-> P-NNN 형식. 모든 프롬프트 원장이 아니라, 재사용 가치가 검증된 프롬프트만 승격 기록한다.
+> P-NNN 형식.
+> 모든 프롬프트 원장이 아니라, [[master-evidence-ledger]]에서 재사용 가치가 검증된 프롬프트만 승격 기록한다.
 
 | Prompt_ID | Intent | Prompt | Reuse rule | Linked evidence |
 |---|---|---|---|---|

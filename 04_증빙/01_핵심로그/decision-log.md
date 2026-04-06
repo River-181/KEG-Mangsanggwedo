@@ -6,7 +6,8 @@ date: 2026-04-06
 ---
 # 의사결정 기록
 
-> DEC-NNN 형식. 모든 범위/기술/디자인 결정을 기록.
+> DEC-NNN 형식.
+> [[master-evidence-ledger]]에서 중요한 의사결정만 승격 기록한다.
 
 ## DEC-001: 워크스페이스 구조 — 옵시디언 볼트 기반 평탄 구조
 - 날짜: 2026-04-06
@@ -111,3 +112,11 @@ date: 2026-04-06
 - 근거: 사용자 요청 — command key 구조를 조사한 뒤 필요한 것들을 정확한 포맷으로 만들 것. 동시에 현재 워크스페이스는 정본 중복과 구조 비대화를 피해야 함
 - AI 역할: Codex가 공식 command 구조를 확인하고 runtime command + command stack registry를 설계/작성
 - 영향: Claude runtime 접근성이 좋아지면서도 공용 정본은 `.agent/system/`과 `.agent/skills/`에 유지됨
+
+## DEC-014: GitHub 운영 스킬을 issue/project 레이어로 분리
+- 날짜: 2026-04-06
+- 결정: `github-workflow`는 상위 오케스트레이터로 유지하고, issue 운영은 `github-issue-ops`, project board 운영은 `github-project-ops`로 분리
+- 대안: 하나의 GitHub 스킬에 commit, issue, project, release를 모두 계속 누적
+- 근거: 사용자 요청 — GitHub 관련 스킬에 이슈와 프로젝트 관리까지 포함해야 함. `gh issue`와 `gh project`는 실제 명령 체계와 운영 포인트가 다름
+- AI 역할: Codex가 `gh issue --help`, `gh project --help`를 확인하고 두 개의 운영 스킬과 registry 연결을 추가
+- 영향: GitHub 운영이 `code flow`와 `management flow`로 나뉘어 유지보수와 재사용성이 좋아짐

@@ -16,7 +16,7 @@ aliases:
 - **D-Day**: 제출 마감 2026-04-13 24:00
 - **현재 단계**: 워크스페이스 구축 / 리서치 준비
 - **오늘의 목표**: 워크스페이스 구조화 완료, 문제 리서치 시작
-- **운영 문서**: [[.agent/system/ops/PLAN|PLAN]] / [[.agent/system/ops/PROGRESS|PROGRESS]] / [[.agent/system/ops/project-manager|운영 대시보드]]
+- **운영 문서**: [[.agent/system/ops/PLAN|PLAN]] / [[.agent/system/ops/PROGRESS|PROGRESS]] / [[_system/dashboard/project-dashboard|운영 대시보드]]
 
 ## 섹션
 
@@ -27,6 +27,12 @@ aliases:
 | [[_03_제품_MOC\|03 제품]] | 문제정의, 페르소나, 아키텍처, 데모 |
 | [[_04_증빙_MOC\|04 증빙]] | AI 사용 로그, 결정 기록, 프롬프트 |
 | [[_05_제출_MOC\|05 제출]] | AI 리포트, 체크리스트, 회고 |
+| [[_system_tools_MOC\|System Tools]] | Obsidian, Excalidraw, Figma, NLM, 팀 셋업 |
+
+## MOC 공간
+
+- 모든 MOC 정본: [[_MOC_HOME]]
+- MOC 파일 물리 위치: `_MOC/`
 
 ## 에이전트 진입점
 
@@ -34,6 +40,7 @@ aliases:
 - `.claude/CLAUDE.md` — Claude Code 전용 지시서
 - `.agent/system/README.md` — 운영 시스템 정본 인덱스
 - `.agent/skills/obsidian-workspace/SKILL.md` — Obsidian vault 작업 기준
+- `_system/team-setup/team-computer-setup-guide.md` — 팀원 환경 적용 가이드
 
 ## 제출물 체크리스트
 

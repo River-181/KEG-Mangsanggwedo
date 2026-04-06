@@ -13,6 +13,8 @@ aliases:
 
 - `.agent/` = 운영 정본
 - `.claude/` = Claude 런타임 어댑터
+- `_MOC/` = 모든 MOC 중앙 공간
+- `_system/tools/` = 저장소 종속 도구 정본
 - `03_제품/` = 제품 정의와 실제 코드
 - `04_증빙/` = AI 리포트 재료 정본
 - 루트 = 사람용 색인과 대회 섹션
@@ -22,6 +24,17 @@ aliases:
 ```text
 .
 ├── 00 HOME.md
+├── _MOC/
+│   ├── _MOC_HOME.md
+│   ├── _01_대회정보_MOC.md
+│   ├── _02_전략_MOC.md
+│   ├── _03_제품_MOC.md
+│   ├── _04_증빙_MOC.md
+│   ├── _05_제출_MOC.md
+│   └── _system_tools_MOC.md
+├── _system/
+│   ├── tools/
+│   └── team-setup/
 ├── 01_대회정보/
 ├── 02_전략/
 ├── 03_제품/
@@ -63,7 +76,7 @@ aliases:
 | 현재 상태 확인 | `.agent/system/ops/PROGRESS.md` |
 | 오래 유지되는 사실 확인 | `.agent/system/memory/long-term-memory.md` |
 | 오늘의 단기 맥락 확인 | `.agent/system/memory/daily-memory.md` |
-| 로그 기록 위치 확인 | `04_증빙/_04_증빙_MOC.md` |
+| 증빙 직접 기록 위치 확인 | `04_증빙/01_핵심로그/master-evidence-ledger.md` |
 
 ## 4. 메모리 → 증빙 흐름
 
@@ -71,7 +84,7 @@ aliases:
 flowchart LR
     Work["Session work"] --> Memory["memory/daily-memory.md"]
     Memory --> Gate{"Evidence Gate"}
-    Gate -->|"report-worthy"| Core["04_증빙/01_핵심로그/"]
+    Gate -->|"report-worthy"| Core["master-evidence-ledger.md"]
     Gate -->|"not report-worthy"| Keep["memory only"]
     Core --> Report["05_제출/AI report"]
 ```
@@ -95,4 +108,5 @@ flowchart LR
 | 운영 규칙 변경 | `workspace-contract.md`, `mirroring-policy.md` |
 | 기억 변경 | `daily-memory.md`, 필요 시 `long-term-memory.md` |
 | 리포트 가치 정보 발생 | `04_증빙/01_핵심로그/` |
-| 세션 종료 | `04_증빙/01_핵심로그/session-log.md`, `04_증빙/01_핵심로그/ai-usage-log.md`, `evidence-gate-log.md` |
+| 세션 종료 | `04_증빙/01_핵심로그/master-evidence-ledger.md`, 필요 시 `decision-log.md`, 필요 시 `prompt-catalog.md` |
+| MOC 구조 변경 | `_MOC/_MOC_HOME.md`, `00 HOME.md`, `workspace-atlas.md` |

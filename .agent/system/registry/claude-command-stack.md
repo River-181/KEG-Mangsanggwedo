@@ -83,7 +83,7 @@ aliases:
 - side effect가 있는 command는 `disable-model-invocation: true`를 넣는다.
 - 내부 운영 문서는 항상 `.agent/system/`을 정본으로 참조한다.
 - Obsidian note를 만지는 command는 `obsidian-workspace` 규칙을 먼저 따른다.
-- 증빙 가치가 있는 command는 종료 전에 `session-log`, `ai-usage-log`, `evidence-gate-log` 반영 여부를 점검한다.
+- 증빙 가치가 있는 command는 종료 전에 `master-evidence-ledger` 반영 여부를 먼저 점검한다.
 
 ## 5. 향후 추가 후보
 

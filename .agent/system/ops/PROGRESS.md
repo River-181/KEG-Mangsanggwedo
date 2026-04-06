@@ -21,7 +21,7 @@ aliases:
 ### 워크스페이스 구조화 ✅
 - [x] 디렉토리 구조 생성 (01~05, assets, 03_제품/app, 03_제품/tests)
 - [x] 기존 파일 11개 이동 및 정리
-- [x] MOC 6개 작성 (`00 HOME.md` ~ `05_제출`)
+- [x] MOC 6개 작성 및 `_MOC/` 중앙화
 - [x] `.agent/AGENTS.md` — 에이전트 공용 진입점
 - [x] `.agent/` — agents, rules, skills, adapters, system 정리
 - [x] `.claude/` — 최소 어댑터만 유지 (`CLAUDE.md`, `settings.json`)
@@ -35,11 +35,11 @@ aliases:
 - [x] 기관 분석 및 심사 전략 (`02_전략/기관_분석_및_심사_전략.md`)
 
 ### 프로젝트 관리 ✅
-- [x] PM 대시보드 (`.agent/system/ops/project-manager.md`)
-- [x] 태스크 트래커 (`.agent/system/ops/project-dashboard.base`)
+- [x] PM 대시보드 (`_system/dashboard/project-dashboard.md`)
+- [x] 태스크 트래커 (`_system/dashboard/project-dashboard.base`)
 
 ### 증빙 체계 ✅ (1차)
-- [x] ai-usage-log.md — 8건 기록
+- [x] ai-usage-log.md — 초기 이벤트 로그 기록
 - [x] decision-log.md — DEC-001~005 기록
 - [x] prompt-catalog.md — 뼈대
 - [x] 데일리 노트 04-06
@@ -85,6 +85,7 @@ aliases:
 - [x] `04_증빙`를 `01_핵심로그 / 02_분석자료 / 03_daily`로 재배치
 - [x] `workspace-sync` 스킬 추가
 - [x] `github-workflow` 스킬 추가
+- [x] `master-evidence-ledger.md` 단일 증빙 원장 도입
 
 ---
 
@@ -108,7 +109,7 @@ aliases:
 
 ## 미완료 — 다음 에이전트가 이어받을 것
 
-1. **Evidence Gate 운영 습관 정착** — 새 세션마다 누락 없이 적용
+1. **단일 증빙 원장 운영 습관 정착** — 새 세션마다 `master-evidence-ledger.md`만 직접 기록
 2. **문제 리서치 시작** — Day 1의 핵심 목표, 아직 미착수
 3. **`04_증빙/01_핵심로그`와 `.agent/system/memory` 간 실제 운용 검증**
 4. **제품 리서치용 문제 은행 문서 생성**

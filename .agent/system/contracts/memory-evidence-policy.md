@@ -18,6 +18,7 @@ aliases:
 - `.agent/system/memory/long-term-memory.md`는 오래 유지되는 핵심 사실 정본이다.
 - `.agent/system/memory/daily-memory.md`는 오늘 세션의 단기 기억과 핸드오프를 담는다.
 - `04_증빙/`은 AI 리포트, 회고, 결과보고서, 심사 대응에 바로 쓸 수 있는 재료의 정본이다.
+- 직접 입력 정본은 `04_증빙/01_핵심로그/master-evidence-ledger.md` 하나다.
 
 ## 메모리에만 두면 안 되는 항목
 
@@ -33,9 +34,10 @@ aliases:
 모든 세션 종료 시 아래 순서로 점검한다.
 
 1. 세션 중 생성된 메모리 항목 검토
-2. 증빙 가치가 있는 내용을 `04_증빙/`에 반영
-3. `04_증빙/01_핵심로그/session-log.md`에 `Evidence updates`와 `Gate status` 기록
-4. `.agent/system/logs/evidence-gate-log.md`에 결과 기록
+2. 증빙 가치가 있는 내용을 `04_증빙/01_핵심로그/master-evidence-ledger.md`에 반영
+3. 중요한 결정만 `04_증빙/01_핵심로그/decision-log.md`로 승격
+4. 반복 사용 프롬프트만 `04_증빙/01_핵심로그/prompt-catalog.md`로 승격
+5. 필요할 때만 `.agent/system/logs/evidence-gate-log.md`에 결과 기록
 
 ## Gate status 정의
 
@@ -46,4 +48,4 @@ aliases:
 ## 세션 완료 조건
 
 - `Pending Evidence` 상태에서는 세션을 `Done`으로 닫지 않는다.
-- `04_증빙/` 반영 후에만 `Done` 가능.
+- `master-evidence-ledger.md` 반영 후에만 `Done` 가능.

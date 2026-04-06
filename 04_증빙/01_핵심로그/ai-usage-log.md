@@ -6,8 +6,8 @@ date: 2026-04-06
 ---
 # AI 사용 기록
 
-> append-only. 삭제 금지. 에이전트는 작업 완료 시 여기에 1줄 추가.
-> V2 인터페이스: 이벤트 원장. 증빙 가치가 있는 세션은 반드시 `session-log.md`와 Evidence Gate를 함께 통과해야 한다.
+> archive/reference.
+> 앞으로 직접 입력은 [[master-evidence-ledger]]에 한다.
 
 ## 2026-04-06
 
@@ -36,3 +36,4 @@ date: 2026-04-06
 | U-021 | S-OPS-004 | 21:20 | Workspace Setup | Ops | GitHub 운영 전용 스킬 추가 | Desktop | Codex | GPT-5 | 사용자 요청, 현재 증빙/운영 규칙, skill-creator 가이드 | `.agent/skills/github-workflow/SKILL.md`, skills-registry, README | estimate | estimate | estimate | O | commit/push/PR/issue/release를 프로젝트 규칙과 연결 | GitHub workflow skill | GitHub 작업도 증빙과 연결되게 설계 |
 | U-022 | S-OPS-005 | 21:45 | Workspace Setup | Ops | Obsidian-first 운영 규칙 명시 + vault 스킬 추가 | Desktop | Codex | GPT-5 | 사용자 지시, obsidian CLI help, Obsidian 관련 스킬, 공용 운영 문서 | `.agent/skills/obsidian-workspace/SKILL.md`, `AGENTS.md`, `CLAUDE.md`, `workspace-contract.md`, `README.md` | estimate | estimate | estimate | O | 이 저장소를 일반 Markdown이 아닌 Obsidian vault 기준으로 운영하도록 정본 문서에 명시 | Obsidian workspace skill | `obsidian --help`로 CLI 가용성 확인 |
 | U-023 | S-OPS-006 | 22:10 | Workspace Setup | Ops | Claude command key 구조 조사 + project commands 추가 | Desktop | Codex | GPT-5 | Claude Code 공식 slash command 문서, 기존 agents/skills 구조, 사용자 요청 | `.claude/commands/*.md`, `claude-command-stack.md`, atlas/registry/portable-config 반영 | estimate | estimate | estimate | O | 반복 운영 플로우를 Claude runtime command layer로 노출 | Claude commands | command key는 파일명 기준으로 설계 |
+| U-024 | S-OPS-007 | 22:25 | Workspace Setup | Ops | GitHub issue/project management 스킬 추가 | Desktop | Codex | GPT-5 | 사용자 요청, `gh issue --help`, `gh project --help`, 기존 github-workflow | `.agent/skills/github-issue-ops/SKILL.md`, `.agent/skills/github-project-ops/SKILL.md`, registry, README | estimate | estimate | estimate | O | commit 중심 GitHub 스킬을 issue/project 운영까지 확장 | GitHub issue/project skills | `gh project`는 `project` scope 필요 |

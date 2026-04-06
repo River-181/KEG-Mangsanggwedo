@@ -6,9 +6,8 @@ date: 2026-04-06
 ---
 # 세션 기록
 
-> 세션 단위로 기록. AI 대화 세션의 맥락·목표·결과를 추적한다.
-> append-only. 삭제 금지.
-> 세션 종료 시 `Evidence updates`와 `Gate status`를 반드시 기록한다.
+> archive/reference.
+> 앞으로 세션 직접 기록은 [[master-evidence-ledger]]를 사용한다.
 
 ## 2026-04-06
 
@@ -24,3 +23,4 @@ date: 2026-04-06
 | S-OPS-004 | 21:20 | Workspace Setup | GitHub 운영 스킬 추가 | Desktop | Codex | GPT-5 | User + Codex | 사용자 요청, 현재 운영 규칙, 증빙 구조 | `github-workflow` skill, registry 반영 | GitHub 작업도 Evidence Gate와 증빙 규칙을 따르도록 결정 | 스킬 파일, registry, usage/session log 반영 | Passed | 실제 GitHub issue/commit 작업에서 첫 사용 | Done |
 | S-OPS-005 | 21:45 | Workspace Setup | Obsidian-first 운영 기준 명시 | Desktop | Codex | GPT-5 | User + Codex | 사용자 지시, obsidian CLI, Obsidian 관련 글로벌 스킬, 공용 운영 문서 | `obsidian-workspace` skill, Obsidian-first 원칙이 반영된 AGENTS/CLAUDE/system docs | 이 저장소의 문서 레이어를 Obsidian vault로 공식 규정하고 note/base 작업은 Obsidian 규칙과 스킬을 우선 사용 | 새 스킬, registry, 공용 문서, usage/session/decision/gate 로그 반영 | Passed | 실제 note/MOC/base 작업에서 `obsidian` CLI 실사용 패턴 정착 | Done |
 | S-OPS-006 | 22:10 | Workspace Setup | Claude runtime command layer 설계 및 추가 | Desktop | Codex | GPT-5 | User + Codex | Claude Code 공식 slash command 문서, 기존 agents/skills, 운영 정본 문서 | `.claude/commands/` 6종, `claude-command-stack.md`, atlas/registry/portable-config/CLAUDE 반영 | commands는 최소 6개 엔트리포인트만 두고, 복잡한 로직은 기존 agents/skills를 재사용하도록 결정 | command registry, runtime commands, usage/session/decision/gate 로그 반영 | Passed | 실제 Claude Code에서 `/session-start`, `/problem-scan`부터 실사용 검증 | Done |
+| S-OPS-007 | 22:25 | Workspace Setup | GitHub issue/project 관리 스킬 확장 | Desktop | Codex | GPT-5 | User + Codex | 사용자 요청, `gh issue`, `gh project`, PM 대시보드, 기존 GitHub 스킬 | `github-issue-ops`, `github-project-ops`, updated `github-workflow`, registry/README 반영 | GitHub 운영을 commit/release와 issue/project board로 분리하고 상위 workflow가 이를 오케스트레이션하도록 결정 | 스킬 파일, registry, usage/session/decision/gate 로그 반영 | Passed | 실제 issue triage와 project board 생성에서 첫 검증 | Done |

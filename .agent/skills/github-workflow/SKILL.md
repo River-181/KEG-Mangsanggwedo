@@ -23,8 +23,10 @@ description: Use when working on GitHub operations in this KEG repo, including g
 3. `.agent/system/ops/PROGRESS.md`
 4. `.agent/system/contracts/workspace-contract.md`
 5. `.agent/rules/logging.md`
-6. `04_증빙/_04_증빙_MOC.md`
+6. `_MOC/_04_증빙_MOC.md`
 7. 필요 시 `.agent/skills/workspace-sync/SKILL.md`
+8. issue 운영이면 `.agent/skills/github-issue-ops/SKILL.md`
+9. project 보드 운영이면 `.agent/skills/github-project-ops/SKILL.md`
 
 ## 기본 원칙
 
@@ -76,6 +78,7 @@ PR 기본값:
 - 제목은 문제 중심으로 쓴다
 - 본문은 `배경 / 해야 할 일 / 완료 조건 / 관련 문서` 순으로 쓴다
 - 전략, 제품, 증빙 중 어디에 속하는지 분명히 한다
+- 반복적인 triage, dedupe, 상태 전환은 `github-issue-ops`를 우선 따른다
 
 추천 템플릿:
 
@@ -108,6 +111,12 @@ release 노트 소스:
 - `04_증빙/01_핵심로그/evolution-log.md`
 - `04_증빙/01_핵심로그/ai-usage-stats.md`
 
+### 6. Project Management
+
+- GitHub Project 운영은 `github-project-ops`를 우선 따른다
+- `PLAN`, `PROGRESS`, `_system/dashboard/project-dashboard.base`와 충돌이 나지 않게 유지한다
+- project scope가 필요하면 `gh auth refresh -s project` 여부를 먼저 점검한다
+
 ## GitHub 작업과 증빙 연결
 
 아래 작업은 끝난 뒤 증빙 반영을 확인한다.
@@ -119,8 +128,7 @@ release 노트 소스:
 
 최소 연결 대상:
 
-- `04_증빙/01_핵심로그/ai-usage-log.md`
-- `04_증빙/01_핵심로그/session-log.md`
+- `04_증빙/01_핵심로그/master-evidence-ledger.md`
 - 필요 시 `04_증빙/01_핵심로그/decision-log.md`
 - 필요 시 `.agent/system/logs/evidence-gate-log.md`
 - 필요 시 `.agent/skills/obsidian-workspace/SKILL.md` 기준으로 MOC/운영 note도 함께 갱신

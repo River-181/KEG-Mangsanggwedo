@@ -43,7 +43,7 @@ aliases:
 ## 현재 우선순위
 
 1. 문제 리서치와 문제 정의
-2. Evidence Gate를 실제 세션에 습관화
+2. `master-evidence-ledger` 기반 증빙 습관화
 3. 기술 스택 결정
 4. 제품 구현
 

@@ -80,6 +80,12 @@ else
   echo "  ✗ .agent/system/ops/PLAN.md 없음"
 fi
 
+if [ -f "_system/tools/bootstrap.sh" ]; then
+  echo "  ✓ _system/tools/bootstrap.sh 존재"
+else
+  echo "  ✗ _system/tools/bootstrap.sh 없음"
+fi
+
 # ---- 4. 옵시디언 확인 ----
 echo ""
 echo "[4/4] 옵시디언 확인..."
@@ -97,5 +103,7 @@ echo ""
 echo "다음 단계:"
 echo "  1. Obsidian에서 이 폴더를 볼트로 열기"
 echo "  2. Claude Code에서 이 폴더 열기"
-echo "  3. .agent/AGENTS.md 읽고 시작"
+echo "  3. bash _system/tools/bootstrap.sh 실행"
+echo "  4. _system/team-setup/team-computer-setup-guide.md 읽기"
+echo "  5. .agent/AGENTS.md 읽고 시작"
 echo "=============================="

@@ -15,3 +15,4 @@ date: 2026-04-06
 | 2026-04-06 | GitHub 운영 전용 `github-workflow` 스킬 추가 |
 | 2026-04-06 | Obsidian-first 운영 규칙과 `obsidian-workspace` 스킬 추가 |
 | 2026-04-06 | `.claude/commands/` runtime command layer와 `claude-command-stack.md` 추가 |
+| 2026-04-06 | GitHub issue/project management 전용 스킬 2종 추가 |

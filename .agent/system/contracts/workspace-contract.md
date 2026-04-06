@@ -38,16 +38,18 @@ aliases:
 |---|---|
 | `.agent/system/ops/PLAN.md` | 앞으로 할 일과 우선순위 |
 | `.agent/system/ops/PROGRESS.md` | 현재 상태와 다음 핸드오프 |
-| `.agent/system/ops/project-manager.md` | 운영 대시보드 |
-| `.agent/system/ops/project-dashboard.base` | Obsidian Bases 태스크 트래커 |
+| `.agent/system/ops/project-manager.md` | AI 운영용 대시보드 어댑터 |
+| `_system/dashboard/project-dashboard.md` | 사용자/AI 공용 운영 대시보드 |
+| `_system/dashboard/project-dashboard.base` | Obsidian Bases 태스크 트래커 |
 | `.agent/AGENTS.md` | 공용 시작 프로토콜과 금지사항 |
 | `.claude/CLAUDE.md` | Claude 실행 어댑터 문서 |
-| `04_증빙/01_핵심로그/ai-usage-log.md` | AI 사용 이벤트 원장 |
-| `04_증빙/01_핵심로그/session-log.md` | 세션 단위 맥락/결과 |
+| `04_증빙/01_핵심로그/master-evidence-ledger.md` | 직접 입력하는 AI 리포트 재료 원장 |
+| `04_증빙/01_핵심로그/ai-usage-log.md` | archive/reference |
+| `04_증빙/01_핵심로그/session-log.md` | archive/reference |
 | `04_증빙/01_핵심로그/decision-log.md` | 사람 승인 결정 |
 | `04_증빙/01_핵심로그/tool-log.md` | 도구 요약 뷰 |
-| `04_증빙/01_핵심로그/prompt-catalog.md` | 재사용 프롬프트 카탈로그 |
-| `04_증빙/01_핵심로그/ai-usage-stats.md` | 통합 통계 집계본 |
+| `04_증빙/01_핵심로그/prompt-catalog.md` | 승격된 재사용 프롬프트 카탈로그 |
+| `04_증빙/01_핵심로그/ai-usage-stats.md` | 파생 통계 집계본 |
 | `.agent/system/memory/long-term-memory.md` | 오래 유지되는 핵심 사실 정본 |
 | `.agent/system/memory/daily-memory.md` | 오늘 세션 단기 기억 |
 | `.agent/system/maps/workspace-atlas.md` | 구조와 갱신 규칙 정본 |
@@ -56,6 +58,7 @@ aliases:
 
 - 새 공용 운영 문서를 만들면 `.agent/system/maps/workspace-atlas.md`를 갱신한다.
 - 새 사실을 메모리에 저장했다면 세션 종료 시 Evidence Gate를 통해 `04_증빙/` 반영 여부를 판단한다.
+- 직접 기록은 원칙적으로 `04_증빙/01_핵심로그/master-evidence-ledger.md` 하나에 한다.
 - `.claude`의 공용 내용은 `.agent/system/`을 참조하거나 요약만 한다.
 
 ## 금지

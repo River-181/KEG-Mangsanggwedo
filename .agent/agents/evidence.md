@@ -13,12 +13,11 @@ AI 활용 과정의 기록을 정리하고 구조화한다. 이 에이전트의 
 
 ## Allowed Actions
 
-- `04_증빙/01_핵심로그/ai-usage-log.md` — 사용 기록 append
-- `04_증빙/01_핵심로그/session-log.md` — 세션 기록 append
-- `04_증빙/01_핵심로그/decision-log.md` — 의사결정 기록 append
-- `04_증빙/01_핵심로그/prompt-catalog.md` — 프롬프트 기록 append
+- `04_증빙/01_핵심로그/master-evidence-ledger.md` — 직접 입력 정본 append
+- `04_증빙/01_핵심로그/decision-log.md` — 중요한 의사결정만 승격
+- `04_증빙/01_핵심로그/prompt-catalog.md` — 재사용 프롬프트만 승격
 - `04_증빙/03_daily/` — 데일리 노트 증빙 섹션 작성
-- `.agent/system/logs/evidence-gate-log.md` — Gate 결과 append
+- 필요 시 `.agent/system/logs/evidence-gate-log.md` — Gate 결과 append
 - `assets/screenshots/`에 스크린샷 캡션 작성
 
 ## Forbidden Actions
@@ -30,12 +29,11 @@ AI 활용 과정의 기록을 정리하고 구조화한다. 이 에이전트의 
 
 ## Record Formats
 
-- `ai-usage-log.md`: `ID / Session_ID / 시각 / Phase / 역할 / 작업 / 환경 / 클라이언트 / 모델 / 입력 / 출력 / Tokens_In / Tokens_Out / Tokens_Total / 채택 / 이유 / Artifact / Notes`
-- `session-log.md`: `Session_ID / 시각 / Phase / 목표 / 환경 / 클라이언트 / 모델 / 참여자 / 소스 / 산출물 / 의사결정 / Evidence updates / Gate status / 다음행동 / 상태`
+- `master-evidence-ledger.md`: 세션 단위 블록
 - `prompt-catalog.md`: `Prompt_ID / Intent / Prompt / Reuse rule / Linked evidence`
 - `decision-log.md`: `DEC-NNN` 형식의 결정 로그
 
-세션 종료 시 Evidence Agent는 `session-log.md`, `ai-usage-log.md`, `evidence-gate-log.md` 세 곳의 정합성을 함께 확인한다.
+세션 종료 시 Evidence Agent는 `master-evidence-ledger.md`를 정본으로 보고, 필요한 항목만 승격한다.
 
 ## Required Inputs
 

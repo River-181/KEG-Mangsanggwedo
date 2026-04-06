@@ -9,17 +9,18 @@ aliases:
 # 증빙
 
 > AI 활용 증빙 자료. 이 디렉토리의 내용이 AI 리포트와 회고의 재료가 된다.
-> 에이전트는 작업 완료 시 자동으로 여기에 기록을 남긴다.
+> 직접 입력 정본은 [[master-evidence-ledger]] 하나다.
 
 ## 01 핵심로그
 
-- `01_핵심로그/ai-usage-log.md` — AI 사용 기록
-- `01_핵심로그/session-log.md` — 세션 단위 목표, 산출물, Evidence Gate 상태
-- `01_핵심로그/decision-log.md` — 의사결정 기록
-- `01_핵심로그/prompt-catalog.md` — 재사용 프롬프트
-- `01_핵심로그/tool-log.md` — 도구 역할과 사용 원칙
-- `01_핵심로그/ai-usage-stats.md` — 통합 통계 집계본
-- `01_핵심로그/evolution-log.md` — 구조/운영 진화 기록
+- [[master-evidence-ledger]] — 직접 입력하는 단일 증빙 원장
+- [[decision-log]] — 중요한 의사결정만 승격
+- [[prompt-catalog]] — 재사용 가치가 검증된 프롬프트만 승격
+- [[tool-log]] — 도구 설명서와 사용 원칙
+- [[ai-usage-stats]] — 나중에 파생되는 통계 집계본
+- [[ai-usage-log]] — archive/reference
+- [[session-log]] — archive/reference
+- [[evolution-log]] — archive/reference
 
 ## 02 분석자료
 
@@ -29,7 +30,8 @@ aliases:
 
 - 이 디렉토리는 AI 리포트 재료의 정본이다.
 - `.agent/system/memory/`의 보조 기억 중 리포트 가치가 있는 내용은 최종적으로 이곳으로 승격되어야 한다.
-- 세션 종료 시 `01_핵심로그/session-log.md`와 `evidence-gate-log.md`를 함께 확인한다.
+- 직접 입력은 [[master-evidence-ledger]] 하나로 끝내는 것을 기본값으로 한다.
+- 세션 종료 시 필요하면 [[decision-log]] 또는 [[prompt-catalog]]로만 추가 승격한다.
 
 ## 03 daily
 

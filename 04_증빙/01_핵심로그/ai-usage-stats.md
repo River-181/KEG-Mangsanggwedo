@@ -10,6 +10,7 @@ aliases:
 
 > **자동 집계 명령어**: `python3 .agent/system/automation/scripts/collect-usage-stats.py`
 > **PM/Evidence Agent 매일 밤 루틴**: 이 파일을 스크립트 결과로 업데이트
+> [[master-evidence-ledger]]와 세션 데이터에서 파생되는 집계본.
 > AI 리포트 §통계 섹션의 소스.
 > 마지막 업데이트: 2026-04-06 18:00 (Day 0)
 

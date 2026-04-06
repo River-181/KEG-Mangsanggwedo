@@ -9,4 +9,5 @@ date: 2026-04-06
 1. `workspace-atlas.md`
 2. `system-change-log.md`
 3. `PROGRESS.md`
+4. 필요 시 `_MOC/_MOC_HOME.md`
 5. 필요 시 `00 HOME.md`와 해당 섹션 MOC

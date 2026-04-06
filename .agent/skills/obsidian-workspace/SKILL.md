@@ -28,20 +28,21 @@ description: Use when editing notes, MOCs, daily logs, Bases files, or vault str
 3. `.agent/system/contracts/workspace-contract.md`
 4. `.agent/system/memory/MEMORY.md`
 5. `.agent/system/maps/workspace-atlas.md`
-6. `04_증빙/_04_증빙_MOC.md`
+6. `_MOC/_04_증빙_MOC.md`
+7. `_MOC/_MOC_HOME.md`
 
 ## 기본 원칙
 
 - 내부 링크는 `[[wikilink]]`를 기본값으로 쓴다.
 - 외부 URL만 Markdown link `[]()`를 쓴다.
 - 모든 노트는 YAML frontmatter를 유지한다.
-- 새 note를 만들면 필요한 MOC와 atlas 반영 여부를 함께 판단한다.
-- note 수정이 리포트 가치가 있으면 `04_증빙/01_핵심로그/` 반영을 함께 판단한다.
+- 새 note를 만들면 필요한 `_MOC/` 갱신과 atlas 반영 여부를 함께 판단한다.
+- note 수정이 리포트 가치가 있으면 `[[master-evidence-ledger]]` 반영을 함께 판단한다.
 
 ## 표준 순서
 
 1. 작업 대상이 note, MOC, daily, base 중 무엇인지 분류한다.
-2. vault 상호링크가 바뀌면 관련 MOC와 `workspace-atlas.md` 반영 여부를 확인한다.
+2. vault 상호링크가 바뀌면 관련 `_MOC/` 파일과 `workspace-atlas.md` 반영 여부를 확인한다.
 3. note 생성/조회/append는 가능하면 `obsidian` CLI 사용을 먼저 검토한다.
 4. `.base` 파일은 일반 텍스트가 아니라 Obsidian Bases 문법으로 다룬다.
 5. 구조나 운영 사실이 바뀌면 `workspace-sync` 스킬 기준으로 memory/evidence까지 맞춘다.
