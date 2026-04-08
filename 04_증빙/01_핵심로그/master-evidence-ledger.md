@@ -144,6 +144,21 @@ aliases:
 
 ## 2026-04-08
 
+### S-OPS-014
+- **DateTime**: 2026-04-08 20:35 KST
+- **Phase**: Workspace hardening
+- **Tool/Client**: Codex Desktop, GitHub
+- **Model**: GPT-5.4
+- **Goal**: 공개 저장소 push 전 secret/privacy 점검 절차를 운영 규칙으로 고정
+- **What changed**: `[[github-workflow]]`, `[[github-release-policy]]`, `[[pre-push-safety-check]]`, `[[.gitignore]]`를 연결해 pre-push safety gate를 추가했다.
+- **Why it mattered**: 이 저장소는 공개 GitHub 기준으로 운영되므로 API key, local profile, runtime data, auth file 유출 방지가 구조보다 우선이다.
+- **Artifacts**: [[_system/tools/github/release-policy]], [[_system/tools/github/pre-push-safety-check.sh]], [[.gitignore]]
+- **AI usage strategy**: 정책 문서 + 실행 스크립트 + ignore rule을 같이 둬서 사람이 잊어도 마지막 점검이 남게 설계했다.
+- **Evidence value**: AI 리포트의 보안/재현성/운영성 섹션 재료
+- **Report section hint**: 공개 저장소 운영 원칙, AI 활용 프로세스 안전장치
+- **Token note**: exact unavailable
+- **Follow-up**: 이후 commit/push 전 `bash _system/tools/github/pre-push-safety-check.sh`를 표준 루틴으로 사용
+
 ### S-STRAT-010
 
 - DateTime: 2026-04-08 / Desktop

@@ -39,6 +39,7 @@ up: "[[.agent/skills/README]]"
 - GitHub 작업도 증빙의 일부다.
 - 의미 있는 GitHub 작업은 `04_증빙/01_핵심로그/`에 남긴다.
 - 사용자 승인 없이 destructive action을 하지 않는다.
+- `commit/push` 전에는 secret/privacy preflight를 먼저 통과한다.
 - release는 기본값이 `draft` 또는 보류다. 사용자가 명시적으로 원할 때만 final로 간다.
 - release는 배포만이 아니라 `운영 업데이트 기록`으로도 사용한다.
 - GitHub 관련 note, changelog, release note 초안도 Obsidian note 규칙에 맞춰 관리한다.
@@ -53,6 +54,7 @@ up: "[[.agent/skills/README]]"
 2. 현재 브랜치와 원격
 3. 변경 범위가 요청과 맞는지
 4. 증빙 로그 업데이트 필요 여부
+5. `bash _system/tools/github/pre-push-safety-check.sh`
 
 ### 2. Commit / Push
 
@@ -61,13 +63,15 @@ up: "[[.agent/skills/README]]"
 1. 변경 파일이 요청 범위 안에 있는지 확인
 2. `PROGRESS.md` 또는 관련 증빙 로그 반영 여부 확인
 3. 테스트/검증 가능하면 최소 1개 이상 수행
-4. 커밋 메시지는 의도와 범위를 짧게 설명
+4. staged diff에 secret, token, credentials, runtime profile이 없는지 확인
+5. 커밋 메시지는 의도와 범위를 짧게 설명
 
 푸시 전 체크:
 
 1. 브랜치명이 목적을 설명하는지 확인
 2. 원격이 올바른지 확인
 3. release 준비가 아닌데 main 직푸시는 피한다
+4. `pre-push-safety-check.sh` 결과를 다시 확인한다
 
 ### 3. Pull Request
 
@@ -150,6 +154,7 @@ release 노트 소스:
 ## 절대 규칙
 
 - 변경 범위를 모른 채 `git add .` 하지 않는다.
+- `.env`, `runtime/`, local profile, token file을 추적 상태로 올리지 않는다.
 - 사용자가 요청하지 않은 release를 만들지 않는다.
 - 증빙이 필요한 GitHub 작업을 로그 없이 끝내지 않는다.
 - 브랜치/PR/이슈/릴리즈 설명을 빈 상태로 두지 않는다.

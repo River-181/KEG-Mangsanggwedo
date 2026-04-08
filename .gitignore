@@ -11,6 +11,14 @@ Thumbs.db
 .env.*
 *.pem
 credentials.json
+*.key
+*.p12
+*.mobileprovision
+*.cer
+*.crt
+*.pfx
+*.secrets*
+secrets.*
 
 # Dependencies
 node_modules/
@@ -33,3 +41,19 @@ build/
 # Logs (런타임)
 *.log
 npm-debug.log*
+
+# Workspace-local runtime / profiles
+runtime/
+_system/tools/runtime/
+_system/tools/.env
+_system/tools/.python-version
+_system/tools/.venv/
+**/chrome-profiles/
+**/profiles/
+playwright/.auth/
+auth.json
+
+# Local exports / temp
+*.sqlite
+*.db
+*.local.json

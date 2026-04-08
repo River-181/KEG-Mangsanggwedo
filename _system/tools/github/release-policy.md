@@ -72,6 +72,16 @@ release를 만들거나 수정했다면 아래를 확인한다.
 - `[[master-evidence-ledger]]`에 세션 기록이 있는가
 - 필요 시 `[[decision-log]]`에 구조 결정이 승격됐는가
 - release note와 `PLAN/PROGRESS`가 모순되지 않는가
+- 공개 release note에 API key, token, 개인 계정 식별자, private URL, local path dump가 없는가
+
+## security preflight
+
+release 전에는 아래를 통과한다.
+
+1. `bash _system/tools/github/pre-push-safety-check.sh`
+2. staged file 목록 수동 확인
+3. `runtime/`, `.env`, browser profile, auth file이 tracked가 아닌지 확인
+4. note 본문에 개인 정보나 민감 식별자가 없는지 확인
 
 ## 운영 기본값
 
