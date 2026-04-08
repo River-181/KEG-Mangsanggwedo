@@ -1,8 +1,10 @@
 ---
 tags:
-  - ops
-  - plan
-date: 2026-04-06
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-08
+up: "[[.agent/system/ops/README]]"
 aliases:
   - 계획
 ---
@@ -10,7 +12,7 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 자신의 역할에 해당하는 작업을 찾아 실행한다.
-> 마지막 업데이트: 2026-04-06 19:20 (Day 0)
+> 마지막 업데이트: 2026-04-08 (Day 2)
 
 ---
 
@@ -29,50 +31,57 @@ aliases:
 
 ---
 
-## 현재 우선순위 (Day 0 밤)
+## 현재 우선순위 (Day 2)
 
 ### P0 — 지금 당장
-1. **Evidence Gate 운영 정착**
+1. **프로젝트 대시보드를 제출용 진행판으로 유지**
    - 담당: 모든 AI 에이전트
-   - 산출물: `04_증빙/01_핵심로그/master-evidence-ledger.md` 누락 없는 기록, 필요 시 `decision-log.md`와 `prompt-catalog.md` 승격
-2. **문제 리서치 시작**
+   - 산출물: `_system/dashboard/project-dashboard.md`, `.agent/system/ops/PLAN.md`, `.agent/system/ops/PROGRESS.md`, `04_증빙/03_daily/*.md`가 같은 날짜 기준으로 정렬
+2. **문제 후보 3개 축소**
    - 담당: Research Agent
-   - 산출물: `02_전략/problem-bank.md`, `02_전략/problem-scorecard.md`
-3. **리포트 재료 수집 규율 검증**
+   - 산출물: `02_전략/problem-bank.md`, `02_전략/problem-scorecard.md`, `02_전략/tasks/문제-후보-3개-축소.md`
+3. **최종 문제 1개 + scope 방향 확정**
+   - 담당: PM Agent + Judge Agent + Product Agent
+   - 산출물: `decision-sprint.md`, `scope-board.md`, `02_전략/tasks/최종-문제-1개-확정.md`
+4. **Evidence Gate 운영 유지**
    - 담당: Evidence Agent
-   - 산출물: `04_증빙`와 `.agent/system/memory` 간 승격 예시 1회 이상
+   - 산출물: `04_증빙/01_핵심로그/master-evidence-ledger.md` 누락 없는 기록, 필요 시 `decision-log.md`와 `prompt-catalog.md` 승격
 
-### P1 — 오늘 밤 ~ 내일 아침
-4. **문제 후보 15개 수집** — 교육/학생/실행 가능성 기준
-   - 담당: Research Agent (Perplexity + ChatGPT + Codex)
-   - 산출물: `02_전략/problem-bank.md`
-5. **문제 후보 점수화** — 심사 적합도, 구현 난도, 데모력 평가
-   - 담당: Judge Agent + PM Agent
-   - 산출물: `02_전략/problem-scorecard.md`
-6. **통계 수집 규칙 검증**
-   - 담당: Evidence Agent
-   - 산출물: `04_증빙/01_핵심로그/ai-usage-stats.md`와 `master-evidence-ledger.md` 연결 규칙 점검
+### P1 — 오늘 안에 맞출 것
+5. **LLM 위키 1차 ingest 시작**
+   - 담당: Research Agent
+   - 산출물: `06_LLM위키/tasks/전략-문서-1차-ingest.md`, `06_LLM위키/` 하위 첫 entity/concept/problem note
+6. **제출용 진행 증빙 정렬**
+   - 담당: Evidence Agent + PM Agent
+   - 산출물: `04_증빙/tasks/제출용-진행-증빙-정렬.md`, `2026-04-07.md`, `2026-04-08.md`, `daily-memory.md`
+7. **실제 task note 운영 시작**
+   - 담당: 모든 AI 에이전트
+   - 산출물: `type/task` note가 대시보드에 최소 3건 이상 노출
 
-### P2 — Day 1 완료 목표
-7. **문제 후보 3개 축소** — scorecard 평가 완료
-8. **의사결정 질문 준비** — 플레이북 §2 프레임워크 적용
+### P2 — Day 3 직전 준비
+8. **제품 정의 초안**
+   - 담당: Product Agent
+   - 산출물: `problem-definition.md`, `user-personas.md`, `architecture.md`
+9. **앱 스켈레톤 준비**
+   - 담당: Builder Agent
+   - 산출물: `03_제품/app/` 초기 구조, 첫 실행 경로, `demo-critical-path`
 
 ### P3 — Day 2 이후
-9. **기술 스택 확정** → `03_제품/app/` 초기화
 10. **demo-script-v0.md** 작성
-11. **scope-board.md** — Must/Should/Could/Not now
+11. **README/AI report 입력 루틴 고정**
+12. **제출 패키징 리허설**
 
 ---
 
 ## 역할별 할 일
 
 ### PM Agent
-- 매일 아침: PROGRESS.md 업데이트, 오늘의 우선순위 확인
+- 매 세션 시작: `project-dashboard`, `PLAN`, `PROGRESS` 동기 확인
 - 매일 밤: 데일리 노트 작성, 내일 단일 목표 설정
 
 ### Research Agent
-- Day 1: 문제 은행 구축 (15개 후보 → 스코어카드로 평가)
-- Day 1: 경쟁 분석 (유사 서비스 3~5개)
+- Day 2: 문제 은행 3개 후보로 축소
+- Day 2: 전략 문서에서 `06_LLM위키/` 첫 ingest 수행
 
 ### Judge Agent
 - Day 2: 후보 3개에 대한 심사위원 시뮬레이션
@@ -81,6 +90,7 @@ aliases:
 ### Evidence Agent
 - 상시: master-evidence-ledger 기록
 - 상시: 필요 시 decision/prompt만 승격
+- 상시: `daily`와 `daily-memory` 공백 날짜 보정
 - Day 5: AI 리포트 초안 컴파일
 
 ### Product Agent
@@ -111,6 +121,7 @@ aliases:
 | R4 | 배포 실패 | 치명 | Day 3부터 매일 배포 검증 |
 | R5 | API Key 노출 | 탈락 | .gitignore + 커밋 전 검사 |
 | R6 | 메모리-증빙 동기화 누락 | 높음 | 세션 종료 시 Evidence Gate 강제 |
+| R7 | 대시보드가 빈 판으로 남음 | 높음 | `type/task` note를 실제 운영 입력점으로 사용 |
 
 ---
 
@@ -120,6 +131,7 @@ aliases:
 - `.context/` 내용 흡수 및 폴더 제거 완료
 - `.claude/` 최소 어댑터화 완료
 - `04_증빙` 핵심 로그 스키마 개편 완료
+- 제출용 대시보드 역할을 `PLAN/PROGRESS/daily/task`와 연결하는 방향 확정
 
 ---
 

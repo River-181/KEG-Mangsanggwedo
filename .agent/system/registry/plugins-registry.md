@@ -1,6 +1,10 @@
 ---
-tags: [agent, system, registry]
+tags:
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/README]]"
 ---
 # Plugins Registry
 

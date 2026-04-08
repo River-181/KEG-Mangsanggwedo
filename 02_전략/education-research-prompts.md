@@ -1,9 +1,10 @@
 ---
 tags:
-  - 전략
-  - 리서치
-  - 프롬프트
+  - area/strategy
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[_02_전략_MOC]]"
 aliases:
   - 리서치프롬프트
   - 교육리서치

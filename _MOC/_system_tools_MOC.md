@@ -1,9 +1,10 @@
 ---
 tags:
-  - moc
-  - system
-  - tools
+  - area/moc
+  - type/moc
+  - status/active
 date: 2026-04-06
+up: "[[_MOC_HOME]]"
 aliases:
   - system-tools
   - 도구관리

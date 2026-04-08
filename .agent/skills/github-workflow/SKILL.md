@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: github-workflow
 description: Use when working on GitHub operations in this KEG repo, including git status review, branch setup, commit, push, pull request, issue triage/creation, release/tag creation, and GitHub hygiene. Aligns every GitHub action with the repo's evidence and workspace-sync rules.
+up: "[[.agent/skills/README]]"
 ---
 
 # GitHub Workflow
@@ -92,7 +97,7 @@ PR 기본값:
 - [ ]
 
 ## 관련 문서
-- 
+-
 ```
 
 ### 5. Release / Tag

@@ -1,8 +1,10 @@
 ---
 tags:
-  - 증빙
-  - decision
+  - area/evidence
+  - type/log
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 ---
 # 의사결정 기록
 
@@ -120,3 +122,35 @@ date: 2026-04-06
 - 근거: 사용자 요청 — GitHub 관련 스킬에 이슈와 프로젝트 관리까지 포함해야 함. `gh issue`와 `gh project`는 실제 명령 체계와 운영 포인트가 다름
 - AI 역할: Codex가 `gh issue --help`, `gh project --help`를 확인하고 두 개의 운영 스킬과 registry 연결을 추가
 - 영향: GitHub 운영이 `code flow`와 `management flow`로 나뉘어 유지보수와 재사용성이 좋아짐
+
+## DEC-015: 태그는 namespace 기반 횡단 메타데이터로만 사용
+- 날짜: 2026-04-08
+- 결정: Obsidian note의 태그는 `area/*`, `type/*`, `status/*`, `workflow/*` 네 축만 허용하고, 주제어·별칭·폴더 의미는 태그에서 제거
+- 대안: 기존처럼 평면 태그, 별칭성 태그, 폴더성 태그를 혼용
+- 근거: 검색성과 필터 일관성이 무너지고, 새 파일이 생길 때마다 태그 drift가 커졌기 때문
+- AI 역할: Codex가 전수 조사 후 규칙 문서, 감사 스크립트, template, 실제 frontmatter를 함께 정리
+- 영향: 대시보드와 CLI 감사가 안정화되고, 1년 뒤에도 같은 규칙을 반복 적용할 수 있게 됨
+
+## DEC-016: child note는 `up` 속성으로 부모를 반드시 가리킨다
+- 날짜: 2026-04-08
+- 결정: MOC나 상위 운영 note 아래에 속한 child note는 frontmatter `up`에 부모 note를 명시한다
+- 대안: 부모 문서가 자식만 가리키는 top-down 링크 구조 유지
+- 근거: 자식이 어느 구조에 속하는지 즉시 알 수 있어야 하고, 모듈화된 사고를 시스템적으로 표현해야 하기 때문
+- AI 역할: 사용자 방향 제시 → Codex가 visible vault와 `.agent` 전반에 `up`을 반영하고 누락 검사를 추가
+- 영향: bottom-up 탐색, 감사, 구조 복구가 쉬워졌고 새 note 생성 규칙이 명확해짐
+
+## DEC-017: 반복 가치가 있는 지시는 prompt asset으로 승격
+- 날짜: 2026-04-08
+- 결정: 재사용 가능한 프롬프트는 `prompt-catalog`에 `Intent / Input contract / Output contract / Reuse rule` 형태로 저장
+- 대안: 좋은 프롬프트를 대화 기록이나 개인 기억에만 남김
+- 근거: 같은 작업을 나중에 다른 에이전트가 반복할 수 있어야 하고, 프롬프트도 운영 자산으로 관리해야 하기 때문
+- AI 역할: Codex가 `prompt-catalog` 구조를 확장하고 packaging guide와 template를 작성
+- 영향: 태그 정규화, `up` 복원 같은 시스템 작업을 재생 가능한 자산으로 재사용 가능
+
+## DEC-018: `project-dashboard`를 제출용 진행 가시화 정본으로 사용
+- 날짜: 2026-04-08
+- 결정: visible dashboard는 `_system/dashboard/project-dashboard.md`를 기준으로 하고, `PLAN`, `PROGRESS`, `daily`, `type/task` note를 그 아래 유기적으로 연결
+- 대안: `PLAN`, `PROGRESS`, 데일리, 증빙 로그를 각각 따로 보고 사용자가 수동으로 해석
+- 근거: 결과 보고서와 AI 리포트에서 “우리는 어떤 흐름으로 프로젝트를 운영했는가”를 한 화면에서 설명할 필요가 있기 때문
+- AI 역할: 사용자 요구를 기준으로 Codex가 간트형 일정, 로그 링크, task 연동, 새 파일/폴더 생성 이유까지 포함해 대시보드를 재설계
+- 영향: 대시보드가 빈 개요판이 아니라 실제 제출용 진행 아티팩트가 됨

@@ -1,10 +1,10 @@
 ---
 tags:
-  - 증빙
-  - evaluation
-  - audit
-  - workspace
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - AI네이티브워크스페이스감사보고서
   - 워크스페이스감사보고서

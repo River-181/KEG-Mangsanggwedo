@@ -1,8 +1,10 @@
 ---
 tags:
-  - 전략
-  - playbook
+  - area/strategy
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_02_전략_MOC]]"
 aliases:
   - 마스터플레이북
   - 플레이북

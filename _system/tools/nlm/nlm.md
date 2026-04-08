@@ -1,11 +1,14 @@
 ---
+tags:
+  - area/system
+  - type/guide
+  - status/active
 title: nlm (NotebookLM CLI)
 kind: tool
 area: system
 status: setup-required
 created: 2026-04-06
 updated: 2026-04-06
-up: "[[_system_tools_MOC]]"
 tool_id: nlm
 tool_type: cli
 owner: research
@@ -13,9 +16,7 @@ auth_mode: session
 env_keys:
   - UV_PROJECT
   - NOTEBOOKLM_MCP_CLI_PATH
-tags:
-  - system/tools
-  - nlm
+up: "[[_system/tools/README]]"
 ---
 
 # nlm

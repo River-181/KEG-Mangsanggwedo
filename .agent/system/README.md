@@ -1,9 +1,10 @@
 ---
 tags:
-  - agent
-  - system
-  - ops
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/AGENTS]]"
 aliases:
   - agent-system
   - 운영시스템정본

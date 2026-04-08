@@ -1,8 +1,10 @@
 ---
 tags:
-  - 제출
-  - checklist
+  - area/submission
+  - type/checklist
+  - status/active
 date: 2026-04-06
+up: "[[_05_제출_MOC]]"
 status: draft
 ---
 # 제출 체크리스트

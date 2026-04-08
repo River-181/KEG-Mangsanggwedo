@@ -1,17 +1,31 @@
 ---
 tags:
-  - 증빙
-  - prompt
+  - area/evidence
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 ---
 # 프롬프트 카탈로그
 
 > P-NNN 형식.
 > 모든 프롬프트 원장이 아니라, [[master-evidence-ledger]]에서 재사용 가치가 검증된 프롬프트만 승격 기록한다.
+> 저장 원칙: 프롬프트는 문장만 저장하지 않고 `입력 조건`과 `출력 계약`까지 함께 저장해야 반복 재생 가능하다.
 
-| Prompt_ID | Intent | Prompt | Reuse rule | Linked evidence |
-|---|---|---|---|---|
-| P-001 | 대회 개요를 빠르게 파악하고 기준 문서를 만든다 | `http://koreaitac.com/2025/landing/vibe_coding.asp 해당 대회를 나가고자 한다. 대회에 대해 학습하라. 대회 개요를 작성하라.` | 공식 페이지와 공지 자료를 기준으로 대회 브리프가 필요할 때 재사용 | `바이브코딩공모전_공지.md`, `U-001`, `S-GPT-001` |
-| P-002 | 준비 단계를 전략적으로 분해한다 | `이 대회가 어떤 대회인지, 역사는 어떤지, 비슷한 결의 대회에서 승리하는 전략과 방법은 무엇인지, 이 대회를 위한 우리팀 워크 스페이스는 어떻게 준비할지, AI 에이전트를 이 운영에 어떻게 활용할지 등등. 이걸 일련의 단계로 쪼개주시오.` | 문제 리서치 전, 운영/전략 프레임이 필요할 때 재사용 | `vibe_contest_master_playbook_v0_1.md`, `U-002` |
-| P-005 | 기관 의도와 심사 문법을 추론한다 | `KEG 바이브코딩 콘테스트의 주최·주관·후원 기관을 조사하고... 기관이 좋아할 문제 정의, 기관이 싫어할 허술한 접근, 심사 문법에 맞는 발표/제출물 방향 중심으로 정리하라.` | 기관 분석이나 심사위원 관점 정리가 필요할 때 재사용 | `02_전략/기관_분석_및_심사_전략.md`, `tool-log.md` |
-| P-006 | 전신 대회와 유사 대회의 패턴을 비교한다 | `2026 제1회 KEG 바이브코딩 콘테스트를 중심으로, 이 대회의 전신 또는 결이 유사한 대회들을 조사하라... 실제로 먹히는 전략 관점에서 시사점을 도출하라.` | 유사 대회 분석이나 전략 패턴 추출이 필요할 때 재사용 | `02_전략/계보_포지셔닝_분석.md`, `tool-log.md` |
+| Prompt_ID | Intent | Prompt | Input contract | Output contract | Reuse rule | Linked evidence |
+|---|---|---|---|---|---|---|
+| P-001 | 대회 개요를 빠르게 파악하고 기준 문서를 만든다 | `http://koreaitac.com/2025/landing/vibe_coding.asp 해당 대회를 나가고자 한다. 대회에 대해 학습하라. 대회 개요를 작성하라.` | 공식 페이지, 공지 자료 | 대회 브리프 note 초안 | 공식 페이지와 공지 자료를 기준으로 대회 브리프가 필요할 때 재사용 | `바이브코딩공모전_공지.md`, `U-001`, `S-GPT-001` |
+| P-002 | 준비 단계를 전략적으로 분해한다 | `이 대회가 어떤 대회인지, 역사는 어떤지, 비슷한 결의 대회에서 승리하는 전략과 방법은 무엇인지, 이 대회를 위한 우리팀 워크 스페이스는 어떻게 준비할지, AI 에이전트를 이 운영에 어떻게 활용할지 등등. 이걸 일련의 단계로 쪼개주시오.` | 대회 개요, 팀 상황 | 단계별 플레이북, 운영 프레임 | 문제 리서치 전, 운영/전략 프레임이 필요할 때 재사용 | `vibe_contest_master_playbook_v0_1.md`, `U-002` |
+| P-005 | 기관 의도와 심사 문법을 추론한다 | `KEG 바이브코딩 콘테스트의 주최·주관·후원 기관을 조사하고... 기관이 좋아할 문제 정의, 기관이 싫어할 허술한 접근, 심사 문법에 맞는 발표/제출물 방향 중심으로 정리하라.` | 대회명, 기관명, 공지 자료 | 기관 분석 note, 심사 전략 | 기관 분석이나 심사위원 관점 정리가 필요할 때 재사용 | `02_전략/기관_분석_및_심사_전략.md`, `tool-log.md` |
+| P-006 | 전신 대회와 유사 대회의 패턴을 비교한다 | `2026 제1회 KEG 바이브코딩 콘테스트를 중심으로, 이 대회의 전신 또는 결이 유사한 대회들을 조사하라... 실제로 먹히는 전략 관점에서 시사점을 도출하라.` | 대회명, 유사 대회 범위 | 비교 분석 note, 전략 시사점 | 유사 대회 분석이나 전략 패턴 추출이 필요할 때 재사용 | `02_전략/계보_포지셔닝_분석.md`, `tool-log.md` |
+| P-007 | vault 태그 체계를 정규화한다 | `이 Obsidian vault의 markdown note들을 조사하여 현재 tags, aliases, folder 구조, dashboard/base 필터 사용 방식을 분석하라. 태그는 폴더 분류나 주제어가 아니라 횡단 메타데이터만 표현해야 한다. 결과적으로 tags를 area/*, type/*, status/*, workflow/* 네임스페이스로 정규화하고, 평면 태그·별칭성 태그·중복 의미 태그를 제거하라. 태그 규칙 문서, 감사 명령, note template, dashboard filter까지 같이 설계/갱신하라.` | vault 경로, note frontmatter, dashboard/base 파일 | 태그 규칙 문서, 감사 스크립트, template, 정규화된 frontmatter | 새 vault를 표준화하거나 태그가 오염된 vault를 청소할 때 재사용 | `tagging-system.md`, `tag-audit.sh`, `project-dashboard.base` |
+| P-008 | 부모-자식 계층을 `up` 속성으로 복원한다 | `이 Obsidian vault에서 top-down MOC 구조가 존재하더라도, 모든 자식 note는 frontmatter up 속성으로 즉시 부모 note를 가리켜야 한다. 각 markdown 파일에 대해 immediate parent note를 하나만 결정하고 up: "[[Parent Note]]" 형태로 반영하라. root note만 up 없이 둘 수 있다. 규칙 문서, 템플릿, 감사 스크립트까지 같이 갱신하여 반복 재생 가능하게 만들어라.` | vault 구조, MOC 구조, 섹션별 parent note | `up` 반영 frontmatter, 계층 규칙 문서, 누락 감사 | MOC 기반 vault를 bottom-up 탐색 가능하게 바꿀 때 재사용 | `_MOC/_MOC_HOME.md`, `tagging-system.md`, `obsidian-conventions.md`, `tag-audit.sh` |
+| P-009 | AI 사용 통계와 증빙 원장을 함께 관리한다 | `You are the Evidence Orchestrator for this workspace. Your job is to keep AI usage evidence accurate, low-friction, and reusable for the final report. Update master-evidence-ledger.md with session blocks, append external-ai-usage.csv for manual Web/App usage, and prepare ai-usage-stats.md using exact local stats when available and estimated stats otherwise. Split ledger entries by date headers, keep exact vs estimate explicit, and capture not only usage volume but also orchestration quality: why a tool was chosen, how tools were sequenced, what got handed off between AIs, and which artifacts changed.` | 사용자 수동 입력, changed files, current ledger, external usage CSV, daily note | append된 ledger block, CSV row, stats update draft, open gaps | 여러 AI를 동시에 쓰는 프로젝트에서 일별/세션별 AI 활용 증빙을 정리할 때 재사용 | `.agent/agents/evidence.md`, `master-evidence-ledger.md`, `external-ai-usage.csv`, `ai-usage-stats.md` |
+
+## 프롬프트 승격 체크리스트
+
+- 같은 의도로 다시 실행할 수 있는가
+- 입력 조건이 명확한가
+- 출력 형식이 고정 가능한가
+- 결과물이 note, script, template 중 하나 이상으로 남는가
+- 1년 뒤 읽어도 그대로 다시 실행 가능한가

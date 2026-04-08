@@ -1,9 +1,10 @@
 ---
 tags:
-  - 증빙
-  - plan
-  - workspace
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - 워크스페이스구조화플랜
 ---

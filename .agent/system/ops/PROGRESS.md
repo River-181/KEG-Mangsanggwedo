@@ -1,8 +1,10 @@
 ---
 tags:
-  - ops
-  - progress
-date: 2026-04-06
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-08
+up: "[[.agent/system/ops/README]]"
 aliases:
   - 진행상황
 ---
@@ -10,11 +12,11 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-06 21:20 (Day 0)
+> 마지막 업데이트: 2026-04-08 (Day 2)
 
 ---
 
-## 현재 단계: Day 0 — 세팅 & 리서치 준비
+## 현재 단계: Day 2 — 운영 가시화 완료, 문제 정의 수렴 전
 
 ## 완료된 작업
 
@@ -37,6 +39,7 @@ aliases:
 ### 프로젝트 관리 ✅
 - [x] PM 대시보드 (`_system/dashboard/project-dashboard.md`)
 - [x] 태스크 트래커 (`_system/dashboard/project-dashboard.base`)
+- [x] `PLAN / PROGRESS / daily / task`를 대시보드와 유기적으로 연결하는 제출용 구조 확정
 
 ### 증빙 체계 ✅ (1차)
 - [x] ai-usage-log.md — 초기 이벤트 로그 기록
@@ -87,6 +90,28 @@ aliases:
 - [x] `github-workflow` 스킬 추가
 - [x] `master-evidence-ledger.md` 단일 증빙 원장 도입
 
+### Obsidian 구조 정규화 ✅
+- [x] 태그 체계를 `area/*`, `type/*`, `status/*`, `workflow/*` namespace로 재정의
+- [x] 기존 평면/별칭성 태그 제거 및 frontmatter 정규화
+- [x] child note에 `up` 속성을 의무화해 bottom-up 추적 복원
+- [x] 태그 규칙 문서, 감사 스크립트, note template 추가
+- [x] `.agent`, `.claude`, visible vault 전반에 동일 규칙 반영
+
+### 재사용 자산화 ✅
+- [x] prompt-catalog를 `Intent / Prompt / Input contract / Output contract / Reuse rule / Linked evidence` 구조로 확장
+- [x] 태그 정규화, `up` 계층 복원 프롬프트를 자산으로 저장
+- [x] prompt packaging 가이드와 template 추가
+
+### 지식 시스템 확장 ✅
+- [x] `06_LLM위키/` 레이어 도입
+- [x] `index.md`, `overview.md`, `schema.md`, `log.md` 생성
+- [x] `karpathy-llm-wiki-adaptation.md`로 현재 vault 매핑 문서화
+
+### 데일리/메모리 보강 ✅
+- [x] 누락된 `2026-04-07.md`, `2026-04-08.md` 생성
+- [x] `.agent/system/memory/daily-memory.md`를 현재 구조 기준으로 갱신
+- [x] 새 파일/폴더의 생성 이유를 대시보드에 명시
+
 ---
 
 ## 참여 중인 AI 에이전트
@@ -109,8 +134,8 @@ aliases:
 
 ## 미완료 — 다음 에이전트가 이어받을 것
 
-1. **단일 증빙 원장 운영 습관 정착** — 새 세션마다 `master-evidence-ledger.md`만 직접 기록
-2. **문제 리서치 시작** — Day 1의 핵심 목표, 아직 미착수
-3. **`04_증빙/01_핵심로그`와 `.agent/system/memory` 간 실제 운용 검증**
-4. **제품 리서치용 문제 은행 문서 생성**
-5. **GitHub 기능 활용** — Issues, Projects, Actions, Wiki 설정
+1. **문제 후보 3개 축소** — `problem-scorecard` 기준으로 전략 후보 압축
+2. **최종 문제 1개 결정** — `decision-sprint`, `scope-board` 실사용
+3. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
+4. **제품 정의 초안 작성** — 아직 `03_제품/`은 뼈대 상태
+5. **단일 증빙 원장 운영 습관 정착** — 새 세션마다 `master-evidence-ledger.md` 직접 입력 유지

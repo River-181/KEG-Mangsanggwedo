@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: github-issue-ops
 description: Use when managing GitHub issues in this KEG repo, including issue creation, triage, labeling, commenting, closing, reopening, deduplication, and converting work into issue-sized tasks. Aligns issue work with evidence logs, Obsidian notes, and the repo's contest workflow.
+up: "[[.agent/skills/README]]"
 ---
 
 # GitHub Issue Ops

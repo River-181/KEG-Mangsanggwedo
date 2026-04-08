@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Review work using the contest judging lens. Use for strategy, product concept, demo flow, evidence quality, or submission readiness checks.
+up: "[[.agent/AGENTS]]"
 argument-hint: [artifact, folder, or scope]
 disable-model-invocation: true
 ---

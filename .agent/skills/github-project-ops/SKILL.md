@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: github-project-ops
 description: Use when managing GitHub Projects for this KEG repo, including project creation, fields, views, item add/update, draft issue management, and project-board hygiene. Designed for contest sprint planning and alignment with Obsidian Bases, PLAN/PROGRESS, and evidence logs.
+up: "[[.agent/skills/README]]"
 ---
 
 # GitHub Project Ops

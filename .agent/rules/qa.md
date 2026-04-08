@@ -1,3 +1,11 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+up: "[[.agent/AGENTS]]"
+date: 2026-04-07
+---
 # QA 규칙
 
 - 핵심 시나리오 오류 0개가 목표

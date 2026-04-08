@@ -1,8 +1,10 @@
 ---
 tags:
-  - moc
-  - index
+  - area/moc
+  - type/moc
+  - status/active
 date: 2026-04-06
+up: "[[00 HOME]]"
 aliases:
   - MOC_HOME
   - MOC 허브
@@ -23,6 +25,7 @@ aliases:
 - [[_03_제품_MOC|03 제품]]
 - [[_04_증빙_MOC|04 증빙]]
 - [[_05_제출_MOC|05 제출]]
+- [[_06_LLM위키_MOC|06 LLM 위키]]
 - [[_system_tools_MOC|System Tools]]
 
 ## 운영 규칙

@@ -1,8 +1,10 @@
 ---
 tags:
-  - moc
-  - 제출
+  - area/moc
+  - type/moc
+  - status/active
 date: 2026-04-06
+up: "[[_MOC_HOME]]"
 aliases:
   - 제출
 status: draft

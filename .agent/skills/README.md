@@ -1,3 +1,13 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-07
+up: "[[.agent/AGENTS]]"
+aliases:
+  - skills-readme
+---
 # .agent/skills/ — 프로젝트 커스텀 스킬
 
 이 디렉토리는 이 프로젝트 전용 커스텀 스킬을 저장한다.

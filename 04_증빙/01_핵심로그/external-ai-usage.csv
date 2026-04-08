@@ -1,0 +1,4 @@
+date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing_mode,notes
+2026-04-08,Gemini,Gemini Web,,Paid,,0,0,,flat-subscription,"append one row per meaningful session"
+2026-04-08,Perplexity,Perplexity Web,Search+AI,Pro,,0,0,,flat-subscription,"append one row per meaningful session"
+2026-04-08,Grok,Grok Web,,Free,,0,0,,free-tier,"append one row per meaningful session"

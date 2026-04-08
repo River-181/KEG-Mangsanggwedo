@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.hasTag("task")
+    - file.hasTag("type/task")
     - file.ext == "md"
 formulas:
   days_left: if(due, (date(due) - today()).days, "")
@@ -43,9 +43,9 @@ views:
     summaries:
       formula.days_left: Min
     columnSize:
-      formula.priority_icon: 62
-      formula.status_icon: 157
-      file.name: 131
+      formula.priority_icon: 67
+      formula.status_icon: 34
+      file.name: 158
       note.track: 105
       formula.owner_display: 106
       formula.day_label: 128

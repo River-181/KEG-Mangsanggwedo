@@ -1,9 +1,10 @@
 ---
 tags:
-  - system/tools
-  - excalidraw
-  - mcp
+  - area/system
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_system/tools/README]]"
 aliases:
   - Excalidraw MCP
 ---

@@ -1,9 +1,10 @@
 ---
 tags:
-  - system
-  - onboarding
-  - map
+  - area/system
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_system_tools_MOC]]"
 aliases:
   - workspace-visual-map
   - 워크스페이스시각화맵

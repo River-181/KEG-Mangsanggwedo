@@ -1,3 +1,11 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+up: "[[.agent/AGENTS]]"
+date: 2026-04-07
+---
 # 심사 시뮬레이션 규칙
 
 - 심사 기준: 기술적 완성도, AI활용 능력/효율성, 기획력/실무접합성, 창의성

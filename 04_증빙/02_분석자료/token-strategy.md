@@ -1,9 +1,10 @@
 ---
 tags:
-  - 증빙
-  - strategy
-  - cost
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 ---
 # 토큰/비용 최적화 전략
 

@@ -1,9 +1,11 @@
 ---
 tags:
-  - 증빙
-  - ledger
-  - ai-report
+  - area/evidence
+  - type/log
+  - status/active
+  - workflow/evidence-source
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
   - 증빙원장
@@ -18,15 +20,25 @@ aliases:
 ## 원칙
 
 - 기록 단위는 `세션 단위`다.
+- 세션은 반드시 해당 날짜 헤더 `## YYYY-MM-DD` 아래에 추가한다.
 - 내부 참조는 기본적으로 `[[wikilink]]`를 사용한다.
 - 중요한 결정만 [[decision-log]]로 승격한다.
 - 재사용 가치가 검증된 프롬프트만 [[prompt-catalog]]로 승격한다.
 - 통계는 나중에 이 원장을 바탕으로 [[ai-usage-stats]]로 파생한다.
 - 기존 [[ai-usage-log]], [[session-log]], [[evolution-log]]는 보존용 `archive/reference`다.
 
+## 일자 운영 규칙
+
+- 날짜가 바뀌면 먼저 새 헤더 `## YYYY-MM-DD`를 만든다.
+- 같은 날의 세션은 모두 그 날짜 아래에 append한다.
+- 하루에 세션이 많아져도 기존 블록을 재정렬하지 말고 append 순서를 유지한다.
+- 하루 요약이 필요하면 daily note에 쓰고, 원장에는 세션 증빙만 남긴다.
+
 ## 세션 블록 템플릿
 
 ```markdown
+## YYYY-MM-DD
+
 ### S-XXX
 
 - DateTime:
@@ -125,3 +137,57 @@ aliases:
 - Report section hint: `AI 활용 전략`, `도구/모델 선택 이유`, `데이터 흐름`, `유지보수성/재현성 전략`
 - Token note: `obsidian` CLI는 이 세션에서 응답 검증 실패, 나머지는 문서/구조 기준으로 정리
 - Follow-up: Obsidian App이 열린 상태에서 `obsidian` CLI 실동작 검증, `uv sync --project _system/tools` 기반 NLM 설치 검증
+
+## 2026-04-07
+
+> 아직 이 날짜에 승격된 세션 블록이 없다. 필요 시 이 헤더 아래에 append한다.
+
+## 2026-04-08
+
+### S-STRAT-010
+
+- DateTime: 2026-04-08 / Desktop
+- Phase: Strategy, Knowledge System
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: Karpathy의 `LLM Wiki` 방법론을 현재 대회 워크스페이스에 어떻게 삽입할지 구체화한다.
+- What changed: `06_LLM위키/` 레이어를 새로 도입하고, `index.md`, `log.md`, `schema.md`, `overview.md` 및 카테고리 디렉토리 골격을 만들었다. 동시에 [[karpathy-llm-wiki-adaptation]] 문서로 raw/wiki/schema 3층을 현재 구조에 매핑했다.
+- Why it mattered: 이제 리서치와 전략 지식을 `04_증빙`나 chat 기록에 흩뿌리지 않고, LLM이 유지하는 compounding wiki layer로 누적할 수 있게 되었다.
+- Artifacts: [[karpathy-llm-wiki-adaptation]], [[_06_LLM위키_MOC]], [[index]], [[log]], [[schema]], [[overview]]
+- AI usage strategy: Karpathy 원문의 핵심을 유지하기 위해 `raw sources`, `persistent wiki`, `schema`를 분리하고, 이 중 wiki만 별도 layer로 추가했다.
+- Evidence value: knowledge system 설계, 지속 리서치 방식, AI-maintained wiki 운영 전략
+- Report section hint: `AI 활용 전략`, `데이터 흐름`, `유지보수성/재현성 전략`
+- Token note: 문서 분석과 구조 설계 중심, 정확 토큰 미집계
+- Follow-up: 기존 전략 문서 3~4개를 첫 ingest 대상으로 삼아 entity/concept/problem page를 실제로 생성
+
+### S-OPS-011
+
+- DateTime: 2026-04-08 / Desktop
+- Phase: Workspace Operations, Obsidian System
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: visible vault와 내부 운영 note 전반에 일관된 태그/계층 규칙을 강제한다.
+- What changed: 태그를 `area/*`, `type/*`, `status/*`, `workflow/*` namespace로 정규화했고, child note에 `up` 속성을 의무화했다. 태그 감사 스크립트, template, 규칙 문서도 함께 갱신했다.
+- Why it mattered: 폴더/별칭/주제 태그가 섞여 있던 상태를 정리해 검색, 필터, 유지보수가 안정화되었고, MOC 기반 top-down 구조에 bottom-up 복귀 경로가 생겼다.
+- Artifacts: [[tagging-system]], `tag-audit.sh`, [[.agent/rules/obsidian-conventions|obsidian-conventions]], [[project-dashboard.base]], `standard-note-template.md`, `task-note-template.md`
+- AI usage strategy: 구조 변경을 문서 규칙, 스크립트, 실제 note frontmatter까지 한 번에 묶어 drift를 줄였다.
+- Evidence value: 정보 구조 설계, 반복 가능한 vault 유지보수 방식, Obsidian 운용 규칙
+- Report section hint: `AI 활용 전략`, `데이터 흐름`, `유지보수성/재현성 전략`
+- Token note: 전수 정리 작업으로 정확 토큰은 미집계
+- Follow-up: 새 note 생성 시 동일 규칙을 기본값으로 강제하고, task 입력을 실제 운영 흐름에 넣기
+
+### S-OPS-012
+
+- DateTime: 2026-04-08 / Desktop
+- Phase: Evidence, PM Workflow
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 프로젝트 진행 상황을 제출용으로 보여줄 수 있도록 dashboard, plan, progress, daily, memory를 정렬한다.
+- What changed: [[project-dashboard]]를 간트형 일정, 로그 링크, 새 파일/폴더 생성 이유를 포함한 진행판으로 개편했다. 동시에 `PLAN.md`, `PROGRESS.md`, `daily-memory.md`, `2026-04-07.md`, `2026-04-08.md`, 실제 `type/task` note들을 추가해 대시보드가 빈 판이 아니게 만들었다.
+- Why it mattered: 나중에 결과보고서와 AI 리포트에서 “무엇을 언제 왜 했는가”를 보여주는 핵심 가시화 레이어가 생겼다.
+- Artifacts: [[project-dashboard]], [[.agent/system/ops/PLAN|PLAN]], [[.agent/system/ops/PROGRESS|PROGRESS]], [[.agent/system/memory/daily-memory|daily-memory]], [[2026-04-07]], [[2026-04-08]]
+- AI usage strategy: PM 문서와 증빙 문서를 분리하지 않고 하나의 visible dashboard에 연결해 설명 가능성을 높였다.
+- Evidence value: 프로젝트 관리 흐름, 제출용 진행 시각화, 날짜별 작업 스냅샷
+- Report section hint: `워크플로우`, `AI 활용 과정`, `프로젝트 관리 방식`
+- Token note: 문서 개편 및 연결 작업, 정확 토큰 미집계
+- Follow-up: 주제 확정 이후 제품 태스크와 데모 크리티컬 태스크를 같은 방식으로 누적

@@ -1,3 +1,12 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-07
+aliases:
+  - AGENTS
+---
 # AGENTS.md — 에이전트 공용 진입점
 
 > 이 문서는 모든 AI 에이전트(Claude Code, Cursor, Copilot, ChatGPT 등)가 이 프로젝트에서 **가장 먼저** 읽어야 하는 문서다.
@@ -5,11 +14,13 @@
 > 공용 운영 정본:
 > - `.agent/system/contracts/workspace-contract.md`
 > - `.agent/system/contracts/memory-evidence-policy.md`
+> - `.agent/system/contracts/llm-wiki-operations.md`
 > - `.agent/system/memory/long-term-memory.md`
 > - `.agent/system/maps/workspace-atlas.md`
 
 > 이 저장소는 일반 Markdown 폴더가 아니라 **Obsidian vault**다.
 > 노트, 링크, MOC, `.base` 파일은 모두 Obsidian 규칙으로 다뤄야 한다.
+> 새 markdown note를 만들면 첫 저장 시점에 `tags`, `date`, `up`을 같이 넣는다. root note가 아니면 `up` 생략 금지다.
 
 ## 에이전트 시작 프로토콜
 
@@ -23,13 +34,26 @@
 6. **`.agent/system/memory/long-term-memory.md`** — 장기 기억 정본
 7. **`.agent/system/memory/daily-memory.md`** — 오늘의 단기 기억
 8. **`.agent/system/maps/workspace-atlas.md`** — 구조와 갱신 지도
-9. **`.agent/rules/obsidian-conventions.md`** — Obsidian 문서 규칙
+9. **`06_LLM위키/index.md`** — 지속 지식의 주제 인덱스
+10. **`06_LLM위키/overview.md`** — 위키 읽기 우선순위
+11. **`06_LLM위키/log.md`** — 최근 ingest/query/lint 이력
+12. **`.agent/system/contracts/llm-wiki-operations.md`** — wiki-first 검색/갱신 규칙
+13. **`.agent/rules/obsidian-conventions.md`** — Obsidian 문서 규칙
 
 **작업 완료 시 반드시:**
 - `.agent/system/ops/PROGRESS.md` 업데이트
 - `04_증빙/01_핵심로그/master-evidence-ledger.md` 반영
 - 필요 시 `decision-log.md` 또는 `prompt-catalog.md` 승격 여부 확인
 - Evidence Gate가 필요한 경우에만 확인
+
+## LLM Wiki First 원칙
+
+- 프로젝트 맥락이 필요한 질문은 raw source보다 먼저 `06_LLM위키/`를 조회한다.
+- `06_LLM위키/`는 `assets/`와 `04_증빙/` 사이의 persistent synthesis layer다.
+- 위키에서 충분히 답할 수 있으면 raw source를 다시 읽지 않는다.
+- 위키가 비어 있거나 충돌하거나 freshness가 의심될 때만 raw source로 내려간다.
+- durable finding은 답변으로만 끝내지 말고 위키에 writeback 한다.
+- report-grade material만 `[[master-evidence-ledger]]`로 승격한다.
 
 ## Obsidian First 원칙
 
@@ -38,6 +62,7 @@
 - 노트를 만들거나 구조를 바꿀 때는 `obsidian-cli` 사용을 우선 검토한다.
 - `.base` 파일은 `obsidian-bases` 규칙으로 다룬다.
 - Obsidian 관련 작업은 필요 시 글로벌 `obsidian-cli`, `obsidian-markdown`, `obsidian-bases` 스킬과 프로젝트 스킬 `.agent/skills/obsidian-workspace/SKILL.md`를 따른다.
+- 새 note 생성 후에는 `bash _system/tools/obsidian/tag-audit.sh` 또는 동등한 점검으로 `tags/up` 누락이 없는지 확인한다.
 
 ---
 
@@ -86,7 +111,7 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
 | 역할 | 미션 | 읽는 파일 | 쓰는 파일 |
 |------|------|-----------|-----------|
 | PM | 우선순위, blocker, 진행 추적 | 00 HOME, 04_증빙/03_daily | 00 HOME, 04_증빙/03_daily |
-| Research | 문제 리서치, 경쟁 분석 | 01_대회정보, 02_전략 | 02_전략, 04_증빙 |
+| Research | 문제 리서치, 경쟁 분석, LLM 위키 운영 | 01_대회정보, 02_전략, 06_LLM위키 | 02_전략, 06_LLM위키, 04_증빙 |
 | Product | 문제 정의, 페르소나, 스펙 | 02_전략 | 03_제품 |
 | Builder | 구현, 코드 생성 | 03_제품 | 03_제품/app/, 03_제품/tests/ |
 | QA | 테스트, 엣지케이스 | 03_제품/app/, 03_제품/tests/ | 04_증빙/01_핵심로그 |
@@ -116,6 +141,7 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
 5. **최종 범위 결정, 삭제 결정, 제출 결정은 반드시 사람이 한다**
 6. **공용 운영 규칙을 `.claude`에서 먼저 수정 금지**
 7. **증빙 가치가 있는 사실을 메모리에만 두고 세션 종료 금지**
+8. **프로젝트 맥락 질문에 raw source부터 읽기 금지** — 먼저 `06_LLM위키/` 확인
 
 ## 의사결정 권한
 

@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Sync Obsidian-facing workspace structure, notes, MOCs, and atlas after note or vault changes. Use for vault hygiene, note restructuring, wikilink cleanup, and Obsidian consistency.
+up: "[[.agent/AGENTS]]"
 argument-hint: [target note, folder, or scope]
 disable-model-invocation: true
 ---

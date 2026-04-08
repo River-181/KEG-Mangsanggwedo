@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: pm
 description: PM Agent — 일일 우선순위, blocker 정리, 진행 추적, 팀 조율
 model: opus
 tools: Read, Write, Edit, Glob, Grep, Bash, Agent, TaskCreate, TaskUpdate
+up: "[[.agent/AGENTS]]"
 ---
 
 # PM Agent

@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Prepare and execute GitHub-related work in this repo using the project's evidence and workflow rules. Use for commit, branch, push, PR, issue, release, and release-note preparation.
+up: "[[.agent/AGENTS]]"
 argument-hint: [action, scope, or intent]
 disable-model-invocation: true
 ---

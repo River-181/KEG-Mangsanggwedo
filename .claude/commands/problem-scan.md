@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Run a structured problem discovery pass for this contest. Use when researching education pain points, candidate ideas, or evidence-backed problem definitions.
+up: "[[.agent/AGENTS]]"
 argument-hint: <topic or user segment>
 disable-model-invocation: true
 ---

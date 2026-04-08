@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: submission
 description: Submission Agent — README, AI 리포트, 제출 패키징
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep
+up: "[[.agent/AGENTS]]"
 ---
 
 # Submission Agent

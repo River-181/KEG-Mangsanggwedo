@@ -1,8 +1,10 @@
 ---
 tags:
-  - 증빙
-  - evolution
+  - area/evidence
+  - type/log
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 ---
 # 시스템 진화 기록
 

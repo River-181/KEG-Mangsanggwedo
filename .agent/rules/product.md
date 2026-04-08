@@ -1,3 +1,11 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+up: "[[.agent/AGENTS]]"
+date: 2026-04-07
+---
 # 제품 규칙
 
 - 단순 LMS 클론 금지 — 교육 현장 페인포인트를 날카롭게 해결

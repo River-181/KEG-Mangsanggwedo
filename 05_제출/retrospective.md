@@ -1,8 +1,10 @@
 ---
 tags:
-  - 제출
-  - 회고
+  - area/submission
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_05_제출_MOC]]"
 status: draft
 ---
 # 회고

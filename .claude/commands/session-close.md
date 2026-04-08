@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Close a working session cleanly. Update progress, memory, evidence, and Evidence Gate status before ending the session.
+up: "[[.agent/AGENTS]]"
 argument-hint: [what changed]
 disable-model-invocation: true
 ---

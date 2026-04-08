@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: qa
 description: QA Agent — 테스트, 엣지케이스, 재현 절차, 버그 리포트
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
+up: "[[.agent/AGENTS]]"
 ---
 
 # QA Agent

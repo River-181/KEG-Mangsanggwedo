@@ -1,9 +1,10 @@
 ---
 tags:
-  - system
-  - tools
-  - stack
+  - area/system
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_system/tools/README]]"
 aliases:
   - portable-tool-stack
   - 도구스택

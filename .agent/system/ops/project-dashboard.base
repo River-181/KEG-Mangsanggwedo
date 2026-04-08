@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.hasTag("task")
+    - file.hasTag("type/task")
     - file.ext == "md"
 formulas:
   days_left: if(due, (date(due) - today()).days, "")

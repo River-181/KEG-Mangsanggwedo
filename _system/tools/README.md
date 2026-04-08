@@ -1,8 +1,10 @@
 ---
 tags:
-  - system
-  - tools
+  - area/system
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_system_tools_MOC]]"
 aliases:
   - Tools Home
 ---
@@ -20,6 +22,8 @@ aliases:
 
 - [[portable-tool-stack]] — 전체 스택 개요
 - [[_system/tools/obsidian/obsidian-cli-and-skills|Obsidian CLI + Skills]]
+- [[_system/tools/obsidian/tagging-system|Obsidian Tagging System]]
+- [[_system/tools/obsidian/prompt-packaging|Prompt Packaging]]
 - [[_system/tools/excalidraw/excalidraw-mcp|Excalidraw MCP]]
 - [[_system/tools/figma/figma|Figma MCP]]
 - [[_system/tools/nlm/nlm|NotebookLM CLI]]

@@ -1,9 +1,10 @@
 ---
 tags:
-  - 증빙
-  - evaluation
-  - multi-ai
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - Codex평가
 ---

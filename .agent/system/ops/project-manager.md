@@ -1,8 +1,10 @@
 ---
 tags:
-  - pm
-  - dashboard
+  - area/system
+  - type/dashboard
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/ops/README]]"
 aliases:
   - PM대시보드
   - 프로젝트관리
@@ -126,7 +128,11 @@ pie title 트랙별 태스크 비중 (예상)
 ```yaml
 ---
 tags:
-  - task
+  - area/product
+  - type/task
+  - status/active
+  - workflow/demo-critical
+up: "[[_03_제품_MOC]]"
 status: todo          # todo / in-progress / blocked / done
 priority: P0          # P0 / P1 / P2
 track: 개발           # 기획 / 개발 / QA / 증빙 / 제출
@@ -141,7 +147,12 @@ demo_critical: true   # true / false
 
 ```markdown
 ---
-tags: [task]
+tags:
+  - area/product
+  - type/task
+  - status/active
+  - workflow/demo-critical
+up: "[[_03_제품_MOC]]"
 status: todo
 priority: P0
 track: 개발
@@ -170,3 +181,4 @@ Next.js 앱 초기화 + Vercel 배포 + 도메인 연결
 - [[_05_제출_MOC|제출]] — 제출물 준비
 - [[바이브코딩공모전_공지|대회 개요서]] — 대회 규칙 전체
 - [[vibe_contest_master_playbook_v0_1|마스터 플레이북]] — 전략 가이드
+- [[tagging-system]] — 태그 규칙 정본

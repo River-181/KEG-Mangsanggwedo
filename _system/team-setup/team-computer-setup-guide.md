@@ -1,9 +1,10 @@
 ---
 tags:
-  - system
-  - onboarding
-  - team
+  - area/system
+  - type/guide
+  - status/active
 date: 2026-04-06
+up: "[[_system_tools_MOC]]"
 aliases:
   - team-computer-setup-guide
   - 팀 컴퓨터 셋업

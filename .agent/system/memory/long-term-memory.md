@@ -1,6 +1,10 @@
 ---
-tags: [agent, system, memory, long-term]
-date: 2026-04-06
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-08
+up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - long-term-memory
   - 장기기억
@@ -36,16 +40,19 @@ aliases:
 
 - 공용 운영 규칙: `.agent/system/`
 - 운영 진행 관리: `.agent/system/ops/`
+- visible 진행 대시보드: `_system/dashboard/project-dashboard.md`
 - 리포트 재료: `04_증빙/`
 - Claude 런타임 어댑터: `.claude/`
 - 공용 에이전트 정의: `.agent/agents/`
+- 전략/증빙/wiki task 입력점: `02_전략/tasks/`, `04_증빙/tasks/`, `06_LLM위키/tasks/`
 
 ## 현재 우선순위
 
-1. 문제 리서치와 문제 정의
-2. `master-evidence-ledger` 기반 증빙 습관화
-3. 기술 스택 결정
-4. 제품 구현
+1. 문제 후보 3개 축소와 최종 문제 1개 확정
+2. `project-dashboard`를 중심으로 `PLAN/PROGRESS/daily/task` 동기화 유지
+3. `master-evidence-ledger` 기반 증빙 습관화
+4. `06_LLM위키/` 첫 ingest 시작
+5. 제품 구현 착수
 
 ## authoritative files
 

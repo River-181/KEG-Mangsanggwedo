@@ -1,8 +1,10 @@
 ---
 tags:
-  - dashboard
-  - project
-date: 2026-04-06
+  - area/system
+  - type/dashboard
+  - status/active
+date: 2026-04-08
+up: "[[00 HOME]]"
 aliases:
   - project-dashboard
   - 프로젝트대시보드
@@ -12,12 +14,46 @@ aliases:
 > 사용자와 AI가 함께 보는 가시 대시보드 정본.
 > 숨김 `.agent/` 내부가 아니라 Obsidian에서 바로 보이는 위치에 둔다.
 
-## 빠른 링크
+## 현재 상태
 
-- [[00 HOME|홈]]
-- [[.agent/system/ops/PLAN|PLAN]]
-- [[.agent/system/ops/PROGRESS|PROGRESS]]
-- [[_04_증빙_MOC|증빙]]
+- 현재 단계: Day 2, `운영 가시화 완료 → 문제 정의 수렴 직전`
+- 아직 주제 1개는 확정되지 않았다. 따라서 `03_제품/`은 뼈대 상태를 유지한다.
+- 지금 대시보드는 `PLAN`, `PROGRESS`, `daily`, `master-evidence-ledger`, `type/task` note를 한 화면에서 잇는 제출용 진행판 역할을 맡는다.
+
+## 제출용 일정 개요
+
+```mermaid
+gantt
+    title KEG 프로젝트 진행 흐름
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m/%d
+    section 운영/전략
+    워크스페이스 정비 및 증빙 체계 :done, a1, 2026-04-06, 2d
+    문제 후보 수집 및 평가 :active, a2, 2026-04-07, 2d
+    최종 문제 및 스코프 확정 :a3, 2026-04-08, 1d
+    section 제품
+    앱 뼈대 및 데모 플로우 :a4, 2026-04-09, 2d
+    기능 동결 및 QA :a5, 2026-04-10, 2d
+    section 제출
+    README 및 AI 리포트 작성 :a6, 2026-04-11, 2d
+    데모 리허설 및 최종 제출 :a7, 2026-04-12, 2d
+```
+
+## 운영 로그 연결
+
+- [[.agent/system/ops/PLAN|PLAN]] — 오늘 기준 우선순위와 마일스톤
+- [[.agent/system/ops/PROGRESS|PROGRESS]] — 실제 완료/진행 상태
+- [[master-evidence-ledger]] — 세션 단위 증빙 원장
+- [[decision-log]] — 중요한 구조 결정
+- [[prompt-catalog]] — 재사용 프롬프트 자산
+- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] — 일별 작업 스냅샷
+
+## 새 파일/폴더를 만든 이유
+
+- `02_전략/tasks/` — 전략 후보 축소와 문제 확정 작업을 `type/task`로 추적하기 위해 추가
+- `04_증빙/tasks/` — 제출용 진행 증빙 정리를 task로 관리하기 위해 추가
+- `06_LLM위키/tasks/` — 전략 문서를 wiki layer로 ingest하는 반복 작업을 분리하기 위해 추가
+- `04_증빙/03_daily/2026-04-07.md`, `2026-04-08.md` — 빠진 일일 기록을 복원해 날짜별 증빙 공백을 메우기 위해 추가
 
 ## 태스크 트래커
 
@@ -25,6 +61,10 @@ aliases:
 
 ## 규칙
 
-- 태스크 note는 `#task`와 frontmatter를 맞춰야 여기에 뜬다.
+- `PLAN`은 앞으로 할 일을, `PROGRESS`는 실제 상태를, 이 대시보드는 제출용 가시화 판을 맡는다.
+- 세 문서는 같은 날짜 기준으로 함께 갱신한다. 셋 중 하나만 바뀌면 진행 상황이 왜곡된다.
+- 태스크 note는 `type/task` 태그와 frontmatter를 맞춰야 여기에 뜬다.
+- day가 바뀌면 `daily`, `PLAN`, `PROGRESS`, `master-evidence-ledger`를 먼저 맞춘 뒤 대시보드를 본다.
+
 - 대시보드 구조를 바꾸면 [[workspace-atlas]]와 관련 운영 문서를 같이 본다.
 - AI 운영 note는 `.agent/system/ops/`에 둘 수 있지만, 사람이 직접 보는 대시보드는 이 note를 기준으로 한다.

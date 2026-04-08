@@ -1,8 +1,10 @@
 ---
 tags:
-  - 대회정보
-  - team
+  - area/contest
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[_01_대회정보_MOC]]"
 aliases:
   - 팀프로필
 ---

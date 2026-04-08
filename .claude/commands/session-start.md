@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: Start a Claude work session for this KEG workspace. Read the canonical ops and memory docs, then summarize the immediate next action, blockers, and files to touch.
+up: "[[.agent/AGENTS]]"
 argument-hint: [focus]
 disable-model-invocation: true
 ---

@@ -1,6 +1,10 @@
 ---
-tags: [agent, system, automation]
+tags:
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/README]]"
 ---
 # Logging Spec
 
@@ -10,3 +14,9 @@ date: 2026-04-06
 - `04_증빙/01_핵심로그/ai-usage-stats.md`: 파생 통계 집계본
 - `04_증빙/01_핵심로그/ai-usage-log.md`: archive/reference
 - `04_증빙/01_핵심로그/session-log.md`: archive/reference
+
+## Prompt Promotion Rule
+
+- 프롬프트는 문장만 저장하지 않는다.
+- 최소 `Intent / Prompt / Input contract / Output contract / Reuse rule / Linked evidence`를 같이 저장한다.
+- 구조 변경 프롬프트는 결과물 note, script, template을 연결해야 한다.

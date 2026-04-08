@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: obsidian-workspace
 description: Use when editing notes, MOCs, daily logs, Bases files, or vault structure in this KEG repo. Wraps the global obsidian-cli, obsidian-markdown, and obsidian-bases skills with the repo's canonical memory, atlas, and evidence rules.
+up: "[[.agent/skills/README]]"
 ---
 
 # Obsidian Workspace
@@ -36,8 +41,11 @@ description: Use when editing notes, MOCs, daily logs, Bases files, or vault str
 - 내부 링크는 `[[wikilink]]`를 기본값으로 쓴다.
 - 외부 URL만 Markdown link `[]()`를 쓴다.
 - 모든 노트는 YAML frontmatter를 유지한다.
+- 새 노트는 생성 시점에 `tags`, `date`, `up`을 함께 넣는다.
+- 부모가 있는 note는 `up` 없이 만들지 않는다.
 - 새 note를 만들면 필요한 `_MOC/` 갱신과 atlas 반영 여부를 함께 판단한다.
 - note 수정이 리포트 가치가 있으면 `[[master-evidence-ledger]]` 반영을 함께 판단한다.
+- 구조 작업 후에는 `bash _system/tools/obsidian/tag-audit.sh`로 태그와 `up` 누락을 점검한다.
 
 ## 표준 순서
 

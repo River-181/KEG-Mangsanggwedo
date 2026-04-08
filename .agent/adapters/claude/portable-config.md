@@ -1,8 +1,10 @@
 ---
 tags:
-  - config
-  - portable
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/AGENTS]]"
 ---
 # 포터블 설정 가이드
 

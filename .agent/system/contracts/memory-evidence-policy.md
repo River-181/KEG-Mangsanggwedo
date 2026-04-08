@@ -1,10 +1,10 @@
 ---
 tags:
-  - agent
-  - system
-  - contract
-  - evidence
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/contracts/workspace-contract]]"
 aliases:
   - memory-evidence-policy
   - 기억증빙정책
@@ -17,6 +17,7 @@ aliases:
 
 - `.agent/system/memory/long-term-memory.md`는 오래 유지되는 핵심 사실 정본이다.
 - `.agent/system/memory/daily-memory.md`는 오늘 세션의 단기 기억과 핸드오프를 담는다.
+- `06_LLM위키/`는 메모리보다 구조화된 지속 synthesis layer다.
 - `04_증빙/`은 AI 리포트, 회고, 결과보고서, 심사 대응에 바로 쓸 수 있는 재료의 정본이다.
 - 직접 입력 정본은 `04_증빙/01_핵심로그/master-evidence-ledger.md` 하나다.
 
@@ -35,9 +36,10 @@ aliases:
 
 1. 세션 중 생성된 메모리 항목 검토
 2. 증빙 가치가 있는 내용을 `04_증빙/01_핵심로그/master-evidence-ledger.md`에 반영
-3. 중요한 결정만 `04_증빙/01_핵심로그/decision-log.md`로 승격
-4. 반복 사용 프롬프트만 `04_증빙/01_핵심로그/prompt-catalog.md`로 승격
-5. 필요할 때만 `.agent/system/logs/evidence-gate-log.md`에 결과 기록
+3. 재사용 가치가 큰 정리라면 먼저 `06_LLM위키/`에 writeback
+4. 중요한 결정만 `04_증빙/01_핵심로그/decision-log.md`로 승격
+5. 반복 사용 프롬프트만 `04_증빙/01_핵심로그/prompt-catalog.md`로 승격
+6. 필요할 때만 `.agent/system/logs/evidence-gate-log.md`에 결과 기록
 
 ## Gate status 정의
 

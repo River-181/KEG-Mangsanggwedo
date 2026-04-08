@@ -1,3 +1,13 @@
+---
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-08
+up: "[[.agent/AGENTS]]"
+aliases:
+  - CLAUDE
+---
 # CLAUDE.md — Claude Code 프로젝트 지시서
 
 Canonical: `.agent/system/`
@@ -52,8 +62,8 @@ Canonical: `.agent/system/`
 ## 옵시디언 규칙
 
 - 내부 링크: `[[위키링크]]` 사용 (마크다운 링크 `[]()`는 외부 URL에만)
-- 모든 노트에 YAML frontmatter 포함 (최소 `tags`, `date`)
-- 태그: `#moc`, `#대회정보`, `#전략`, `#제품`, `#증빙`, `#제출`, `#daily` 등
+- 모든 노트에 YAML frontmatter 포함 (최소 `tags`, `date`, `up`)
+- 태그: `area/*`, `type/*`, `status/*`, `workflow/*`
 - 임베드: `![[파일명]]` 사용
 - 강조: `==하이라이트==` 사용 가능
 - vault 조작은 가능하면 `obsidian` CLI를 우선 검토

@@ -1,7 +1,9 @@
 ---
 tags:
-  - moc
-  - home
+  - area/home
+  - type/reference
+  - status/active
+  - type/moc
 date: 2026-04-06
 aliases:
   - HOME
@@ -27,6 +29,7 @@ aliases:
 | [[_03_제품_MOC\|03 제품]] | 문제정의, 페르소나, 아키텍처, 데모 |
 | [[_04_증빙_MOC\|04 증빙]] | AI 사용 로그, 결정 기록, 프롬프트 |
 | [[_05_제출_MOC\|05 제출]] | AI 리포트, 체크리스트, 회고 |
+| [[_06_LLM위키_MOC\|06 LLM 위키]] | Karpathy 스타일 persistent knowledge layer |
 | [[_system_tools_MOC\|System Tools]] | Obsidian, Excalidraw, Figma, NLM, 팀 셋업 |
 
 ## MOC 공간
@@ -55,7 +58,7 @@ aliases:
 | Day | 날짜    | 초점                           | 상태     |
 | --- | ----- | ---------------------------- | ------ |
 | D0  | 04-06 | 주제분석, 문제선택, 구조확정             | 🔄 진행중 |
-| D1  | 04-07 | 뼈대 앱, 데이터 구조, 첫 배포           |        |
+| D1  | 04-07 | 뼈대 앱, 데이터 구조, 첫 배포           | 🔄 진행중 |
 | D2  | 04-08 | 핵심 플로우 작동                    |        |
 | D3  | 04-09 | 데모 크리티컬 완성, 기능 동결            |        |
 | D4  | 04-10 | QA, UX, 증빙 정리                |        |

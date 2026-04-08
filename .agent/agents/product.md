@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: product
 description: Product Agent — 문제 정의, 페르소나, 사용자 스토리, 스펙 작성
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep
+up: "[[.agent/AGENTS]]"
 ---
 
 # Product Agent

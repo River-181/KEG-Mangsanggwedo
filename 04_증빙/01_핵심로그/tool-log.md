@@ -1,8 +1,10 @@
 ---
 tags:
-  - 증빙
-  - tools
+  - area/evidence
+  - type/log
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 ---
 # 도구 사용 기록
 
@@ -18,6 +20,8 @@ date: 2026-04-06
 | T-002 | Codex       | AI Agent    | 구현/정리        | Desktop | GPT-5     | App | 로컬 파일, 코드, 검증              | 웹 브라우징 약함   | 산출물 생성, repo 정리, 검증 | 리서치 전용 작업      | `.agent/system/contracts/tools/codex.md`       | Active |
 | T-003 | Perplexity  | AI Research | 리서치          | Web     | Search+AI | Pro | 방대한 자료 탐색, 출처 수집           | 출처 품질 편차    | 사례 수집, 경쟁 분석, 참고 링크 | 최종 결정 근거 단독 사용 | `.agent/system/contracts/tools/perplexity.md`  | Active |
 | T-004 | Claude Code | AI Agent    | 워크스페이스 구축/코딩 | CLI     | Opus 4.6  | -   | 로컬 파일 완전 제어, MCP, 스킬, 에이전트 | 컨텍스트 소모 큼   | 구조 설계, 코드, 증빙       | 단순 리서치         | `.agent/system/contracts/tools/claude-code.md` | Active |
+| T-005 | Gemini Web  | AI Chat     | 비교 질의/보조 발상     | Web     | Gemini    | Paid | 빠른 비교 응답, 대안 관점 확보            | 세션/토큰 근거 약함 | 비교 질문, 대안 탐색        | 로컬 수정, 정본 작성  | `.agent/system/contracts/tools/gemini-web.md`  | Active |
+| T-006 | Grok Web    | AI Chat     | 가벼운 보조 질의        | Web     | Grok      | Free | 빠른 보조 질의, 추가 관점                 | 정밀 증빙/추적 약함 | 가벼운 탐색, 보조 질문      | 정본 의사결정 근거    | `.agent/system/contracts/tools/grok.md`        | Active |
 
 ## 외부 도구/서비스
 

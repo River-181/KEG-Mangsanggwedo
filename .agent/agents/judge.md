@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: judge
 description: Judge Agent — 심사위원 시뮬레이션, 치명적 약점 지적, 점수 예측
 model: opus
 tools: Read, Glob, Grep, WebFetch
+up: "[[.agent/AGENTS]]"
 ---
 
 # Judge Agent

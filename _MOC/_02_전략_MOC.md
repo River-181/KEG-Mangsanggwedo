@@ -1,8 +1,10 @@
 ---
 tags:
-  - moc
-  - 전략
+  - area/moc
+  - type/moc
+  - status/active
 date: 2026-04-06
+up: "[[_MOC_HOME]]"
 aliases:
   - 전략
 ---
@@ -22,3 +24,4 @@ aliases:
 ## 연결
 
 - [[_04_증빙_MOC|04 증빙]] — 전략적 결정은 `04_증빙/01_핵심로그/decision-log.md`에도 기록
+- [[_06_LLM위키_MOC|06 LLM 위키]] — 전략 문서에서 지속 지식 위키로 컴파일

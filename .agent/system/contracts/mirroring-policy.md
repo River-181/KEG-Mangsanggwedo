@@ -1,10 +1,10 @@
 ---
 tags:
-  - agent
-  - system
-  - contract
-  - mirror
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/contracts/workspace-contract]]"
 aliases:
   - mirroring-policy
   - 미러링정책

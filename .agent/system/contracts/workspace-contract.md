@@ -1,9 +1,10 @@
 ---
 tags:
-  - agent
-  - system
-  - contract
+  - area/system
+  - type/reference
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/README]]"
 aliases:
   - workspace-contract
   - 운영계약
@@ -22,6 +23,7 @@ aliases:
 | AI 리포트 재료 | `04_증빙/` |
 | 제품 구현 | `03_제품/app/`, `03_제품/tests/` |
 | 대회/전략 지식 | `01_대회정보/`, `02_전략/` |
+| 지속 합성 지식 | `06_LLM위키/` |
 
 ## Obsidian 인터페이스 계약
 
@@ -53,6 +55,9 @@ aliases:
 | `.agent/system/memory/long-term-memory.md` | 오래 유지되는 핵심 사실 정본 |
 | `.agent/system/memory/daily-memory.md` | 오늘 세션 단기 기억 |
 | `.agent/system/maps/workspace-atlas.md` | 구조와 갱신 규칙 정본 |
+| `.agent/system/contracts/llm-wiki-operations.md` | LLM wiki 조회/갱신 운영 규칙 |
+| `06_LLM위키/index.md` | 지속 지식 주제 인덱스 |
+| `06_LLM위키/log.md` | ingest/query/lint 이력 |
 
 ## 업데이트 의무
 
@@ -60,6 +65,7 @@ aliases:
 - 새 사실을 메모리에 저장했다면 세션 종료 시 Evidence Gate를 통해 `04_증빙/` 반영 여부를 판단한다.
 - 직접 기록은 원칙적으로 `04_증빙/01_핵심로그/master-evidence-ledger.md` 하나에 한다.
 - `.claude`의 공용 내용은 `.agent/system/`을 참조하거나 요약만 한다.
+- 프로젝트 맥락 질의는 `06_LLM위키/`를 먼저 조회하고, raw source는 필요할 때만 내려간다.
 
 ## 금지
 

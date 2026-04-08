@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: workspace-sync
 description: Use when updating workspace structure, memory, maps, or evidence logs in this KEG repo. Consolidates changes into the canonical files, promotes report-worthy facts from memory to evidence, updates the single workspace atlas, and enforces Evidence Gate at session end.
+up: "[[.agent/skills/README]]"
 ---
 
 # Workspace Sync

@@ -1,18 +1,19 @@
 ---
+tags:
+  - area/system
+  - type/guide
+  - status/active
 title: figma
 kind: tool
 area: system
 status: setup-required
 created: 2026-04-06
 updated: 2026-04-06
-up: "[[_system_tools_MOC]]"
 tool_id: figma
 tool_type: mcp
 owner: design
 auth_mode: oauth
-tags:
-  - system/tools
-  - figma
+up: "[[_system/tools/README]]"
 ---
 
 # Figma MCP

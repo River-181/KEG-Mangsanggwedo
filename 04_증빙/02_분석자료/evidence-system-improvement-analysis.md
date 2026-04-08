@@ -1,9 +1,10 @@
 ---
 tags:
-  - 증빙
-  - 전략
-  - architecture
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - 증빙개선분석
   - AI생태계아키텍처

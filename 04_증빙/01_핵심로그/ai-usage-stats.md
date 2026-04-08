@@ -1,18 +1,27 @@
 ---
 tags:
-  - 증빙
-  - statistics
+  - area/evidence
+  - type/report
+  - status/active
 date: 2026-04-06
+up: "[[_04_증빙_MOC]]"
 aliases:
   - AI사용통계
 ---
 # AI 사용 통계
 
 > **자동 집계 명령어**: `python3 .agent/system/automation/scripts/collect-usage-stats.py`
+> **외부 AI 집계 명령어**: `python3 .agent/system/automation/scripts/collect-external-usage-stats.py`
 > **PM/Evidence Agent 매일 밤 루틴**: 이 파일을 스크립트 결과로 업데이트
 > [[master-evidence-ledger]]와 세션 데이터에서 파생되는 집계본.
 > AI 리포트 §통계 섹션의 소스.
 > 마지막 업데이트: 2026-04-06 18:00 (Day 0)
+
+## 운영 원칙
+
+- `Claude Code`는 local JSONL에서 exact token/cost를 자동 집계한다.
+- `Codex`, `ChatGPT`, `Gemini`, `Perplexity`, `Grok`은 현재 이 workspace 기준으로 exact token export가 없으면 `external-ai-usage.csv`에 세션 단위 추정치를 기록한다.
+- 따라서 이 문서의 수치는 `exact`와 `estimate`가 섞일 수 있으며, 리포트에는 그 차이를 명시한다.
 
 ---
 
@@ -88,6 +97,22 @@ aliases:
 | 세션 수 | 0 (대기 중) |
 | 비용 | 정액제 (Pro $20/월) |
 
+### Gemini
+
+| 항목 | 수치 |
+|------|------|
+| 세션 수 | CSV 기준 집계 |
+| 비용 | 유료 플랜 또는 API 사용분 기준 별도 기록 |
+| 추정 토큰 | `external-ai-usage.csv` 기준 |
+
+### Grok
+
+| 항목 | 수치 |
+|------|------|
+| 세션 수 | CSV 기준 집계 |
+| 비용 | 무료 또는 플랜 기준 별도 기록 |
+| 추정 토큰 | `external-ai-usage.csv` 기준 |
+
 ---
 
 ## 전체 통합 요약
@@ -144,4 +169,5 @@ aliases:
 ---
 
 > 자동 집계: `python3 .agent/system/automation/scripts/collect-usage-stats.py`
+> 외부 AI 집계: `python3 .agent/system/automation/scripts/collect-external-usage-stats.py`
 > 관련: [[ai-usage-log]], [[token-strategy]], [[tool-log]]

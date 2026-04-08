@@ -1,6 +1,10 @@
 ---
-tags: [agent, system, map, atlas]
-date: 2026-04-06
+tags:
+  - area/system
+  - type/reference
+  - status/active
+date: 2026-04-08
+up: "[[.agent/system/README]]"
 aliases:
   - workspace-atlas
   - 워크스페이스지도
@@ -17,6 +21,7 @@ aliases:
 - `_system/tools/` = 저장소 종속 도구 정본
 - `03_제품/` = 제품 정의와 실제 코드
 - `04_증빙/` = AI 리포트 재료 정본
+- `06_LLM위키/` = Karpathy 스타일 persistent wiki layer
 - 루트 = 사람용 색인과 대회 섹션
 
 ## 2. 현재 폴더 구조
@@ -37,14 +42,18 @@ aliases:
 │   └── team-setup/
 ├── 01_대회정보/
 ├── 02_전략/
+│   └── tasks/
 ├── 03_제품/
 │   ├── app/
 │   └── tests/
 ├── 04_증빙/
 │   ├── 01_핵심로그/
 │   ├── 02_분석자료/
-│   └── 03_daily/
+│   ├── 03_daily/
+│   └── tasks/
 ├── 05_제출/
+├── 06_LLM위키/
+│   └── tasks/
 ├── assets/
 ├── .agent/
 │   ├── AGENTS.md
@@ -74,8 +83,11 @@ aliases:
 | 새 세션 시작 | `.agent/AGENTS.md` |
 | 현재 할 일 확인 | `.agent/system/ops/PLAN.md` |
 | 현재 상태 확인 | `.agent/system/ops/PROGRESS.md` |
+| 제출용 진행판 확인 | `_system/dashboard/project-dashboard.md` |
 | 오래 유지되는 사실 확인 | `.agent/system/memory/long-term-memory.md` |
 | 오늘의 단기 맥락 확인 | `.agent/system/memory/daily-memory.md` |
+| 지속 위키 확인 | `06_LLM위키/index.md` |
+| LLM 위키 운영 규칙 확인 | `.agent/system/contracts/llm-wiki-operations.md` |
 | 증빙 직접 기록 위치 확인 | `04_증빙/01_핵심로그/master-evidence-ledger.md` |
 
 ## 4. 메모리 → 증빙 흐름
@@ -86,6 +98,8 @@ flowchart LR
     Memory --> Gate{"Evidence Gate"}
     Gate -->|"report-worthy"| Core["master-evidence-ledger.md"]
     Gate -->|"not report-worthy"| Keep["memory only"]
+    Work --> Wiki["06_LLM위키/"]
+    Wiki --> Core
     Core --> Report["05_제출/AI report"]
 ```
 
@@ -107,6 +121,8 @@ flowchart LR
 | 폴더 구조 변경 | 이 파일, `system-change-log.md`, `PROGRESS.md` |
 | 운영 규칙 변경 | `workspace-contract.md`, `mirroring-policy.md` |
 | 기억 변경 | `daily-memory.md`, 필요 시 `long-term-memory.md` |
+| 대시보드/일정 구조 변경 | `project-dashboard.md`, `PLAN.md`, `PROGRESS.md`, `04_증빙/03_daily/` |
+| LLM wiki 변경 | `06_LLM위키/index.md`, `06_LLM위키/log.md`, 필요 시 `master-evidence-ledger.md` |
 | 리포트 가치 정보 발생 | `04_증빙/01_핵심로그/` |
 | 세션 종료 | `04_증빙/01_핵심로그/master-evidence-ledger.md`, 필요 시 `decision-log.md`, 필요 시 `prompt-catalog.md` |
 | MOC 구조 변경 | `_MOC/_MOC_HOME.md`, `00 HOME.md`, `workspace-atlas.md` |

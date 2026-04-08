@@ -1,6 +1,11 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: moc-sync
 description: Keep the centralized `_MOC/` space current. Use when creating, moving, or updating section indexes, vault home links, or top-level navigation notes in this KEG workspace.
+up: "[[.agent/skills/README]]"
 ---
 
 # MOC Sync

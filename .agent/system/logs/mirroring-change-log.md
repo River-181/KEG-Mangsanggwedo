@@ -1,6 +1,10 @@
 ---
-tags: [agent, system, log]
+tags:
+  - area/system
+  - type/log
+  - status/active
 date: 2026-04-06
+up: "[[.agent/system/README]]"
 ---
 # Mirroring Change Log
 

@@ -1,8 +1,13 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 name: builder
 description: Builder Agent — 구현 계획, 코드 생성, 리팩터링
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
+up: "[[.agent/AGENTS]]"
 ---
 
 # Builder Agent

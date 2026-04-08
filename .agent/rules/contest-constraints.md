@@ -1,5 +1,10 @@
 ---
+tags:
+  - area/system
+  - type/reference
+  - status/active
 description: 대회 제약사항 — 마감, 금지사항, 스코프 규칙
+up: "[[.agent/AGENTS]]"
 ---
 
 # 대회 제약사항
