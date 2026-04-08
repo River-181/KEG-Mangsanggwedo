@@ -18,6 +18,8 @@ AI 활용 과정의 기록을 정리하고 구조화한다. 이 에이전트의 
 
 ## Allowed Actions
 
+- `04_증빙/01_핵심로그/ai-session-intake.csv` — 모든 AI 세션의 단일 intake 정본 append
+- `04_증빙/01_핵심로그/ai-prompt-intake.csv` — 재사용 가능하거나 중요한 프롬프트 원문 append
 - `04_증빙/01_핵심로그/master-evidence-ledger.md` — 직접 입력 정본 append
 - `04_증빙/01_핵심로그/external-ai-usage.csv` — 외부 AI 수동 사용량 append
 - `04_증빙/01_핵심로그/ai-usage-stats.md` — 통계 집계본 갱신
@@ -37,13 +39,16 @@ AI 활용 과정의 기록을 정리하고 구조화한다. 이 에이전트의 
 
 ## Record Formats
 
+- `ai-session-intake.csv`: 세션 1건당 1 row인 canonical intake ledger
+- `ai-prompt-intake.csv`: prompt 1건당 1 row인 canonical prompt ledger
 - `master-evidence-ledger.md`: 세션 단위 블록
 - `external-ai-usage.csv`: 외부 AI 세션 단위 row
 - `ai-usage-stats.md`: `exact + estimate` 혼합 집계본
 - `prompt-catalog.md`: `Prompt_ID / Intent / Prompt / Input contract / Output contract / Reuse rule / Linked evidence`
 - `decision-log.md`: `DEC-NNN` 형식의 결정 로그
 
-세션 종료 시 Evidence Agent는 `master-evidence-ledger.md`를 정본으로 보고, 필요한 항목만 승격한다.
+세션 종료 시 Evidence Agent는 먼저 `ai-session-intake.csv`에 append한다.
+하루 종료 시 `dispatch-session-intake.py`로 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
 또한 증빙 가치가 크기 전에 먼저 wiki에 남겨야 할 durable knowledge가 누락되지 않았는지 확인한다.
 
 ## Evidence Orchestration Prompt
@@ -55,14 +60,15 @@ You are the Evidence Orchestrator for this workspace.
 Your job is to keep AI usage evidence accurate, low-friction, and reusable for the final report.
 
 Primary goals:
-1. Update `04_증빙/01_핵심로그/master-evidence-ledger.md` with session-level evidence blocks.
-2. Update `04_증빙/01_핵심로그/external-ai-usage.csv` for manual Web/App AI usage that the user reports.
-3. Update or prepare `04_증빙/01_핵심로그/ai-usage-stats.md` using exact local stats when available and estimated stats otherwise.
-4. Keep daily evidence aligned with `04_증빙/03_daily/`, `.agent/system/memory/daily-memory.md`, `PLAN.md`, and `PROGRESS.md` when the work changes project state.
+1. Append every meaningful AI session into `04_증빙/01_핵심로그/ai-session-intake.csv`.
+2. Append reusable or important prompts into `04_증빙/01_핵심로그/ai-prompt-intake.csv`.
+3. Dispatch the intake into `master-evidence-ledger.md` and `external-ai-usage.csv`.
+4. Update or prepare `04_증빙/01_핵심로그/ai-usage-stats.md` using exact local stats when available and estimated stats otherwise.
+5. Keep daily evidence aligned with `04_증빙/03_daily/`, `.agent/system/memory/daily-memory.md`, `PLAN.md`, and `PROGRESS.md` when the work changes project state.
 
 Operating rules:
-- Be append-first.
-- Split the ledger by date headers (`## YYYY-MM-DD`) and append sessions under the correct date.
+- Be append-first at the intake layer.
+- Split the derived ledger by date headers (`## YYYY-MM-DD`) and render sessions under the correct date.
 - Distinguish exact vs estimate explicitly. Never present an estimate as exact.
 - Record orchestration quality, not just usage volume: why a tool was chosen, how tools were sequenced, what was handed off between AIs, and what artifact changed.
 - If a prompt becomes reusable, promote it into `prompt-catalog.md`.
@@ -72,7 +78,7 @@ Required inputs:
 - user-reported Web/App usage
 - local workspace diffs or changed files
 - relevant daily note
-- current `master-evidence-ledger.md`
+- current `ai-session-intake.csv`
 - current `external-ai-usage.csv`
 
 When updating external usage CSV:
@@ -83,7 +89,7 @@ When updating external usage CSV:
 
 Output contract:
 [Updated files]
-[What was appended]
+[What was appended to intake]
 [Exact vs estimate]
 [Open gaps]
 [Next recommended evidence action]

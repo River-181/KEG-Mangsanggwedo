@@ -112,6 +112,21 @@ aliases:
 - [x] `.agent/system/memory/daily-memory.md`를 현재 구조 기준으로 갱신
 - [x] 새 파일/폴더의 생성 이유를 대시보드에 명시
 
+### 세션 intake 파이프라인 ✅
+- [x] 엑셀 트래커 시트 구조를 참고한 `ai-session-intake.csv` canonical ledger 도입
+- [x] 과거 AI 세션 22건을 intake 파일로 백필
+- [x] `dispatch-session-intake.py`로 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md` 재생성 구현
+- [x] `session-intake-pipeline.md`와 공용 운영 문서를 intake-first 흐름으로 갱신
+
+### 리서치 운영 정렬 ✅
+- [x] `02_전략/research-results/`를 리서치 작업 공간으로 정리
+- [x] `research-hub`, `research-plan-eduswarm-v0`, `research-prompts-by-tool`, `research-log` 생성
+- [x] `problem-bank`, `problem-scorecard` 초안 생성
+- [x] `gemini`, `grok`, `perplexity` 리서치 결과를 통합한 `20260408_EduSwarm_리서치_통합_브리프.md` 작성
+- [x] `nlm` 재인증 및 CLI 동작 복구
+- [x] NotebookLM 노트북 `KEG EduSwarm Research 2026-04-08` 생성 및 리서치 문서 18개 업로드
+- [x] NotebookLM 1차 질의로 `담임 모드` 우선 가설 도출
+
 ---
 
 ## 참여 중인 AI 에이전트
@@ -120,8 +135,8 @@ aliases:
 | --------------------- | --------------- | ----------------- | ------------ |
 | Claude Opus 4.6       | Claude Code CLI | 워크스페이스 구조화, 증빙 설계 | 증빙 시스템 확장 중  |
 | GPT-5.4 (ChatGPT Pro) | Web             | 전략 설계, 플레이북 작성    | 플레이북 v0.1 완료 |
-| GPT-5 (Codex)         | Desktop App     | 평가, 엑셀 트래커 생성     | 워크스페이스 평가 완료 |
-| Perplexity            | Web             | 리서치 수집            | 대기           |
+| GPT-5 (Codex)         | Desktop App     | 리서치 운영, NLM 통합, 증빙 정리 | 리서치 노트북 생성 및 통합 질의 완료 |
+| Perplexity            | Web             | 리서치 수집            | 운영자/교사 페인포인트 리서치 완료 |
 
 ---
 
@@ -136,6 +151,7 @@ aliases:
 
 1. **문제 후보 3개 축소** — `problem-scorecard` 기준으로 전략 후보 압축
 2. **최종 문제 1개 결정** — `decision-sprint`, `scope-board` 실사용
-3. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
-4. **제품 정의 초안 작성** — 아직 `03_제품/`은 뼈대 상태
-5. **단일 증빙 원장 운영 습관 정착** — 새 세션마다 `master-evidence-ledger.md` 직접 입력 유지
+3. **NotebookLM 추가 질의 2~3회 실행** — `담임 모드 vs 운영자 모드`를 더 좁히고 최종 컷 기준 확정
+4. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
+5. **제품 정의 초안 작성** — 아직 `03_제품/`은 뼈대 상태
+6. **단일 intake 운영 습관 정착** — 새 세션마다 `ai-session-intake.csv` 먼저 append하고 nightly dispatch 유지

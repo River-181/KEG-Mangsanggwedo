@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/active
   - workflow/evidence-source
-date: 2026-04-06
+date: 2026-04-08
 up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
@@ -13,66 +13,257 @@ aliases:
 ---
 # Master Evidence Ledger
 
-> 이 파일은 `04_증빙`의 직접 입력 정본이다.
-> 앞으로 사람이 직접 기록하는 기본 위치는 이 note 하나뿐이다.
-> 목적은 [[20260406_③_2026_KIT_바이브코딩_공모전_팀명_개인은_이름_AI리포트]]의 품질을 높이는 재료 축적이다.
+> 이 파일은 `ai-session-intake.csv`에서 파생되는 증빙 원장이다.
+> 낮 동안 직접 입력은 intake에 먼저 하고, nightly dispatch에서 이 파일을 재생성한다.
 
 ## 원칙
 
-- 기록 단위는 `세션 단위`다.
-- 세션은 반드시 해당 날짜 헤더 `## YYYY-MM-DD` 아래에 추가한다.
-- 내부 참조는 기본적으로 `[[wikilink]]`를 사용한다.
-- 중요한 결정만 [[decision-log]]로 승격한다.
-- 재사용 가치가 검증된 프롬프트만 [[prompt-catalog]]로 승격한다.
-- 통계는 나중에 이 원장을 바탕으로 [[ai-usage-stats]]로 파생한다.
-- 기존 [[ai-usage-log]], [[session-log]], [[evolution-log]]는 보존용 `archive/reference`다.
-
-## 일자 운영 규칙
-
-- 날짜가 바뀌면 먼저 새 헤더 `## YYYY-MM-DD`를 만든다.
-- 같은 날의 세션은 모두 그 날짜 아래에 append한다.
-- 하루에 세션이 많아져도 기존 블록을 재정렬하지 말고 append 순서를 유지한다.
-- 하루 요약이 필요하면 daily note에 쓰고, 원장에는 세션 증빙만 남긴다.
-
-## 세션 블록 템플릿
-
-```markdown
-## YYYY-MM-DD
-
-### S-XXX
-
-- DateTime:
-- Phase:
-- Tool/Client:
-- Model:
-- Goal:
-- What changed:
-- Why it mattered:
-- Artifacts:
-- AI usage strategy:
-- Evidence value:
-- Report section hint:
-- Token note:
-- Follow-up:
-```
+- intake row 1건은 의미 있는 세션 1건이다.
+- 세션 블록은 날짜별로 정렬해 렌더링한다.
+- 정확 수치와 추정 수치를 구분해 `Token note`에 남긴다.
+- prompt/decision 승격 여부는 dispatch report의 후보를 보고 최종 판단한다.
 
 ## 2026-04-06
+
+### S-001
+
+- DateTime: 2026-04-06 / CLI
+- Phase: Contest Research
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: 대회 개요 정리와 워크스페이스 구조화를 시작한다
+- What changed: 대회 개요서와 초기 워크스페이스 구조 및 MOC와 에이전트 뼈대가 만들어졌다
+- Why it mattered: 프로젝트 전체를 증빙 중심 워크스페이스로 운영하는 출발점이 되었다
+- Artifacts: [[바이브코딩공모전_공지]] | `_MOC/` | `.agent/agents/`
+- AI usage strategy: Claude Code는 로컬 파일 생성과 구조화에 집중했다
+- Evidence value: 워크스페이스 초기 생성 기록
+- Report section hint: 워크플로우 | AI 활용 과정
+- Token note: exact token source exists in Claude JSONL
+- Follow-up: 증빙 시스템 확장 단계로 연결
+
+### S-002
+
+- DateTime: 2026-04-06 / CLI
+- Phase: Workspace Setup
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: 증빙 시스템 개선과 포터블 환경을 정리한다
+- What changed: 증빙 구조 분석 문서와 setup 스크립트 및 포터블 설정이 추가되었다
+- Why it mattered: 기록 체계가 일회성이 아니라 재현 가능한 구조로 전환되었다
+- Artifacts: evidence-system-improvement-analysis.md | setup.sh | portable-config.md
+- AI usage strategy: 분석 결과를 바로 스크립트와 설정 파일로 연결했다
+- Evidence value: 증빙 체계와 포터블 환경 설계 기록
+- Report section hint: AI 활용 전략 | 유지보수성
+- Token note: exact token source exists in Claude JSONL
+- Follow-up: PLAN/PROGRESS 생성으로 이어짐
+
+### S-003
+
+- DateTime: 2026-04-06 / CLI
+- Phase: Workspace Setup
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: 멀티에이전트 조율 체계를 도입한다
+- What changed: PLAN과 PROGRESS가 생기고 멀티 AI 동기화 프로토콜이 도입되었다
+- Why it mattered: 여러 AI가 현재 상태와 다음 할 일을 공유할 수 있게 되었다
+- Artifacts: [[.agent/system/ops/PLAN]] | [[.agent/system/ops/PROGRESS]]
+- AI usage strategy: Claude는 운영 문서 반영을 맡고 Codex 평가는 입력 신호로 활용했다
+- Evidence value: 멀티 에이전트 조율 체계의 기원
+- Report section hint: 워크플로우 | AI 활용 과정
+- Token note: Claude exact token은 JSONL 참조
+- Follow-up: 증빙 확장과 아키텍처 시각화로 연결
+
+### S-CODEX-001
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 워크스페이스 전반을 평가해 약점과 개선점을 찾는다
+- What changed: 워크스페이스 평가서와 개선 우선순위가 정리되었다
+- Why it mattered: 운영 정본화와 증빙 체계 재설계의 외부 피드백 근거가 되었다
+- Artifacts: [[codex-workspace-evaluation]]
+- AI usage strategy: Codex는 감사와 정리 역할로 활용했다
+- Evidence value: 초기 진단과 약점 식별 근거
+- Report section hint: AI 활용 전략 | 운영 감사
+- Token note: exact unavailable estimate
+- Follow-up: 평가 결과를 운영 문서에 통합
+
+### S-CODEX-002
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: AI-native 운영감사 보고서를 작성하고 수정한다
+- What changed: 운영감사 보고서 초안과 수정본이 만들어졌다
+- Why it mattered: 운영 체계의 통합성/재현성/자동화 한계를 구조적으로 정리했다
+- Artifacts: [[ai-native-workspace-audit-report]]
+- AI usage strategy: Codex를 감사와 구조 개선 제안 채널로 사용했다
+- Evidence value: 감사 보고서와 개선 제안 근거
+- Report section hint: AI 활용 전략 | 유지보수성
+- Token note: exact unavailable estimate
+- Follow-up: 운영 정본 V2 구현으로 연결
 
 ### S-GPT-001
 
 - DateTime: 2026-04-06 / Web
-- Phase: Contest Research, Win Strategy
-- Tool/Client: ChatGPT Web
+- Phase: Contest Research
+- Tool/Client: ChatGPT
 - Model: GPT-5.4
-- Goal: 대회 개요를 빠르게 파악하고 준비 로드맵의 큰 그림을 잡는다.
-- What changed: 공식 페이지와 공지/홍보자료를 바탕으로 대회 개요 초안, 준비 단계 분해, 플레이북 초안, 프롬프트 트래커 초기 구조가 만들어졌다.
-- Why it mattered: 이후 모든 운영 설계와 워크스페이스 구축의 출발점이 되었다.
-- Artifacts: [[바이브코딩공모전_공지]], [[vibe_contest_master_playbook_v0_1]], `KEG_AI_Prompt_Tracker.xlsx`, [[prompt-catalog]]
-- AI usage strategy: ChatGPT Web은 설계/기획 전용으로 사용하고, 구조화와 방향 설정을 먼저 맡겼다.
-- Evidence value: 대회 해석, 초기 전략, 도구 분업의 기원 기록
-- Report section hint: `1. 기획`, `AI 활용 전략`, `도구/모델 선택 이유`
-- Token note: 정액제 환경이라 정확 토큰은 없고 추정치만 가능
-- Follow-up: 이후 세부 리서치와 구현은 다른 도구로 분담
+- Goal: 대회 개요와 준비 로드맵의 큰 그림을 잡는다
+- What changed: 대회 개요서 초안과 플레이북 방향 및 프롬프트 트래커 초기 구조가 만들어졌다
+- Why it mattered: 이후 모든 운영 설계와 워크스페이스 구축의 출발점이 되었다
+- Artifacts: [[바이브코딩공모전_공지]] | [[vibe_contest_master_playbook_v0_1]] | KEG_AI_Prompt_Tracker.xlsx
+- AI usage strategy: 설계와 방향 설정을 Web AI에 먼저 맡기고 로컬 구현은 후속 에이전트로 넘겼다
+- Evidence value: 대회 해석과 초기 전략의 기원 기록
+- Report section hint: 기획 | AI 활용 전략 | 도구 선택 이유
+- Token note: 정액제 환경이라 exact unavailable
+- Follow-up: 후속 리서치와 구현 분업 검증
+
+### S-OPS-001
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 공용 운영 정본 V2를 실제 파일 구조로 반영한다
+- What changed: `.agent/system/` 골격과 계약 문서 및 정본 메모리와 맵 구조가 생겼다
+- Why it mattered: 공용 운영 정본이 생기며 워크스페이스가 재현 가능한 시스템으로 바뀌었다
+- Artifacts: [[workspace-contract]] | [[workspace-atlas]] | `.agent/system/`
+- AI usage strategy: 구조 설계를 문서와 실제 파일 이동으로 동시에 반영했다
+- Evidence value: 운영 정본화와 시스템 레이어 구축
+- Report section hint: AI 활용 전략 | 유지보수성/재현성
+- Token note: exact unavailable estimate
+- Follow-up: 문제 리서치 세션에서도 같은 구조가 유효한지 검증
+
+### S-OPS-002
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Cleanup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 루트 구조와 경로 정합성을 단순화한다
+- What changed: 운영 파일이 `.agent/system/ops`로 이동하고 `.claude`가 최소 어댑터로 정리되었다
+- Why it mattered: 루트 혼란이 줄고 공용 운영 자산 위치가 명확해졌다
+- Artifacts: `.agent/system/ops/` | `.claude/` | `03_제품/`
+- AI usage strategy: 정본과 어댑터를 분리하는 방향으로 정리했다
+- Evidence value: 루트 최소화와 어댑터 단순화 기록
+- Report section hint: 유지보수성 | 재현성
+- Token note: exact unavailable estimate
+- Follow-up: 실전 운용 검증으로 연결
+
+### S-OPS-003
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Cleanup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 처음 보는 사용자 기준으로 memory/maps/evidence를 단순화한다
+- What changed: 장기기억/일일기억과 workspace-atlas 및 핵심로그/분석자료/daily 3구역 구조가 생겼다
+- Why it mattered: 학습 비용이 줄고 세션 종료 동기화 경로가 분명해졌다
+- Artifacts: [[long-term-memory]] | [[daily-memory]] | [[workspace-atlas]]
+- AI usage strategy: 복잡한 구조를 파일 수 축소와 sync 스킬로 함께 정리했다
+- Evidence value: 초심자 친화 구조 개편 근거
+- Report section hint: 워크플로우 | 유지보수성
+- Token note: exact unavailable estimate
+- Follow-up: workspace-sync 실전 적용 검증
+
+### S-OPS-004
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: GitHub 운영 전용 스킬을 추가한다
+- What changed: `github-workflow` 스킬과 registry 연결이 추가되었다
+- Why it mattered: GitHub 작업도 증빙 흐름과 같은 규칙 아래 관리되게 되었다
+- Artifacts: `.agent/skills/github-workflow/SKILL.md` | registry
+- AI usage strategy: commit/push/PR 흐름을 프로젝트 스킬로 표준화했다
+- Evidence value: GitHub 운영 표준화 기록
+- Report section hint: AI 활용 전략 | 운영 자동화
+- Token note: exact unavailable estimate
+- Follow-up: 실제 GitHub issue/commit 작업에서 검증
+
+### S-OPS-005
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: Obsidian-first 운영 기준을 정본 문서에 명시한다
+- What changed: Obsidian workspace 스킬과 관련 규칙이 AGENTS와 계약 문서에 반영되었다
+- Why it mattered: 이 저장소가 일반 markdown repo가 아니라 Obsidian vault라는 전제가 고정되었다
+- Artifacts: `.agent/skills/obsidian-workspace/SKILL.md` | [[AGENTS]]
+- AI usage strategy: vault 규칙과 스킬 사용 원칙을 함께 고정했다
+- Evidence value: Obsidian-first 운영 기준의 정착
+- Report section hint: 도구 선택 이유 | 워크플로우
+- Token note: exact unavailable estimate
+- Follow-up: 실제 note/MOC/base 작업에서 실전 적용
+
+### S-OPS-006
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: Claude runtime command layer를 얇게 설계한다
+- What changed: `.claude/commands`와 command stack registry가 추가되었다
+- Why it mattered: 런타임 접근성은 높이고 공용 정본 중복은 줄일 수 있게 되었다
+- Artifacts: `.claude/commands/` | [[claude-command-stack]]
+- AI usage strategy: entrypoint는 얇게 두고 실제 로직은 agents/skills를 재사용하게 설계했다
+- Evidence value: command layer 설계와 재사용 전략
+- Report section hint: 유지보수성 | 재현성
+- Token note: exact unavailable estimate
+- Follow-up: Claude runtime 실사용 검증
+
+### S-OPS-007
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: GitHub issue/project 운영 스킬을 분리한다
+- What changed: issue/project 전용 스킬과 registry 연결이 추가되었다
+- Why it mattered: GitHub 코드 흐름과 관리 흐름을 분리해 유지보수성이 좋아졌다
+- Artifacts: `.agent/skills/github-issue-ops/` | `.agent/skills/github-project-ops/`
+- AI usage strategy: 상위 workflow는 유지하고 하위 운영 스킬을 분리했다
+- Evidence value: GitHub 운영 세분화 기록
+- Report section hint: AI 활용 전략 | 운영 자동화
+- Token note: exact unavailable estimate
+- Follow-up: 실제 issue triage와 board 생성에서 검증
+
+### S-OPS-008
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 증빙 입력을 단일 원장 체계로 전환한다
+- What changed: `master-evidence-ledger.md`가 직접 입력 정본으로 재정의되고 관련 규칙이 바뀌었다
+- Why it mattered: 기록 비용을 줄이고 AI 리포트 재료를 한 곳에 쌓을 수 있게 되었다
+- Artifacts: [[master-evidence-ledger]] | [[memory-evidence-policy]]
+- AI usage strategy: 입력 1개와 파생 N개 전략으로 기록 비용을 줄였다
+- Evidence value: 로깅 전략 변화와 유지비 절감
+- Report section hint: AI 활용 전략 | 토큰 절약 전략
+- Token note: exact unavailable estimate
+- Follow-up: 실제 세션 운영에서 체계 검증
+
+### S-OPS-009
+
+- DateTime: 2026-04-06 / Desktop App
+- Phase: Workspace Setup
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: MOC를 중앙화하고 도구 문서를 저장소 내부로 가져온다
+- What changed: `_MOC/` 중앙화와 `_system/tools/`
+- Why it mattered: `_system/team-setup/` 공간이 만들어졌다
+- Artifacts: 다른 워크스페이스나 전역 환경에 덜 의존하는 포터블 구조가 되었다
+- AI usage strategy: [[_MOC_HOME]] | [[_system/tools/README]] | team-computer-setup-guide.md
+- Evidence value: 구조 변경은 정본 문서와 팀 가이드까지 함께 묶었다
+- Report section hint: 포터블 환경과 도구 계층 정리
+- Token note: 도구 선택 이유 | 재현성
+- Follow-up: exact unavailable estimate
 
 ### S-PPLX-001
 
@@ -80,129 +271,144 @@ aliases:
 - Phase: Contest Research
 - Tool/Client: Perplexity
 - Model: Search+AI
-- Goal: 대회의 주최·후원 기관 의도, 전신 대회와 유사 대회 맥락, 실제로 먹히는 전략을 조사한다.
-- What changed: 기관 분석과 계보/포지셔닝 분석을 위한 조사 질문이 정리되었고, 심사 문법과 기관 선호 포인트를 추론할 수 있는 재료가 확보되었다.
-- Why it mattered: 문제 정의를 “기관이 좋아할 문법”으로 맞추는 기준이 생겼다.
-- Artifacts: [[prompt-catalog]], [[tool-log]], `P-005`, `P-006`
-- AI usage strategy: Perplexity는 방대한 자료 탐색과 출처 수집 전용으로 사용하고, 최종 판단은 다른 문서와 결합한다.
-- Evidence value: 기관 적합성, 유사 대회 패턴, 전략 근거
-- Report section hint: `1. 기획`, `AI 활용 전략`, `데이터 흐름`, `문제 정의 근거`
-- Token note: 토큰 비공개, 세션 기준 추정만 가능
-- Follow-up: 실제 문제 후보 평가 시 이 조사 재료를 다시 연결
-
-### S-OPS-MIGRATED-001
-
-- DateTime: 2026-04-06 / CLI + Desktop
-- Phase: Workspace Setup
-- Tool/Client: Claude Code, Codex
-- Model: Opus 4.6, GPT-5
-- Goal: 대회용 AI-native 운영 공간을 만들고, 에이전트/규칙/증빙/Obsidian/GitHub 구조를 정리한다.
-- What changed: `.agent/system` 공용 정본, Obsidian-first 규칙, `.claude/commands`, GitHub 운영 스킬, 증빙 구조 개편, 감사 보고서와 평가 문서가 만들어졌다.
-- Why it mattered: 이 프로젝트가 단순 repo가 아니라 “재현 가능한 AI 협업 시스템”이 되었다.
-- Artifacts: [[.agent/AGENTS|AGENTS]], [[workspace-contract]], [[memory-evidence-policy]], [[workspace-atlas]], [[_system/dashboard/project-dashboard|project-dashboard]], [[.agent/skills/obsidian-workspace/SKILL|obsidian-workspace]], [[.agent/skills/github-workflow/SKILL|github-workflow]], [[claude-command-stack]], [[ai-native-workspace-audit-report]], [[codex-workspace-evaluation]]
-- AI usage strategy: Claude Code는 구축/자동화, Codex는 평가/정리/감사로 분업했다.
-- Evidence value: 운영 시스템 설계, 에이전트 구성 방식, 재현성/유지보수성 전략
-- Report section hint: `AI 활용 전략`, `에이전트 구성 방식`, `유지보수성/재현성 전략`
-- Token note: 일부는 세션 단위 정확 수치가 없고 추정 또는 별도 집계 문서 참조
-- Follow-up: 실전 문제 리서치와 제품 개발에서도 같은 분업이 유효한지 검증
-
-### S-OPS-008
-
-- DateTime: 2026-04-06 / Desktop
-- Phase: Workspace Setup
-- Tool/Client: Codex
-- Model: GPT-5
-- Goal: 증빙 입력 마찰을 줄이기 위해 단일 원장 체계로 전환한다.
-- What changed: [[master-evidence-ledger]]를 직접 입력 정본으로 만들고, 기존 핵심 로그는 `archive/reference` 또는 `승격 전용` 역할로 낮췄다. 공용 규칙과 command/skill 문구도 새 체계에 맞게 조정했다.
-- Why it mattered: 앞으로 세션마다 여러 파일을 동시에 수정하지 않아도 되고, AI 리포트 재료를 한 곳에 누적할 수 있다.
-- Artifacts: [[master-evidence-ledger]], [[_04_증빙_MOC]], [[workspace-contract]], [[memory-evidence-policy]], [[.agent/rules/logging|logging]], [[.agent/skills/workspace-sync/SKILL|workspace-sync]], [[.agent/skills/obsidian-workspace/SKILL|obsidian-workspace]]
-- AI usage strategy: 기록 비용을 줄이기 위해 “입력 1개, 파생 N개” 전략으로 전환했다.
-- Evidence value: 로깅 전략 변화, 유지비 절감, 리포트 중심 운영 방식
-- Report section hint: `AI 활용 전략`, `토큰 낭비 최소화 전략`, `유지보수성/재현성 전략`
-- Token note: 구조 개편 세션, 정확 토큰은 미집계
-- Follow-up: 다음 실제 세션부터 이 원장만 직접 사용하고, 파생 문서 필요성을 다시 검증
-
-### S-OPS-009
-
-- DateTime: 2026-04-06 / Desktop
-- Phase: Workspace Setup, Tool Stack
-- Tool/Client: Codex
-- Model: GPT-5
-- Goal: MOC를 중앙화하고, 이 저장소 안에 독립형 도구 관리 공간을 만든다.
-- What changed: 섹션 MOC를 `_MOC/`로 이동했고, `_system/tools/`와 `_system/team-setup/`를 새로 만들었다. Obsidian, Excalidraw MCP, Figma MCP, NotebookLM CLI의 정본 문서와 팀원 셋업 가이드를 저장소 내부로 끌어들였다.
-- Why it mattered: 더 이상 전역 환경이나 다른 워크스페이스 문서에 의존하지 않고, 이 저장소만으로 MOC/도구/셋업 기준을 재현할 수 있게 되었다.
-- Artifacts: [[_MOC_HOME]], [[_system_tools_MOC]], [[_system/tools/README|Tools Home]], [[_system/tools/portable-tool-stack|Portable Tool Stack]], [[_system/tools/obsidian/obsidian-cli-and-skills|Obsidian CLI + Skills]], [[_system/tools/excalidraw/excalidraw-mcp|Excalidraw MCP]], [[_system/tools/figma/figma|Figma MCP]], [[_system/tools/nlm/nlm|NotebookLM CLI]], [[_system/team-setup/team-computer-setup-guide|팀 컴퓨터 환경 적용 가이드]]
-- AI usage strategy: 구조 변경은 먼저 저장소 정본 문서로 고정하고, 실제 런타임 연결은 팀 가이드와 bootstrap으로 분리했다.
-- Evidence value: 포터블 환경 구축, 도구 계층 정리, 팀 재현성 강화
-- Report section hint: `AI 활용 전략`, `도구/모델 선택 이유`, `데이터 흐름`, `유지보수성/재현성 전략`
-- Token note: `obsidian` CLI는 이 세션에서 응답 검증 실패, 나머지는 문서/구조 기준으로 정리
-- Follow-up: Obsidian App이 열린 상태에서 `obsidian` CLI 실동작 검증, `uv sync --project _system/tools` 기반 NLM 설치 검증
+- Goal: 기관 의도와 유사 대회 패턴을 리서치한다
+- What changed: 기관 선호 포인트와 심사 문법을 추론할 재료를 모았다
+- Why it mattered: 문제 정의를 기관 친화 문법으로 맞추는 기준이 생겼다
+- Artifacts: [[기관_분석_및_심사_전략]] | [[계보_포지셔닝_분석]]
+- AI usage strategy: Perplexity는 대규모 탐색과 출처 모음에만 쓰고 최종 판단은 별도 문서와 결합했다
+- Evidence value: 기관 적합성과 심사 전략 근거
+- Report section hint: 기획 | 문제 정의 근거 | AI 활용 전략
+- Token note: 토큰 비공개라 conservative estimate
+- Follow-up: 실제 문제 후보 평가 시 조사 재활용
 
 ## 2026-04-07
 
-> 아직 이 날짜에 승격된 세션 블록이 없다. 필요 시 이 헤더 아래에 append한다.
+### S-MTG-001
+
+- DateTime: 2026-04-07 / Offline + Workspace Notes
+- Phase: Ideation, Research Framing
+- Tool/Client: Human Meeting + Codex-supported structuring
+- Model: GPT-5
+- Goal: 흩어진 임시 아이디어를 하나의 문제 탐색 축으로 모으고 개발 전 필요한 리서치 범위를 정한다
+- What changed: `Paperclip/OpenClaw`류 agent orchestration을 한국 교육 맥락에 적용하는 `EduSwarm/EduPaperclip` 방향이 유력해졌고, 공교육/사교육 및 운영자/교사 축으로 문제를 봐야 한다는 합의가 생겼다
+- Why it mattered: 이후 논의가 개별 기능 나열이 아니라 `역할 기반 교육 운영 시스템`이라는 상위 컨셉 아래에서 진행될 수 있게 되었다
+- Artifacts: [[2026-04-07_1차-아이디어-미팅]] | [[paperclip_교육_아이디어_통합정리]]
+- AI usage strategy: AI는 흩어진 아이디어를 통합하고 리서치 질문을 구조화하는 데 사용했다
+- Evidence value: 아이디어 수렴 시작점, 리서치 프레임 설정, 문제 탐색 초기 합의
+- Report section hint: 문제 발굴 과정 | AI 활용 전략 | 초기 가설 형성
+- Token note: 오프라인 미팅 기반, Codex 정리 작업은 exact unavailable estimate
+- Follow-up: 역할별 포커스와 구체 문제 정의를 다음 미팅에서 확정
 
 ## 2026-04-08
 
-### S-OPS-014
-- **DateTime**: 2026-04-08 20:35 KST
-- **Phase**: Workspace hardening
-- **Tool/Client**: Codex Desktop, GitHub
-- **Model**: GPT-5.4
-- **Goal**: 공개 저장소 push 전 secret/privacy 점검 절차를 운영 규칙으로 고정
-- **What changed**: `[[github-workflow]]`, `[[github-release-policy]]`, `[[pre-push-safety-check]]`, `[[.gitignore]]`를 연결해 pre-push safety gate를 추가했다.
-- **Why it mattered**: 이 저장소는 공개 GitHub 기준으로 운영되므로 API key, local profile, runtime data, auth file 유출 방지가 구조보다 우선이다.
-- **Artifacts**: [[_system/tools/github/release-policy]], [[_system/tools/github/pre-push-safety-check.sh]], [[.gitignore]]
-- **AI usage strategy**: 정책 문서 + 실행 스크립트 + ignore rule을 같이 둬서 사람이 잊어도 마지막 점검이 남게 설계했다.
-- **Evidence value**: AI 리포트의 보안/재현성/운영성 섹션 재료
-- **Report section hint**: 공개 저장소 운영 원칙, AI 활용 프로세스 안전장치
-- **Token note**: exact unavailable
-- **Follow-up**: 이후 commit/push 전 `bash _system/tools/github/pre-push-safety-check.sh`를 표준 루틴으로 사용
+### S-EVID-015
 
-### S-STRAT-010
-
-- DateTime: 2026-04-08 / Desktop
-- Phase: Strategy, Knowledge System
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Evidence Operations
 - Tool/Client: Codex
-- Model: GPT-5
-- Goal: Karpathy의 `LLM Wiki` 방법론을 현재 대회 워크스페이스에 어떻게 삽입할지 구체화한다.
-- What changed: `06_LLM위키/` 레이어를 새로 도입하고, `index.md`, `log.md`, `schema.md`, `overview.md` 및 카테고리 디렉토리 골격을 만들었다. 동시에 [[karpathy-llm-wiki-adaptation]] 문서로 raw/wiki/schema 3층을 현재 구조에 매핑했다.
-- Why it mattered: 이제 리서치와 전략 지식을 `04_증빙`나 chat 기록에 흩뿌리지 않고, LLM이 유지하는 compounding wiki layer로 누적할 수 있게 되었다.
-- Artifacts: [[karpathy-llm-wiki-adaptation]], [[_06_LLM위키_MOC]], [[index]], [[log]], [[schema]], [[overview]]
-- AI usage strategy: Karpathy 원문의 핵심을 유지하기 위해 `raw sources`, `persistent wiki`, `schema`를 분리하고, 이 중 wiki만 별도 layer로 추가했다.
-- Evidence value: knowledge system 설계, 지속 리서치 방식, AI-maintained wiki 운영 전략
-- Report section hint: `AI 활용 전략`, `데이터 흐름`, `유지보수성/재현성 전략`
-- Token note: 문서 분석과 구조 설계 중심, 정확 토큰 미집계
-- Follow-up: 기존 전략 문서 3~4개를 첫 ingest 대상으로 삼아 entity/concept/problem page를 실제로 생성
+- Model: GPT-5.4
+- Goal: Codex 세션도 증빙 원장과 외부 AI 사용 집계에 포함되게 만든다
+- What changed: Codex 토큰을 estimate로 기록하는 규칙이 실제 CSV와 원장에 반영되었다
+- Why it mattered: Claude만 exact 집계되고 Codex가 누락되는 왜곡을 줄였다
+- Artifacts: [[master-evidence-ledger]] | `external-ai-usage.csv`
+- AI usage strategy: exact source가 없는 도구는 zero로 비우지 않고 보수 추정치로 누적했다
+- Evidence value: 도구별 사용량 비교와 멀티 AI 분업 기록
+- Report section hint: AI 활용 과정 | 통계
+- Token note: exact unavailable and recorded as estimate
+- Follow-up: nightly 집계 시 stats 재생성
 
 ### S-OPS-011
 
-- DateTime: 2026-04-08 / Desktop
-- Phase: Workspace Operations, Obsidian System
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Workspace Operations
 - Tool/Client: Codex
 - Model: GPT-5
-- Goal: visible vault와 내부 운영 note 전반에 일관된 태그/계층 규칙을 강제한다.
-- What changed: 태그를 `area/*`, `type/*`, `status/*`, `workflow/*` namespace로 정규화했고, child note에 `up` 속성을 의무화했다. 태그 감사 스크립트, template, 규칙 문서도 함께 갱신했다.
-- Why it mattered: 폴더/별칭/주제 태그가 섞여 있던 상태를 정리해 검색, 필터, 유지보수가 안정화되었고, MOC 기반 top-down 구조에 bottom-up 복귀 경로가 생겼다.
-- Artifacts: [[tagging-system]], `tag-audit.sh`, [[.agent/rules/obsidian-conventions|obsidian-conventions]], [[project-dashboard.base]], `standard-note-template.md`, `task-note-template.md`
-- AI usage strategy: 구조 변경을 문서 규칙, 스크립트, 실제 note frontmatter까지 한 번에 묶어 drift를 줄였다.
-- Evidence value: 정보 구조 설계, 반복 가능한 vault 유지보수 방식, Obsidian 운용 규칙
-- Report section hint: `AI 활용 전략`, `데이터 흐름`, `유지보수성/재현성 전략`
-- Token note: 전수 정리 작업으로 정확 토큰은 미집계
-- Follow-up: 새 note 생성 시 동일 규칙을 기본값으로 강제하고, task 입력을 실제 운영 흐름에 넣기
+- Goal: 태그와 계층 규칙을 vault 전반에 일관되게 적용한다
+- What changed: namespace 태그 체계와 `up` 속성 및 감사 스크립트와 템플릿이 정리되었다
+- Why it mattered: 검색/필터/구조 복구가 안정화되었다
+- Artifacts: [[tagging-system]] | `tag-audit.sh` | templates
+- AI usage strategy: 규칙 문서와 스크립트와 실제 노트를 한 번에 맞췄다
+- Evidence value: 정보 구조 정규화와 vault 유지보수 방식
+- Report section hint: AI 활용 전략 | 유지보수성
+- Token note: exact unavailable estimate
+- Follow-up: 새 note 생성 기본값으로 동일 규칙 유지
 
 ### S-OPS-012
 
-- DateTime: 2026-04-08 / Desktop
-- Phase: Evidence, PM Workflow
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Evidence
 - Tool/Client: Codex
 - Model: GPT-5
-- Goal: 프로젝트 진행 상황을 제출용으로 보여줄 수 있도록 dashboard, plan, progress, daily, memory를 정렬한다.
-- What changed: [[project-dashboard]]를 간트형 일정, 로그 링크, 새 파일/폴더 생성 이유를 포함한 진행판으로 개편했다. 동시에 `PLAN.md`, `PROGRESS.md`, `daily-memory.md`, `2026-04-07.md`, `2026-04-08.md`, 실제 `type/task` note들을 추가해 대시보드가 빈 판이 아니게 만들었다.
-- Why it mattered: 나중에 결과보고서와 AI 리포트에서 “무엇을 언제 왜 했는가”를 보여주는 핵심 가시화 레이어가 생겼다.
-- Artifacts: [[project-dashboard]], [[.agent/system/ops/PLAN|PLAN]], [[.agent/system/ops/PROGRESS|PROGRESS]], [[.agent/system/memory/daily-memory|daily-memory]], [[2026-04-07]], [[2026-04-08]]
-- AI usage strategy: PM 문서와 증빙 문서를 분리하지 않고 하나의 visible dashboard에 연결해 설명 가능성을 높였다.
-- Evidence value: 프로젝트 관리 흐름, 제출용 진행 시각화, 날짜별 작업 스냅샷
-- Report section hint: `워크플로우`, `AI 활용 과정`, `프로젝트 관리 방식`
-- Token note: 문서 개편 및 연결 작업, 정확 토큰 미집계
-- Follow-up: 주제 확정 이후 제품 태스크와 데모 크리티컬 태스크를 같은 방식으로 누적
+- Goal: 대시보드와 계획/진행/데일리/메모리를 제출용으로 정렬한다
+- What changed: 프로젝트 대시보드가 간트형 진행판으로 재설계되고 연계 문서가 보강되었다
+- Why it mattered: 나중에 AI 리포트와 결과보고서에서 작업 흐름을 설명할 수 있게 되었다
+- Artifacts: [[project-dashboard]] | [[PLAN]] | [[PROGRESS]] | [[2026-04-08]]
+- AI usage strategy: PM 문서와 증빙 문서를 visible dashboard로 연결해 설명 가능성을 높였다
+- Evidence value: 제출용 진행 가시화 레이어
+- Report section hint: 워크플로우 | 프로젝트 관리 방식
+- Token note: exact unavailable estimate
+- Follow-up: 주제 확정 이후 제품 태스크도 같은 방식으로 누적
+
+### S-MTG-002
+
+- DateTime: 2026-04-08 / Offline + Workspace Notes
+- Phase: Ideation, Problem Definition
+- Tool/Client: Human Meeting + Codex-supported documentation
+- Model: GPT-5
+- Goal: 프로젝트 아이디어 방향과 문제 정의 축을 확정하고 역할 분담 및 주간 일정을 맞춘다
+- What changed: 프로젝트 방향을 `paperclip + k-skill + K-교육`을 결합한 `EduPaperclip`으로 확정했다. 동시에 세부 기능보다 먼저 `운영자 관점 시스템`과 `강사/교사 관점 시스템`이라는 문제 정의 축을 고정하고, 역할 분담과 주간 일정 흐름을 정리했다
+- Why it mattered: 이제부터 spec과 구현 논의가 개별 아이디어의 병렬 탐색이 아니라, 하나의 상위 컨셉과 문제 정의 축 아래에서 진행될 수 있다
+- Artifacts: [[2026-04-08_2차-아이디어-문제정의-확정-미팅]] | [[paperclip_교육_아이디어_통합정리]] | [[decision-log]]
+- AI usage strategy: AI는 기존 임시 아이디어와 외부 사례를 한 방향으로 수렴시키고, 회의 내용을 증빙과 전략 note로 구조화하는 역할을 맡았다
+- Evidence value: 아이디어 확정, 문제 정의 축 확정, 역할 분담, 일정 합의
+- Report section hint: 문제 정의 | 아이디어 수렴 과정 | 프로젝트 운영 방식
+- Token note: 오프라인 미팅 기반, 문서화 과정은 exact unavailable estimate
+- Follow-up: 사용자 포커스 결정, `spec.md` 작성, `paperclip` 코드 해체 분석 진행
+
+### S-OPS-014
+
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Workspace Hardening
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 공개 저장소 push 전 secret/privacy 점검 절차를 고정한다
+- What changed: pre-push safety gate와 관련 정책/스크립트가 추가되었다
+- Why it mattered: 공개 저장소 운영에서 보안 점검이 구조보다 우선이라는 기준이 생겼다
+- Artifacts: `pre-push-safety-check.sh` | `.gitignore`
+- AI usage strategy: 정책 문서와 실행 스크립트와 ignore rule을 같이 둬서 누락을 줄였다
+- Evidence value: 보안과 공개 저장소 운영 안전장치
+- Report section hint: 운영 안전장치 | 재현성
+- Token note: exact unavailable estimate
+- Follow-up: 이후 push 전 표준 루틴으로 사용
+
+### S-RES-013
+
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Research Ops
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 리서치 작업 공간을 구축하고 NotebookLM을 통합한다
+- What changed: 리서치 허브/플랜/프롬프트/로그와 통합 브리프가 만들어지고 NotebookLM 노트북이 생성되었다
+- Why it mattered: 흩어진 리서치 결과를 MVP 판단용 합성 계층으로 묶을 수 있게 되었다
+- Artifacts: `research-hub` | `research-plan-eduswarm-v0` | NotebookLM notebook
+- AI usage strategy: 구조화는 Codex가 맡고 상위 비교 질문은 NotebookLM 합성 계층으로 넘겼다
+- Evidence value: 리서치 운영 구조와 합성 도구 검증
+- Report section hint: 문제 정의 근거 | AI 활용 전략
+- Token note: Codex exact unavailable estimate and NotebookLM exact unavailable
+- Follow-up: scorecard 반영과 최종 문제 압축으로 연결
+
+### S-STRAT-010
+
+- DateTime: 2026-04-08 / Desktop App
+- Phase: Strategy
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: Karpathy 스타일 LLM Wiki를 현재 워크스페이스에 삽입한다
+- What changed: `06_LLM위키/` 레이어와 schema/index/log/overview가 생겼다
+- Why it mattered: 리서치 지식을 채팅 로그가 아니라 지속 가능한 wiki layer에 누적할 수 있게 되었다
+- Artifacts: [[karpathy-llm-wiki-adaptation]] | `06_LLM위키/`
+- AI usage strategy: raw/wiki/schema 3층을 분리해 compounding knowledge 구조를 만들었다
+- Evidence value: 지속 지식 시스템 설계
+- Report section hint: AI 활용 전략 | 데이터 흐름 | 재현성
+- Token note: exact unavailable estimate
+- Follow-up: 기존 전략 문서 첫 ingest 실행

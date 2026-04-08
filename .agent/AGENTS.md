@@ -42,7 +42,9 @@ aliases:
 
 **작업 완료 시 반드시:**
 - `.agent/system/ops/PROGRESS.md` 업데이트
-- `04_증빙/01_핵심로그/master-evidence-ledger.md` 반영
+- `04_증빙/01_핵심로그/ai-session-intake.csv` append
+- 필요 시 `04_증빙/01_핵심로그/ai-prompt-intake.csv` append
+- 필요 시 `python3 .agent/system/automation/scripts/dispatch-session-intake.py` 실행
 - 필요 시 `decision-log.md` 또는 `prompt-catalog.md` 승격 여부 확인
 - Evidence Gate가 필요한 경우에만 확인
 
@@ -116,7 +118,7 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
 | Builder | 구현, 코드 생성 | 03_제품 | 03_제품/app/, 03_제품/tests/ |
 | QA | 테스트, 엣지케이스 | 03_제품/app/, 03_제품/tests/ | 04_증빙/01_핵심로그 |
 | Judge | 심사위원 시뮬레이션 | 전체 | 04_증빙/02_분석자료 |
-| Evidence | AI 리포트 재료 원장 관리 | 대화 로그 | 04_증빙/01_핵심로그/master-evidence-ledger.md |
+| Evidence | AI 리포트 재료 원장 관리 | 대화 로그 | 04_증빙/01_핵심로그/ai-session-intake.csv |
 | Submission | 제출물 패키징 | 04_증빙, 03_제품 | 05_제출, README |
 
 ## 핸드오프 계약

@@ -39,6 +39,10 @@ aliases:
 
 - `03_daily/` — 일별 스탠드업 + 증빙 스냅샷
 
+## 04 meetings
+
+- `04_meetings/` — 회의록, 역할 분담, 일정 합의 기록
+
 ## 미디어
 
 - `assets/screenshots/` — 개발 과정 스크린샷

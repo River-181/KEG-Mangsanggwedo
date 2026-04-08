@@ -1,4 +1,20 @@
 date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing_mode,notes
-2026-04-08,Gemini,Gemini Web,,Paid,,0,0,,flat-subscription,"append one row per meaningful session"
-2026-04-08,Perplexity,Perplexity Web,Search+AI,Pro,,0,0,,flat-subscription,"append one row per meaningful session"
-2026-04-08,Grok,Grok Web,,Free,,0,0,,free-tier,"append one row per meaningful session"
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-CODEX-001,1,10000,,flat-subscription,ai-usage-log U-013 기반 백필
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-CODEX-002,2,16000,,flat-subscription,ai-usage-log U-016~017 기반 백필
+2026-04-06,ChatGPT,Web,GPT-5.4,Pro,S-GPT-001,4,50000,,flat-subscription,엑셀 트래커 원형과 가장 가까운 초기 기획 세션
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-001,1,12000,,flat-subscription,session-log 기반
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-002,1,14000,,flat-subscription,DEC-009와 직접 연결
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-003,1,14000,,flat-subscription,DEC-010과 직접 연결
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-004,1,8000,,flat-subscription,DEC-011 맥락
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-005,1,10000,,flat-subscription,DEC-012 맥락
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-006,1,12000,,flat-subscription,DEC-013 맥락
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-007,1,10000,,flat-subscription,DEC-014 맥락
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-008,1,9000,,flat-subscription,이후 이번 턴에서 다시 intake-first로 재설계됨
+2026-04-06,Codex,Desktop App,GPT-5,Plus,S-OPS-009,1,12000,,flat-subscription,master ledger 기반 백필
+2026-04-06,Perplexity,Web,Search+AI,Pro,S-PPLX-001,2,18000,,flat-subscription,출처 품질은 별도 검증 필요
+2026-04-08,Codex,Desktop App,GPT-5.4,Plus,S-EVID-015,2,12000,,flat-subscription,이번 턴에서 기존 CSV를 보강한 세션
+2026-04-08,Codex,Desktop App,GPT-5,Plus,S-OPS-011,1,15000,,flat-subscription,master ledger와 decision log에 이미 반영된 세션
+2026-04-08,Codex,Desktop App,GPT-5,Plus,S-OPS-012,1,14000,,flat-subscription,master ledger 기반 백필
+2026-04-08,Codex,Desktop App,GPT-5.4,Plus,S-OPS-014,1,9000,,flat-subscription,master ledger 기반 백필
+2026-04-08,Codex,Desktop App,GPT-5,Plus,S-RES-013,2,22000,,flat-subscription,혼합 도구 세션이지만 intake에서는 한 row로 기록
+2026-04-08,Codex,Desktop App,GPT-5,Plus,S-STRAT-010,1,12000,,flat-subscription,master ledger 기반 백필
