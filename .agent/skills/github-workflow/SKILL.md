@@ -32,6 +32,7 @@ up: "[[.agent/skills/README]]"
 7. 필요 시 `.agent/skills/workspace-sync/SKILL.md`
 8. issue 운영이면 `.agent/skills/github-issue-ops/SKILL.md`
 9. project 보드 운영이면 `.agent/skills/github-project-ops/SKILL.md`
+10. release 작업이면 `_system/tools/github/release-policy.md`
 
 ## 기본 원칙
 
@@ -39,6 +40,7 @@ up: "[[.agent/skills/README]]"
 - 의미 있는 GitHub 작업은 `04_증빙/01_핵심로그/`에 남긴다.
 - 사용자 승인 없이 destructive action을 하지 않는다.
 - release는 기본값이 `draft` 또는 보류다. 사용자가 명시적으로 원할 때만 final로 간다.
+- release는 배포만이 아니라 `운영 업데이트 기록`으로도 사용한다.
 - GitHub 관련 note, changelog, release note 초안도 Obsidian note 규칙에 맞춰 관리한다.
 
 ## 표준 순서
@@ -109,12 +111,19 @@ release 전 체크:
 3. README, 제출 문서, 증빙 링크가 따라오는가
 4. 사용자 승인 또는 명시적 요청이 있는가
 
+release 판단 기준:
+
+- 구조 개편, 운영 규칙 변경, 도구 체계 확정, 문제정의 동결, MVP 동결, 제출 동결처럼 상태 변화가 분명할 때 release를 만든다.
+- 사소한 수정은 release를 만들지 않는다.
+- 기존 draft release를 업데이트 기록으로 계속 보강할 수 있다.
+
 release 노트 소스:
 
 - `05_제출/`
 - `04_증빙/01_핵심로그/decision-log.md`
 - `04_증빙/01_핵심로그/evolution-log.md`
 - `04_증빙/01_핵심로그/ai-usage-stats.md`
+- `_system/tools/github/release-note-template.md`
 
 ### 6. Project Management
 

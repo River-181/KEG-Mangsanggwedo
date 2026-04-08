@@ -27,6 +27,8 @@ aliases:
 - [[_system/tools/excalidraw/excalidraw-mcp|Excalidraw MCP]]
 - [[_system/tools/figma/figma|Figma MCP]]
 - [[_system/tools/nlm/nlm|NotebookLM CLI]]
+- [[_system/tools/github/release-policy|GitHub Release Policy]]
+- [[_system/tools/github/release-note-template|Release Note Template]]
 - [[_system/team-setup/team-computer-setup-guide|팀 셋업 가이드]]
 
 ## 런타임 데이터
