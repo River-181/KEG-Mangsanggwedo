@@ -12,11 +12,11 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-09 (Day 3)
+> 마지막 업데이트: 2026-04-09 (Day 4)
 
 ---
 
-## 현재 단계: Day 3 — 바텀업 리서치 심화, 첫 사용자 압축 전
+## 현재 단계: Day 4 — 제품 기획 문서 세트 완성 + k-skill 생태계 정의
 
 ## 완료된 작업
 
@@ -149,7 +149,7 @@ aliases:
 
 | AI                    | 환경              | 현재 역할             | 마지막 작업       |
 | --------------------- | --------------- | ----------------- | ------------ |
-| Claude Opus 4.6       | Claude Code CLI | 워크스페이스 구조화, 증빙 설계 | 증빙 시스템 확장 중  |
+| Claude Opus 4.6       | Claude Code CLI | 제품 기획, k-skill 설계 | hagent-os/ 기획 문서 10개 + k-skill 생태계 반영 (Day 4) |
 | GPT-5.4 (ChatGPT Pro) | Web             | 전략 설계, 플레이북 작성    | 플레이북 v0.1 완료 |
 | GPT-5 (Codex)         | Desktop App     | 리서치 운영, NLM 통합, 증빙 정리 | Bottom-Up 딥리서치 + Studio report export 완료 |
 | Perplexity            | Web             | 리서치 수집            | 운영자/교사 페인포인트 리서치 완료 |
@@ -163,11 +163,28 @@ aliases:
 
 ---
 
+### HagentOS 기획 문서 세트 (03_제품/hagent-os/) ✅ → Round 3 완료
+- [x] `README.md` — 프로젝트 진입점, 아키텍처 다이어그램 (k-skill + 실존 MCP 반영)
+- [x] `00_vision/core-bet.md` — 핵심 베팅 + k-skill 스킬 공급 구조에 실존 MCP 13개+ 반영
+- [x] `00_vision/success-metrics.md` — 성공 지표 (스케줄러 + k-skill KPI 추가)
+- [x] `01_strategy/market-and-customer.md` — 시장·고객 분석 (스케줄 pain 추가)
+- [x] `01_strategy/value-and-competition.md` — 가치 제안·경쟁 (실존 MCP moat 강화)
+- [x] `01_strategy/go-to-market.md` — GTM 전략 (Phase 1에 외부 MCP 라이브 연동 추가)
+- [x] `02_product/prd.md` — PRD (전체 맵 ★ 12/14개로 확장, 에이전트별 스킬 장착 맵, 실존 MCP 13개 레퍼런스)
+- [x] `02_product/mvp-scope.md` — MVP 범위 (S8 외부 MCP 라이브 연동 추가, Not Now에 실존 도구 ✅ 표시)
+- [x] `02_product/user-personas.md` — 페르소나
+- [x] `02_product/user-journeys.md` — 사용자 여정 (스케줄러 + 캘린더 동기화)
+- [ ] `03_domain/` — 학원 운영 도메인 지식 (진행 예정)
+- [ ] `04_ai-agents/` — 에이전트 설계 + k-skill 카탈로그 (진행 예정)
+- [ ] `05_workflows/` ~ `10_execution/` — 후속 문서 (진행 예정)
+
+---
+
 ## 미완료 — 다음 에이전트가 이어받을 것
 
-1. **최종 문제 1개 결정** — `decision-sprint`, `scope-board`, `bet-memo`를 새 scorecard 기준으로 갱신
-2. **NotebookLM 비교 질의 1~2회 추가 실행** — `민원/예외 처리 vs 재등록/이탈` 최종 컷 기준만 추가 확인
-3. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
-4. **paperclip 분석 결과를 문제 정의 source에 연결** — `control plane`, `case state`, `plugin/domain pack`, `local deployment` 가설을 문제 정의 입력으로 승격
-5. **제품 정의 초안 작성** — 아직 `03_제품/`은 뼈대 상태
-6. **단일 intake 운영 습관 정착** — 새 세션마다 `ai-session-intake.csv` 먼저 append하고 nightly dispatch 유지
+1. **03_domain/ 문서 작성** — `academy-operations.md`, `finance-and-policy.md`, `communication-model.md`
+2. **04_ai-agents/ 문서 작성** — `agent-design.md` + 역할별 에이전트 상세 + **k-skill 카탈로그 정본**
+3. **05_workflows/ ~ 10_execution/ 문서 작성** — 워크플로우, 정책, 연동, 데이터 모델, UX, 로드맵
+4. **앱 스켈레톤 준비** — Next.js + Supabase 세팅, `03_제품/app/` 초기 구조
+5. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 구현
+6. **단일 intake 운영 습관 정착** — 새 세션마다 `ai-session-intake.csv` 먼저 append

@@ -12,7 +12,7 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 자신의 역할에 해당하는 작업을 찾아 실행한다.
-> 마지막 업데이트: 2026-04-09 (Day 3)
+> 마지막 업데이트: 2026-04-09 (Day 4)
 
 ---
 
@@ -31,48 +31,41 @@ aliases:
 
 ---
 
-## 현재 우선순위 (Day 3)
+## 현재 우선순위 (Day 4)
 
 ### P0 — 지금 당장
-1. **프로젝트 대시보드를 제출용 진행판으로 유지**
-   - 담당: 모든 AI 에이전트
-   - 산출물: `_system/dashboard/project-dashboard.md`, `.agent/system/ops/PLAN.md`, `.agent/system/ops/PROGRESS.md`, `04_증빙/03_daily/*.md`, `.agent/system/memory/*.md`가 같은 날짜 기준으로 정렬
-2. **문제 후보 3개 축소와 첫 사용자 압축**
-   - 담당: Research Agent
-   - 산출물: `02_전략/problem-bank.md`, `02_전략/problem-scorecard.md`, `02_전략/tasks/문제-후보-3개-축소.md`
-3. **최종 문제 1개 + scope 방향 확정**
-   - 담당: PM Agent + Judge Agent + Product Agent
-   - 산출물: `decision-sprint.md`, `scope-board.md`, `02_전략/tasks/최종-문제-1개-확정.md`
-4. **Evidence Gate 운영 유지**
-   - 담당: Evidence Agent
-   - 산출물: `04_증빙/01_핵심로그/ai-session-intake.csv` 누락 없는 기록, nightly dispatch 이후 `master-evidence-ledger.md`와 `external-ai-usage.csv` 재생성, 필요 시 `decision-log.md`와 `prompt-catalog.md` 승격
-5. **paperclip 실제 코드 해체 분석을 문제 정의 입력으로 연결**
-   - 담당: Research Agent + Product Agent
-   - 산출물: `02_전략/paperclip-analysis/*.md`, `00-problem-definition-source.md`, `paperclip-analysis` 기준 첫 구조 가설
+1. **hagent-os/ 기획 문서 세트 완성**
+   - 담당: Product Agent (Claude Opus 4.6)
+   - 상태: 00_vision, 01_strategy, 02_product ✅ 완료 + k-skill 반영 ✅
+   - 남은 것: `03_domain/`, `04_ai-agents/`, `05_workflows/` ~ `10_execution/`
+2. **k-skill 카탈로그 정본 작성**
+   - 담당: Product Agent
+   - 산출물: `04_ai-agents/` 하위에 에이전트 설계 + 스킬 카탈로그
+   - 핵심: 에이전트 × 스킬 매핑, 외부 한국형 도구(korean-law-mcp, HWP 등) 연동 설계
 
 ### P1 — 오늘 안에 맞출 것
-6. **LLM 위키 1차 ingest 시작**
-   - 담당: Research Agent
-   - 산출물: `06_LLM위키/tasks/전략-문서-1차-ingest.md`, `06_LLM위키/` 하위 첫 entity/concept/problem note
-7. **제출용 진행 증빙 정렬**
-   - 담당: Evidence Agent + PM Agent
-   - 산출물: `04_증빙/tasks/제출용-진행-증빙-정렬.md`, `2026-04-09.md`, `daily-memory.md`, `long-term-memory.md`
-8. **실제 task note 운영 시작**
-   - 담당: 모든 AI 에이전트
-   - 산출물: `type/task` note가 대시보드에 최소 3건 이상 노출
-
-### P2 — Day 3 직전 준비
-9. **제품 정의 초안**
-   - 담당: Product Agent
-   - 산출물: `problem-definition.md`, `user-personas.md`, `architecture.md`
-10. **앱 스켈레톤 준비**
+3. **앱 스켈레톤 준비**
    - 담당: Builder Agent
-   - 산출물: `03_제품/app/` 초기 구조, 첫 실행 경로, `demo-critical-path`
+   - 산출물: `03_제품/app/` Next.js + Supabase 초기 구조
+4. **k-skill 프로토타입 구현**
+   - 담당: Builder Agent
+   - 산출물: `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 3~5개
+5. **Evidence Gate 운영 유지**
+   - 담당: Evidence Agent
+   - 산출물: `ai-session-intake.csv`, `master-evidence-ledger.md`
 
-### P3 — Day 2 이후
-10. **demo-script-v0.md** 작성
-11. **README/AI report 입력 루틴 고정**
-12. **제출 패키징 리허설**
+### P2 — Day 5 준비
+6. **오케스트레이터 + Agent 2개 핵심 개발**
+   - 담당: Builder Agent
+   - 산출물: Orchestrator + Complaint Agent + Retention Agent 동작
+7. **승인 대시보드 + k-skill 레지스트리 UI**
+   - 담당: Builder Agent
+   - 산출물: 카드 UI + 스킬 카탈로그 UI
+
+### P3 — Day 6~7
+8. **demo-script-v0.md** 작성
+9. **README/AI report 입력 루틴 고정**
+10. **제출 패키징 리허설**
 
 ---
 

@@ -8,7 +8,7 @@
 
 HagentOS는 한국 교육 기관의 운영자와 교사가 AI 에이전트 팀을 구성하여 비교육 업무를 위임하고, 교육 본업에 집중할 수 있게 하는 오픈소스 플랫폼이다.
 
-챗봇이 아니다. **역할 기반 AI 에이전트들이 조직처럼 움직이며, 사람은 대시보드에서 승인만 한다.**
+챗봇이 아니다. **역할 기반 AI 에이전트들이 조직처럼 움직이며, 사람은 대시보드에서 승인만 한다.** 통합 스케줄러로 강사·상담·차량·법정기한을 한 눈에 보고, 모바일에서도 알림과 승인이 가능하다.
 
 > "If OpenClaw is an employee, Paperclip is the company."
 > — Paperclip
@@ -52,12 +52,29 @@ HagentOS는 이 철학을 한국 교육에 이식한다:
     ├──▶ Intake Agent        (신규 상담 자동화)
     ├──▶ Staff Agent         (강사 관리·성과)
     ├──▶ Compliance Agent    (규제·공문 대응)
+    ├──▶ Finance Agent       (환불·수납·세무)
     └──▶ ...domain packs
+    │
+    │  각 에이전트가 k-skill 장착
+    ▼
+┌──────────────────────────────────────────────────┐
+│  k-skill Registry (한국 교육 특화 스킬)              │
+│  ┌─ 공식: refund-calc │ complaint-clf │ churn-det │
+│  ├─ 외부 MCP (✅ 실존):                             │
+│  │   korean-law-mcp │ kakao-bot-mcp │ aligo-sms  │
+│  │   @portone/mcp │ py-mcp-naver │ gcal-mcp     │
+│  │   weather-mcp │ 공공데이터API │ hwp-processor  │
+│  ├─ k-skill: 카카오톡 │ 미세먼지 │ 블루리본 │ 우편번호 │
+│  └─ 커뮤니티: 학원별 커스텀 규칙, 도메인 팩          │
+└──────────────────────────────────────────────────┘
     ▼
 승인 대시보드  →  원클릭 승인 or 편집
     │
     ▼
 감사 로거  →  모든 AI 처리 내역 자동 저장
+    │
+    ▼
+데이터 자산  →  엑셀 import/export + 운영 리포트
 ```
 
 ---
@@ -81,6 +98,13 @@ hagent-os/
 ├── _research/          ← Paperclip 분석, 경쟁사 리서치
 └── .agent/             ← AI 에이전트 운영 규칙
 ```
+
+### 핵심 문서 바로가기
+
+- [[00_vision/core-bet|Core Bet]] — 핵심 베팅과 차별점
+- [[02_product/prd|PRD]] — 제품 전체 설명서 (단일 진실 원본)
+- [[02_product/mvp-scope|MVP Scope]] — 7일 빌드 우선순위 (정본)
+- [[01_strategy/market-and-customer|시장·고객]] — TAM/SAM/SOM + 고객 세그먼트
 
 ---
 
