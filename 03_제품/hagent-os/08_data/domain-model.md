@@ -15,18 +15,22 @@ up: "[[hagent-os/README]]"
 
 ```
 Organization
-  ├─── Agent[]          (1:N)
-  ├─── Student[]        (1:N)
-  ├─── Instructor[]     (1:N)
-  ├─── Schedule[]       (1:N)
-  ├─── Case[]           (1:N)
-  ├─── Notification[]   (1:N)
-  └─── Template[]       (1:N)
+  ├─── Agent[]               (1:N)
+  ├─── Student[]             (1:N)
+  ├─── Instructor[]          (1:N)
+  ├─── Schedule[]            (1:N)
+  ├─── Case[]                (1:N)
+  ├─── Notification[]        (1:N)
+  ├─── Template[]            (1:N)
+  ├─── OpsGoal[]             (1:N)
+  ├─── OrganizationSecret[]  (1:N)
+  └─── AgentKey[]            (1:N, via Agent)
 
 Agent
   ├─── WakeupRequest[]  (1:N)
   ├─── AgentRun[]       (1:N)
   ├─── Routine[]        (1:N)
+  ├─── AgentKey[]       (1:N)
   └─── reportsTo → Agent (self-ref, nullable)
 
 Student
@@ -48,7 +52,16 @@ Schedule
 
 Case
   ├─── AuditLog[]       (1:N, 불변)
-  └─── approval_status → Approval
+  ├─── CaseComment[]    (1:N)
+  ├─── CaseAttachment[] (1:N)
+  ├─── CaseDocument[]   (1:N)
+  ├─── approval_status → Approval
+  ├─── parentId → Case  (self-ref, 하위 케이스 계층)
+  ├─── goalId → OpsGoal (운영 목표 연결, nullable)
+  └─── checkoutRunId → AgentRun (원자적 체크아웃, nullable)
+
+OpsGoal
+  └─── parentId → OpsGoal (self-ref, 목표 계층)
 
 AgentRun
   └─── WakeupRequest    (N:1)
@@ -83,9 +96,11 @@ AgentRun
 | organizationId | UUID → Organization | |
 | name | TEXT | "민원 담당 에이전트" |
 | slug | TEXT UNIQUE | "complaint-agent" |
+| urlKey | TEXT UNIQUE | URL 슬러그 (`/agents/:urlKey`) |
 | agentType | ENUM | `orchestrator` \| `complaint` \| `retention` \| `scheduler` \| `intake` \| `staff` \| `finance` \| `compliance` \| `notification` \| `analytics` |
 | status | ENUM | `idle` \| `running` \| `pending_approval` \| `paused` \| `error` |
 | reportsTo | UUID → Agent | NULL이면 원장에게 직보 |
+| instructions | TEXT | 시스템 프롬프트 / 에이전트 지시사항 (nullable) |
 | adapterType | TEXT | `"claude"` \| `"openai"` |
 | adapterConfig | JSONB | `{ model, systemPrompt, temperature }` |
 | skills | TEXT[] | 장착된 k-skill slug |
@@ -176,6 +191,46 @@ AgentRun
 | approvalStatus | ENUM | `none` \| `approved` \| `rejected` |
 | approvedBy | UUID | 승인한 사람 or 상위 에이전트 |
 | auditLog | AuditLog[] | 불변 이력 |
+| parentId | UUID → Case | 하위 케이스 계층 (nullable) |
+| goalId | UUID → OpsGoal | 연결된 운영 목표 (nullable) |
+| checkoutRunId | UUID → AgentRun | 원자적 체크아웃 — 중복 작업 방지 (nullable) |
+| priority | ENUM | `urgent` \| `high` \| `medium` \| `low` |
+| labels | TEXT[] | 분류 태그 (예: ["환불", "고학년"]) |
+| blockedBy | UUID[] → Case[] | 차단 관계 (이 케이스를 블로킹하는 케이스 ID 목록) |
+| planDocument | TEXT | 에이전트 작업 계획 (nullable) |
+
+#### CaseComment (케이스 댓글)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| caseId | UUID → Case | |
+| authorId | UUID | 작성자 ID (User 또는 Agent) |
+| authorType | ENUM | `user` \| `agent` |
+| body | TEXT | 댓글 본문 |
+| createdAt | TIMESTAMPTZ | |
+
+#### CaseAttachment (케이스 첨부파일)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| caseId | UUID → Case | |
+| fileName | TEXT | 원본 파일명 |
+| fileUrl | TEXT | 스토리지 URL |
+| mimeType | TEXT | 파일 MIME 타입 |
+| createdAt | TIMESTAMPTZ | |
+
+#### CaseDocument (케이스 문서)
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| caseId | UUID → Case | |
+| title | TEXT | 문서 제목 |
+| content | TEXT | 문서 본문 (마크다운) |
+| revision | INT | 버전 번호 (1부터 시작) |
+| createdAt | TIMESTAMPTZ | |
 
 ---
 
@@ -210,8 +265,69 @@ AgentRun
 | approvedBy | UUID | 승인자 |
 | startedAt | TIMESTAMP | |
 | completedAt | TIMESTAMP | |
+| invocationSource | ENUM | `timer` \| `assignment` \| `on_demand` \| `automation` (실행 트리거 출처) |
+| sessionIdBefore | TEXT | 이전 세션 ID (Claude 세션 재개용, nullable) |
+| sessionIdAfter | TEXT | 실행 후 세션 ID (nullable) |
+| logRef | TEXT | 로그 스토리지 경로 (nullable) |
+| usageJson | JSONB | 토큰 상세 (prompt / completion / total 등, nullable) |
 
 **용도:** 모든 AI 결정의 감사 추적 근거. 학부모 민원 대응 시 원장이 조회.
+
+---
+
+### OpsGoal (운영 목표)
+
+> 기관 미션 → 프로젝트 목표 → 개별 목표의 계층 구조로 운영 목표를 관리. Case.goalId로 연결.
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| organizationId | UUID → Organization | |
+| title | TEXT | 목표 제목 |
+| description | TEXT | 목표 상세 설명 (nullable) |
+| status | ENUM | `active` \| `completed` \| `cancelled` |
+| parentId | UUID → OpsGoal | 상위 목표 (nullable, self-ref) |
+| targetDate | DATE | 목표 달성 예정일 (nullable) |
+| createdAt | TIMESTAMPTZ | |
+| updatedAt | TIMESTAMPTZ | |
+
+**관계:** 계층 구조 (기관 미션 → 프로젝트 목표 → 개별 목표). `Case.goalId`로 케이스와 연결.
+
+---
+
+### OrganizationSecret (기관 시크릿 / 환경변수)
+
+> 에이전트가 사용하는 API 키 및 환경변수를 암호화하여 저장.
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| organizationId | UUID → Organization | |
+| key | TEXT | 변수명 (예: `CLAUDE_API_KEY`) |
+| value | TEXT | 암호화 저장된 값 |
+| description | TEXT | 용도 설명 (nullable) |
+| createdAt | TIMESTAMPTZ | |
+| updatedAt | TIMESTAMPTZ | |
+
+**보안:** `value`는 AES-256 암호화. 평문은 조회 불가, 에이전트 런타임에서만 복호화.
+
+---
+
+### AgentKey (에이전트 JWT 인증 키)
+
+> 에이전트가 외부 서비스나 API에 인증할 때 사용하는 키 관리.
+
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID PK | |
+| agentId | UUID → Agent | |
+| organizationId | UUID → Organization | |
+| keyHash | TEXT | API 키 해시 (원본은 생성 시 1회만 노출) |
+| label | TEXT | 키 식별 레이블 (예: "Claude Code local") |
+| lastUsedAt | TIMESTAMPTZ | 마지막 사용 시각 (nullable) |
+| createdAt | TIMESTAMPTZ | |
+
+**보안:** 원본 키는 생성 즉시 단 1회만 응답. 이후에는 `keyHash`만 저장.
 
 ---
 

@@ -25,6 +25,10 @@ up: "[[hagent-os/README]]"
 - 하단 탭바 5개 (고정)
 - 사이드바: 스와이프로 열리는 오버레이
 
+**CommandPalette**: Cmd+K 글로벌 검색/네비게이션 오버레이 (모든 화면에서 접근 가능)
+- 케이스 검색, 에이전트 이동, 페이지 이동
+- 키보드: ↑↓ 탐색, Enter 이동, Esc 닫기
+
 ---
 
 ## 사이드바 구조
@@ -57,13 +61,13 @@ up: "[[hagent-os/README]]"
 |--------|--------|:---:|------|
 | `/[org]/dashboard` | 대시보드 | ✅ | 오늘 현황, 에이전트 상태, 승인 대기 요약 |
 | `/[org]/inbox` | 알림함 | ✅ | 에이전트 결과물 알림, 실패 알림 |
-| `/[org]/cases` | 케이스 목록 | ✅ | 민원·이탈·스케줄 변경 요청 등 전체 케이스 |
+| `/[org]/cases` | 케이스 목록 | ✅ | 민원·이탈·스케줄 변경 요청 등 전체 케이스 — 상태별 그룹 리스트 뷰 + **칸반 뷰 전환** (IN PROGRESS / TODO / BLOCKED 컬럼) |
 | `/[org]/cases/:id` | 케이스 상세 | ✅ | 3존 상세 뷰 — 본문+실행결과+댓글 / 속성 패널 |
 | `/[org]/approvals` | 승인 큐 | ✅ | 대기 중 / 전체 승인 목록 |
 | `/[org]/approvals/:id` | 승인 상세 | ✅ | 승인 / 편집 후 승인 / 반려 |
 | `/[org]/schedule` | 스케줄 캘린더 | ✅ | 7종 스케줄 통합 뷰 |
 | `/[org]/agents` | 에이전트 팀 | ✅ | 전체·활성·일시중지·오류 필터 |
-| `/[org]/agents/:id` | 에이전트 상세 | ✅ | 설정, 실행 이력, 성과 차트 |
+| `/[org]/agents/:id` | 에이전트 상세 | ✅ | 에이전트 상세 — 6탭: **대시보드** / **지시사항(시스템 프롬프트)** / **스킬** / **설정(어댑터)** / **실행 이력** / **예산** |
 | `/[org]/agents/new` | 에이전트 추가 | 🔲 | 에이전트 신규 생성 |
 | `/[org]/skills` | k-skill 레지스트리 | Should | 설치 가능한 스킬 카탈로그 |
 | `/[org]/skills/:slug` | 스킬 상세 | Should | 스킬 설명, 장착된 에이전트 목록 |
@@ -145,3 +149,20 @@ up: "[[hagent-os/README]]"
 ```
 k-skill 레지스트리 → 스킬 상세 → 에이전트에 장착
 ```
+
+---
+
+## 실시간 이벤트 (WebSocket)
+
+HagentOS는 WebSocket으로 실시간 상태를 스트리밍한다 (Paperclip `LiveEvent` 패턴).
+
+| 이벤트 | 트리거 | UI 반응 |
+|--------|--------|---------|
+| `agent.run.started` | 에이전트 실행 시작 | 사이드바 live dot 표시 |
+| `agent.run.completed` | 실행 완료 | 대시보드 갱신, 토스트 알림 |
+| `case.created` | 케이스 생성 | 목록 즉시 업데이트 |
+| `approval.created` | 승인 요청 생성 | 알림함 배지 증가 |
+| `budget.incident` | 예산 초과 | 빨간 배너 표시 |
+
+연결: `ws(s)://{host}/api/organizations/{orgId}/events/ws`
+재연결: 지수 백오프 (max 15s)
