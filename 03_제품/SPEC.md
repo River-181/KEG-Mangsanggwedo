@@ -1,6 +1,6 @@
 ---
 tags: [area/product, type/spec, status/active]
-date: 2026-04-09
+date: 2026-04-10
 up: "[[03_제품/hagent-os/README]]"
 aliases: [spec, 개발스펙]
 ---
@@ -27,24 +27,26 @@ aliases: [spec, 개발스펙]
 
 ---
 
-## 기술 스택
+## 기술 스택 (정본 — 하위 문서와 충돌 시 이 테이블이 우선)
 
-| 레이어       | 기술                                | 비고                         |
-| --------- | --------------------------------- | -------------------------- |
-| Frontend  | Next.js 14 + React + Tailwind CSS | 4존 레이아웃                    |
-| Backend   | Node.js + TypeScript              | 에이전트 런타임 포함                |
-| AI        | Claude API, Codex, etc            | 모든 에이전트 공용                 |
-| DB        | PostgreSQL + Drizzle ORM          | Docker(로컬) / Neon.tech(배포) |
-| Auth      | next-auth JWT                     | MVP: `local_trusted` 모드    |
-| Scheduler | node-cron                         | 07:00 heartbeat            |
-| Deploy    | Vercel + Neon.tech                | 라이브 URL 필수                 |
+| 레이어       | 기술                                          | 비고                                      |
+| --------- | ------------------------------------------- | --------------------------------------- |
+| Frontend  | React 19 + Vite + React Router v7 + Tailwind CSS | 4존 레이아웃, SPA                            |
+| Backend   | Express v5 + TypeScript (ESM)               | 에이전트 런타임 포함                              |
+| AI        | Claude API (Sonnet 4.6)                     | Orchestrator + 전문 에이전트 모두 LLM            |
+| DB        | PostgreSQL + Drizzle ORM                    | embedded-postgres(로컬) / 외부 PG URL(클라우드) |
+| Auth      | local_trusted (인증 없음)                       | MVP: 단일 원장, 세션 고정                       |
+| Scheduler | node-cron                                   | 07:00 heartbeat                         |
+| Deploy    | GitHub 오픈소스 설치형 + 별도 랜딩 페이지                 | Paperclip 배포 모델                          |
+
+> **스택 변경 공지 (2026-04-10)**: 기획 문서(`hagent-os/`)에 Next.js·Neon·Vercel 참조가 남아있을 수 있다. **이 SPEC이 정본**이다. Paperclip 동일 패턴으로 확정.
 
 ---
 
 ## 핵심 아키텍처
 
 ```
-원장 → Board (Next.js UI) → API Router → Orchestrator Agent
+원장 → Board (React UI) → Express API → Orchestrator Agent
                                               ↓
                               ┌────────────────┼────────────────┐
                          Complaint Agent   Retention Agent   Scheduler Agent
@@ -60,7 +62,13 @@ aliases: [spec, 개발스펙]
                          PostgreSQL (Drizzle ORM)
 ```
 
-**에이전트 실행 흐름**: Case 생성 → WakeupRequest(dedup) → Orchestrator 계획 → assigneeAgentId 디스패치 → k-skill 컨텍스트 주입 → LLM 호출 → Level 0-4 분기 → 승인/자동완결
+**핵심 인터랙션 패턴 (Paperclip 동일)**:
+1. 원장이 **지시 입력 바**에 자연어 지시 → Orchestrator가 계획 수립 → 에이전트 병렬 디스패치
+2. 케이스 상세에서 **라이브 에이전트 실행** 확인 ("Waiting for run output..." + Stop 버튼)
+3. 결과물 → **승인 큐** 카드로 도착 → 원장 원클릭 승인
+4. 모든 행동 → **Activity 감사 로그** 타임라인 기록
+
+**에이전트 실행 흐름**: 지시 입력 or Case 생성 → WakeupRequest(dedup) → Orchestrator 계획 → assigneeAgentId 디스패치 → k-skill 컨텍스트 주입 → LLM 호출 → Level 0-4 분기 → 승인/자동완결
 
 **승인 레벨**: 행동(Action) 단위로 결정. 같은 에이전트도 케이스마다 다른 레벨.
 - Level 0: 자동 완결 (분류, 기록, 감지)
@@ -98,21 +106,21 @@ Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 ```
 
 **디자인 북극성**: 토스 앱 UI — `--teal-500: #0ea5b0`(포인트), `--bg-base: #ffffff`, 네이비 그림자
-**디자인 토큰**: [[design]]
+**디자인 토큰**: [[DESIGN]]
 
 **MVP Must 화면**: 대시보드, 케이스 목록, 케이스 상세, 승인 큐, 에이전트 상세
 전체 IA(22 라우트): [[diagrams/05_ia-screen-map]]
 
 ---
 
-## MVP 스프린트 요약 (Phase 기반, 날짜 후불)
+## MVP 스프린트 요약
 
-| Phase | 핵심 목표 | 담당 |
-|-------|----------|------|
-| **1** | 인프라 + 스켈레톤 (Next.js, Docker PG, Drizzle 5테이블, mock data) | 승+용 |
-| **2** | Complaint Agent 단일 흐름 완성 (생성→실행→초안→승인) | 승(에이전트) 용(API/UI) |
-| **3** | 승인 대시보드 UI + Retention Agent + heartbeat | 용(UI) 승(에이전트) |
-| **4** | 배포(Vercel+Neon) + 데모 테스트 + 제출 | 공동 |
+| Phase | Day | 핵심 목표 | 담당 |
+|-------|-----|----------|------|
+| **1** | D5 (4/10) | 인프라 + 스켈레톤 (Vite+React, Express, embedded-postgres, Drizzle 5테이블, mock data) | 승+용 |
+| **2** | D6 (4/11) | Complaint Agent 단일 흐름 완성 (생성→실행→초안→승인) | 승(에이전트) 용(API/UI) |
+| **3** | D7 (4/12) | 승인 대시보드 UI + Retention Agent + heartbeat | 용(UI) 승(에이전트) |
+| **4** | D8 (4/13) | GitHub 정리 + 랜딩 페이지 + 데모 테스트 + 제출 | 공동 |
 
 상세 계획: [[PLAN]]
 진행 상황: [[PROGRESS]]
@@ -161,7 +169,7 @@ Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 | System Context | `hagent-os/diagrams/00_system-context.md` | C4 Level 1 |
 | Demo Flow | `hagent-os/diagrams/01_demo-user-flow.md` | 2분 데모 흐름 |
 | Orchestrator Sequence | `hagent-os/diagrams/02_orchestrator-sequence.md` | 에이전트 실행 시퀀스 |
-| ERD | `hagent-os/diagrams/03_erd.md` | 핵심 12개 테이블 |
+| ERD | `hagent-os/diagrams/03_erd.md` | 핵심 16개 테이블 |
 | Approval State | `hagent-os/diagrams/04_approval-state.md` | 승인 상태 머신 |
 | IA/Screen Map | `hagent-os/diagrams/05_ia-screen-map.md` | 22 라우트 맵 |
 
