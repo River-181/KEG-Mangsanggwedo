@@ -92,7 +92,7 @@ aliases: [spec, 개발스펙]
 ┌──────┬──────────┬───────────────────────┬─────────────┐
 │ Z0   │ Z1       │ Z2 (Main)             │ Z3          │
 │ 72px │ 240px    │ flex-1                │ 320px       │
-│ 레일 │ 사이드바  │ 메인 콘텐츠             │ 속성 패널    │
+│ 레일  │ 사이드바   │ 메인 콘텐츠              │ 속성 패널     │
 └──────┴──────────┴───────────────────────┴─────────────┘
 Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 ```
@@ -105,17 +105,18 @@ Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 
 ---
 
-## MVP 스프린트 요약 (D5-D8)
+## MVP 스프린트 요약 (Phase 기반, 날짜 후불)
 
-| Day | 핵심 목표 | 담당 |
-|-----|----------|------|
-| D5 | 인프라 + 스켈레톤 (Next.js, Docker PG, Drizzle 5테이블, mock data) | 승+용 |
-| D6 | Complaint Agent 단일 흐름 완성 (생성→실행→초안→승인) | 승(에이전트) 용(API/UI) |
-| D7 | 승인 대시보드 UI + Retention Agent + heartbeat | 용(UI) 승(에이전트) |
-| D8 | Vercel+Neon 배포 + 데모 테스트 + 제출 | 공동 |
+| Phase | 핵심 목표 | 담당 |
+|-------|----------|------|
+| **1** | 인프라 + 스켈레톤 (Next.js, Docker PG, Drizzle 5테이블, mock data) | 승+용 |
+| **2** | Complaint Agent 단일 흐름 완성 (생성→실행→초안→승인) | 승(에이전트) 용(API/UI) |
+| **3** | 승인 대시보드 UI + Retention Agent + heartbeat | 용(UI) 승(에이전트) |
+| **4** | 배포(Vercel+Neon) + 데모 테스트 + 제출 | 공동 |
 
-상세 로드맵: [[10_execution/roadmap]]
-미해결 블로커: [[10_execution/open-questions]]
+상세 계획: [[PLAN]]
+진행 상황: [[PROGRESS]]
+미해결 블로커: [[hagent-os/10_execution/open-questions]]
 
 ---
 

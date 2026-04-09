@@ -7,8 +7,9 @@ aliases: [dev-progress, 개발진행]
 # PROGRESS.md — HagentOS 개발 진행 상황
 
 > **단일 진실 원본**: 모든 AI 에이전트는 작업 전후에 이 파일을 업데이트한다.
-> 작업 시작: 해당 항목에 `🔵 진행 중 (에이전트명)` 표시
+> 작업 시작: `🔵 진행 중 (에이전트명)` 표시
 > 작업 완료: `✅` 체크 + 완료 시각
+> 날짜는 작업이 끝난 후 기록한다 (후불).
 
 ---
 
@@ -16,15 +17,15 @@ aliases: [dev-progress, 개발진행]
 
 | 항목 | 상태 |
 |------|------|
-| Phase | D4 기획 완료 → **D5 앱 착수 준비** |
+| Phase | 기획 완료 → **Phase 1 착수 준비** |
 | 마지막 릴리스 | v0.1.4-verified (기획 문서 완성) |
-| 마지막 커밋 | `docs: add HagentOS modeling diagrams (6종)` |
-| 다음 목표 | D5: 인프라 + 스켈레톤 |
-| 블로커 | 없음 (open-questions 참고) |
+| 다음 목표 | Phase 1: 인프라 + 스켈레톤 |
+| 블로커 | 없음 |
+| 마감 | 2026-04-13 |
 
 ---
 
-## D5 (4/10): 인프라 + 스켈레톤
+## Phase 1: 인프라 + 스켈레톤
 
 ### 프로젝트 초기화
 - [ ] Next.js 14 프로젝트 생성 (`03_제품/app/`)
@@ -62,14 +63,16 @@ aliases: [dev-progress, 개발진행]
 - [ ] Complaint Agent 스텁 (`lib/agents/complaint.ts`)
 - [ ] Mock 데이터 시드 스크립트 (`scripts/seed.ts`)
 
-### D5 체크포인트
+### Phase 1 체크포인트
 - [ ] `pnpm dev` → 4존 레이아웃 렌더링
 - [ ] DB 연결 + 테이블 생성 확인
 - [ ] Mock 데이터 조회 API 동작
 
+**완료일**: —
+
 ---
 
-## D6 (4/11): 민원 단일 흐름
+## Phase 2: 민원 단일 흐름
 
 ### 에이전트 파이프라인
 - [ ] Orchestrator: Case → 계획 → assigneeAgentId
@@ -78,10 +81,10 @@ aliases: [dev-progress, 개발진행]
 - [ ] 승인 레벨 분기 (Level 0/1/2)
 
 ### API 라우트
-- [ ] POST /api/cases (케이스 생성)
-- [ ] GET /api/cases (목록)
-- [ ] GET /api/cases/[id] (상세)
-- [ ] POST /api/approvals/[id]/decide (승인/반려)
+- [ ] POST /api/cases
+- [ ] GET /api/cases
+- [ ] GET /api/cases/[id]
+- [ ] POST /api/approvals/[id]/decide
 
 ### 케이스 UI
 - [ ] 케이스 목록 (`/cases`) — 상태별 그룹
@@ -89,12 +92,14 @@ aliases: [dev-progress, 개발진행]
 - [ ] 케이스 생성 폼
 - [ ] 에이전트 실행 결과 표시
 
-### D6 체크포인트
+### Phase 2 체크포인트
 - [ ] **민원 생성 → 에이전트 실행 → 초안 → 승인 → 완결** 전체 흐름
+
+**완료일**: —
 
 ---
 
-## D7 (4/12): 승인 대시보드 + Retention
+## Phase 3: 승인 대시보드 + Retention
 
 ### 승인 UI
 - [ ] 승인 큐 (`/approvals`) — 카드 + 원클릭
@@ -111,22 +116,20 @@ aliases: [dev-progress, 개발진행]
 - [ ] node-cron 07:00 heartbeat
 - [ ] Orchestrator → 에이전트 병렬 깨움
 
-### D7 체크포인트
+### Phase 3 체크포인트
 - [ ] 데모 시나리오 전체 통과
 - [ ] 모바일 승인 카드 동작
 
+**완료일**: —
+
 ---
 
-## D8 (4/13): 배포 + 제출
+## Phase 4: 배포 + 제출
 
 ### 배포
 - [ ] Vercel 배포
 - [ ] Neon.tech PostgreSQL
 - [ ] 라이브 URL 동작
-
-### 추가 (시간 남으면)
-- [ ] k-skill 레지스트리 UI
-- [ ] 에이전트 조직도
 
 ### 제출물
 - [ ] GitHub public URL
@@ -135,16 +138,28 @@ aliases: [dev-progress, 개발진행]
 - [ ] 개인정보 동의서
 - [ ] 참가 각서
 
+**완료일**: —
+
 ---
 
-## 완료된 작업 (기획 Phase)
+## Bonus
 
-- ✅ v0.1.0: 기획 문서 세트 57개 파일 작성
-- ✅ v0.1.1: Codex 3라운드 리뷰 → CRITICAL 6 + HIGH 9 + MEDIUM 7 수정
-- ✅ v0.1.2: 디자인 시스템 (Toss 토큰) + Paperclip UI 분석
-- ✅ v0.1.3: k-edu-zero-human.md 마스터 컨텍스트 브리프
-- ✅ v0.1.4: Opus + Codex 최종 검증 → 도메인 모델/승인 레벨/스프린트 수정
-- ✅ 모델링 다이어그램 6종 (ERD, 시퀀스, 상태머신, 시스템 컨텍스트, 데모 흐름, IA 맵)
+- [ ] k-skill 레지스트리 UI
+- [ ] 에이전트 조직도
+- [ ] 감사 로그 뷰
+- [ ] 민원 유형별 통계
+
+---
+
+## 완료된 작업
+
+- ✅ 기획 문서 세트 57개 파일 (v0.1.0)
+- ✅ Codex 3라운드 리뷰 + 수정 (v0.1.1)
+- ✅ 디자인 시스템 + Paperclip UI 분석 (v0.1.2)
+- ✅ 마스터 컨텍스트 브리프 (v0.1.3)
+- ✅ Opus + Codex 최종 검증 (v0.1.4)
+- ✅ 모델링 다이어그램 6종
+- ✅ SPEC.md + PLAN.md + PROGRESS.md 생성
 
 ---
 
@@ -152,4 +167,4 @@ aliases: [dev-progress, 개발진행]
 
 | 시각 | 에이전트 | 작업 | 결과 |
 |------|---------|------|------|
-| — | — | D5 시작 대기 | — |
+| — | — | Phase 1 시작 대기 | — |
