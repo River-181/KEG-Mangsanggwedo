@@ -10,6 +10,19 @@ up: "[[hagent-os/README]]"
 
 ---
 
+## 다이어그램 (빠른 참조)
+
+| 다이어그램 | 내용 |
+|-----------|------|
+| [[diagrams/00_system-context]] | 시스템 컨텍스트 — 사용자·시스템·외부 의존성 (C4 Level 1) |
+| [[diagrams/01_demo-user-flow]] | 2분 데모 사용자 흐름 — 민원 접수 → 승인 → 완결 |
+| [[diagrams/02_orchestrator-sequence]] | 에이전트 실행 시퀀스 — Trigger → Dispatch → Level 분기 |
+| [[diagrams/03_erd]] | 핵심 ERD — 12개 테이블, Drizzle ORM 기준 |
+| [[diagrams/04_approval-state]] | 승인 상태 머신 — Case 상태 + Level 0-4 흐름 |
+| [[diagrams/05_ia-screen-map]] | 화면 구조 맵 — 22개 라우트 + 4존 레이아웃 |
+
+---
+
 ## 개발 시작 전 필독
 
 | 문서 | 내용 |
