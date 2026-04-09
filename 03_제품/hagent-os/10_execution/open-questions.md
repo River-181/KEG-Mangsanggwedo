@@ -16,7 +16,7 @@ up: "[[hagent-os/README]]"
 ### 🚨 member/auth 모델 — MVP 단일 계정 확정
 **상태**: ✅ MVP 결정 완료
 - **결정**: MVP는 원장 단일 계정. 실장/강사 멀티 계정은 Phase 1.
-- **MVP 구현**: next-auth (JWT) 단일 사용자, academy_id 기반 데이터 격리
+- **MVP 구현**: local_trusted 모드 (인증 없이 시작), academy_id 기반 데이터 격리
 - **영향**: 온보딩 단순화, RLS 불필요 (앱 레벨 필터), D5 스키마 설계 반영 필수
 
 ### 🚨 Approval-Case-AgentRun 연결 스키마
@@ -50,17 +50,17 @@ up: "[[hagent-os/README]]"
 - 영향: 수익화 모델, 초기 가격 책정
 
 ### 🚨 DB 로컬 개발 환경 설정
-**상태**: ✅ PostgreSQL + Drizzle ORM + Neon.tech 확정
-- **로컬 개발**: Docker Compose로 PostgreSQL 5432 포트 노출
-- **연결**: `.env`에 `DATABASE_URL=postgresql://user:password@localhost:5432/hagent_os_dev` 설정
+**상태**: ✅ PostgreSQL + Drizzle ORM + embedded-postgres 확정
+- **로컬 개발**: embedded-postgres로 자동 시작 (별도 Docker 불필요)
+- **연결**: `.env`에 `DATABASE_URL=postgresql://...` 설정 (embedded-postgres가 자동 생성)
 - **스키마 초기화**: `npm run db:migrate` (Drizzle Kit 마이그레이션)
 - **Mock 데이터**: `npm run db:seed` 스크립트로 투입
-- **배포**: Neon.tech PostgreSQL (권장) 또는 AWS RDS, Railway 등
+- **배포**: 외부 PostgreSQL URL 지정 (Neon, AWS RDS, Railway 등 유연)
 
 ### 데이터 격리 및 권한 관리
 **상태**: ⏳ MVP는 애플리케이션 레벨 (기본)
 - **로컬 개발**: RLS (Row Level Security) 불필요
-- **프로덕션**: `academy_id` 기반 쿼리 필터 (next-auth 세션 정보 사용)
+- **프로덕션**: `academy_id` 기반 쿼리 필터 (세션 정보 사용)
 - **결정**: MVP에서는 JWT 기반 세션 검증으로 충분, RLS는 Phase 1
 
 ### Google Calendar 단방향 동기화 MVP

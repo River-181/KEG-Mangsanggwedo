@@ -1,3 +1,15 @@
+---
+tags:
+  - area/product
+  - type/index
+  - status/active
+date: 2026-04-09
+up: "[[_03_제품_MOC]]"
+aliases:
+  - HagentOS
+  - hagent-os
+---
+
 # HagentOS
 
 > **Open-source AI agent orchestration platform for Korean education**
@@ -60,12 +72,12 @@ HagentOS는 이 철학을 한국 교육에 이식한다:
 ┌──────────────────────────────────────────────────┐
 │  k-skill Registry (한국 교육 특화 스킬)              │
 │  ┌─ 공식: refund-calc │ complaint-clf │ churn-det │
-│  ├─ 외부 MCP (✅ 실존):                             │
+│  ├─ 외부 MCP (✅ 실존):                            │
 │  │   korean-law-mcp │ kakao-bot-mcp │ aligo-sms  │
-│  │   @portone/mcp │ py-mcp-naver │ gcal-mcp     │
-│  │   weather-mcp │ 공공데이터API │ hwp-processor  │
-│  ├─ k-skill: 카카오톡 │ 미세먼지 │ 블루리본 │ 우편번호 │
-│  └─ 커뮤니티: 학원별 커스텀 규칙, 도메인 팩          │
+│  │   @portone/mcp │ py-mcp-naver │ gcal-mcp      │
+│  │   weather-mcp │ 공공데이터API │ hwp-processor    │
+│  ├─ k-skill: 카카오톡 │ 미세먼지 │ 블루리본 │ 우편번호    │
+│  └─ 커뮤니티: 학원별 커스텀 규칙, 도메인 팩               │
 └──────────────────────────────────────────────────┘
     ▼
 승인 대시보드  →  원클릭 승인 or 편집
@@ -116,9 +128,10 @@ hagent-os/
 | AI | Claude API (Sonnet 4.6) | 오케스트레이터 + 전문 에이전트 |
 | DB | PostgreSQL + Drizzle ORM | Docker (로컬) / 클라우드 PostgreSQL 호환 |
 | Migrations | Drizzle Kit | TypeScript 기반 버저닝 |
-| UI | Next.js (React) + Tailwind | 승인 대시보드 |
+| UI | React 19 + Vite + Tailwind | 승인 대시보드 (SPA) |
+| Router | React Router v7 | 클라이언트 라우팅 |
 | Scheduler | node-cron | heartbeat 자동 실행 |
-| Auth | next-auth (JWT) | 오픈소스 표준, Supabase 독립 |
+| Auth | local_trusted (MVP) | 단일 원장, 인증 없이 시작 |
 
 ---
 

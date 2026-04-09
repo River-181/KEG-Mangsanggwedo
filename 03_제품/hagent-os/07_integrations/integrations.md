@@ -34,7 +34,7 @@ up: "[[hagent-os/README]]"
 
 | 항목 | 내용 |
 |------|------|
-| 인증 | OAuth 2.0 (Supabase Auth 연동, refresh token 저장) |
+| 인증 | OAuth 2.0 (refresh token 저장) |
 | 연동 방향 | HagentOS → GCal (생성·수정·삭제), GCal → HagentOS (webhook push) |
 | 사용 MCP | `nspady/google-calendar-mcp` (TypeScript, 가장 활성 유지) |
 | 환경변수 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `GOOGLE_CALENDAR_WEBHOOK_SECRET`, `GOOGLE_CALENDAR_PUSH_CHANNEL_ID`, `GOOGLE_CALENDAR_CHANNEL_EXPIRY`, `GOOGLE_REFRESH_TOKEN` |
@@ -116,7 +116,7 @@ npx -y kimcp
 
 전용 MCP 서버 없음. 아래 두 경로 중 선택:
 
-1. **data.go.kr REST API** — 한국교육과정평가원 수능 기본정보 오픈 API 직접 호출 → Supabase Edge Function으로 래핑
+1. **data.go.kr REST API** — 한국교육과정평가원 수능 기본정보 오픈 API 직접 호출 → Express API로 래핑
 2. **정적 캘린더 시드** — 연초 1회 KICE 공식 일정(suneung.re.kr) 파싱 → `exam_schedule` 테이블에 적재, GCal로 자동 등록
 
 권장: 옵션 2 (연간 시험 일정은 고정적 → API 호출 비용 불필요).
@@ -161,11 +161,11 @@ TMAP_APP_KEY=
 # 법령 검색
 OPEN_LAW_ID=
 
-# Claude API / Supabase
+# Claude API
 ANTHROPIC_API_KEY=
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/hagent_os_dev
 ```
 
 > 런타임 MCP 등록 전체 목록: `[[.agent/system/registry/mcp-registry]]`

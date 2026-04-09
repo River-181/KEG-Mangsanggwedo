@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # MVP Scope
 
 > 7일 대회 MVP: Must / Should / Could / Not Now
@@ -97,7 +106,7 @@
 | 4/7(월) | D2 | 리서치 + 아이디어 확정 | 회의록, 리서치 결과 |
 | 4/8(화) | D3 | 문제 정의 + 전략 문서 | decision-sprint, bet-memo |
 | **4/9(수)** | **D4** | **기획 문서 완성 + spec** | **hagent-os/ 문서 세트** |
-| **4/10(목)** | **D5** | **boilerplate + 핵심 개발 시작** | Next.js + Supabase 세팅 |
+| **4/10(목)** | **D5** | **boilerplate + 핵심 개발 시작** | React+Vite+Express+embedded-postgres |
 | **4/11(금)** | **D6** | **핵심 개발** | 오케스트레이터 + Agent 2개 |
 | **4/12(토)** | **D7** | **핵심 개발 2 + 테스트** | 승인 대시보드 + 통합 |
 | 4/13(일) | D8 | 테스트 + 배포 + 제출 | 최종 제출물 |

@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # Product Requirements Document (PRD)
 
 > HagentOS — 제품 전체 설명서 (단일 진실 원본)
@@ -348,7 +357,7 @@ HagentOS 스킬 레지스트리 UI
 
 ```
 ┌──────────────────────────────────────────────────┐
-│  UI Layer (Next.js) — 반응형 (데스크톱 + 모바일)       │
+│  UI Layer (React 19 + Vite) — 반응형 (데스크톱 + 모바일) │
 │  ┌──────────┐ ┌─────────┐ ┌────────┐ ┌─────────┐ │
 │  │Onboarding│ │Dashboard│ │Approval│ │Schedule │ │
 │  │          │ │+브리핑    │ │Cards   │ │Calendar │ │
@@ -391,13 +400,14 @@ HagentOS 스킬 레지스트리 UI
 
 | Layer     | Tech                       | Rationale                 |
 | --------- | -------------------------- | ------------------------- |
-| Frontend  | Next.js (React) + Tailwind | 승인 대시보드, 온보딩 UI           |
-| Backend   | Node.js + TypeScript       | Paperclip 동일 스택, 에이전트 런타임 |
+| Frontend  | React 19 + Vite + Tailwind | 승인 대시보드, 온보딩 UI (SPA)      |
+| Router    | React Router v7            | 클라이언트 라우팅                   |
+| Backend   | Express v5 (TypeScript ESM)| Paperclip 동일 스택, 에이전트 런타임 |
 | AI        | Claude API (Sonnet 4.6)    | 오케스트레이터 + 전문 에이전트         |
-| DB        | PostgreSQL + Drizzle ORM   | Docker (로컬) / 클라우드 PostgreSQL 호환. 기관 데이터, 에이전트 상태, 감사 로그 |
+| DB        | PostgreSQL + Drizzle ORM   | embedded-postgres (로컬) / 외부 PG URL (배포) |
 | Migrations| Drizzle Kit                | TypeScript 마이그레이션, 스키마 버저닝 |
 | Scheduler | node-cron                  | heartbeat 자동 실행           |
-| Auth      | next-auth (JWT)            | 기관별 접근 제어, 오픈소스 표준       |
+| Auth      | local_trusted (MVP)        | 단일 원장, 인증 없이 시작           |
 
 ---
 
@@ -508,7 +518,7 @@ Organization (기관)
 | 항목            | 내용                                       |
 | ------------- | ---------------------------------------- |
 | **대상**        | 원장은 컴퓨터 앞에 항상 있지 않다. 휴대폰이 주 기기           |
-| **구현**        | Next.js 반응형 — 데스크톱과 모바일 동일 기능            |
+| **구현**        | React 19 + Vite 반응형 — 데스크톱과 모바일 동일 기능    |
 | **핵심 모바일 기능** | 알림 확인, 승인/반려, 스케줄 확인, 민원 초안 검토           |
 | **설치**        | PWA (Progressive Web App) — 홈 화면에 아이콘 추가 |
 | **사용 가이드**    | 설치 및 사용 스킬을 제공하여 원장이 즉시 시작 가능            |

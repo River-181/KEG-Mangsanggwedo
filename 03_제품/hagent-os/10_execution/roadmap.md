@@ -7,7 +7,7 @@ up: "[[hagent-os/README]]"
 
 ## 역할 분담
 - **이승보(승)**: AI 에이전트/오케스트레이터 설계 및 구현, Claude API 연결, 대회 전략
-- **김주용(용)**: UI/프론트엔드, 인프라/배포, Supabase 스키마, 유저 플로우
+- **김주용(용)**: UI/프론트엔드, 인프라/배포, DB 스키마, 유저 플로우
 - **AI 에이전트**: 코드 생성, 문서화, 통합 테스트 보조
 
 ---
@@ -20,10 +20,10 @@ Must-have 기능만 구현. 평가 기준 점수 최대화.
 ### Day별 목표
 
 **D5 (4/10 목): 인프라 + 단일 흐름 스켈레톤**
-- [ ] Next.js + PostgreSQL(Docker) + Drizzle ORM 초기화 — 용
+- [ ] Vite + React 19 + Express v5 + Drizzle ORM 초기화 — 용
 - [ ] 핵심 테이블만: Organization, Agent, Case, AgentRun, Approval — 승+용
-- [ ] Docker Compose로 PostgreSQL 로컬 개발 환경 구성 — 용
-- [ ] next-auth 로그인 (local_trusted 모드 — 인증 없이 시작) — 용
+- [ ] embedded-postgres 로컬 개발 환경 구성 — 용
+- [ ] local_trusted 모드 (인증 없이 시작) — 용
 - [ ] Mock 데이터 투입 (학생 10명, 민원 3건) — 승
 - [ ] Claude API 키 환경변수 설정, 연결 확인 — 승
 
@@ -42,7 +42,7 @@ Must-have 기능만 구현. 평가 기준 점수 최대화.
 - [ ] 데모 시나리오 준비 (민원 2~3건) — 승+용
 
 **D8 (4/13 일): 완성 + 배포**
-- [ ] Vercel + Neon.tech 배포 — 용
+- [ ] GitHub 정리 + 라이브 데모 환경 배포 — 용
 - [ ] k-skill 레지스트리 UI (정적 카탈로그) — 용
 - [ ] 데모 시나리오 최종 테스트 — 승+용
 - [ ] 제출 — 용
@@ -98,7 +98,7 @@ k-skill 커뮤니티 플랫폼으로 진화, 데이터 인사이트 판매.
 |------|---------|-----------------|
 | Google Calendar OAuth 도메인 검증 | 로컬 테스트만 | 높음 |
 | SMS/Kakao 배치 전송 | 제외 | 높음 |
-| Supabase RLS 정책 자동화 | 기본만 | 중간 |
+| DB RLS 정책 자동화 | 앱 레벨 필터링 | 중간 |
 | Scheduler Agent 풀 로직 | UI 전용 | 높음 (Phase 1) |
 | 멀티 계정 (강사/실장) | 단일 원장 MVP | 중간 (Phase 1) |
 | 다국어 지원 | 한국어만 | 낮음 |
