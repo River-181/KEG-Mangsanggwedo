@@ -348,6 +348,78 @@ AgentRun
 
 ---
 
+### 운영 그룹 (Project 대응)
+
+```
+OpsGroup {
+  id, organizationId
+  name, description, color
+  status: active | archived
+  leadAgentId → Agent (담당 에이전트)
+  createdAt, updatedAt
+}
+-- Cases can link to OpsGroup via groupId
+```
+
+### 활동 로그 (Activity / Audit Log)
+
+```
+ActivityEvent {
+  id, organizationId
+  entityType: case | agent | approval | skill | schedule
+  entityId
+  action: created | updated | deleted | approved | rejected | run_started | run_completed
+  actorId, actorType: user | agent
+  payload: jsonb
+  createdAt
+}
+```
+
+### API 토큰 예산 (Cost / Budget)
+
+```
+TokenBudget {
+  id, organizationId, agentId (nullable — org-level or agent-level)
+  budgetMonthlyCents
+  spentMonthlyCents
+  warningThresholdPct: default 80
+  hardStop: boolean
+  resetAt: timestamp
+}
+
+TokenUsageEvent {
+  id, organizationId, agentId, agentRunId
+  inputTokens, outputTokens, cacheTokens
+  costCents
+  model
+  createdAt
+}
+```
+
+### AgentRun 독립 참조용 (HeartbeatRun 대응)
+
+> AgentRun 스키마 확인: `invocationSource`, `sessionIdBefore`, `sessionIdAfter`, `logRef`, `usageJson` 컬럼이 이미 존재함 (위 AgentRun 테이블 참조). 추가 마이그레이션 불필요.
+
+---
+
+### 승인 레벨 정본 (Approval Level Semantics)
+
+레벨은 **에이전트 단위가 아니라 행동(Action) 단위**로 결정된다.
+같은 에이전트가 케이스마다 다른 레벨로 동작할 수 있다.
+
+| 에이전트 | 행동 | 레벨 |
+|----------|------|:----:|
+| Retention | 위험 점수 산출 + 대시보드 표시 | 0 |
+| Retention | 학부모 안내 메시지 발송 | 1 |
+| Retention | 상담 예약 / 개입 결정 | 3 |
+| Complaint | 민원 분류 + 로그 기록 | 0 |
+| Complaint | 일반 민원 응답 초안 발송 | 1 |
+| Complaint | 복잡/환불/법적 민원 | 2 |
+| Scheduler | 일정 자동 업데이트 | 0 |
+| Scheduler | 강사 대체 제안 | 1 |
+
+---
+
 ## 확장 고려사항
 
 ### 멀티 지점

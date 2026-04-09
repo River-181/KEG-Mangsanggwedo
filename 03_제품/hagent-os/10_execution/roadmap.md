@@ -19,33 +19,41 @@ Must-have 기능만 구현. 평가 기준 점수 최대화.
 
 ### Day별 목표
 
-**D5 (4/10 목): 스켈레톤 & 인프라**
-- [ ] Next.js + PostgreSQL(Docker) + Drizzle ORM 기본 프로젝트 구조 세팅 — 용
-- [ ] DB 스키마 확정 (Academy, Student, Instructor, Complaint, Case, AgentRun) — 승+용
-- [ ] Docker Compose로 PostgreSQL 로컬 개발 환경 구성, Drizzle 마이그레이션 — 용
-- [ ] next-auth 인증 설정 (JWT, 단일 원장 계정 MVP) — 용
-- [ ] Mock 데이터 투입 (학생 20명, 민원 5건, 강사 3명, 수업 일정) — 승
+**D5 (4/10 목): 인프라 + 단일 흐름 스켈레톤**
+- [ ] Next.js + PostgreSQL(Docker) + Drizzle ORM 초기화 — 용
+- [ ] 핵심 테이블만: Organization, Agent, Case, AgentRun, Approval — 승+용
+- [ ] Docker Compose로 PostgreSQL 로컬 개발 환경 구성 — 용
+- [ ] next-auth 로그인 (local_trusted 모드 — 인증 없이 시작) — 용
+- [ ] Mock 데이터 투입 (학생 10명, 민원 3건) — 승
 - [ ] Claude API 키 환경변수 설정, 연결 확인 — 승
 
-**D6 (4/11 금): 에이전트 코어**
-- [ ] Orchestrator 구현 (task routing, 수동 분기 — 자동 라우팅 없음) — 승
-- [ ] Complaint Agent (민원 분류 + 초안 응답 생성, Claude API 연결) — 승
-- [ ] Retention Agent (이탈 신호 감지 로직, Claude API 연결) — 승
-- [ ] Backend API (민원 목록, 학생 현황, 결재 대기 조회) — 용
-- [ ] Claude API 병렬 호출 토큰 비용 실측 — 승
+**D6 (4/11 금): 민원 단일 흐름 완성**
+- [ ] Complaint Agent (Claude API 연결) — 승
+- [ ] 케이스 생성 → 에이전트 실행 → 초안 생성 — 승
+- [ ] Approval 상태 머신 (pending → approved/rejected) — 용
+- [ ] Backend API (민원 조회, 승인 업데이트) — 용
+- [ ] 기본 에이전트 동작 테스트 — 승
 
-**D7 (4/12 토): Approval Dashboard & Heartbeat**
-- [ ] Approval Dashboard UI (카드 레이아웃, 승인/편집/반려 원클릭, 모바일 반응형) — 용
-- [ ] Heartbeat cron (매일 07:00, Retention Agent 트리거) — 승
-- [ ] Google Calendar 단방향 동기화 MVP (읽기 전용, 로컬 테스트) — 용
-- [ ] 온보딩 최소 입력 필드 UI (학원명, 운영자명, 학생 1명) — 용
+**D7 (4/12 토): 승인 대시보드 + Heartbeat**
+- [ ] 승인 카드 UI (카드 + 원클릭 승인) — 용
+- [ ] node-cron 07:00 heartbeat (Orchestrator → Complaint + Retention) — 승
+- [ ] Retention Agent (기본 이탈 감지) — 승
+- [ ] 모바일 반응형 — 용
+- [ ] 데모 시나리오 준비 (민원 2~3건) — 승+용
 
-**D8 (4/13 일): 마무리 & 제출**
-- [ ] Scheduler UI (캘린더 뷰, 수업 일정 표시 — 에이전트 로직 없음, UI 전용) — 용
-- [ ] k-skill 레지스트리 UI (기본 에이전트 목록 표시) — 용
-- [ ] 데모 시나리오 테스트 (민원 처리, 이탈 감지, 승인 플로우 4~5건) — 승+용
-- [ ] 대회 심사 기준 자체 검수 — 승+용
-- [ ] 최종 배포 & 제출 — 용
+**D8 (4/13 일): 완성 + 배포**
+- [ ] Vercel + Neon.tech 배포 — 용
+- [ ] k-skill 레지스트리 UI (정적 카탈로그) — 용
+- [ ] 데모 시나리오 최종 테스트 — 승+용
+- [ ] 제출 — 용
+
+**절대 하지 않는 것 (D5-D8):**
+- [ ] Google Calendar sync → v1.1
+- [ ] 카카오/SMS → v1.1
+- [ ] Scheduler Agent 실제 에이전트 로직 → UI만
+- [ ] 복잡한 인증 → local_trusted 모드로 시작
+
+> **Codex + Opus 검증 결과**: 원래 계획보다 30-40% 축소. 민원 처리 단일 흐름 완성이 우선.
 
 ---
 
