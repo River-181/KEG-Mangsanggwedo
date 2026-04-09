@@ -28,9 +28,9 @@ aliases:
 - `02_전략/00-problem-definition-source.md`
 - `02_전략/research-results/10_reports/R-005_교사학원업무실태.md`
 - `02_전략/research-results/10_reports/R-006_통합리서치합성.md`
-- `02_전략/research-results/gemini/`
-- `02_전략/research-results/grok/`
-- `02_전략/research-results/perplexity/`
+- `02_전략/research-results/30_external-ai/gemini/`
+- `02_전략/research-results/30_external-ai/grok/`
+- `02_전략/research-results/30_external-ai/perplexity/`
 - `06_LLM위키/sources/01~05`
 
 총 업로드 소스 수: 18

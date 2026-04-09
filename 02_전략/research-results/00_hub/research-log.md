@@ -3,7 +3,7 @@ tags:
   - area/strategy
   - type/log
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[research-hub]]"
 aliases:
   - research-log
@@ -91,10 +91,10 @@ aliases:
 - NotebookLM 업로드용 핵심 문서 묶음 선정
 
 **업로드 우선 문서**:
-- `R-007_EduSwarm_리서치_통합_브리프.md`
-- `20260408_EduSwarm_프로젝트를_위한_운영자·교사_현장_페인_포인트_Top_10.md`
-- `20260408_탁상공론이 아닌, 실제 원장·담임·강사들의 생목소리.md`
-- `20260408_EduSwarm(역할 기반 AI 에이전트 스웜) 프로젝트를 위한 공교육·사교육 페인포인트 종합 보고서.md`
+- `10_reports/R-007_EduSwarm_리서치_통합_브리프.md`
+- `30_external-ai/perplexity/P-004_EduSwarm_운영자_교사_현장_페인포인트_TOP10.md`
+- `30_external-ai/grok/X-001_원장_담임_강사_현장_생목소리.md`
+- `30_external-ai/gemini/G-005_EduSwarm_공교육_사교육_페인포인트_종합_보고서.md`
 
 ### R-004 (2026-04-08): NotebookLM 노트북 생성 + 1차 통합 질의
 
@@ -103,10 +103,10 @@ aliases:
 - ID: `3cd41a3b-ff36-494d-bc34-bb5b81d3b5ee`
 
 **업로드 완료 소스**:
-- `R-007_EduSwarm_리서치_통합_브리프.md`
-- `20260408_EduSwarm_프로젝트를_위한_운영자·교사_현장_페인_포인트_Top_10.md`
-- `20260408_탁상공론이 아닌, 실제 원장·담임·강사들의 생목소리.md`
-- `20260408_EduSwarm(역할 기반 AI 에이전트 스웜) 프로젝트를 위한 공교육·사교육 페인포인트 종합 보고서.md`
+- `10_reports/R-007_EduSwarm_리서치_통합_브리프.md`
+- `30_external-ai/perplexity/P-004_EduSwarm_운영자_교사_현장_페인포인트_TOP10.md`
+- `30_external-ai/grok/X-001_원장_담임_강사_현장_생목소리.md`
+- `30_external-ai/gemini/G-005_EduSwarm_공교육_사교육_페인포인트_종합_보고서.md`
 
 **질의**:
 - `운영자 모드와 담임 모드 중 첫 MVP로 더 적합한 쪽을 고르고, 이유를 현장성, AI 적합성, 7일 MVP 가능성, 2분 데모 전달력 기준으로 비교해줘. 마지막에 하나만 추천해줘.`
@@ -207,12 +207,12 @@ aliases:
 - `_research/`는 제거하고 `02_전략/research-results/` 하나만 리서치 정본으로 고정
 
 **산출물**:
-- `02_전략/research-results/20_domain-analysis/domain-research-hub.md`
-- `02_전략/research-results/20_domain-analysis/hagwon-operations.md`
-- `02_전략/research-results/20_domain-analysis/pain-points.md`
-- `02_전략/research-results/20_domain-analysis/legal-requirements.md`
-- `02_전략/research-results/20_domain-analysis/data-assets.md`
-- `02_전략/research-results/00_hub/research-folder-guide.md`
+- `20_domain-analysis/domain-research-hub.md`
+- `20_domain-analysis/hagwon-operations.md`
+- `20_domain-analysis/pain-points.md`
+- `20_domain-analysis/legal-requirements.md`
+- `20_domain-analysis/data-assets.md`
+- `00_hub/research-folder-guide.md`
 
 **핵심 발견**:
 
@@ -230,4 +230,4 @@ aliases:
 
 **현재 판단**:
 - `EduPaperclip`의 핵심은 또 하나의 학원 ERP가 아니라 `운영 케이스 OS`에 가깝다
-- 앞으로 새 심화 리서치는 `_research/<topic>/`에 정리하고, 최종 합성만 `research-results/`로 올린다
+- 앞으로 새 심화 리서치는 `20_domain-analysis/` 또는 `30_external-ai/<tool>/`에 바로 정리하고, 최종 합성은 `10_reports/`에서만 갱신한다

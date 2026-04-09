@@ -3,7 +3,7 @@ tags:
   - area/strategy
   - type/reference
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[_02_전략_MOC]]"
 aliases:
   - research-hub
@@ -50,7 +50,14 @@ aliases:
 - `00_hub/` — 허브, 계획, 프롬프트, 로그, 가이드
 - `10_reports/` — 합성 보고서와 핵심 리서치 산출물
 - `20_domain-analysis/` — 한국 학원 운영 도메인 분석 노트
-- `30_external-ai/` — `gemini`, `grok`, `perplexity` raw 결과
+- `30_external-ai/` — `gemini`, `grok`, `perplexity` raw 결과 아카이브
+
+## 지금 기준 정리 상태
+
+- `research-results/`는 이 폴더 하나를 정본으로 사용한다.
+- 허브 문서는 모두 `00_hub/`에서 시작한다.
+- 외부 AI의 raw 결과는 더 이상 루트에 두지 않고 `30_external-ai/<tool>/`에만 둔다.
+- 제품 판단에 직접 쓰는 합성 결과만 `10_reports/`와 `20_domain-analysis/`로 끌어올린다.
 
 ## 입력 소스
 

@@ -16,7 +16,7 @@ aliases:
 
 ---
 
-## 현재 단계: Day 4 완료 — 기획 전체 완성
+## 현재 단계: Day 4 완전 완료 — 기획·디자인·UI 아키텍처 전체 확정, 앱 개발 대기
 
 ## 완료된 작업
 
@@ -212,6 +212,15 @@ aliases:
 - [x] k-edu-zero-human.md — 제목/내용 업데이트 (Level 0-4 canonical 정렬)
 - [x] 07_integrations — @solapi/mcp-server, kimcp 추가, 연동 우선순위 매트릭스
 - [x] 증빙 S-PROD-019 추가
+- [x] design.md — Toss 색상 토큰 반영 + 복제 언어 제거 (HagentOS 고유 언어)
+- [x] ux-concepts.md — "운영 제어판 UX 패턴 + 한국형 재설계"로 리프레이밍
+- [x] information-architecture.md — Paperclip 4존 레이아웃 + 22개 라우트 + 모바일 탭바
+- [x] _research/paperclip-ui-reference.md — Paperclip 4개 화면 분석 (개발 참고)
+- [x] DB 스택 변경: Supabase → PostgreSQL + Drizzle ORM (오픈소스/로컬)
+- [x] 대회 요건 확인: 라이브 URL 필수, AI 리포트 2섹션, 배포 필요
+- [x] 토스증권 웹 디자인 시스템 분석 완료 (색상 토큰 30개+)
+- [x] 랜딩 페이지 방향 확정: Paperclip/Linear 구조 + 한국형 헤로
+- [x] 04_증빙/03_daily/2026-04-09.md 업데이트
 
 ---
 

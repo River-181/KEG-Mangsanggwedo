@@ -1,9 +1,10 @@
 ---
 tags:
-  - area/research
-  - type/index
+  - area/strategy
+  - type/reference
   - status/active
 date: 2026-04-09
+up: "[[research-hub]]"
 aliases:
   - domain-research-hub
   - k-education-domain

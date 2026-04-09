@@ -16,6 +16,16 @@ aliases:
 ## 오늘 상태 (Day 4 — 2026-04-09)
 
 ### 기획 문서 전체 완성 (Day 4 최종)
+
+### UI/디자인 시스템 확정 (Day 4 후반)
+- 디자인 북극성: 토스 앱 UI (색상 토큰 직접 추출)
+- design.md: Toss 토큰 (#0ea5b0 teal 포인트) + HagentOS 고유 컴포넌트명
+- ux-concepts.md: 복제 언어 제거 → 독자적 UX 패턴 언어
+- information-architecture.md: 4존 레이아웃 + 22개 라우트 확정
+- Paperclip UI 4개 화면 완전 분석 → _research/paperclip-ui-reference.md
+- DB: Supabase → PostgreSQL + Drizzle ORM (오픈소스/로컬 Docker)
+- 대회: 라이브 URL 필수 (Vercel + Neon 방향)
+- AI 리포트: 2섹션 (기획 + AI 활용 전략), 04_증빙이 raw material
 - 총 57개 파일 / 00~10 폴더 모두 채움
 - Codex 3라운드 리뷰 → 총 CRITICAL 6 + HIGH 9 + MEDIUM 7 수정
 - design.md + INDEX.md 추가

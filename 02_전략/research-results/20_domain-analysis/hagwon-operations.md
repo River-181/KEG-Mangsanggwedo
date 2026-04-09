@@ -1,7 +1,7 @@
 ---
 tags:
-  - area/research
-  - type/domain-map
+  - area/strategy
+  - type/reference
   - status/active
 date: 2026-04-09
 up: "[[domain-research-hub]]"

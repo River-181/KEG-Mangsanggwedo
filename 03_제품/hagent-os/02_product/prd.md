@@ -374,8 +374,9 @@ HagentOS 스킬 레지스트리 UI
 ├──────────────────────────────────────────────────┤
 │  Data Layer                                      │
 │  ┌──────────────┐ ┌────────────────────────────┐ │
-│  │ Supabase     │ │ Claude API (Sonnet 4.6)    │ │
-│  │ (PostgreSQL) │ │                            │ │
+│  │ PostgreSQL + │ │ Claude API (Sonnet 4.6)    │ │
+│  │ Drizzle ORM  │ │                            │ │
+│  │ (Docker/云)  │ │                            │ │
 │  └──────────────┘ └────────────────────────────┘ │
 ├──────────────────────────────────────────────────┤
 │  Integration Layer                               │
@@ -393,9 +394,10 @@ HagentOS 스킬 레지스트리 UI
 | Frontend  | Next.js (React) + Tailwind | 승인 대시보드, 온보딩 UI           |
 | Backend   | Node.js + TypeScript       | Paperclip 동일 스택, 에이전트 런타임 |
 | AI        | Claude API (Sonnet 4.6)    | 오케스트레이터 + 전문 에이전트         |
-| DB        | Supabase (PostgreSQL)      | 기관 데이터, 에이전트 상태, 감사 로그    |
-| Scheduler | node-cron or Supabase cron | heartbeat 자동 실행           |
-| Auth      | Supabase Auth              | 기관별 접근 제어                 |
+| DB        | PostgreSQL + Drizzle ORM   | Docker (로컬) / 클라우드 PostgreSQL 호환. 기관 데이터, 에이전트 상태, 감사 로그 |
+| Migrations| Drizzle Kit                | TypeScript 마이그레이션, 스키마 버저닝 |
+| Scheduler | node-cron                  | heartbeat 자동 실행           |
+| Auth      | next-auth (JWT)            | 기관별 접근 제어, 오픈소스 표준       |
 
 ---
 

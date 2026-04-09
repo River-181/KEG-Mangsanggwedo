@@ -8,7 +8,7 @@ up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-09 15:00 KST
+> 생성 시각: 2026-04-09 17:25 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -18,7 +18,7 @@ up: "[[_04_증빙_MOC]]"
 |---|---:|---|---:|---:|
 | 2026-04-06 | 16 | ChatGPT, Claude Code, Codex, Perplexity | 18 | 195,000 |
 | 2026-04-08 | 6 | Codex | 8 | 84,000 |
-| 2026-04-09 | 2 | Codex | 2 | 26,000 |
+| 2026-04-09 | 3 | Codex | 3 | 33,000 |
 
 ## Prompt Promotion Candidates
 
@@ -27,6 +27,7 @@ up: "[[_04_증빙_MOC]]"
 - `S-PPLX-001` Perplexity: P-005와 P-006은 승격 가치가 높음
 - `S-EVID-015` Codex: P-009 evidence orchestrator prompt는 재사용 가치 있음
 - `S-OPS-011` Codex: P-007과 P-008은 재사용 프롬프트 자산으로 승격 가치 높음
+- `S-PROD-018` Codex: 제품 정의 근거 | 워크플로우 | AI 활용 전략
 
 ## Decision Promotion Candidates
 
@@ -47,6 +48,7 @@ up: "[[_04_증빙_MOC]]"
 - `S-OPS-014` Codex: 보안 gate 추가를 decision 후보로 검토 가능
 - `S-RES-013` Codex: NotebookLM을 리서치 합성 도구로 검증
 - `S-STRAT-010` Codex: LLM 위키 레이어 도입
+- `S-PROD-018` Codex: exact unavailable estimate
 - `S-STRAT-016` Codex: paperclip 해체 분석을 문제 정의 입력으로 승격
 
 ## Daily Note Hints
@@ -73,6 +75,7 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-08` / `S-OPS-014`: 공개 저장소 운영 원칙을 장기 기억에 유지
 - `2026-04-08` / `S-RES-013`: 담임 모드 우선 가설을 memory에 유지
 - `2026-04-08` / `S-STRAT-010`: 지식 시스템 변경을 장기 기억에 남길 것
+- `2026-04-09` / `S-PROD-018`: 향후 구현/비평/리팩터링은 hagent-os 문서군을 기준으로 진행
 - `2026-04-09` / `S-STRAT-016`: 메모리와 대시보드를 현재 상태로 맞춘 이유를 남길 것
 
 ## Memory Sync Hints

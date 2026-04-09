@@ -34,7 +34,7 @@ up: "[[hagent-os/README]]"
 - **MVP**: in-app 알림 + 이메일만
 - **제외 (v2+)**: 카카오톡 / SMS
 - **근거**: 대회 일정(D-4) 내 카카오/SMS 연동 불가, PRD 우선순위 반영
-- **영향**: Approval Dashboard 알림 아이콘, 이메일 발송 Supabase Edge Function으로 구현
+- **영향**: Approval Dashboard 알림 아이콘, 이메일 발송 Node.js 백엔드 API로 구현 (Nodemailer/SendGrid)
 
 ### Claude API 병렬 에이전트 비용 실측
 **상태**: ⏳ D6에 결정
@@ -43,12 +43,19 @@ up: "[[hagent-os/README]]"
 - **결정점**: 에이전트 간 순차/병렬 전환, 배치 크기 최적화
 - 영향: 수익화 모델, 초기 가격 책정
 
-### Supabase RLS 정책 구현 수준
-**상태**: ⏳ MVP는 기본만 (role 기반)
-- 현재: `is_admin()`, `user_id()` 기본 조건만
-- 필요한 것: 학원별 데이터 격리 (academy_id 기준)
-- **질문**: D5에 멀티테넌트 RLS 전체 구현 vs 애플리케이션 레벨 수동 처리?
-- **결정**: MVP 단일 계정이므로 academy_id 기반 기본 RLS로 충분, D5에 완료
+### 🚨 DB 로컬 개발 환경 설정
+**상태**: ✅ PostgreSQL + Drizzle ORM 확정
+- **로컬 개발**: Docker Compose로 PostgreSQL 5432 포트 노출
+- **연결**: `.env`에 `DATABASE_URL=postgresql://user:password@localhost:5432/hagent_os_dev` 설정
+- **스키마 초기화**: `npm run db:migrate` (Drizzle Kit 마이그레이션)
+- **Mock 데이터**: `npm run db:seed` 스크립트로 투입
+- **배포**: PostgreSQL 호환 클라우드 (Railway, Vercel Postgres, AWS RDS 등) 자유
+
+### 데이터 격리 및 권한 관리
+**상태**: ⏳ MVP는 애플리케이션 레벨 (기본)
+- **로컬 개발**: RLS (Row Level Security) 불필요
+- **프로덕션**: `academy_id` 기반 쿼리 필터 (next-auth 세션 정보 사용)
+- **결정**: MVP에서는 JWT 기반 세션 검증으로 충분, RLS는 Phase 1
 
 ### Google Calendar 단방향 동기화 MVP
 **상태**: ⓘ 선택사항, D7에 시도

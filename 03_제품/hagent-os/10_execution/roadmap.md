@@ -20,9 +20,10 @@ Must-have 기능만 구현. 평가 기준 점수 최대화.
 ### Day별 목표
 
 **D5 (4/10 목): 스켈레톤 & 인프라**
-- [ ] Next.js + Supabase 기본 프로젝트 구조 세팅 — 용
+- [ ] Next.js + PostgreSQL(Docker) + Drizzle ORM 기본 프로젝트 구조 세팅 — 용
 - [ ] DB 스키마 확정 (Academy, Student, Instructor, Complaint, Case, AgentRun) — 승+용
-- [ ] Supabase 인증 설정 (단일 원장 계정 MVP) — 용
+- [ ] Docker Compose로 PostgreSQL 로컬 개발 환경 구성, Drizzle 마이그레이션 — 용
+- [ ] next-auth 인증 설정 (JWT, 단일 원장 계정 MVP) — 용
 - [ ] Mock 데이터 투입 (학생 20명, 민원 5건, 강사 3명, 수업 일정) — 승
 - [ ] Claude API 키 환경변수 설정, 연결 확인 — 승
 

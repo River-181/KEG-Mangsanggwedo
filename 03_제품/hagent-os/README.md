@@ -108,15 +108,17 @@ hagent-os/
 
 ---
 
-## Tech Stack (TBD)
+## Tech Stack
 
-| Layer | Candidate | Note |
-|-------|-----------|------|
-| Backend | Node.js + TypeScript | Paperclip 동일 스택 |
+| Layer | Tech | Note |
+|-------|------|------|
+| Backend | Node.js + TypeScript | Paperclip 동일 스택, 에이전트 런타임 |
 | AI | Claude API (Sonnet 4.6) | 오케스트레이터 + 전문 에이전트 |
-| DB | Supabase (PostgreSQL) | 에이전트 상태 + 감사 로그 |
-| UI | Next.js (React) | 승인 대시보드 |
-| Scheduler | cron (heartbeat) | 매일 자동 실행 |
+| DB | PostgreSQL + Drizzle ORM | Docker (로컬) / 클라우드 PostgreSQL 호환 |
+| Migrations | Drizzle Kit | TypeScript 기반 버저닝 |
+| UI | Next.js (React) + Tailwind | 승인 대시보드 |
+| Scheduler | node-cron | heartbeat 자동 실행 |
+| Auth | next-auth (JWT) | 오픈소스 표준, Supabase 독립 |
 
 ---
 

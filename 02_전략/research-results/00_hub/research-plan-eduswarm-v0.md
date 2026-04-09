@@ -1,7 +1,7 @@
 ---
 tags:
   - area/strategy
-  - type/plan
+  - type/reference
   - status/active
 date: 2026-04-08
 up: "[[research-hub]]"
