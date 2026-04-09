@@ -7,11 +7,17 @@ up: "[[hagent-os/README]]"
 
 ## 기술
 
+### 🚨 스프린트 범위 조정
+**상태**: ⏳ D5 Opus 검증 권고
+- **이슈**: D5-D8 4일 안에 DB 15개 테이블 + 에이전트 3개 + 대시보드 + 배포는 2명에게 과부하.
+- **권장**: **민원 처리 단일 흐름**(케이스 생성→Complaint Agent 실행→승인 카드→발송) 완성 후 확장.
+- **결정**: D5 목표를 이것으로 좁혀야 하는가? 승이 Opus로 재검증.
+
 ### 🚨 member/auth 모델 — MVP 단일 계정 확정
 **상태**: ✅ MVP 결정 완료
 - **결정**: MVP는 원장 단일 계정. 실장/강사 멀티 계정은 Phase 1.
-- **MVP 구현**: Supabase Auth 단일 사용자, academy_id 기반 데이터 격리
-- **영향**: 온보딩 단순화, RLS 복잡도 감소, D5 스키마 설계 반영 필수
+- **MVP 구현**: next-auth (JWT) 단일 사용자, academy_id 기반 데이터 격리
+- **영향**: 온보딩 단순화, RLS 불필요 (앱 레벨 필터), D5 스키마 설계 반영 필수
 
 ### 🚨 Approval-Case-AgentRun 연결 스키마
 **상태**: ⏳ D5 스키마 확정 시 결정
@@ -44,12 +50,12 @@ up: "[[hagent-os/README]]"
 - 영향: 수익화 모델, 초기 가격 책정
 
 ### 🚨 DB 로컬 개발 환경 설정
-**상태**: ✅ PostgreSQL + Drizzle ORM 확정
+**상태**: ✅ PostgreSQL + Drizzle ORM + Neon.tech 확정
 - **로컬 개발**: Docker Compose로 PostgreSQL 5432 포트 노출
 - **연결**: `.env`에 `DATABASE_URL=postgresql://user:password@localhost:5432/hagent_os_dev` 설정
 - **스키마 초기화**: `npm run db:migrate` (Drizzle Kit 마이그레이션)
 - **Mock 데이터**: `npm run db:seed` 스크립트로 투입
-- **배포**: PostgreSQL 호환 클라우드 (Railway, Vercel Postgres, AWS RDS 등) 자유
+- **배포**: Neon.tech PostgreSQL (권장) 또는 AWS RDS, Railway 등
 
 ### 데이터 격리 및 권한 관리
 **상태**: ⏳ MVP는 애플리케이션 레벨 (기본)

@@ -7,7 +7,7 @@ up: "[[hagent-os/README]]"
 # Domain Model (데이터 도메인 모델)
 
 > prd.md 데이터 모델 + agent-design.md DB Schema를 통합한 정본 레퍼런스.
-> DB: Supabase (PostgreSQL). ORM: Prisma (예정).
+> DB: PostgreSQL + Neon.tech (배포). ORM: Drizzle ORM. Auth: next-auth (JWT).
 
 ---
 
