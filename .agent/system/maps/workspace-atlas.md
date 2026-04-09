@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[.agent/system/README]]"
 aliases:
   - workspace-atlas
@@ -42,7 +42,14 @@ aliases:
 │   └── team-setup/
 ├── 01_대회정보/
 ├── 02_전략/
-│   └── tasks/
+│   ├── 00_foundation/
+│   ├── 01_problem-framing/
+│   ├── 02_prompts/
+│   ├── 03_decisions/
+│   ├── paperclip-analysis/
+│   ├── research-results/
+│   ├── tasks/
+│   └── archive/
 ├── 03_제품/
 │   ├── app/
 │   └── tests/

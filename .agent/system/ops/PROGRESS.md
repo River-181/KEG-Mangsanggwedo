@@ -32,9 +32,9 @@ aliases:
 
 ### 전략 문서 ✅
 - [x] 대회 개요서 (`01_대회정보/바이브코딩공모전_공지.md`)
-- [x] 마스터 플레이북 (`02_전략/vibe_contest_master_playbook_v0_1.md`)
-- [x] 계보·포지셔닝 분석 (`02_전략/계보_포지셔닝_분석.md`)
-- [x] 기관 분석 및 심사 전략 (`02_전략/기관_분석_및_심사_전략.md`)
+- [x] 마스터 플레이북 (`02_전략/00_foundation/00-vibe_contest_master_playbook_v0_1.md`)
+- [x] 계보·포지셔닝 분석 (`02_전략/00_foundation/00-계보_포지셔닝_분석.md`)
+- [x] 기관 분석 및 심사 전략 (`02_전략/00_foundation/00-기관_분석_및_심사_전략.md`)
 
 ### 프로젝트 관리 ✅
 - [x] PM 대시보드 (`_system/dashboard/project-dashboard.md`)
@@ -133,7 +133,9 @@ aliases:
 - [x] NotebookLM Studio report artifact 생성 및 Google Docs export 완료
 - [x] `02_전략/research-results/20_domain-analysis/`에 학원 운영 도메인 심화 문서 4종 정리
 - [x] `02_전략/research-results/`를 `00_hub / 10_reports / 20_domain-analysis / 30_external-ai` 구조로 통합
-- [x] 새 deep research import 기준으로 `02_전략/01-problem-scorecard.md`를 후보 3개 압축 방식으로 전면 개편
+- [x] 새 deep research import 기준으로 `02_전략/01_problem-framing/01-problem-scorecard.md`를 후보 3개 압축 방식으로 전면 개편
+- [x] `02_전략` 루트를 `00_foundation / 01_problem-framing / 02_prompts / 03_decisions / paperclip-analysis / research-results / tasks / archive` 구조로 재정리
+- [x] 전략 MOC, 프롬프트, 문제 정의 문서 경로를 새 구조 기준으로 갱신
 - [x] 현재 1순위를 `학원 운영자 민원·예외 처리 OS`로 재정렬
 
 ### Paperclip 코드 해체 분석 ✅

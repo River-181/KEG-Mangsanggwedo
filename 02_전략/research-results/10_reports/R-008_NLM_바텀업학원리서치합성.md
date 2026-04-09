@@ -17,15 +17,15 @@ aliases:
 
 ## 이번 라운드 목적
 
-- `02_전략/00-bottom-up-academy-research-source.md`를 기준 문서로 삼는다.
-- `02_전략/00-notebooklm-bottom-up-prompts.md`를 질의 세트로 사용한다.
+- `02_전략/01_problem-framing/00-bottom-up-academy-research-source.md`를 기준 문서로 삼는다.
+- `02_전략/02_prompts/00-notebooklm-bottom-up-prompts.md`를 질의 세트로 사용한다.
 - 기능 제안보다 `현장 운영 마찰`, `반복 업무`, `예외`, `승인`, `기록`, `책임소재`를 먼저 추출한다.
 
 ## 업로드한 주요 소스
 
-- `02_전략/00-bottom-up-academy-research-source.md`
-- `02_전략/00-notebooklm-bottom-up-prompts.md`
-- `02_전략/00-problem-definition-source.md`
+- `02_전략/01_problem-framing/00-bottom-up-academy-research-source.md`
+- `02_전략/02_prompts/00-notebooklm-bottom-up-prompts.md`
+- `02_전략/01_problem-framing/00-problem-definition-source.md`
 - `02_전략/research-results/10_reports/R-005_교사학원업무실태.md`
 - `02_전략/research-results/10_reports/R-006_통합리서치합성.md`
 - `02_전략/research-results/30_external-ai/gemini/`

@@ -32,4 +32,4 @@ aliases:
 
 - [R-008_NLM_바텀업학원리서치합성.md](/Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/02_전략/research-results/10_reports/R-008_NLM_바텀업학원리서치합성.md)
 - [R-009_NLM_딥리서치_및_스튜디오보고서.md](/Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/02_전략/research-results/10_reports/R-009_NLM_딥리서치_및_스튜디오보고서.md)
-- [00-problem-definition-source.md](/Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/02_전략/00-problem-definition-source.md)
+- [00-problem-definition-source.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/01_problem-framing/00-problem-definition-source.md)

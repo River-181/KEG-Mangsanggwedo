@@ -138,13 +138,13 @@ aliases:
 
 ## 이 문서를 만들 때 참조한 핵심
 
-- [01-problem-bank.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/01-problem-bank.md)
-- [01-problem-scorecard.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/01-problem-scorecard.md)
-- [02-bet-memo.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/02-bet-memo.md)
-- [02-decision-sprint.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/02-decision-sprint.md)
-- [02-demo-critical-path.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/02-demo-critical-path.md)
-- [02-risk-register.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/02-risk-register.md)
-- [02-scope-board.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/02-scope-board.md)
+- [01-problem-bank.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/01_problem-framing/01-problem-bank.md)
+- [01-problem-scorecard.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/01_problem-framing/01-problem-scorecard.md)
+- [02-bet-memo.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/03_decisions/02-bet-memo.md)
+- [02-decision-sprint.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/03_decisions/02-decision-sprint.md)
+- [02-demo-critical-path.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/03_decisions/02-demo-critical-path.md)
+- [02-risk-register.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/03_decisions/02-risk-register.md)
+- [02-scope-board.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_전략/03_decisions/02-scope-board.md)
 
 ## 다음 산출물
 

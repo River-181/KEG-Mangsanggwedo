@@ -43,3 +43,17 @@ aliases:
 - `02_전략/research-results`는 `06_LLM위키/sources/research-results/`로 raw mirror 되었다.
 - 우선 승격된 주제는 `학원 운영의 예외처리 구조`, `운영 케이스 OS`, `데이터 자산화 우선순위`, `운영자 모드 vs 담임 모드`다.
 - 다음 승격 단위는 `민원 대응`, `재등록/이탈 방어`, `법규 approval flow`, `domain pack`이다.
+
+## 현재 추가 확보한 축
+
+- approval flow 축: [[학원_운영의_승인지점과_approval_flow]]
+- MVP 후보 축: [[민원_대응은_첫_MVP_후보다]], [[재등록과_이탈_방어는_두번째_강한_MVP_후보다]]
+- evidence language 축: [[현장_발화는_문제정의의_강한_근거다]]
+- 구조 비교 축: [[공교육_vs_사교육_민원과_행정_체계]]
+- domain pack 축: [[업종별_학원_운영_리스크_맵]]
+
+## 이번 라운드 추가 축
+
+- pain priority 축: [[운영자와_교사의_현장_pain_top10]]
+- field quote bank 축: [[현장_발화_샘플_뱅크]]
+- toolchain 축: [[학원_운영_k-skill_및_MCP_후보_맵]]

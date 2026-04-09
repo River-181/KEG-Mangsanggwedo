@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-07
+date: 2026-04-09
 aliases:
   - AGENTS
 ---
@@ -94,7 +94,15 @@ aliases:
 
 ```
 01_대회정보/  — 대회 개요서, 팀 프로필, 홍보자료
-02_전략/      — 플레이북, 분석, 의사결정
+02_전략/      — 전략 루트
+  ├─ 00_foundation/        — 대회 이해, 계보, 심사 전략
+  ├─ 01_problem-framing/   — 문제 정의 전 기준 문서와 후보 비교
+  ├─ 02_prompts/           — Claude, NotebookLM, Paperclip 분석 프롬프트
+  ├─ 03_decisions/         — 베팅, 범위, 데모, 리스크, 의사결정
+  ├─ paperclip-analysis/   — reference 프로그램 해체 분석
+  ├─ research-results/     — 세부 리서치 정본
+  ├─ tasks/                — 전략 실행 태스크
+  └─ archive/              — 보관 문서와 웹 캡처
 03_제품/      — 문제정의, 페르소나, 아키텍처, 데모
 04_증빙/      — AI 사용 로그, 결정 기록, 프롬프트, 데일리 노트
 05_제출/      — AI 리포트, 체크리스트, 회고

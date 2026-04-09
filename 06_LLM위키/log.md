@@ -67,3 +67,62 @@ aliases:
 - next:
 	- `legal-requirements` 기반 approval flow concept 생성
 	- `P-001/P-004/X-001` 기반 현장 발화 problem note 생성
+
+## [2026-04-09] ingest | 기록관 라운드 추가 승격
+
+- action: ingest
+- reason: `research-results`에서 바로 제품/심사/문제정의에 영향을 주는 주제를 기록관 시점에서 추가 승격
+- touched:
+	- [[학원_운영의_승인지점과_approval_flow]]
+	- [[민원_대응은_첫_MVP_후보다]]
+	- [[재등록과_이탈_방어는_두번째_강한_MVP_후보다]]
+	- [[현장_발화는_문제정의의_강한_근거다]]
+	- [[기록관_추가_위키_후보_카탈로그]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `공교육 vs 사교육 민원 체계` comparison 생성
+	- `업종별 운영 리스크 맵` concept 생성
+
+## [2026-04-09] ingest | 운영 체계 비교와 업종 리스크 맵 추가
+
+- action: ingest
+- reason: 구조 비교와 domain pack 후보를 위키에서 바로 조회할 수 있게 만들기 위함
+- touched:
+	- [[공교육_vs_사교육_민원과_행정_체계]]
+	- [[업종별_학원_운영_리스크_맵]]
+	- [[기록관_추가_위키_후보_카탈로그]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `P-004` 기반 운영자/교사 pain top list 생성
+	- `X-001` 기반 현장 발화 샘플 뱅크 생성
+
+## [2026-04-09] ingest | pain top10, field quote bank, skill/MCP map 추가
+
+- action: ingest
+- reason: `P-004`, `X-001`, `R-010`에서 반복 조회될 가능성이 높은 문제 우선순위, 현장 발화, 도구 연동 후보를 reusable wiki page로 승격
+- touched:
+	- [[운영자와_교사의_현장_pain_top10]]
+	- [[현장_발화_샘플_뱅크]]
+	- [[학원_운영_k-skill_및_MCP_후보_맵]]
+	- [[기록관_추가_위키_후보_카탈로그]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `legal-requirements` 기반 법규 체크리스트 생성
+	- `G-004/G-005` 기반 자동화 대상 업무 분해와 cross-domain synthesis 추가
+
+## [2026-04-09] skill | wiki candidate harvest 생성 및 실사용
+
+- action: skill-create-and-use
+- reason: 프로젝트 내부에서 LLM wiki 승격 후보를 반복적으로 찾는 작업을 재사용 가능한 skill로 고정
+- touched:
+	- `.agent/skills/wiki-candidate-harvest/SKILL.md`
+	- `.agent/skills/wiki-candidate-harvest/scripts/scan_candidates.py`
+	- `.agent/skills/wiki-candidate-harvest/references/candidate-signals.md`
+	- `.agent/skills/README.md`
+	- `.agent/system/registry/skills-registry.md`
+	- [[프로젝트_지식화_후보_스캔]]
+- next:
+	- `problem-scorecard`, `problem-bank`, `playbook` 순으로 wiki 승격

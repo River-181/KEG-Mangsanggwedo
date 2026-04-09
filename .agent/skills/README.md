@@ -43,6 +43,7 @@ skills/
 - `github-workflow/` — commit, push, PR, issue, release 운영 스킬
 - `github-issue-ops/` — issue 생성, triage, dedupe, 상태 전환 스킬
 - `github-project-ops/` — GitHub Project 보드, field, item, sprint 운영 스킬
+- `wiki-candidate-harvest/` — 프로젝트 문서 중 LLM wiki 승격 후보를 스캔하고 backlog로 정리하는 스킬
 
 ## Obsidian 관련 글로벌 스킬
 

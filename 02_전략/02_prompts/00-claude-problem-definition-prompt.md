@@ -19,7 +19,7 @@ Do not write feature lists, screens, architecture, APIs, or implementation plans
 Your job is to define the problem clearly before product specification begins.
 
 Read and obey the following source-of-truth note first:
-- `02_전략/00-problem-definition-source.md`
+- `02_전략/01_problem-framing/00-problem-definition-source.md`
 
 Project context:
 - The project direction is `EduPaperclip`.
@@ -64,13 +64,13 @@ Writing instructions:
   - 3 questions that must be answered before writing `spec.md`
 
 Use these existing files only as supporting inputs, not as output format templates:
-- `02_전략/01-problem-bank.md`
-- `02_전략/01-problem-scorecard.md`
-- `02_전략/02-bet-memo.md`
-- `02_전략/02-decision-sprint.md`
-- `02_전략/02-demo-critical-path.md`
-- `02_전략/02-risk-register.md`
-- `02_전략/02-scope-board.md`
+- `02_전략/01_problem-framing/01-problem-bank.md`
+- `02_전략/01_problem-framing/01-problem-scorecard.md`
+- `02_전략/03_decisions/02-bet-memo.md`
+- `02_전략/03_decisions/02-decision-sprint.md`
+- `02_전략/03_decisions/02-demo-critical-path.md`
+- `02_전략/03_decisions/02-risk-register.md`
+- `02_전략/03_decisions/02-scope-board.md`
 
 The final note should help the team choose the first committed problem, not prematurely lock features.
 ```

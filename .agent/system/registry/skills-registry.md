@@ -17,6 +17,7 @@ up: "[[.agent/system/README]]"
 - `.agent/skills/github-workflow/SKILL.md`
 - `.agent/skills/github-issue-ops/SKILL.md`
 - `.agent/skills/github-project-ops/SKILL.md`
+- `.agent/skills/wiki-candidate-harvest/SKILL.md`
 - `.agent/system/automation/scripts/collect-usage-stats.py`
 
 ## 운영 원칙

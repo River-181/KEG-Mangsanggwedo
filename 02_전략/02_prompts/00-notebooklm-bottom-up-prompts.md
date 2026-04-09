@@ -22,8 +22,8 @@ aliases:
 
 ## 추천 입력 자료
 
-- `02_전략/00-bottom-up-academy-research-source.md`
-- `02_전략/00-problem-definition-source.md`
+- `02_전략/01_problem-framing/00-bottom-up-academy-research-source.md`
+- `02_전략/01_problem-framing/00-problem-definition-source.md`
 - `02_전략/research-results/` 하위 raw 리서치
 - `06_LLM위키/sources/` 하위 원문 메모
 - 학원 관련 기사, 인터뷰, 커뮤니티 스크린샷, 제도 자료

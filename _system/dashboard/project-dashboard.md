@@ -16,8 +16,8 @@ aliases:
 
 ## 현재 상태
 
-- 현재 단계: Day 3, `문제 정의 수렴 직전 → reference 코드 해체 분석 완료`
-- 아직 주제 1개는 확정되지 않았다. 따라서 `03_제품/`은 뼈대 상태를 유지한다.
+- 현재 단계: Day 4, `문제 정의 수렴 + reference 코드 해체 분석 + 전략 구조 정리 완료`
+- 아직 세부 기능 스코프는 열려 있다. 따라서 `03_제품/`은 기획 고도화와 앱 스켈레톤 준비 단계다.
 - 지금 대시보드는 `PLAN`, `PROGRESS`, `daily`, `master-evidence-ledger`, `type/task` note를 한 화면에서 잇는 제출용 진행판 역할을 맡는다.
 
 ## 제출용 일정 개요
@@ -51,11 +51,13 @@ gantt
 ## 새 파일/폴더를 만든 이유
 
 - `02_전략/tasks/` — 전략 후보 축소와 문제 확정 작업을 `type/task`로 추적하기 위해 추가
+- `02_전략/00_foundation/`, `01_problem-framing/`, `02_prompts/`, `03_decisions/` — 전략 루트에 섞여 있던 기준 문서, 프롬프트, 의사결정 문서를 역할별로 분리하기 위해 추가
 - `04_증빙/tasks/` — 제출용 진행 증빙 정리를 task로 관리하기 위해 추가
 - `06_LLM위키/tasks/` — 전략 문서를 wiki layer로 ingest하는 반복 작업을 분리하기 위해 추가
 - `04_증빙/03_daily/2026-04-07.md`, `2026-04-08.md` — 빠진 일일 기록을 복원해 날짜별 증빙 공백을 메우기 위해 추가
 - `02_전략/paperclip-analysis/paperclip-master/` — 실제 reference 프로그램 코드를 로컬에 두고 구조를 해체 분석하기 위해 추가
 - `02_전략/paperclip-analysis/06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` — chat imitation이 아니라 control plane 구조와 확장 구조를 기준으로 모방 포인트를 고정하기 위해 추가
+- `02_전략/archive/web-captures/` — 전략 정본이 아닌 웹 저장본과 캡처를 분리 보관하기 위해 추가
 
 ## 태스크 트래커
 

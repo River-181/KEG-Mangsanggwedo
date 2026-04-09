@@ -5,8 +5,8 @@ AI-native 대회 운영 워크스페이스입니다.
 
 ## 현재 상태
 
-- 단계: 워크스페이스 구축 / 리서치 준비
-- 목표: 문제 정의 전, 운영 시스템과 협업 구조를 먼저 안정화
+- 단계: 문제 정의 수렴 / 전략 구조 정리 / 제품 설계 확장 중
+- 목표: `EduPaperclip` 방향을 기준으로 문제 정의와 사용자 축을 닫고, 제품 기획과 구현 준비를 연결
 - 특징:
   - Obsidian-first vault
   - `_MOC/` 중앙 MOC 구조
@@ -32,10 +32,19 @@ AI-native 대회 운영 워크스페이스입니다.
 │   ├── team-setup/               # 팀원 컴퓨터 적용 가이드
 │   └── tools/                    # 도구 정본, bootstrap, runtime 규칙
 ├── 01_대회정보/                   # 규칙, 일정, 심사
-├── 02_전략/                       # 리서치, 플레이북, 문제 정의
+├── 02_전략/                       # 전략 루트
+│   ├── 00_foundation/            # 대회 이해, 계보, 심사 전략
+│   ├── 01_problem-framing/       # 문제 정의 전 기준 문서와 후보 비교
+│   ├── 02_prompts/               # Claude, NotebookLM, Paperclip 분석 프롬프트
+│   ├── 03_decisions/             # 베팅, 범위, 데모, 리스크, 의사결정
+│   ├── paperclip-analysis/       # reference 프로그램 해체 분석
+│   ├── research-results/         # 세부 리서치 정본
+│   ├── tasks/                    # 전략 실행 태스크
+│   └── archive/                  # 보관 문서와 웹 캡처
 ├── 03_제품/                       # 제품 정의, app, tests
 ├── 04_증빙/                       # AI 리포트 재료 정본
 ├── 05_제출/                       # 최종 제출물
+├── 06_LLM위키/                    # AI 지식 베이스
 ├── .agent/                       # AI 운영 정본
 └── .claude/                      # Claude 런타임 어댑터
 ```

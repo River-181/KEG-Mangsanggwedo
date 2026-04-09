@@ -18,7 +18,7 @@ Goal:
 Do not propose final features yet. First analyze what parts of `paperclip` should be borrowed, transformed, or discarded for Korean academy and education operations.
 
 Read these files first:
-- `02_전략/00-problem-definition-source.md`
+- `02_전략/01_problem-framing/00-problem-definition-source.md`
 - `02_전략/paperclip-analysis/README.md`
 
 Write findings into these analysis buckets if relevant:
