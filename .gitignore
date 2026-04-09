@@ -5,6 +5,7 @@ Thumbs.db
 # Obsidian - workspace는 개인별이므로 제외
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
+.obsidian/plugins/
 
 # Environment / Secrets
 .env
@@ -52,6 +53,8 @@ _system/tools/.venv/
 **/profiles/
 playwright/.auth/
 auth.json
+02_전략/paperclip-analysis/paperclip-master/
+assets/excaildraw/
 
 # Local exports / temp
 *.sqlite

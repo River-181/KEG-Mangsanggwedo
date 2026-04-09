@@ -20,10 +20,10 @@ aliases:
 
 ## 초기 ingest 후보
 
-- [[기관_분석_및_심사_전략]]
-- [[계보_포지셔닝_분석]]
+- [[00-기관_분석_및_심사_전략]]
+- [[00-계보_포지셔닝_분석]]
 - [[education-research-prompts]]
-- [[vibe_contest_master_playbook_v0_1]]
+- [[00-vibe_contest_master_playbook_v0_1]]
 
 ## 현재 확보한 첫 축
 

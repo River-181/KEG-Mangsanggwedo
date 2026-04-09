@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/active
   - workflow/evidence-source
-date: 2026-04-08
+date: 2026-04-09
 up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
@@ -281,24 +281,6 @@ aliases:
 - Token note: 토큰 비공개라 conservative estimate
 - Follow-up: 실제 문제 후보 평가 시 조사 재활용
 
-## 2026-04-07
-
-### S-MTG-001
-
-- DateTime: 2026-04-07 / Offline + Workspace Notes
-- Phase: Ideation, Research Framing
-- Tool/Client: Human Meeting + Codex-supported structuring
-- Model: GPT-5
-- Goal: 흩어진 임시 아이디어를 하나의 문제 탐색 축으로 모으고 개발 전 필요한 리서치 범위를 정한다
-- What changed: `Paperclip/OpenClaw`류 agent orchestration을 한국 교육 맥락에 적용하는 `EduSwarm/EduPaperclip` 방향이 유력해졌고, 공교육/사교육 및 운영자/교사 축으로 문제를 봐야 한다는 합의가 생겼다
-- Why it mattered: 이후 논의가 개별 기능 나열이 아니라 `역할 기반 교육 운영 시스템`이라는 상위 컨셉 아래에서 진행될 수 있게 되었다
-- Artifacts: [[2026-04-07_1차-아이디어-미팅]] | [[paperclip_교육_아이디어_통합정리]]
-- AI usage strategy: AI는 흩어진 아이디어를 통합하고 리서치 질문을 구조화하는 데 사용했다
-- Evidence value: 아이디어 수렴 시작점, 리서치 프레임 설정, 문제 탐색 초기 합의
-- Report section hint: 문제 발굴 과정 | AI 활용 전략 | 초기 가설 형성
-- Token note: 오프라인 미팅 기반, Codex 정리 작업은 exact unavailable estimate
-- Follow-up: 역할별 포커스와 구체 문제 정의를 다음 미팅에서 확정
-
 ## 2026-04-08
 
 ### S-EVID-015
@@ -349,22 +331,6 @@ aliases:
 - Token note: exact unavailable estimate
 - Follow-up: 주제 확정 이후 제품 태스크도 같은 방식으로 누적
 
-### S-MTG-002
-
-- DateTime: 2026-04-08 / Offline + Workspace Notes
-- Phase: Ideation, Problem Definition
-- Tool/Client: Human Meeting + Codex-supported documentation
-- Model: GPT-5
-- Goal: 프로젝트 아이디어 방향과 문제 정의 축을 확정하고 역할 분담 및 주간 일정을 맞춘다
-- What changed: 프로젝트 방향을 `paperclip + k-skill + K-교육`을 결합한 `EduPaperclip`으로 확정했다. 동시에 세부 기능보다 먼저 `운영자 관점 시스템`과 `강사/교사 관점 시스템`이라는 문제 정의 축을 고정하고, 역할 분담과 주간 일정 흐름을 정리했다
-- Why it mattered: 이제부터 spec과 구현 논의가 개별 아이디어의 병렬 탐색이 아니라, 하나의 상위 컨셉과 문제 정의 축 아래에서 진행될 수 있다
-- Artifacts: [[2026-04-08_2차-아이디어-문제정의-확정-미팅]] | [[paperclip_교육_아이디어_통합정리]] | [[decision-log]]
-- AI usage strategy: AI는 기존 임시 아이디어와 외부 사례를 한 방향으로 수렴시키고, 회의 내용을 증빙과 전략 note로 구조화하는 역할을 맡았다
-- Evidence value: 아이디어 확정, 문제 정의 축 확정, 역할 분담, 일정 합의
-- Report section hint: 문제 정의 | 아이디어 수렴 과정 | 프로젝트 운영 방식
-- Token note: 오프라인 미팅 기반, 문서화 과정은 exact unavailable estimate
-- Follow-up: 사용자 포커스 결정, `spec.md` 작성, `paperclip` 코드 해체 분석 진행
-
 ### S-OPS-014
 
 - DateTime: 2026-04-08 / Desktop App
@@ -412,3 +378,37 @@ aliases:
 - Report section hint: AI 활용 전략 | 데이터 흐름 | 재현성
 - Token note: exact unavailable estimate
 - Follow-up: 기존 전략 문서 첫 ingest 실행
+
+## 2026-04-09
+
+### S-OPS-017
+
+- DateTime: 2026-04-09 / Desktop App
+- Phase: Workspace Sync
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 운영 문서와 메모리와 AI 사용 기록을 한 번 더 최신 상태로 동기화한다
+- What changed: 반복 요청 기준으로 운영 정합성을 다시 맞추고 intake/dispatch/usage stats를 재실행했다
+- Why it mattered: 다음 에이전트가 읽는 운영 상태와 통계가 더 최신화되었다
+- Artifacts: [[PLAN]] | [[PROGRESS]] | [[daily-memory]] | [[ai-usage-stats]]
+- AI usage strategy: Codex를 운영 동기화와 증빙 재생성 루틴 검증에 사용했다
+- Evidence value: 운영 루틴 반복 가능성 검증
+- Report section hint: 워크플로우 | AI 활용 전략 | 유지보수성
+- Token note: exact unavailable estimate
+- Follow-up: nightly dispatch와 stats 재집계를 같은 패턴으로 반복 유지
+
+### S-STRAT-016
+
+- DateTime: 2026-04-09 / Desktop App
+- Phase: Reference Analysis
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: `paperclip-master` 실제 코드 기준으로 분석 문서를 보강하고 운영 메모리를 최신화한다
+- What changed: `paperclip-analysis` 문서가 개념 메모에서 repo-grounded 분석으로 바뀌고 운영 문서와 메모리도 현재 상태 기준으로 정렬되었다
+- Why it mattered: reference 프로그램을 chat이 아니라 control plane으로 이해하게 되면서 향후 제품 정의의 기준점이 명확해졌다
+- Artifacts: `02_전략/paperclip-analysis/` | [[PLAN]] | [[PROGRESS]] | [[daily-memory]]
+- AI usage strategy: Codex는 로컬 repo 해체와 전략/운영 문서 동기화를 한 세션 안에서 연결했다
+- Evidence value: reference 분석을 실제 제품 방향 입력으로 승격한 기록
+- Report section hint: 문제 정의 근거 | 워크플로우 | AI 활용 전략
+- Token note: exact unavailable estimate
+- Follow-up: 다음으로 problem-definition-source와 scorecard에 반영

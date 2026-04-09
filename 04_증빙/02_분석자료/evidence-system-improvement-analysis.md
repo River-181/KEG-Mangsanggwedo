@@ -171,4 +171,4 @@ aliases:
 
 ---
 
-> 관련: [[vibe_contest_master_playbook_v0_1]], [[ai-usage-log]], [[decision-log]]
+> 관련: [[00-vibe_contest_master_playbook_v0_1]], [[ai-usage-log]], [[decision-log]]

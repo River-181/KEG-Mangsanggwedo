@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/dashboard
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[00 HOME]]"
 aliases:
   - project-dashboard
@@ -16,7 +16,7 @@ aliases:
 
 ## 현재 상태
 
-- 현재 단계: Day 2, `운영 가시화 완료 → 문제 정의 수렴 직전`
+- 현재 단계: Day 3, `문제 정의 수렴 직전 → reference 코드 해체 분석 완료`
 - 아직 주제 1개는 확정되지 않았다. 따라서 `03_제품/`은 뼈대 상태를 유지한다.
 - 지금 대시보드는 `PLAN`, `PROGRESS`, `daily`, `master-evidence-ledger`, `type/task` note를 한 화면에서 잇는 제출용 진행판 역할을 맡는다.
 
@@ -29,10 +29,10 @@ gantt
     axisFormat  %m/%d
     section 운영/전략
     워크스페이스 정비 및 증빙 체계 :done, a1, 2026-04-06, 2d
-    문제 후보 수집 및 평가 :active, a2, 2026-04-07, 2d
-    최종 문제 및 스코프 확정 :a3, 2026-04-08, 1d
+    문제 후보 수집 및 평가 :done, a2, 2026-04-07, 2d
+    최종 문제 및 스코프 확정 :active, a3, 2026-04-09, 1d
     section 제품
-    앱 뼈대 및 데모 플로우 :a4, 2026-04-09, 2d
+    앱 뼈대 및 데모 플로우 :a4, 2026-04-10, 2d
     기능 동결 및 QA :a5, 2026-04-10, 2d
     section 제출
     README 및 AI 리포트 작성 :a6, 2026-04-11, 2d
@@ -46,7 +46,7 @@ gantt
 - [[master-evidence-ledger]] — 세션 단위 증빙 원장
 - [[decision-log]] — 중요한 구조 결정
 - [[prompt-catalog]] — 재사용 프롬프트 자산
-- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] — 일별 작업 스냅샷
+- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] / [[2026-04-09]] — 일별 작업 스냅샷
 
 ## 새 파일/폴더를 만든 이유
 
@@ -54,6 +54,8 @@ gantt
 - `04_증빙/tasks/` — 제출용 진행 증빙 정리를 task로 관리하기 위해 추가
 - `06_LLM위키/tasks/` — 전략 문서를 wiki layer로 ingest하는 반복 작업을 분리하기 위해 추가
 - `04_증빙/03_daily/2026-04-07.md`, `2026-04-08.md` — 빠진 일일 기록을 복원해 날짜별 증빙 공백을 메우기 위해 추가
+- `02_전략/paperclip-analysis/paperclip-master/` — 실제 reference 프로그램 코드를 로컬에 두고 구조를 해체 분석하기 위해 추가
+- `02_전략/paperclip-analysis/06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` — chat imitation이 아니라 control plane 구조와 확장 구조를 기준으로 모방 포인트를 고정하기 위해 추가
 
 ## 태스크 트래커
 

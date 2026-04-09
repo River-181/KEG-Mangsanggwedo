@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - long-term-memory
@@ -51,8 +51,16 @@ aliases:
 1. 문제 후보 3개 축소와 최종 문제 1개 확정
 2. `project-dashboard`를 중심으로 `PLAN/PROGRESS/daily/task` 동기화 유지
 3. `master-evidence-ledger` 기반 증빙 습관화
-4. `06_LLM위키/` 첫 ingest 시작
-5. 제품 구현 착수
+4. `paperclip` 실제 코드 해체 결과를 제품 정의 입력으로 승격
+5. `06_LLM위키/` 첫 ingest 시작
+6. 제품 구현 착수
+
+## 제품 방향에서 고정된 것
+
+- reference 프로그램은 `paperclip` 계열이며, 목표는 clone이 아니라 한국형 학원 운영 맥락에 맞는 재구성이다.
+- 현재까지의 코드 해체 기준 핵심 차용 대상은 `board-first control plane`, `stateful operations model`, `local-first deployment`, `plugin/adapter extensibility`다.
+- 초기 제품은 chat shell보다 `운영 보드 + 케이스 + 승인 + 활동 기록`에 가까운 형태일 가능성이 높다.
+- 도메인 다양성이 크므로 core system과 domain pack, skill bundle을 분리해 사고해야 한다.
 
 ## authoritative files
 

@@ -44,7 +44,7 @@ aliases:
 
 - [[00 HOME]]에서 `01_대회정보 → 05_제출`로 흐르는 구조는 사람과 에이전트 모두에게 직관적이다.
 - [[바이브코딩공모전_공지]]는 실제로 대회 맥락을 빠르게 파악하는 단일 브리프로 기능한다.
-- [[vibe_contest_master_playbook_v0_1]]는 아직 rough 단계지만, 전략/운영/제출을 하나의 서사로 묶는 기준 문서 역할을 한다.
+- [[00-vibe_contest_master_playbook_v0_1]]는 아직 rough 단계지만, 전략/운영/제출을 하나의 서사로 묶는 기준 문서 역할을 한다.
 
 ### 2-2. 에이전트 진입점이 분리되어 있다
 
@@ -423,7 +423,7 @@ aliases:
 
 ## 8. 관련 문서
 
-- [[vibe_contest_master_playbook_v0_1]]
+- [[00-vibe_contest_master_playbook_v0_1]]
 - [[workspace-structuring-plan]]
 - [[codex-workspace-evaluation]]
 - [[ai-usage-log]]

@@ -3,12 +3,12 @@ tags:
   - area/evidence
   - type/report
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-08 22:37 KST
+> 생성 시각: 2026-04-09 15:00 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -18,6 +18,7 @@ up: "[[_04_증빙_MOC]]"
 |---|---:|---|---:|---:|
 | 2026-04-06 | 16 | ChatGPT, Claude Code, Codex, Perplexity | 18 | 195,000 |
 | 2026-04-08 | 6 | Codex | 8 | 84,000 |
+| 2026-04-09 | 2 | Codex | 2 | 26,000 |
 
 ## Prompt Promotion Candidates
 
@@ -46,6 +47,7 @@ up: "[[_04_증빙_MOC]]"
 - `S-OPS-014` Codex: 보안 gate 추가를 decision 후보로 검토 가능
 - `S-RES-013` Codex: NotebookLM을 리서치 합성 도구로 검증
 - `S-STRAT-010` Codex: LLM 위키 레이어 도입
+- `S-STRAT-016` Codex: paperclip 해체 분석을 문제 정의 입력으로 승격
 
 ## Daily Note Hints
 
@@ -71,6 +73,7 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-08` / `S-OPS-014`: 공개 저장소 운영 원칙을 장기 기억에 유지
 - `2026-04-08` / `S-RES-013`: 담임 모드 우선 가설을 memory에 유지
 - `2026-04-08` / `S-STRAT-010`: 지식 시스템 변경을 장기 기억에 남길 것
+- `2026-04-09` / `S-STRAT-016`: 메모리와 대시보드를 현재 상태로 맞춘 이유를 남길 것
 
 ## Memory Sync Hints
 
@@ -80,6 +83,8 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-08` / `S-EVID-015`: 외부 AI 사용 통계 왜곡 방지 맥락 유지
 - `2026-04-08` / `S-OPS-011`: 태그/계층 규칙 변경 사실을 장기 기억에 남길 것
 - `2026-04-08` / `S-OPS-012`: 데일리와 daily-memory 동기화 이유를 기억에 남길 것
+- `2026-04-09` / `S-OPS-017`: 반복 요청에서도 intake-first 규칙을 유지했다는 점을 기억에 남길 것
+- `2026-04-09` / `S-STRAT-016`: logged
 
 ## Open Notes
 

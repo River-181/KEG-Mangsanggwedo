@@ -28,11 +28,29 @@ aliases:
 
 ## 작업 문서
 
+- [[00-bottom-up-academy-research-source]] — 한국 학원 생태계 바텀업 조사 기준
+- [[00-notebooklm-bottom-up-prompts]] — NotebookLM 전용 바텀업 프롬프트 세트
 - [[research-plan-eduswarm-v0]] — 이번 라운드 리서치 범위와 우선순위
 - [[research-prompts-by-tool]] — `Gemini Deep Research`, `Perplexity`, `NotebookLM`, `X`용 프롬프트
 - [[research-log]] — 수집 기록과 다음 액션
-- [[problem-bank]] — 리서치에서 살아남은 문제 후보 저장소
-- [[problem-scorecard]] — 후보 비교표
+- [[research-folder-guide]] — `research-results` 내부 구조와 읽는 순서
+- [[01-problem-bank]] — 리서치에서 살아남은 문제 후보 저장소
+- [[01-problem-scorecard]] — 후보 비교표
+
+## 심화 도메인 분석
+
+- [[domain-research-hub]] — 한국 학원 운영 도메인 분석 허브
+- [[hagwon-operations]] — 원장/실장 업무 전체 맵
+- [[pain-points]] — 기존 솔루션 기능과 현장 불만
+- [[legal-requirements]] — 학원 운영 법적 의무
+- [[data-assets]] — 데이터 자산화 가능 영역
+
+## 현재 폴더 구조
+
+- `00_hub/` — 허브, 계획, 프롬프트, 로그, 가이드
+- `10_reports/` — 합성 보고서와 핵심 리서치 산출물
+- `20_domain-analysis/` — 한국 학원 운영 도메인 분석 노트
+- `30_external-ai/` — `gemini`, `grok`, `perplexity` raw 결과
 
 ## 입력 소스
 
@@ -49,3 +67,4 @@ aliases:
 - `현장 발화`, `운영 흐름`, `규제/시스템`, `도메인 특성`을 분리 기록한다.
 - 출처 없는 주장과 바이럴 서사는 `problem-bank`에 바로 올리지 않는다.
 - 의미 있는 발견만 `06_LLM위키/`나 `04_증빙/`로 승격한다.
+- NotebookLM은 `운영 흐름`, `반복 업무`, `예외 처리`, `승인 지점`, `데이터 자산화`를 우선 합성한다.

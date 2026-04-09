@@ -18,3 +18,5 @@ date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing
 2026-04-08,Codex,Desktop App,GPT-5.4,Plus,S-OPS-014,1,9000,,flat-subscription,master ledger 기반 백필
 2026-04-08,Codex,Desktop App,GPT-5,Plus,S-RES-013,2,22000,,flat-subscription,혼합 도구 세션이지만 intake에서는 한 row로 기록
 2026-04-08,Codex,Desktop App,GPT-5,Plus,S-STRAT-010,1,12000,,flat-subscription,master ledger 기반 백필
+2026-04-09,Codex,Desktop App,GPT-5.4,Plus,S-OPS-017,1,8000,,flat-subscription,2026-04-09 follow-up workspace sync 세션
+2026-04-09,Codex,Desktop App,GPT-5.4,Plus,S-STRAT-016,1,18000,,flat-subscription,

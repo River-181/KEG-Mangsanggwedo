@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-08
+date: 2026-04-09
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 진행상황
@@ -12,11 +12,11 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-08 (Day 2)
+> 마지막 업데이트: 2026-04-09 (Day 3)
 
 ---
 
-## 현재 단계: Day 2 — 운영 가시화 완료, 문제 정의 수렴 전
+## 현재 단계: Day 3 — 바텀업 리서치 심화, 첫 사용자 압축 전
 
 ## 완료된 작업
 
@@ -122,10 +122,26 @@ aliases:
 - [x] `02_전략/research-results/`를 리서치 작업 공간으로 정리
 - [x] `research-hub`, `research-plan-eduswarm-v0`, `research-prompts-by-tool`, `research-log` 생성
 - [x] `problem-bank`, `problem-scorecard` 초안 생성
-- [x] `gemini`, `grok`, `perplexity` 리서치 결과를 통합한 `20260408_EduSwarm_리서치_통합_브리프.md` 작성
+- [x] `gemini`, `grok`, `perplexity` 리서치 결과를 통합한 `R-007_EduSwarm_리서치_통합_브리프.md` 작성
 - [x] `nlm` 재인증 및 CLI 동작 복구
 - [x] NotebookLM 노트북 `KEG EduSwarm Research 2026-04-08` 생성 및 리서치 문서 18개 업로드
 - [x] NotebookLM 1차 질의로 `담임 모드` 우선 가설 도출
+- [x] Bottom-Up 전용 노트북 `KEG Bottom-Up Academy Research 2026-04-09` 생성 및 소스 18개 업로드
+- [x] 바텀업 프롬프트 5종 실행 후 `R-008_NLM_바텀업학원리서치합성.md` 작성
+- [x] 바텀업 질의 기준으로 `운영자 모드`와 `민원/이탈` 축이 다시 강하게 부상함을 확인
+- [x] `nlm deep research`로 새 웹 소스 22개를 Bottom-Up 노트북에 추가 import
+- [x] NotebookLM Studio report artifact 생성 및 Google Docs export 완료
+- [x] `02_전략/research-results/20_domain-analysis/`에 학원 운영 도메인 심화 문서 4종 정리
+- [x] `02_전략/research-results/`를 `00_hub / 10_reports / 20_domain-analysis / 30_external-ai` 구조로 통합
+- [x] 새 deep research import 기준으로 `02_전략/01-problem-scorecard.md`를 후보 3개 압축 방식으로 전면 개편
+- [x] 현재 1순위를 `학원 운영자 민원·예외 처리 OS`로 재정렬
+
+### Paperclip 코드 해체 분석 ✅
+- [x] `02_전략/paperclip-analysis/paperclip-master/`에 실제 reference repo 로컬 복제본 배치
+- [x] `ui/src/App.tsx`, `docs/start/architecture.md`, `docs/api/overview.md`, `docs/deploy/deployment-modes.md`, `packages/plugins/sdk/README.md` 기준으로 repo-grounded 분석 수행
+- [x] `01-ui-entrypoints.md`, `02-data-context-model.md`, `03-agent-skill-structure.md`, `04-k-education-fit-gaps.md`, `05-open-questions.md` 보강
+- [x] `06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` 추가
+- [x] 모방 기준을 `chat UX`가 아니라 `control plane + local-first deployment + plugin/adapter extensibility`로 재정렬
 
 ---
 
@@ -135,7 +151,7 @@ aliases:
 | --------------------- | --------------- | ----------------- | ------------ |
 | Claude Opus 4.6       | Claude Code CLI | 워크스페이스 구조화, 증빙 설계 | 증빙 시스템 확장 중  |
 | GPT-5.4 (ChatGPT Pro) | Web             | 전략 설계, 플레이북 작성    | 플레이북 v0.1 완료 |
-| GPT-5 (Codex)         | Desktop App     | 리서치 운영, NLM 통합, 증빙 정리 | 리서치 노트북 생성 및 통합 질의 완료 |
+| GPT-5 (Codex)         | Desktop App     | 리서치 운영, NLM 통합, 증빙 정리 | Bottom-Up 딥리서치 + Studio report export 완료 |
 | Perplexity            | Web             | 리서치 수집            | 운영자/교사 페인포인트 리서치 완료 |
 
 ---
@@ -149,9 +165,9 @@ aliases:
 
 ## 미완료 — 다음 에이전트가 이어받을 것
 
-1. **문제 후보 3개 축소** — `problem-scorecard` 기준으로 전략 후보 압축
-2. **최종 문제 1개 결정** — `decision-sprint`, `scope-board` 실사용
-3. **NotebookLM 추가 질의 2~3회 실행** — `담임 모드 vs 운영자 모드`를 더 좁히고 최종 컷 기준 확정
-4. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
+1. **최종 문제 1개 결정** — `decision-sprint`, `scope-board`, `bet-memo`를 새 scorecard 기준으로 갱신
+2. **NotebookLM 비교 질의 1~2회 추가 실행** — `민원/예외 처리 vs 재등록/이탈` 최종 컷 기준만 추가 확인
+3. **LLM 위키 1차 ingest 실전 적용** — 기존 전략 문서를 entity/concept/problem note로 변환
+4. **paperclip 분석 결과를 문제 정의 source에 연결** — `control plane`, `case state`, `plugin/domain pack`, `local deployment` 가설을 문제 정의 입력으로 승격
 5. **제품 정의 초안 작성** — 아직 `03_제품/`은 뼈대 상태
 6. **단일 intake 운영 습관 정착** — 새 세션마다 `ai-session-intake.csv` 먼저 append하고 nightly dispatch 유지
