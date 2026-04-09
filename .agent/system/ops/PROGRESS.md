@@ -16,7 +16,7 @@ aliases:
 
 ---
 
-## 현재 단계: Day 4 — 제품 기획 문서 세트 완성 + k-skill 생태계 정의
+## 현재 단계: Day 4 완료 — 기획 전체 완성
 
 ## 완료된 작업
 
@@ -174,17 +174,51 @@ aliases:
 - [x] `02_product/mvp-scope.md` — MVP 범위 (S8 외부 MCP 라이브 연동 추가, Not Now에 실존 도구 ✅ 표시)
 - [x] `02_product/user-personas.md` — 페르소나
 - [x] `02_product/user-journeys.md` — 사용자 여정 (스케줄러 + 캘린더 동기화)
-- [ ] `03_domain/` — 학원 운영 도메인 지식 (진행 예정)
-- [ ] `04_ai-agents/` — 에이전트 설계 + k-skill 카탈로그 (진행 예정)
-- [ ] `05_workflows/` ~ `10_execution/` — 후속 문서 (진행 예정)
+- [x] `03_domain/academy-operations.md` — 학원 운영 도메인 (일과, 스케줄, 유형별 차이, 예외/루틴)
+- [x] `03_domain/finance-and-policy.md` — 재무·법규 도메인 (환불, 세무, 노무, 법정기한, 규제 리스크)
+- [x] `03_domain/communication-model.md` — 커뮤니케이션 도메인 (채널, 민원, 리포트, 데이터 자산)
+- [x] `04_ai-agents/agent-design.md` — 에이전트 아키텍처 정본 (Paperclip 메커니즘 반영, DB 스키마, 실행 흐름, 협력 패턴, 예산 모델)
+- [x] `04_ai-agents/agent-roles/orchestrator.md` — 태스크 라우팅, 병렬 브리핑 패턴, System Prompt
+- [x] `04_ai-agents/agent-roles/complaint.md` — 7종 분류, 긴급도, 에스컬레이션 조건
+- [x] `04_ai-agents/agent-roles/retention.md` — 이탈 점수화(4스트림), 개입 권고 6종
+- [x] `04_ai-agents/agent-roles/scheduler.md` — 7종 스케줄, 외부 시험 연동, 구글 캘린더 동기화
+- [x] `04_ai-agents/agent-roles/intake.md` — 신규 문의 → 등록 전환
+- [x] `04_ai-agents/agent-roles/staff.md` — 강사 성과, 번아웃, 노무
+- [x] `04_ai-agents/agent-roles/finance.md` — 환불, 세무, 급여
+- [x] `04_ai-agents/agent-roles/compliance.md` — 학원법, 소방, 개인정보
+- [x] `04_ai-agents/agent-roles/notification.md` — 다채널 알림 (cross-cutting)
+- [x] `04_ai-agents/agent-roles/analytics.md` — 주간/월간 리포트
+- [x] `05_workflows/complaint-handling.md` — 민원 처리 7단계, k-skill 주입 지점, 분기 처리, DB 스키마
+- [x] `05_workflows/churn-detection.md` — 이탈 감지 4스트림, 점수 공식, 개입 → 추적
+- [x] `05_workflows/schedule-management.md` — 강사 공결 대체, 구글 캘린더 동기화, 외부 시험 트리거
+- [x] `05_workflows/new-enrollment.md` — 문의→상담→등록 전환, follow-up cron, 온보딩
+- [x] `05_workflows/morning-briefing.md` — 07:00 heartbeat 병렬 브리핑, Level 0/1 분류
+- [x] `05_workflows/compliance-alert.md` — D-30/D-7/D-1 법정 기한, korean-law-mcp 연동
+- [x] `06_policies/communication-policy.md` — 채널별 발송 원칙, SLA, AI 투명성
+- [x] `06_policies/data-policy.md` — 수집 범위, 보존 기간, 익명화, 감사 로그 불변성
+- [x] `06_policies/ai-safety-policy.md` — 절대 금지 3종, 제로휴먼 정책, RBAC, override 보장
+- [x] `07_integrations/integrations.md` — Google Calendar MVP, 카카오/SMS Phase2, MCP 13개 연동 가이드, .env 예시
+- [x] `08_data/domain-model.md` — ERD + 10개 핵심 테이블 상세, 멀티지점/공교육 확장 가이드
+- [x] `08_data/reporting-metrics.md` — 실시간 6지표, 주간/월간 리포트, 에이전트별 KPI, 엑셀 5시트
+- [x] `09_ux/information-architecture.md` — 사이트맵, 10개 화면 인벤토리, 4개 여정 흐름, 모바일/데스크톱 분리
+- [x] `09_ux/ux-concepts.md` — 승인 카드 해부도, 3-tap 모바일 flow, swipe 제스처, 에러 UX
+- [x] `10_execution/roadmap.md` — D5~D8 스프린트, 역할 분담, Phase 1~3, 기술 부채 목록
+- [x] `10_execution/open-questions.md` — 기술/제품/도메인/비즈니스 미결 13항목, 우선순위 매트릭스
+- [x] Codex 리뷰 03+04 — 완료 (CRITICAL 2 + HIGH 2 수정)
+- [x] Codex 리뷰 05+06 — 완료 (CRITICAL 1 + HIGH 3 수정)
+- [x] Codex 리뷰 07+10 — 완료 (CRITICAL 1 + HIGH 2 + MEDIUM 2 수정)
+- [x] design.md — Paperclip 기반 HagentOS 디자인 시스템
+- [x] INDEX.md — 개발자용 빠른 탐색 인덱스
+- [x] k-edu-zero-human.md — 제목/내용 업데이트 (Level 0-4 canonical 정렬)
+- [x] 07_integrations — @solapi/mcp-server, kimcp 추가, 연동 우선순위 매트릭스
+- [x] 증빙 S-PROD-019 추가
 
 ---
 
-## 미완료 — 다음 에이전트가 이어받을 것
+## 다음 단계: Day 5 준비 완료 — 앱 스켈레톤 착수 (D5: Next.js + Supabase)
 
-1. **03_domain/ 문서 작성** — `academy-operations.md`, `finance-and-policy.md`, `communication-model.md`
-2. **04_ai-agents/ 문서 작성** — `agent-design.md` + 역할별 에이전트 상세 + **k-skill 카탈로그 정본**
-3. **05_workflows/ ~ 10_execution/ 문서 작성** — 워크플로우, 정책, 연동, 데이터 모델, UX, 로드맵
-4. **앱 스켈레톤 준비** — Next.js + Supabase 세팅, `03_제품/app/` 초기 구조
-5. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 구현
-6. **단일 intake 운영 습관 정착** — 새 세션마다 `ai-session-intake.csv` 먼저 append
+1. **Next.js + Supabase 스켈레톤** — 앱 구조, DB 스키마 설정, Mock 데이터 투입
+2. **역할 분담** — 이승보 (Orchestrator+에이전트), 김주용 (UI+인프라)
+3. **설계 기준** — `design.md` (색상 토큰), `INDEX.md` (문서 색인)
+4. **Google Calendar OAuth** — D7 전 credentials 준비
+5. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 확인

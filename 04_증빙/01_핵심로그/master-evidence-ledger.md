@@ -397,6 +397,22 @@ aliases:
 - Token note: exact unavailable estimate
 - Follow-up: nightly dispatch와 stats 재집계를 같은 패턴으로 반복 유지
 
+### S-PROD-018
+
+- DateTime: 2026-04-09 / Desktop App
+- Phase: Product Learning
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: `03_제품/hagent-os` 기획 문서를 수정 없이 읽고 현재 제품 방향을 학습한다
+- What changed: HagentOS의 현재 제품 방향이 `학원 운영자 민원·예외 처리 OS`
+- Why it mattered: `board-first AI 팀`
+- Artifacts: `k-skill registry`
+- AI usage strategy: `통합 스케줄러` 축으로 정리되어 있음을 확인했다
+- Evidence value: 이후 구현과 피드백이 기존 전략 메모가 아니라 실제 제품 문서 정본을 기준으로 이루어질 수 있게 되었다
+- Report section hint: `03_제품/hagent-os/README.md` | `00_vision/` | `01_strategy/` | `02_product/`
+- Token note: Codex는 문서를 수정하지 않고 제품 방향을 읽어 현재 설계의 중심축과 미정 영역만 학습했다
+- Follow-up: 제품 정본 학습과 방향 정합성 확보
+
 ### S-STRAT-016
 
 - DateTime: 2026-04-09 / Desktop App
@@ -412,3 +428,19 @@ aliases:
 - Report section hint: 문제 정의 근거 | 워크플로우 | AI 활용 전략
 - Token note: exact unavailable estimate
 - Follow-up: 다음으로 problem-definition-source와 scorecard에 반영
+
+### S-PROD-019
+
+- DateTime: 2026-04-09 / CLI
+- Phase: Product Planning
+- Tool/Client: Claude Code (Sonnet 4.6 + Opus subagents + Haiku subagents + Codex reviews)
+- Model: Sonnet 4.6
+- Goal: HagentOS 기획 문서 세트 완성 — 00_vision ~ 10_execution + 03_domain + 04_ai-agents + 05_workflows + 06_policies
+- What changed: 30+ 기획 문서가 10개 폴더 카테고리에 걸쳐 신규 생성 및 갱신되었다. Codex 리뷰 3라운드 수행, CRITICAL/HIGH 17건 수정 완료.
+- Why it mattered: 개발 착수를 위한 완전한 기획 기반이 확보되었다. 아키텍처·도메인·워크플로우·정책 레이어가 모두 정본으로 고정되어 구현 착수 준비가 완료되었다.
+- Artifacts: `03_제품/hagent-os/` 전체 구조 (00_vision / 01_strategy / 02_product / 03_domain / 04_ai-agents / 05_workflows / 06_policies / 07_tech / 08_ux / 09_data / 10_execution)
+- AI usage strategy: Opus(복잡한 아키텍처 및 전략 문서), Sonnet(도메인·워크플로우·정책 반복 생성), Haiku(반복 정책 문서 및 포맷 정규화), Codex(3라운드 교차 리뷰 및 비판적 피드백)
+- Evidence value: 대회 AI 활용 증빙 + 기획→개발 전환 기록. 복수 AI 분업 구조의 실증 사례.
+- Report section hint: AI 활용 과정 | 기획 | 멀티에이전트 분업 전략 | 도구 선택 이유
+- Token note: Sonnet/Opus/Haiku exact token source exists in Claude JSONL; Codex exact unavailable estimate
+- Follow-up: 기획 문서 기반으로 MVP 구현 착수 (complaint-draft 스킬 + Orchestrator Agent 우선)

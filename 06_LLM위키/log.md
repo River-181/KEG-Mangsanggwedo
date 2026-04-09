@@ -49,3 +49,21 @@ aliases:
 - next:
 	- `problem-bank` ingest 후 문제 후보별 page 생성
 	- `vibe_contest_master_playbook_v0_1`에서 execution doctrine 추출
+
+## [2026-04-09] ingest | research-results raw mirror + 1차 승격 후보 정리
+
+- action: ingest
+- reason: `02_전략/research-results/`를 LLM wiki source corpus로 복제하고, 학원 운영 도메인에서 재사용 가치가 높은 주제를 먼저 승격
+- touched:
+	- [[research-results_소스_허브]]
+	- `06_LLM위키/sources/research-results/` 전체 raw mirror
+	- [[학원_운영은_정규루틴보다_예외처리가_본체다]]
+	- [[운영_케이스_OS가_화이트스페이스다]]
+	- [[학원_운영_데이터_자산화_우선순위]]
+	- [[운영자_모드_vs_담임_모드]]
+	- [[research-results_위키_승격_후보]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `legal-requirements` 기반 approval flow concept 생성
+	- `P-001/P-004/X-001` 기반 현장 발화 problem note 생성

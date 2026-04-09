@@ -134,7 +134,7 @@ Paperclip:                     HagentOS:
 | **마케팅·모집** | 신규 문의 응대, 등록 전환, 지역 분석, 콘텐츠 초안 | Intake | ★ | `lead-conversion-tracker`, ✅ `py-mcp-naver` (지역 검색·경쟁 학원 분석) |
 | **스케줄링** | 강사 시간표, 보강/대체, 차량 운행, 상담 일정, 원장 일정, 법정 기한 | Scheduler | ★ | ✅ Google Calendar MCP (다수 존재), `schedule-optimizer`, `substitute-matcher` |
 | **알림·메시지** | 민원 알림, 스케줄 변경, 기한 알림, 보강 안내, 결석 알림 | Notification | ★ | ✅ `aligo-sms-mcp-server`, ✅ `kakao-bot-mcp-server`, `message-template-pack` |
-| **수업·교육 품질** | 수업 요약, 학생 피드백, 문항 생성, 시험 일정 연동 | Teaching | | `quiz-generator`, `school-record-draft`, 수능/모의고사 일정 API (data.go.kr) |
+| **수업·교육 품질** | 수업 요약, 학생 피드백, 문항 생성, 시험 일정 연동 | Teaching | | `quiz-generator`, `school-record-draft`, `exam-schedule-sync` (수능·자격증·어학 등 유형별), 수능/모의고사 일정 API (data.go.kr) |
 | **데이터·리포팅** | 운영 대시보드, 주간 보고, 교육 통계, 벤치마크 | Analytics | ★ | `weekly-report-gen`, ✅ 공공데이터API (사교육 통계·학원 현황) |
 | **외부 연동** | 구글 캘린더, 카카오톡, 네이버, 법률 MCP, 결제, 공공데이터 | Integration | ★ | ✅ Google Calendar MCP, ✅ `korean-law-mcp`, ✅ `py-mcp-naver`, ✅ `@portone/mcp-server`, ✅ HWP 처리 도구 |
 | **생활 편의** | 주변 맛집·카페, 날씨·미세먼지, 교사 생일, 주차 정보 | Utility | | ✅ `py-mcp-naver` (맛집·주차), ✅ Weather MCP, ✅ k-skill (미세먼지·블루리본), ✅ Remindlo MCP |
@@ -207,7 +207,7 @@ HagentOS 스킬 레지스트리 UI
 | **Staff** | `substitute-matcher`, `k-labor-wage-api`, `labor-classification-guide`, ✅ `korean-law-mcp` |
 | **Finance** | `refund-calculator`, `tax-filing-prep`, `receipt-manager`, ✅ `@portone/mcp-server` |
 | **Compliance** | ✅ `korean-law-mcp`, ✅ `south-korea-law-mcp`, `fire-safety-checklist` |
-| **Scheduler** | `schedule-optimizer`, ✅ Google Calendar MCP, `substitute-matcher` |
+| **Scheduler** | `schedule-optimizer`, `exam-schedule-sync`, ✅ Google Calendar MCP, `substitute-matcher` |
 | **Intake** | `lead-conversion-tracker`, ✅ `py-mcp-naver` (지역 분석), ✅ `aligo-sms-mcp` |
 | **Notification** | ✅ `kakao-bot-mcp`, ✅ `aligo-sms-mcp`, ✅ Weather MCP, `message-template-pack` |
 | **Analytics** | `weekly-report-gen`, ✅ 공공데이터API, `excel-import-export` |

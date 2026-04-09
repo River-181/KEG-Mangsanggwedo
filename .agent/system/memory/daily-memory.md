@@ -15,28 +15,23 @@ aliases:
 
 ## 오늘 상태 (Day 4 — 2026-04-09)
 
-### 핵심 변경: HagentOS 기획 문서 세트 + k-skill 생태계 정의
+### 기획 문서 전체 완성 (Day 4 최종)
+- 총 57개 파일 / 00~10 폴더 모두 채움
+- Codex 3라운드 리뷰 → 총 CRITICAL 6 + HIGH 9 + MEDIUM 7 수정
+- design.md + INDEX.md 추가
+- @solapi MCP 발견 (알림톡 MVP 경로 확보)
 
-- **제품명 확정**: HagentOS (Hagwon + Agent + OS)
+### HagentOS 구조 확정
+- **제품명**: HagentOS (Hagwon + Agent + OS)
 - **비전**: Korean Education 전체 (사교육 운영자 + 공교육 교사 + 강사)
 - **MVP 타겟**: P-001 학원 운영자, 민원·예외 처리 OS
-- **디렉토리**: `03_제품/hagent-os/` — 기획 문서 10개 완성
+- **디렉토리**: `03_제품/hagent-os/` — 57개 파일, 00~10 전체 체계
 
-### k-skill 생태계가 핵심 차별점으로 승격
-- 에이전트 2개(민원+이탈)만으로는 "앱"이지 "플랫폼"이 아님
-- k-skill = 에이전트가 장착하는 한국 교육 도메인 특화 스킬 패키지
-- 법규 조회(korean-law-mcp), 환불 계산, 최저임금 API, 교육 공공데이터, HWP 처리 등
-- GitHub 기반 커뮤니티 공유 구조
-- 외부 한국형 도구를 적극 활용 (만들어놓은 사람들 많음)
-- **core-bet.md**: 차별점 3→4개 (k-skill 추가)
-- **prd.md**: 전체 운영 업무 맵(10영역) + k-skill 아키텍처 섹션 + 비목표 리프레이밍
-- **mvp-scope.md**: Not Now → "k-skill 생태계로 확장" 리프레이밍, 데모에 스킬 레지스트리 장면 추가
-- **value-and-competition.md**: k-skill moat 추가, White Space에 3항목 추가
-
-### 기존 리서치/전략 상태 (변동 없음)
-- 리서치 공간 핵심 판단: `운영자 모드 우세`, `민원/예외 처리 우선`, `보습·IT 우선 도메인`
-- Paperclip 분석 결론: `board-first control plane`, `local-first`, `plugin/adapter extensibility`
-- intake-first 증빙 파이프라인 도입 완료
+### k-skill 생태계 + 실존 MCP 13개+ 연동 확인
+- R-010 조사로 실존 MCP 확인: korean-law-mcp, aligo-sms, kakao-bot, portone, py-mcp-naver, google-calendar 등
+- prd.md 전체 맵: ★ 12/14개 영역 시연 가능 (★ = 시연 가능, Must = 빌드)
+- 에이전트별 스킬 장착 맵 추가 (Paperclip 방식)
+- 원칙: MVP는 빌드 우선순위이지 인프라의 한계가 아니다
 
 ## 오늘 바뀐 구조
 
@@ -56,13 +51,13 @@ aliases:
 - 단일 세션 intake 정본: `04_증빙/01_핵심로그/ai-session-intake.csv`
 - nightly dispatch 스크립트: `.agent/system/automation/scripts/dispatch-session-intake.py`
 
-## 다음 세션 체크리스트
+## 다음 세션 체크리스트 (Day 5 — 앱 착수)
 
-1. `.agent/system/ops/PLAN.md` 확인 — Day 4 우선순위
-2. `.agent/system/ops/PROGRESS.md` 확인 — 완료/미완료 항목
-3. **`03_제품/hagent-os/03_domain/` 작성** — 학원 운영 도메인 문서
-4. **`03_제품/hagent-os/04_ai-agents/` 작성** — 에이전트 설계 + k-skill 카탈로그 정본
-5. **앱 스켈레톤 착수** — Next.js + Supabase 세팅 (`03_제품/app/`)
-6. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 확인
-7. 세션 종료 시 `04_증빙/01_핵심로그/ai-session-intake.csv` append
-8. `PROGRESS.md` 업데이트
+1. **D5 목표**: Next.js + Supabase 스켈레톤, DB 스키마, Mock 데이터 투입
+2. **역할 분담**: 이승보(Orchestrator+에이전트), 김주용(UI+인프라)
+3. **필독 파일**: open-questions.md 🚨 블로커 4개 먼저 확인
+4. **설계 기준**: design.md (색상 토큰), INDEX.md (문서 색인)
+5. **Git**: 기획 커밋 완료 → D5부터 feature/app-skeleton 브랜치 권장
+6. **Claude API**: 토큰 예산 설정 확인 (에이전트 병렬 실행 시 비용 주의)
+7. **Supabase**: 프로젝트 생성 + .env 설정
+8. **확인 필요**: Google Calendar OAuth credentials (D7 전 준비)

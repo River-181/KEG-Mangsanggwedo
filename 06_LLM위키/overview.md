@@ -37,3 +37,9 @@ aliases:
 - `problem-bank`와 `problem-scorecard`가 나오면 `problems/`를 후보별로 분화
 - `education-research-prompts.md`를 prompt asset이 아닌 concept note로 압축
 - `vibe_contest_master_playbook_v0_1.md`에서 execution doctrine 추출
+
+## research-results 반영 메모
+
+- `02_전략/research-results`는 `06_LLM위키/sources/research-results/`로 raw mirror 되었다.
+- 우선 승격된 주제는 `학원 운영의 예외처리 구조`, `운영 케이스 OS`, `데이터 자산화 우선순위`, `운영자 모드 vs 담임 모드`다.
+- 다음 승격 단위는 `민원 대응`, `재등록/이탈 방어`, `법규 approval flow`, `domain pack`이다.
