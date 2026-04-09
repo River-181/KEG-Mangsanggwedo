@@ -1,351 +1,323 @@
 ---
 tags:
   - area/product
-  - type/design
+  - type/context-brief
   - status/active
 date: 2026-04-09
 up: "[[_03_제품_MOC]]"
 aliases:
-  - k-edu-zero-human
-  - K교육제로휴먼
-  - 제로휴먼운영레벨
+  - HagentOS-Master-Brief
+  - 마스터컨텍스트브리프
 related:
-  - "[[03_제품/hagent-os/04_ai-agents/agent-design]]"
   - "[[03_제품/hagent-os/README]]"
+  - "[[03_제품/hagent-os/02_product/prd]]"
+  - "[[03_제품/hagent-os/04_ai-agents/agent-design]]"
+  - "[[03_제품/hagent-os/10_execution/roadmap]]"
 ---
-# K교육 제로 휴먼 운영 레벨 설계 참조서
+# HagentOS 마스터 컨텍스트 브리프
 
-> **목적**: HagentOS의 제로휴먼 레벨(Level 0-4)을 한국 교육 도메인에 적용할 때 사용하는 시스템 설계 참조서.
-> 에이전트 조직 구조, k-skill 패키지 목록, 도메인별 사용 시나리오를 포함한다.
->
-> **핵심 전제**: 제로휴먼은 사람을 없애는 게 아니라 **사람이 잡무에서 해방**되는 것이다.
-> 에이전트가 만든 초안을 사람이 검토·승인하는 구조 — [[03_제품/hagent-os/04_ai-agents/agent-design]] 의 Human-in-the-Loop 원칙과 동일.
->
-> **영감**: Paperclip ("If OpenClaw is an employee, Paperclip is the company")
-> + k-skill (한국형 서비스를 모듈 스킬로 패키지화)
+> **이 문서는 HagentOS 프로젝트에 처음 합류하는 AI 에이전트 또는 사람이 읽는 단일 맥락 문서다.**
+> 5분 안에 프로젝트 전체를 파악하고, 바로 기여할 수 있도록 설계했다.
 
 ---
 
-## 핵심 철학
+## TL;DR (30초 요약)
 
-```
-Paperclip 원문: "Define the goal → Hire the team → Approve and run"
-
-K교육 번역:
-  원장: "올해 재등록률 90% 달성해줘"
-  → AI 에이전트 팀 구성 (민원·이탈·강사·신규 에이전트)
-  → 원장은 대시보드에서 승인만
-
-  교사: "내 반 운영 제로 잔업으로 만들어줘"
-  → AI 에이전트 팀 구성 (민원·생기부·수업계획·행정 에이전트)
-  → 교사는 수업에만 집중
-```
-
-**HagentOS 에이전트 이름 규칙**: 각 에이전트는 `Orchestrator Agent` 하위의 전문 에이전트로 구성된다.
-에이전트 고용·해고 권한은 원장(Board)에게 있으며, 새 도메인 추가는 k-skill 패키지 설치로 대응한다.
+- **무엇**: HagentOS — 한국 학원(사교육)의 비교육 업무를 AI 에이전트 팀이 대신 처리하는 오픈소스 플랫폼
+- **왜**: 학원 원장은 하루 3시간(월 300만원)을 민원/이탈/강사 관리에 쓴다. 출결/수납은 자동화됐지만 예외 처리는 100% 수동
+- **어떻게**: Orchestrator가 전문 에이전트(민원, 이탈, 스케줄 등)를 조율하고, 원장은 대시보드에서 승인만 한다
+- **현재**: 기획 문서 57개 완성 (v0.1.2-brand), 코드 개발 D5(4/10)부터 시작
+- **다음**: D5-D8(4/10-4/13) 4일 스프린트로 MVP 빌드 → 대회 제출
 
 ---
 
-## 시스템 전체 구조
+## 우리가 만드는 것
+
+**HagentOS는 챗봇이 아니다. 학원을 운영하는 AI 조직이다.**
+
+Paperclip("If OpenClaw is an employee, Paperclip is the company")의 'company as AI' 개념을 한국 교육에 이식한다. 기존 에듀테크가 개별 도구(출결 앱, 수납 앱)를 제공한다면, HagentOS는 교육 기관 전체를 운영하는 AI 팀을 제공한다.
 
 ```
-사람 (원장 or 교사)
-    │  한 줄 지시 또는 일정 트리거
+기존:   출결 앱 + 수납 앱 + 카카오톡 + 엑셀 + 구글 캘린더 (분절, 수동)
+HagentOS: 오케스트레이터 → [민원팀] [이탈방어팀] [스케줄러] [강사관리팀]
+```
+
+**태그라인**: "학원의 AI 팀을 고용하세요. 원장님은 승인만 하면 됩니다."
+
+---
+
+## 왜 만드는가 (Pain)
+
+### 사교육 운영자 (학원 원장) — MVP 타겟
+
+- 하루 **3시간** 행정 = **월 300만원** 기회비용 (bati.ai)
+- 업무의 **70%가 비정형 예외 처리**: 심야 민원, 보강, 환불, 강사 대타
+- 출결/수납은 자동화됐지만 **민원/이탈/강사 관리는 100% 수동**
+- 학령인구 **500만 붕괴**(2026) → 학원 생존 경쟁 극심화
+
+### 시장 규모
+
+- 전국 학원 **94,485개** (2025)
+- 사교육비 총액 **29.2조원** (2024)
+- 한국 EdTech 시장 **USD 6.2B → 10.4B** (2024-2030, CAGR 9%)
+
+### 공교육 교사 (Phase 2 타겟)
+
+- 주당 행정 **6-8시간** = **OECD 1위** (TALIS 2024)
+- 학부모 민원 스트레스 **56.9%** (세계 2위), 악성 민원 경험 **46.8%**
+- 생기부 주당 **5-8시간**, 정서적 소진 **68%** (OECD 최상위)
+
+---
+
+## 어떻게 작동하는가 (Architecture)
+
+### 시스템 전체 구조
+
+```
+사람 (원장)
+    │  한 줄 지시 또는 스케줄 트리거
     ▼
-오케스트레이터 Agent  ←── 목표 + 컨텍스트 + 예산
+Orchestrator Agent  ←── 목표 + 컨텍스트 + 예산
     │
-    ├──▶ 민원 Agent        (학부모 민원 처리)
-    ├──▶ 이탈 Agent        (재원생 이탈 예측)
-    ├──▶ 신규상담 Agent    (신규 문의 응대)
-    ├──▶ 강사 Agent        (강사 관리·성과)
-    ├──▶ 생기부 Agent      (담임 전용: 기록 초안)
-    ├──▶ 수업계획 Agent    (담임 전용: 수업 설계)
-    └──▶ 규정 Agent        (공문·법적 대응)
-
-    ▼ 결과물
-승인 대시보드  →  원장/교사가 원클릭 승인 or 편집
+    ├──▶ Complaint Agent     (민원 분류 + 응답 초안)
+    ├──▶ Retention Agent     (이탈 징후 감지)
+    ├──▶ Scheduler Agent     (일정 관리)
+    ├──▶ Intake Agent        (신규 상담)
+    ├──▶ Staff Agent         (강사 관리)
+    ├──▶ Finance Agent       (환불/수납)
+    ├──▶ Compliance Agent    (규제/공문)
+    ├──▶ Notification Agent  (알림 발송)
+    └──▶ Analytics Agent     (운영 분석)
     │
     ▼
-증빙 로거  →  모든 AI 처리 내역 자동 저장 (AI 리포트용)
+승인 대시보드 (Paperclip 4-zone Board UI)
+    → 원장이 원클릭 승인 or 편집 후 발송
+    │
+    ▼
+감사 로거 → 모든 AI 처리 내역 자동 저장
 ```
+
+### 인증 구조 (Dual Auth)
+
+- **Board cookie**: 원장 웹 로그인 (next-auth JWT, 단일 계정 MVP)
+- **Agent JWT**: 에이전트 간 통신용 토큰 (내부 API 보안)
+
+### 제로 휴먼 레벨 (케이스별 결정)
+
+| Level | 인간 개입 | 예시 |
+|:-----:|:---------:|------|
+| **0** | ~0% | 일일 브리핑 자동 생성, 출결 집계 |
+| **1** | ~10% | 민원 응답 초안 → 원클릭 승인 |
+| **2** | ~30% | 복잡한 민원 → 편집 후 발송 |
+| **3** | ~50% | 이탈 위험 학생 → 원장이 개입 여부 결정 |
+| **4** | ~90% | 법적/감성 판단 → AI는 정보 제공만 |
+
+**MVP 목표**: Level 0-1 완전 구현
 
 ---
 
-## 모드 1: 학원 운영 (사교육)
+## 무엇을 만들었는가 (Current State)
 
-**회사 목표** (Paperclip 방식): "최고 재등록률, 미처리 민원 0건, 강사 번아웃 0명"
+### 완료된 것: 기획 문서 57개
 
-### 조직도
+```
+hagent-os/
+├── 00_vision/       ← core-bet, success-metrics
+├── 01_strategy/     ← 시장/고객/경쟁/GTM
+├── 02_product/      ← PRD(정본), MVP 범위, 페르소나, 저니
+├── 03_domain/       ← 학원 운영 도메인 지식
+├── 04_ai-agents/    ← 에이전트 설계 + 역할별 상세
+├── 05_workflows/    ← 핵심 워크플로우
+├── 06_policies/     ← 커뮤니케이션/데이터/AI 안전 정책
+├── 07_integrations/ ← 외부 연동 (카카오, NEIS 등)
+├── 08_data/         ← 도메인 모델, 리포팅 메트릭
+├── 09_ux/           ← IA, UX 컨셉
+├── 10_execution/    ← 로드맵, 미해결 질문
+└── brand/           ← 로고, 디자인 시스템
+```
+
+### 릴리스 히스토리
+
+| 태그 | 내용 |
+|------|------|
+| v0.1.0-planning | 기획 문서 세트 완성 |
+| v0.1.1-design | 디자인 시스템 + UI 참조 |
+| v0.1.2-brand | 브랜드 에셋 + Toss 스타일 UI |
+
+### 코드: 아직 없음
+
+D5(4/10)부터 개발 시작. `03_제품/app/` 디렉토리에 생성 예정.
+
+---
+
+## 무엇을 만들어야 하는가 (MVP Build, D5-D8)
+
+### 일별 목표
+
+| Day | 날짜 | 목표 | 담당 |
+|-----|------|------|------|
+| **D5** | 4/10 목 | 스켈레톤 & 인프라 — Next.js + PostgreSQL + Drizzle + next-auth + Mock 데이터 | 승(에이전트)+용(인프라) |
+| **D6** | 4/11 금 | 에이전트 코어 — Orchestrator + Complaint Agent + Retention Agent | 승(에이전트)+용(API) |
+| **D7** | 4/12 토 | Approval Dashboard UI + Heartbeat cron + 온보딩 | 용(UI)+승(cron) |
+| **D8** | 4/13 일 | 데모 테스트 + 자체 검수 + 최종 배포 제출 | 승+용 |
+
+### Must-have (대회 제출 필수)
+
+- Orchestrator Agent (task routing)
+- Complaint Agent (민원 분류 + 초안 응답)
+- Retention Agent (이탈 신호 감지)
+- Approval Dashboard (승인/편집/반려 원클릭)
+- Heartbeat cron (매일 07:00 자동 실행)
+
+### Should-have (시간 허용 시)
+
+- Scheduler UI (캘린더 뷰, 에이전트 로직 없이 UI만)
+- k-skill 레지스트리 UI (기본 에이전트 목록)
+- Google Calendar 단방향 동기화 (읽기 전용)
+
+---
+
+## 기술 스택 (확정)
+
+| Layer | Tech | 비고 |
+|-------|------|------|
+| Frontend | Next.js 15 (App Router) + Tailwind CSS v4 + shadcn/ui | Toss 스타일, primary #0ea5b0 |
+| Backend | Node.js + TypeScript | API Routes (Next.js) |
+| DB | PostgreSQL + Drizzle ORM | 로컬 Docker / 배포 Neon.tech |
+| AI | Claude API (Sonnet 4.6) | Orchestrator + 전문 에이전트 |
+| Auth | next-auth (JWT) | 단일 원장 계정 MVP |
+| Scheduler | node-cron | heartbeat 방식 자동 실행 |
+| Deploy | Vercel + Neon.tech | 프론트+백엔드 통합 배포 |
+| Design | "Toss Product Sans" / "Noto Sans KR", Lucide icons | 모바일 반응형 |
+
+---
+
+## 에이전트 팀 구조
 
 ```
 원장 (Board — 사람)
-    │ 전략 승인 / 예산 설정 / 에이전트 고용 승인
+    │ 전략 승인 / 예산 설정 / 에이전트 고용
     ▼
-오케스트레이터 (CEO Agent)
+Orchestrator (CEO Agent)     ← Must
     │
-    ├── [Intake Agent] 신규상담 담당
-    │   └── 문의 → 레벨진단 → 반배정 → 등록 안내
+    ├── Complaint Agent      ← Must  : 민원 분류 + 응답 초안
+    ├── Retention Agent      ← Must  : 이탈 징후 감지 + 상담 권고
+    ├── Scheduler Agent      ← Must  : 일정 관리 + 자동 알림
     │
-    ├── [Retention Agent] 이탈예측 담당
-    │   └── 출결패턴 분석 → 이탈징후 감지 → 상담 권고
-    │
-    ├── [Complaint Agent] 민원처리 담당
-    │   └── 민원 분류 → 응답초안 → 에스컬레이션 판단
-    │
-    ├── [Staff Agent] 강사관리 담당
-    │   └── 스케줄 최적화 → 성과측정 → 번아웃 감지
-    │
-    ├── [Finance Agent] 매출분석 담당
-    │   └── 수납현황 → 재등록률 → 수익예측
-    │
-    └── [Compliance Agent] 규제대응 담당
-        └── 교육청 공문 요약 → 체크리스트 → 점검 대비
+    ├── Intake Agent         ← Should: 신규 문의 → 레벨 진단 → 반배정
+    ├── Staff Agent          ← Should: 강사 스케줄 + 성과 + 번아웃 감지
+    ├── Finance Agent        ← Should: 수납 현황 + 환불 계산 + 수익 예측
+    ├── Compliance Agent     ← Should: 교육청 공문 요약 + 체크리스트
+    ├── Notification Agent   ← Should: 알림 발송 채널 관리
+    └── Analytics Agent      ← Should: 운영 리포트 + KPI 대시보드
 ```
 
-### 학원 도메인별 특화 에이전트
-
-| 학원 유형 | 추가 에이전트 | 담당 업무 |
-|-----------|--------------|-----------|
-| 태권도·예체능 | Shuttle Agent | 픽업 스케줄, 차량 안전 점검 |
-| 운전면허 | Fleet Agent | 차량 예약·정비, 합격률 관리 |
-| IT·코딩 | Portfolio Agent | 학생 포트폴리오, 취업 연계 |
-| 보습·교과 | Exam Agent | 시험 일정, 성적 분석, 문제은행 |
-| 피트니스 | Schedule Agent | PT 예약, 회원권 만료 알림 |
-
-### 원장 하루 흐름 (제로 휴먼 달성 후)
-
-```
-기존:  [원장 하루 3시간 행정] = 월 300만원 기회비용 (bati.ai)
-
-제로 휴먼 후:
-  아침 9시 — 오케스트레이터 자동 실행 (Paperclip heartbeat)
-  → "어제 민원 2건 처리 완료. 이탈 위험 학생 1명 감지. 승인 대기 3건."
-  → 원장: 승인 버튼 3번 클릭 → 5분 완료
-
-  특이사항 없는 날: 완전 자동 처리 (Level 0 — 감사 로그만)
-  일반 민원: 초안 → 원클릭 승인 (Level 1)
-  복잡한 민원: 초안 제시 → 원장 편집 후 발송 (Level 2)
-  법적/감성 판단: AI 정보 제공 → 원장 직접 대응 (Level 4)
-```
+각 에이전트는 Claude Sonnet 4.6로 구동되며, k-skill을 장착해 한국 교육 도메인 특화 기능을 수행한다.
 
 ---
 
-## 모드 2: 담임 반 운영 (공교육)
+## k-skill 생태계
 
-**회사 목표**: "수업 외 업무 0시간, 민원 응답 지연 0건, 생기부 초안 자동 완성"
+HagentOS의 4번째 핵심 차별점. 에이전트가 한국 서비스 생태계를 직접 활용하도록 스킬을 모듈화한다.
 
-### 조직도
-
-```
-담임교사 (Board — 사람)
-    │ 수업에만 집중 / 주요 판단만
-    ▼
-오케스트레이터 (담임보조 Agent)
-    │
-    ├── [Complaint Agent] 민원초안 담당
-    │   └── 민원 분류 → 응답초안 → 에스컬레이션 판단
-    │   └── 예: "목소리 커서 잠 못 잔다" → "안녕하세요 어머니, ..." 초안 30초
-    │
-    ├── [Record Agent] 생기부 담당
-    │   └── 누가기록 메모 → 행동특성 초안 → 출결특기사항
-    │   └── 학생 30명 × 1~2시간 → 10분 검토로 압축
-    │
-    ├── [Admin Agent] 행정처리 담당
-    │   └── 가정통신문 초안 → 공문 요약 → 보고서 자동화
-    │
-    ├── [Lesson Agent] 수업계획 담당
-    │   └── 단원별 수업계획 → 학습목표 → 활동 설계
-    │
-    └── [Profile Agent] 학생프로필 담당
-        └── 학생별 상황요약 (출결+민원+특이사항 통합)
-```
-
-### 교사 하루 흐름 (제로 휴먼 달성 후)
+### 구조
 
 ```
-기존:  [주당 행정 6~8h + 생기부 5~8h] = 주 11~16시간 비교육 업무 (OECD 1위)
+에이전트 + k-skill = 한국 교육 특화 AI 직원
 
-제로 휴먼 후:
-  출근 전 — "어젯밤 민원 2건 초안 생성 완료. 검토 부탁"
-  → 교사: 초안 확인 → 발송 (5분)
-
-  학기말 — "30명 학생 행동특성 초안 완성. 검토 부탁"
-  → 교사: 학생별 20초씩 검토 → 10분 완료
-
-  수업 당일 — "목요일 3단원 수업계획 준비됨"
-  → 교사: 확인 후 바로 수업
+예: Complaint Agent + complaint-draft 스킬
+    → 민원 분류 프롬프트 + 학부모 톤 응답 생성 + 에스컬레이션 판단
 ```
+
+### 실존하는 외부 MCP/스킬 (연동 예정)
+
+| MCP/스킬 | 용도 |
+|----------|------|
+| `korean-law-mcp` | 한국 법률 검색 (학원법, 환불 규정) |
+| `@solapi/mcp-server` | SMS/알림톡 발송 |
+| `@portone/mcp` | 결제/수납 연동 |
+| `py-mcp-naver` | 네이버 검색 API |
+| `gcal-mcp` | Google Calendar 동기화 |
+| `hwp-processor` | 한글 문서 처리 |
 
 ---
 
-## k-skill 방식의 스킬 패키지 구조
+## 네가 이 프로젝트에서 해줘야 할 것
 
-k-skill처럼 각 기능을 독립 스킬로 패키지화. 설치·교체·업그레이드 가능.
+### 개발자로 합류한다면
 
-```
-k-edu-skill/
-├── SKILL.md                    ← 전체 스킬 목록 + 설치 가이드
-│
-├── k-edu-setup/                ← 설치 + 학원/학교 초기 설정
-│
-├── complaint-draft/            ← 민원 응답 초안 생성
-│   ├── SKILL.md                ← 스킬 명세 (입력/출력/트리거)
-│   ├── index.ts
-│   └── prompts/
-│       ├── classify.md         ← 민원 분류 프롬프트
-│       └── draft.md            ← 응답 초안 프롬프트
-│
-├── retention-radar/            ← 이탈 예측
-│   ├── SKILL.md
-│   └── index.ts
-│
-├── intake-agent/               ← 신규 상담 자동화
-├── staff-pulse/                ← 강사 성과 모니터링
-├── record-generator/           ← 생기부 행동특성 초안
-├── lesson-planner/             ← 수업 계획 생성
-├── admin-processor/            ← 행정 문서 초안
-├── compliance-brief/           ← 공문·규제 요약
-└── shuttle-manager/            ← 차량 관리 (태권도·예체능용)
-```
+1. `03_제품/hagent-os/README.md` — 프로젝트 개요 + 디렉토리 구조
+2. `03_제품/hagent-os/10_execution/open-questions.md` — 미결 이슈 확인
+3. `03_제품/hagent-os/10_execution/roadmap.md` — 일별 태스크 확인
+4. `03_제품/hagent-os/02_product/prd.md` — 제품 상세 요구사항 (정본)
 
-### 스킬 SKILL.md 형식 (k-skill 스타일)
+### 리뷰어/검증자로 합류한다면
 
-```markdown
-# complaint-draft
+1. `03_제품/hagent-os/10_execution/open-questions.md` — 미결 질문
+2. `03_제품/hagent-os/_research/` — Paperclip 분석, 경쟁사 리서치
 
-**역할**: 학부모 민원 분류 + 응답 초안 생성
-**트리거**: 새 민원 수신 or 원장/교사 수동 실행
-**입력**: 민원 원문 텍스트
-**출력**:
-  - 민원 유형 (성적불만 / 행동지적 / 시설불만 / 기타)
-  - 긴급도 (즉시 / 당일 / 주간)
-  - 응답 초안 (원장/교사 톤 반영)
-  - 에스컬레이션 여부 (Yes/No + 이유)
-**에이전트**: Claude Sonnet 4.6
-**제로휴먼 레벨**: Level 1 (초안 → 원클릭 승인)
-```
+### 디자이너로 합류한다면
+
+1. `03_제품/hagent-os/design.md` — 디자인 시스템 (색상/타이포/컴포넌트)
+2. `03_제품/hagent-os/09_ux/` — IA, UX 컨셉
+
+### AI 활용 보고서를 작성한다면
+
+1. `04_증빙/` 폴더 전체 — 세션 로그, 프롬프트 카탈로그, 사용 통계
+2. `04_증빙/01_핵심로그/master-evidence-ledger.md` — 증빙 정본
 
 ---
 
-## Paperclip과의 직접 대응
+## 결정된 것 vs 미결인 것
 
-| Paperclip 개념 | K교육 제로 휴먼 적용 |
-|----------------|---------------------|
-| "Define the goal" | 원장: "재등록률 90%" / 교사: "잔업 0시간" |
-| "Hire the team" | 필요한 에이전트 활성화 (설치형 스킬) |
-| "Approve and run" | 원장/교사가 대시보드에서 승인 → 실행 |
-| "Agents wake on heartbeat" | 매일 오전 자동 실행 + 이벤트 트리거 |
-| "Budget per agent" | 에이전트별 Claude API 토큰 예산 설정 |
-| "Audit log (immutable)" | 모든 AI 처리 → `master-evidence-ledger` 자동 저장 |
-| "Board approves hires" | 원장이 새 스킬 설치 승인 |
-| "Not a chatbot" | 대화창 아님 — 직무 지향, 자동 처리 |
-| "Org chart" | 원장↔오케스트레이터↔전문에이전트 계층 |
+### 확정 (변경 불가)
 
----
+| 항목 | 결정 내용 |
+|------|-----------|
+| 제품명 | HagentOS |
+| MVP 타겟 | 학원 원장 (사교육) |
+| 기술 스택 | Next.js + PostgreSQL + Drizzle + Claude API + next-auth + node-cron |
+| 디자인 | Toss 스타일, primary teal #0ea5b0, shadcn/ui |
+| Must 에이전트 | Orchestrator, Complaint, Retention, Scheduler |
+| 인증 | next-auth JWT, 단일 원장 계정 |
+| 배포 | Vercel + Neon.tech |
+| 제출 마감 | 2026-04-13 24:00 (D-4) |
 
-## 제로 휴먼 레벨 정의 (HagentOS 정본)
+### 미결 (D5 이후 결정)
 
-> 정본 위치: [[03_제품/hagent-os/04_ai-agents/agent-design]] — "Human-in-the-Loop: 제로휴먼 레벨" 섹션
-> 레벨은 에이전트 고정이 아니라 **케이스별로 결정**된다.
-
-| Level | 이름 | 인간 개입 | K교육 예시 | 승인 UI |
-|:-----:|------|:---------:|------------|---------|
-| **0** | 완전 자동 | ~0% | 일일 브리핑, 출결 집계, 이탈 점수 갱신 | 없음 (감사 로그만) |
-| **1** | 초안 + 원클릭 승인 | ~10% | 민원 응답 초안 → [전송] 버튼 | 승인/반려 |
-| **2** | 초안 + 편집 후 발송 | ~30% | 복잡한 민원, 환불 안내문, 생기부 수정 | 편집기 + 발송 |
-| **3** | 분석 + 사람 결정 | ~50% | 이탈 위험 학생 → 상담 여부 원장 판단 | 분석 리포트 + 액션 선택 |
-| **4** | 정보 제공만 | ~90% | 법적 분쟁, 감성적 판단 필요 케이스 | 참고 자료만 제공 |
-
-**7일 MVP 목표**: Level 0~1 완전 구현
+| 항목 | 상태 | 결정 시점 |
+|------|------|-----------|
+| 스프린트 범위 축소 여부 | 민원 단일 흐름 먼저 완성 권고됨 | D5 |
+| Approval-Case-AgentRun FK 방향 | Option A 권장 (Case 선생성) | D5 저녁 |
+| Claude API 병렬 비용 실측 | 미측정 | D6 |
+| Google Calendar OAuth | 로컬 테스트만, 도메인 검증 생략 | D7 |
+| 오픈소스 라이선스 | Apache 2.0 / MIT / GPL 미결 | 대회 후 |
 
 ---
 
-## 리서치 기반 우선순위 판단
+## 핵심 파일 색인
 
-### 가장 먼저 만들어야 할 스킬 (근거 5개 소스 이상 교차 확인)
-
-| 순위 | 스킬 | 근거 | 해당 레벨 |
-|------|------|------|-----------|
-| 1위 | `complaint-draft` | TALIS 56.9% / 교사 46.8% 경험 / Grok 레전드 민원 | Level 1 |
-| 2위 | `retention-radar` | bati.ai 월 300만원 / 학령인구 500만 붕괴 | Level 0~1 |
-| 3위 | `record-generator` | 생기부 주당 5~8시간 / Perplexity 설문 | Level 2 |
-| 4위 | `intake-agent` | 신규상담 자동화 = 화이트스페이스 | Level 1 |
-| 5위 | `staff-pulse` | 강사 역량 = 재등록 핵심 / 노란봉투법 리스크 | Level 2 |
-
-### 버려야 할 것 (레드오션)
-
-- 출결·수납 자동화: 클래스업, 온하이 이미 커버
-- 생기부 단독: LGU+ 슈퍼스쿨, 왓퀴즈 이미 있음
-- 차량 관리 단독 MVP: IoT 없이 데모 설득력 없음
+| 파일 | 설명 |
+|------|------|
+| `03_제품/hagent-os/README.md` | 프로젝트 개요 + 기술 스택 + 디렉토리 구조 |
+| `03_제품/hagent-os/00_vision/core-bet.md` | 핵심 베팅 — 왜 이걸 만드는가 |
+| `03_제품/hagent-os/02_product/prd.md` | 제품 요구사항 정본 (단일 진실 원본) |
+| `03_제품/hagent-os/02_product/mvp-scope.md` | 7일 MVP 범위 + 우선순위 |
+| `03_제품/hagent-os/04_ai-agents/agent-design.md` | 에이전트 설계 + 제로휴먼 레벨 정본 |
+| `03_제품/hagent-os/10_execution/roadmap.md` | D5-D8 일별 태스크 + Phase 1-3 로드맵 |
+| `03_제품/hagent-os/10_execution/open-questions.md` | 미결 이슈 15개 + 우선순위 매트릭스 |
+| `03_제품/hagent-os/design.md` | 디자인 시스템 (Toss 스타일, 색상/타이포/컴포넌트) |
+| `03_제품/hagent-os/01_strategy/market-and-customer.md` | TAM/SAM/SOM + 고객 세그먼트 |
+| `03_제품/k-edu-zero-human.md` | **이 문서** — 마스터 컨텍스트 브리프 |
 
 ---
 
-## 데모 시나리오 (2분 안에 "와" 소리 나는 장면)
+## 팀
 
-### 학원 원장 버전
+| 이름 | 역할 | 담당 |
+|------|------|------|
+| 이승보(승) | CEO, AI 설계 | 에이전트/오케스트레이터 설계 및 구현, Claude API, 대회 전략 |
+| 김주용(용) | COO, 프론트엔드 | UI/프론트엔드, 인프라/배포, DB 스키마, 유저 플로우 |
+| AI 에이전트 | 코드 생성, 문서화, 테스트 | Claude, GPT, Codex, Perplexity 등 멀티 에이전트 협업 |
 
-```
-시나리오: 원장이 아침에 대시보드 열기
-
-[오케스트레이터 자동 브리핑]
-"어제 오후 9시 이후 처리 사항:"
-- 학부모 민원 2건 → 초안 생성 완료 (승인 대기)
-- 이탈 위험 학생 감지: 박민준 (이번달 결석 4회)
-- 강사 A 성과 하락 감지 → 면담 권고
-
-[원장 액션]
-민원 초안 확인 → "전송" 버튼 클릭 (30초)
-박민준 학부모 상담 일정 생성 → 완료
-
-기존: 2시간 / 제로 휴먼: 5분
-```
-
-### 담임 교사 버전
-
-```
-시나리오: 교사가 "이번 주 반 운영 처리해줘"
-
-[오케스트레이터 실행]
-Agent A (민원): "홍길동 어머니 민원 — '수업 목소리가 커서 잠 못 잔다'
-  → [분류: 수업방식 요청] [긴급도: 낮음]
-  → 응답 초안: '안녕하세요 어머니, 홍길동 학생이 집중해서 듣는 모습을 보아
-     활발한 수업 분위기에 잘 적응하고 있습니다. 앞으로는 조용한 활동과
-     균형을 맞추도록 노력하겠습니다. 감사합니다.'"
-
-Agent B (수업): "목요일 3단원 수업 계획
-  → 학습목표: ~ / 도입(5분): ~ / 전개(30분): ~ / 정리(5분): ~"
-
-기존: 1시간 / 제로 휴먼: 교사 검토 5분
-```
-
----
-
-## 기술 스택 (Paperclip 참고)
-
-| 레이어 | 기술 | 이유 |
-|--------|------|------|
-| 백엔드 | Node.js + TypeScript | Paperclip과 동일 스택 |
-| AI | Claude API (Sonnet 4.6) | 오케스트레이터 + 전문 에이전트 |
-| DB | Supabase (PostgreSQL) | 에이전트 상태 + 증빙 저장 |
-| UI | Next.js (React) | 승인 대시보드 |
-| 스케줄러 | cron (Paperclip heartbeat 방식) | 매일 자동 실행 |
-| 스킬 패키지 | k-skill 방식 (독립 모듈) | 설치·교체 가능 |
-
----
-
-## 다음 액션
-
-1. **`decision-sprint.md` 작성** — 운영자 모드 vs 교사 모드 중 MVP 확정
-2. **`architecture.md` 작성** — 기술 스택 + API 구조 상세화
-3. **Mock 데이터 설계** — 민원 3건 + 학생 20명 + 강사 3명 데이터셋
-4. **스킬 SKILL.md 초안** — `complaint-draft` 스킬부터 시작
-
----
-
-## 미해결 질문 (사람이 결정해야 할 것)
-
-1. **MVP 모드**: 학원 원장 모드 vs 담임교사 모드 중 하나만 먼저?
-2. **차량 관리 포함 여부**: 태권도·예체능 특화 기능을 MVP에 넣을지?
-3. **Paperclip 방식 스케줄러**: 매일 자동 실행 vs 수동 트리거?
-4. **승인 UI**: 카카오톡 알림 vs 웹 대시보드?
-5. **공교육 NEIS 연동**: 완전 mock으로 할지, 일부 연동 시도할지?
+**대회**: 2026 제1회 KEG 바이브코딩 콘테스트 (500팀 경쟁, 4/13 마감)
