@@ -15,57 +15,82 @@ aliases:
 
 - 대회명: 2026 제1회 KEG 바이브코딩 콘테스트
 - 주제: AI활용 차세대 교육 솔루션
-- 기간: 2026-04-06 ~ 2026-04-13
-- 마감: 2026-04-13 24:00
-- 제출물: GitHub(public), 라이브 URL, AI 리포트, 동의서/각서
-- 심사: 기술 완성도, AI 활용 능력/효율성, 기획력/실무접합성, 창의성
-- 상세 정본: `01_대회정보/바이브코딩공모전_공지.md`
+- 기간: 2026-04-06 ~ 2026-04-13 / 마감: 2026-04-13 24:00
+- 제출물 5개: GitHub(public) + **라이브 URL(필수, Vercel)** + AI 리포트(.docx→PDF, 2섹션) + 개인정보동의서 + 참가각서
+- 심사 4개: 기술 완성도, AI 활용 능력/효율성, 기획력/실무접합성, 창의성
+- 정본: `01_대회정보/바이브코딩공모전_공지.md`
 
 ## 팀 핵심
 
-- 팀 인원: 2명
-- 이승보: 한남대학교, SW개발 총괄
-- 김주용: 충남대학교, 프로젝트 관리/발표
+- 이승보 (CEO): 한남대 / Orchestrator + 에이전트 개발 담당
+- 김주용 (COO): 충남대 / UI + 인프라 + 배포 담당
 - 두 사람 모두 풀스택 + AI 네이티브
-- 상세 프로필 정본: `01_대회정보/team_profiles.md`
+- 정본: `01_대회정보/team_profiles.md`
 
-## 워크스페이스 목적
+## 제품 확정 정보 ← 신규 AI 에이전트는 여기서 시작
 
-- 이 공간은 지금 단계에서 제품 저장소보다 먼저 `대회를 위한 운영 시스템 공간`이다
-- 사람 2명과 다중 AI가 같은 규칙과 맥락으로 움직이도록 설계한다
-- Obsidian은 탐색 인터페이스, GitHub는 추후 운영/제품 저장소 역할
-- 실제 제품 코드는 `03_제품/app/`, 테스트는 `03_제품/tests/`
+### 제품명
+HagentOS (Hagwon + Agent + OS)
+"한국 교육 기관을 위한 오픈소스 AI 에이전트 오케스트레이션 플랫폼"
 
-## 정본 위치
+### MVP 범위 (D5-D8 빌드)
+- Must: Orchestrator + Complaint Agent + Retention Agent + Approval Dashboard + Heartbeat cron
+- Scheduler Agent = UI only (full agent logic는 Phase 1)
+- 모바일 반응형 (원장이 폰으로 사용)
 
-- 공용 운영 규칙: `.agent/system/`
-- 운영 진행 관리: `.agent/system/ops/`
-- visible 진행 대시보드: `_system/dashboard/project-dashboard.md`
-- 리포트 재료: `04_증빙/`
-- Claude 런타임 어댑터: `.claude/`
-- 공용 에이전트 정의: `.agent/agents/`
-- 전략/증빙/wiki task 입력점: `02_전략/tasks/`, `04_증빙/tasks/`, `06_LLM위키/tasks/`
+### 기술 스택 (확정)
+- Frontend: Next.js 14 + React + Tailwind CSS
+- Backend: Node.js + TypeScript
+- DB: PostgreSQL + Drizzle ORM (Docker 로컬 / Neon.tech 배포)
+- AI: Claude API (Sonnet 4.6)
+- Auth: next-auth (JWT)
+- Scheduler: node-cron
+- 배포: Vercel (프론트) + Neon.tech (DB)
+
+### 디자인 시스템
+- 북극성: 토스 앱 UI (색상 토큰 직접 추출)
+- Primary: `#0ea5b0` (teal) / Background: `#ffffff` / `#f6f7f9` / Dark base: `#17171c`
+- Grey 스케일: Toss 원본 (`#f9fafb` ~ `#191f28`)
+- 폰트: Pretendard (한국어 최적화, Toss 유사)
+- 레이아웃: 4존 — 72px rail + 240px sidebar + flex-1 main + 320px properties panel
+
+### 에이전트 (Canonical)
+- Must: Orchestrator, Complaint Agent, Retention Agent, Scheduler Agent
+- Should: Intake, Staff, Finance, Compliance, Notification, Analytics
+- Future: Facility, Teaching
+
+### 핵심 파일 위치
+- 기획 정본: `03_제품/hagent-os/` (57개 파일) / 빠른 탐색: `INDEX.md`
+- 에이전트 설계: `04_ai-agents/agent-design.md`
+- PRD: `02_product/prd.md` / MVP 범위: `02_product/mvp-scope.md`
+- DB 모델: `08_data/domain-model.md`
+- 디자인: `design.md` + `brand/`
+- UI 구조: `09_ux/information-architecture.md` (22개 라우트)
+- Paperclip UI 참고: `_research/paperclip-ui-reference.md`
+- 로드맵: `10_execution/roadmap.md`
+- 미결 블로커: `10_execution/open-questions.md` ==🚨 반드시 확인==
+
+### AI 리포트 준비 현황
+- 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (S-001~S-019)
+- 세션 CSV: `04_증빙/01_핵심로그/ai-session-intake.csv`
+- 데일리: `04_증빙/03_daily/2026-04-09.md`
+- 섹션 1 (기획): `prd.md`, `core-bet.md`, `market-and-customer.md`에서 추출
+- 섹션 2 (AI 활용): intake CSV + evidence ledger에서 추출
 
 ## 현재 우선순위
 
-1. 문제 후보 3개 축소와 최종 문제 1개 확정
-2. `project-dashboard`를 중심으로 `PLAN/PROGRESS/daily/task` 동기화 유지
-3. `master-evidence-ledger` 기반 증빙 습관화
-4. `paperclip` 실제 코드 해체 결과를 제품 정의 입력으로 승격
-5. `06_LLM위키/` 첫 ingest 시작
-6. 제품 구현 착수
+1. **D5 (4/10)**: 앱 스켈레톤 — Next.js + PostgreSQL + Drizzle + Mock 데이터
+2. **D6 (4/11)**: Orchestrator + Complaint + Retention Agent (Claude API 연결)
+3. **D7 (4/12)**: Approval Dashboard + Heartbeat cron + GCal 단방향 sync
+4. **D8 (4/13)**: 스케줄러 UI + k-skill 레지스트리 UI + 데모 + 제출
+5. 랜딩 페이지 (Vercel 배포 — 라이브 URL 필수)
 
-## 제품 방향에서 고정된 것
+## 워크스페이스 구조 / 정본 위치
 
-- reference 프로그램은 `paperclip` 계열이며, 목표는 clone이 아니라 한국형 학원 운영 맥락에 맞는 재구성이다.
-- 현재까지의 코드 해체 기준 핵심 차용 대상은 `board-first control plane`, `stateful operations model`, `local-first deployment`, `plugin/adapter extensibility`다.
-- 초기 제품은 chat shell보다 `운영 보드 + 케이스 + 승인 + 활동 기록`에 가까운 형태일 가능성이 높다.
-- 도메인 다양성이 크므로 core system과 domain pack, skill bundle을 분리해 사고해야 한다.
-
-## authoritative files
-
+- 워크스페이스: Obsidian 볼트 + GitHub 저장소 (멀티 AI 협업)
 - 운영 계약: `.agent/system/contracts/workspace-contract.md`
 - 기억/증빙 정책: `.agent/system/contracts/memory-evidence-policy.md`
-- 워크스페이스 구조 맵: `.agent/system/maps/workspace-atlas.md`
+- 구조 맵: `.agent/system/maps/workspace-atlas.md`
 - 실행 계획: `.agent/system/ops/PLAN.md`
-- 진행 현황: `.agent/system/ops/PROGRESS.md`
+- 진행 현황 (SSoT): `.agent/system/ops/PROGRESS.md` ← 작업 전 반드시 확인
+- 제품 코드: `03_제품/app/` / 테스트: `03_제품/tests/`

@@ -63,11 +63,31 @@ aliases:
 
 ## 다음 세션 체크리스트 (Day 5 — 앱 착수)
 
-1. **D5 목표**: Next.js + Supabase 스켈레톤, DB 스키마, Mock 데이터 투입
-2. **역할 분담**: 이승보(Orchestrator+에이전트), 김주용(UI+인프라)
-3. **필독 파일**: open-questions.md 🚨 블로커 4개 먼저 확인
-4. **설계 기준**: design.md (색상 토큰), INDEX.md (문서 색인)
-5. **Git**: 기획 커밋 완료 → D5부터 feature/app-skeleton 브랜치 권장
-6. **Claude API**: 토큰 예산 설정 확인 (에이전트 병렬 실행 시 비용 주의)
-7. **Supabase**: 프로젝트 생성 + .env 설정
-8. **확인 필요**: Google Calendar OAuth credentials (D7 전 준비)
+### 필독 (5분)
+1. `.agent/system/ops/PROGRESS.md` — 현재 상태
+2. `03_제품/hagent-os/10_execution/open-questions.md` — 🚨 블로커 4개
+3. `03_제품/hagent-os/INDEX.md` — 파일 색인
+
+### D5 목표
+- Next.js 앱 초기화 (`03_제품/app/`)
+- PostgreSQL Docker Compose 설정
+- Drizzle ORM 스키마 (domain-model.md 기준)
+- Mock 데이터 투입 (mvp-scope.md의 M8)
+- next-auth 설정
+
+### 역할 분담
+- 이승보: Orchestrator + Complaint Agent + Retention Agent (Claude API 연결)
+- 김주용: UI scaffold + 인증 + DB 인프라 + 배포 파이프라인
+
+### 설계 기준 파일
+- `design.md` — 색상 토큰
+- `_research/paperclip-ui-reference.md` — UI 구조
+- `08_data/domain-model.md` — DB 스키마
+- `brand/` — 브랜드 요소
+
+### 대회 필수 제출물 체크
+- [ ] GitHub public URL
+- [ ] 라이브 URL (Vercel 배포)
+- [ ] AI 리포트 작성 시작
+- [ ] 개인정보 동의서
+- [ ] 참가 각서

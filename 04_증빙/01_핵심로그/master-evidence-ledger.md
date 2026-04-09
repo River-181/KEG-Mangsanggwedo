@@ -444,3 +444,19 @@ aliases:
 - Report section hint: AI 활용 과정 | 기획 | 멀티에이전트 분업 전략 | 도구 선택 이유
 - Token note: Sonnet/Opus/Haiku exact token source exists in Claude JSONL; Codex exact unavailable estimate
 - Follow-up: 기획 문서 기반으로 MVP 구현 착수 (complaint-draft 스킬 + Orchestrator Agent 우선)
+
+### S-PROD-020
+
+- DateTime: 2026-04-09T22:00+09:00
+- Phase: 기획 마무리 / 브랜드 확정
+- Tool/Client: Claude Code (Sonnet 4.6 + Haiku)
+- Model: claude-sonnet-4-6 (main) + claude-haiku-4-5 (반복 작업)
+- Goal: 브랜드 문서 세트 작성 + 메모리/로그 전체 업데이트
+- What changed: brand/identity.md, brand/visual-language.md, brand/landing-page.md 생성. design.md Toss 토큰 반영. ux-concepts.md 복제 언어 제거. information-architecture.md 22개 라우트 확정. _research/paperclip-ui-reference.md 4화면 분석. DB 스택 PostgreSQL+Drizzle 확정. 메모리 3개 파일 (project_hagent_os_state.md 신규 + daily-memory.md 갱신 + master-evidence-ledger.md 이 항목) 생성/업데이트.
+- Why it mattered: 디자인 시스템·브랜드·UI 아키텍처 전체 확정. 메모리 시스템이 현재 상태를 완전히 반영. D5 개발 착수 기반 완성.
+- Artifacts: 03_제품/hagent-os/brand/ (3개 파일) | design.md | _research/paperclip-ui-reference.md | .claude/projects/.../memory/project_hagent_os_state.md | .agent/system/memory/daily-memory.md
+- AI usage strategy: Sonnet(브랜드 창의 작업) + Haiku(메모리 업데이트 및 반복 작업)
+- Evidence value: AI 활용 전략 섹션 — 역할별 모델 선택 증거. 메모리 시스템 안정화 기록.
+- Report section hint: AI 활용 전략 > 모델 선택 기준 | 운영 프로세스
+- Token note: Sonnet exact token source exists in Claude JSONL; Haiku exact token source exists in Claude JSONL
+- Follow-up: D5 앱 스켈레톤 시작
