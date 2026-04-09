@@ -1,39 +1,54 @@
 ---
 tags: [area/product, type/plan, status/active]
-date: 2026-04-09
+date: 2026-04-10
 up: "[[03_제품/SPEC]]"
 aliases: [dev-plan, 개발계획]
 ---
 # PLAN.md — HagentOS 개발 실행 계획
 
 > **SPEC.md**를 먼저 읽어라. 진행 상황은 **PROGRESS.md**에서 추적.
-> 날짜는 작업 완료 후 기록한다 (후불). 작업 단위로 진행.
+> **구현 블루프린트**: `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` — 모든 화면·API·엔티티의 정본.
 > 마감: 2026-04-13
+
+## 타임라인
+
+| Day | 날짜 | Phase | 초점 |
+|-----|------|-------|------|
+| **D5** | 4/10(목) | Phase 1 | 인프라 + 스켈레톤 |
+| **D6** | 4/11(금) | Phase 2 | Complaint Agent 단일 흐름 |
+| **D7** | 4/12(토) | Phase 3 | 대시보드 + Retention |
+| **D8** | 4/13(일) | Phase 4 | 배포 + 제출 (마감) |
 
 ---
 
 ## Phase 1: 인프라 + 스켈레톤
 
 프로젝트 초기화부터 빈 화면이 뜨고 DB가 연결되는 시점까지.
+> CLONE-SPEC 참조: §3 시스템 아키텍처, §4.1 레이아웃 쉘, §6 데이터 모델, §12 기술 스택
 
 ### 용(김주용) — UI/인프라
-- [ ] Next.js 14 프로젝트 초기화 (`03_제품/app/`)
-  - TypeScript, Tailwind CSS, App Router
-- [ ] Docker Compose: PostgreSQL 15 로컬 환경
+- [ ] Vite + React 19 프로젝트 초기화 (`03_제품/app/`)
+  - TypeScript, Tailwind CSS, React Router v7
+  - 의존성: react, react-dom, react-router, @tanstack/react-query, tailwindcss
+- [ ] Express v5 서버 설정 (`server/index.ts`)
+  - TypeScript ESM, CORS, static serve (Vite build output)
+- [ ] embedded-postgres 설정 (로컬 자동 시작, DATABASE_URL 환경변수)
 - [ ] Drizzle ORM 설정 + 5개 핵심 테이블 마이그레이션
   - Organization, Agent, Case, AgentRun, Approval
   - 스키마 기준: `SPEC.md > MVP 핵심 테이블` + `hagent-os/08_data/domain-model.md`
-- [ ] next-auth 설정 (local_trusted — 세션 고정, 로그인 스킵)
+- [ ] `.env` 템플릿 (ANTHROPIC_API_KEY, DATABASE_URL, PORT)
 - [ ] 4존 레이아웃 셸 (Zone 0-3, responsive)
   - UI 참고: `archive/HagentOS-MVP-2026-04-09/public/`
   - 디자인 토큰: `hagent-os/design.md`
-- [ ] 사이드바 네비게이션 (정적 메뉴, 라우트 연결)
-- [ ] 페이지 스텁: `/dashboard`, `/cases`, `/cases/[id]`, `/approvals`, `/agents/[id]`
+- [ ] 사이드바 네비게이션 (정적 메뉴, React Router 연결)
+- [ ] 페이지 스텁: `/dashboard`, `/cases`, `/cases/:id`, `/approvals`, `/agents/:id`
 
 ### 승(이승보) — 에이전트/AI
 - [ ] Claude API 연결 유틸리티 (`lib/claude.ts`)
-  - `.env.local`에 `ANTHROPIC_API_KEY`
+  - `.env`에 `ANTHROPIC_API_KEY`
   - 응답 파싱 + 에러 핸들링 + 토큰 카운팅
+- [ ] Express API 라우트 구조 (`server/routes/`)
+  - health check, bootstrap 엔드포인트
 - [ ] Mock 데이터 시드 스크립트 (`scripts/seed.ts`)
   - Organization 1개, Agent 3개, Student 10명, Parent 5명, Case 5건, Instructor 3명
 - [ ] 에이전트 런타임 기본 구조 (`lib/agents/`)
@@ -52,6 +67,7 @@ aliases: [dev-plan, 개발계획]
 ## Phase 2: 민원 단일 흐름 완성
 
 케이스 생성 → Complaint Agent 실행 → 초안 → 승인 → 완결. 데모 핵심.
+> CLONE-SPEC 참조: §화면5 Issues 목록, §화면6 Issue 상세, §화면9 Approvals, §7 API 레이어
 
 ### 승 — Complaint Agent 파이프라인
 - [ ] Orchestrator: Case → 계획 수립 → assigneeAgentId 결정
@@ -83,6 +99,7 @@ aliases: [dev-plan, 개발계획]
 ## Phase 3: 승인 대시보드 + Retention Agent
 
 두 번째 에이전트 추가 + 핵심 UI 완성. 데모 임팩트.
+> CLONE-SPEC 참조: §화면1 Dashboard, §화면3 Agent 상세, §화면16 Activity, §화면11 Routines
 
 ### 용 — 승인 UI + 대시보드
 - [ ] 승인 큐 (`/approvals`) — 대기 카드 + 원클릭 [승인] [편집] [반려]
@@ -110,8 +127,9 @@ aliases: [dev-plan, 개발계획]
 라이브 URL 확보 + 대회 제출물 완성.
 
 ### 공동
-- [ ] Vercel 배포 (환경변수 설정)
-- [ ] Neon.tech PostgreSQL 프로비저닝 + 마이그레이션
+- [ ] GitHub public repo 정리 + README 작성
+- [ ] 라이브 데모 환경 설정 (외부 PostgreSQL URL or embedded-postgres)
+- [ ] 랜딩 페이지 배포 (별도 정적 사이트)
 - [ ] 라이브 URL 동작 테스트
 - [ ] 데모 시나리오 최종 테스트 (2분 타이머)
 - [ ] AI 리포트 작성 (04_증빙 소재 기반)
@@ -154,11 +172,15 @@ Phase 1 에이전트 스텁 ──► Phase 2 Complaint ─────┤──
 
 | 결정 | 선택 | 대안 (버림) | 이유 |
 |------|------|------------|------|
-| ORM | Drizzle | Prisma | 오픈소스, 가벼움, PostgreSQL 네이티브 |
-| Auth | next-auth JWT | Supabase Auth | 독립성, local_trusted 모드 가능 |
-| DB 호스팅 | Neon.tech | Supabase | Serverless PostgreSQL, Vercel 통합 |
-| 에이전트 실행 | 동기 (await) | 큐 (BullMQ) | MVP 단순화, 큐는 Phase 1 |
-| 상태 관리 | React Server Components + SWR | Redux | Next.js 14 최적 패턴 |
+| Frontend | React 19 + Vite | Next.js | Paperclip 패턴, SPA 충분, SSR 불필요 |
+| Router | React Router v7 | TanStack Router | 생태계 성숙도, 팀 경험 |
+| Backend | Express v5 (ESM) | Fastify | 팀 숙련도, 에이전트 런타임 통합 |
+| ORM | Drizzle | Prisma | Lightweight, PostgreSQL native |
+| Auth | local_trusted (없음) | next-auth | MVP 단순화, 단일 원장 |
+| DB 로컬 | embedded-postgres | Docker Compose | 원클릭 설치, 의존성 최소화 |
+| DB 배포 | 외부 PG URL | Neon.tech | 유연성, 오픈소스 설치형 |
+| 상태 관리 | React Query (TanStack) | SWR / Redux | Express API 캐싱 최적 |
+| 에이전트 실행 | 동기 (await) | 큐 (BullMQ) | MVP 단순화 |
 
 ---
 

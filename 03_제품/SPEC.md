@@ -17,6 +17,54 @@ aliases: [spec, 개발스펙]
 
 ---
 
+## Paperclip 엔진 관계
+
+> **HagentOS = Paperclip 엔진(아키텍처 + UI + API + 엔티티 모델) + 한국 교육 도메인**
+
+**구현 블루프린트**: `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md`
+→ 28개 화면, 전체 API, 전체 엔티티, 전체 컴포넌트가 정의되어 있다.
+→ **기능 구현 시 이 파일을 먼저 읽어라.**
+
+### Paperclip → HagentOS 개념 매핑
+
+| Paperclip | HagentOS | 변경 내용 |
+|-----------|----------|----------|
+| Company | **Organization** (기관/학원) | 이름만 변경, 멀티테넌트 구조 동일 |
+| Issue | **Case** (케이스) | type에 complaint/refund/makeup/inquiry 교육 특화 |
+| CEO Agent | **Orchestrator** | 역할명 교육 도메인화 |
+| Agent | **Agent** | agentType에 complaint/retention/scheduler 등 추가 |
+| Goal | **OpsGoal** (운영 목표) | 동일 계층 구조 |
+| Project | **OpsGroup** (운영 영역) | 동일 |
+| HeartbeatRun | **AgentRun** | 필드 확장 (approvalLevel 0-4 세분화) |
+| Approval | **Approval** | 동일 |
+| CompanySkill | **k-skill** | 한국 교육 도메인 스킬 생태계 |
+| Routine | **Routine** | 동일 (node-cron heartbeat) |
+| ActivityEvent | **ActivityEvent** | 동일 |
+| CompanySecret | **OrganizationSecret** | 동일 |
+
+### Paperclip에서 가져온 핵심 패턴
+
+1. **운영 보드 UX** — 챗봇이 아닌 보드 기반 컨트롤 플레인
+2. **지시 입력 → Orchestrator → 에이전트 병렬 디스패치** — 자연어 지시 → 계획 수립 → 멀티에이전트
+3. **케이스 상세에서 라이브 에이전트 실행** — RunChatSurface 실시간 트랜스크립트
+4. **원자적 이슈 체크아웃** — 중복 작업 방지 (checkoutRunId)
+5. **목표 조상 전파** — 에이전트가 "왜"를 항상 앎 (Goal → Case 연결)
+6. **승인이 1급 시민** — 인간 거버넌스 처음부터 내장
+7. **어댑터 분리** — claude_local 기본, 교체 가능
+8. **Activity 감사 로그** — 모든 에이전트 행동 타임라인 기록
+9. **세션 간 영속 상태** — 에이전트 재부팅 후 중단점에서 재개
+10. **이식 가능한 조직 템플릿** — 전체 구조 export/import
+
+### HagentOS만의 차별점
+
+- **k-skill 생태계** — korean-law-mcp, solapi 등 한국형 스킬 패키지
+- **승인 Level 0-4** — 액션 단위 세분화 (Paperclip보다 정교)
+- **교육 도메인 엔티티** — Student, Parent, Instructor, Schedule, Attendance
+- **이탈 위험 점수** — riskScore (Retention Agent 전용)
+- **토스 디자인 시스템** — Paperclip 다크 테마 대신 Toss teal 포인트
+
+---
+
 ## 대회 제약
 
 - **대회**: 2026 제1회 KEG 바이브코딩 콘테스트
@@ -139,6 +187,11 @@ Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 ---
 
 ## 문서 인덱스 (토큰 절약용 — 필요할 때만 읽어라)
+
+### 구현 블루프린트 (최우선)
+| 문서 | 경로 | 내용 |
+|------|------|------|
+| **Paperclip CLONE-SPEC** | `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` | **구현의 정본**. 28개 화면, 전체 API, 엔티티, 컴포넌트, 어댑터, 스킬 시스템 |
 
 ### 핵심 (반드시 참고)
 | 문서 | 경로 | 내용 |
