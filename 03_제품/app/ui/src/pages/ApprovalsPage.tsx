@@ -123,9 +123,10 @@ export function ApprovalsPage() {
       for (const id of ids) {
         await patchApproval(id, { status: "approved" })
       }
+      return ids.length
     },
-    onSuccess: () => {
-      toast?.success("선택한 승인 요청을 모두 승인했습니다.")
+    onSuccess: (count) => {
+      toast?.success(`${count}건 승인 완료`)
       setSelectedIds([])
       void queryClient.invalidateQueries({
         queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
@@ -139,9 +140,47 @@ export function ApprovalsPage() {
     },
   })
 
+  const bulkRejectMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) {
+        await patchApproval(id, { status: "rejected" })
+      }
+      return ids.length
+    },
+    onSuccess: (count) => {
+      toast?.info(`${count}건 거절 완료`)
+      setSelectedIds([])
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
+      })
+    },
+    onError: () => {
+      toast?.error("일괄 거절 중 오류가 발생했습니다.")
+    },
+  })
+
   const selectedVisibleIds = selectedIds.filter((id) =>
     filteredApprovals.some((approval) => approval.id === id)
   )
+
+  const pendingVisibleIds = filteredApprovals
+    .filter((approval) => approval.status === "pending")
+    .map((approval) => approval.id)
+
+  const allPendingSelected =
+    pendingVisibleIds.length > 0 &&
+    pendingVisibleIds.every((id) => selectedIds.includes(id))
+
+  const toggleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds((current) => Array.from(new Set([...current, ...pendingVisibleIds])))
+    } else {
+      setSelectedIds((current) => current.filter((id) => !pendingVisibleIds.includes(id)))
+    }
+  }
 
   const toggleSelected = (approvalId: string, checked: boolean) => {
     setSelectedIds((current) =>
@@ -172,22 +211,53 @@ export function ApprovalsPage() {
           )}
         </div>
 
-        {selectedVisibleIds.length > 0 && (
-          <Button
-            size="sm"
-            className="gap-1.5"
-            style={{ backgroundColor: "var(--color-success)", color: "#fff" }}
-            disabled={bulkApproveMutation.isPending}
-            onClick={() => bulkApproveMutation.mutate(selectedVisibleIds)}
-          >
-            {bulkApproveMutation.isPending ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <CheckCircle size={14} />
-            )}
-            선택 항목 모두 승인
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {pendingVisibleIds.length > 0 && (
+            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={allPendingSelected}
+                onChange={(e) => toggleSelectAll(e.target.checked)}
+                className="h-4 w-4 rounded"
+                aria-label="전체 선택"
+              />
+              <span className="text-xs" style={{ color: "var(--text-secondary)" }}>전체 선택</span>
+            </label>
+          )}
+          {selectedVisibleIds.length > 0 && (
+            <>
+              <Button
+                size="sm"
+                className="gap-1.5"
+                style={{ backgroundColor: "var(--color-success)", color: "#fff" }}
+                disabled={bulkApproveMutation.isPending || bulkRejectMutation.isPending}
+                onClick={() => bulkApproveMutation.mutate(selectedVisibleIds)}
+              >
+                {bulkApproveMutation.isPending ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <CheckCircle size={14} />
+                )}
+                일괄 승인
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5"
+                style={{ color: "var(--color-danger)", borderColor: "rgba(239,68,68,0.25)" }}
+                disabled={bulkApproveMutation.isPending || bulkRejectMutation.isPending}
+                onClick={() => bulkRejectMutation.mutate(selectedVisibleIds)}
+              >
+                {bulkRejectMutation.isPending ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <XCircle size={14} />
+                )}
+                일괄 거부
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {isLoading ? (

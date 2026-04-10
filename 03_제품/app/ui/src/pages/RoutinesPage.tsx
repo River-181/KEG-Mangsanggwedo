@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/select"
 import { EmptyState } from "@/components/EmptyState"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Plus, Loader2, Bot, Play, CalendarClock, Zap } from "lucide-react"
+import { Clock, Plus, Loader2, Bot, Play, CalendarClock, Zap, ChevronDown, ChevronRight } from "lucide-react"
 
 type TriggerType = "매일" | "매주" | "매월" | "이벤트"
 
@@ -47,6 +47,8 @@ interface RoutineRunHistory {
   id: string
   ranAt: string
   status: string
+  duration?: string
+  message?: string
 }
 
 interface RoutineData {
@@ -184,6 +186,8 @@ function normalizeRoutine(raw: any): RoutineData {
             id: String(item.id ?? `${raw.id}-h${index + 1}`),
             ranAt: String(item.ranAt ?? item.createdAt ?? new Date().toISOString()),
             status: String(item.status ?? "성공"),
+            duration: item.duration ? String(item.duration) : undefined,
+            message: item.message ? String(item.message) : undefined,
           }))
         : [
             {
@@ -344,6 +348,7 @@ export function RoutinesPage() {
   const [submittingRoutine, setSubmittingRoutine] = useState(false)
   const [runningRoutineId, setRunningRoutineId] = useState<string | null>(null)
   const [updatingRoutineId, setUpdatingRoutineId] = useState<string | null>(null)
+  const [expandedRunId, setExpandedRunId] = useState<string | null>(null)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "루틴" }])
@@ -541,7 +546,10 @@ export function RoutinesPage() {
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
                   <button
                     type="button"
-                    onClick={() => setSelectedRoutineId(routine.id)}
+                    onClick={() => {
+                      setSelectedRoutineId(routine.id)
+                      setExpandedRunId(null)
+                    }}
                     className="flex min-w-0 flex-1 items-start gap-4 text-left"
                   >
                     <div
@@ -680,23 +688,98 @@ export function RoutinesPage() {
                       최근 실행 이력
                     </p>
                     <div className="grid gap-2">
-                      {selectedRoutine.history.slice(0, 5).map((history) => (
-                        <div
-                          key={history.id}
-                          className="flex items-center justify-between rounded-xl px-3 py-2"
-                          style={{
-                            backgroundColor: "var(--bg-secondary)",
-                            border: "1px solid var(--border-default)",
-                          }}
-                        >
-                          <span className="text-sm" style={{ color: "var(--text-primary)" }}>
-                            {formatHistoryDate(history.ranAt)}
-                          </span>
-                          <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                            {history.status}
-                          </span>
-                        </div>
-                      ))}
+                      {selectedRoutine.history.slice(0, 5).map((history) => {
+                        const isFailed = history.status === "실패"
+                        const isWarning = history.status === "경고"
+                        const isExpanded = expandedRunId === history.id
+
+                        const dotColor = isFailed
+                          ? "#ef4444"
+                          : isWarning
+                          ? "#f59e0b"
+                          : "#10b981"
+
+                        const rowBg = isFailed
+                          ? "rgba(239,68,68,0.06)"
+                          : "var(--bg-secondary)"
+
+                        const rowBorder = isFailed
+                          ? "1px solid rgba(239,68,68,0.25)"
+                          : "1px solid var(--border-default)"
+
+                        return (
+                          <div key={history.id} className="rounded-xl overflow-hidden" style={{ border: rowBorder }}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedRunId((prev) => (prev === history.id ? null : history.id))
+                              }
+                              className="flex items-center gap-3 w-full px-3 py-2.5 text-left transition-colors hover:brightness-95"
+                              style={{ backgroundColor: rowBg }}
+                            >
+                              <span
+                                className="h-2 w-2 shrink-0 rounded-full"
+                                style={{ backgroundColor: dotColor }}
+                              />
+                              <span className="flex-1 text-sm" style={{ color: "var(--text-primary)" }}>
+                                {formatHistoryDate(history.ranAt)}
+                              </span>
+                              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                {history.status}
+                              </span>
+                              {isExpanded ? (
+                                <ChevronDown size={14} style={{ color: "var(--text-tertiary)" }} />
+                              ) : (
+                                <ChevronRight size={14} style={{ color: "var(--text-tertiary)" }} />
+                              )}
+                            </button>
+                            {isExpanded && (
+                              <div
+                                className="px-4 py-3 grid gap-1.5 text-xs"
+                                style={{
+                                  backgroundColor: "var(--bg-tertiary)",
+                                  borderTop: "1px solid var(--border-default)",
+                                  color: "var(--text-secondary)",
+                                }}
+                              >
+                                <p>
+                                  <span style={{ color: "var(--text-tertiary)" }}>실행 시각: </span>
+                                  {new Date(history.ranAt).toLocaleString("ko-KR")}
+                                </p>
+                                <p>
+                                  <span style={{ color: "var(--text-tertiary)" }}>상태: </span>
+                                  <span
+                                    style={{
+                                      color: isFailed
+                                        ? "#ef4444"
+                                        : isWarning
+                                        ? "#f59e0b"
+                                        : "#10b981",
+                                    }}
+                                  >
+                                    {history.status}
+                                  </span>
+                                </p>
+                                {history.duration && (
+                                  <p>
+                                    <span style={{ color: "var(--text-tertiary)" }}>소요 시간: </span>
+                                    {history.duration}
+                                  </p>
+                                )}
+                                {history.message && (
+                                  <p>
+                                    <span style={{ color: "var(--text-tertiary)" }}>결과 메시지: </span>
+                                    {history.message}
+                                  </p>
+                                )}
+                                {!history.duration && !history.message && (
+                                  <p style={{ color: "var(--text-tertiary)" }}>상세 로그 없음</p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 

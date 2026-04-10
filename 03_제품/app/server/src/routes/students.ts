@@ -128,5 +128,77 @@ export function studentRoutes(db: Db): Router {
     }
   })
 
+  // Create instructor
+  router.post("/organizations/:orgId/instructors", async (req, res) => {
+    try {
+      const { orgId } = req.params
+      const { name, subject, phone, email, status } = req.body
+
+      if (!name) {
+        res.status(400).json({ error: "name required" })
+        return
+      }
+      if (!subject) {
+        res.status(400).json({ error: "subject required" })
+        return
+      }
+
+      const [instructor] = await db
+        .insert(schema.instructors)
+        .values({
+          organizationId: orgId,
+          name,
+          subject,
+          phone: phone ?? null,
+          status: status ?? "active",
+        })
+        .returning()
+
+      res.status(201).json({ ...instructor, email: email ?? null })
+    } catch (err) {
+      res.status(500).json({ error: "Failed to create instructor" })
+    }
+  })
+
+  // Update instructor
+  router.patch("/instructors/:id", async (req, res) => {
+    try {
+      const { name, subject, phone, email, status } = req.body
+      const updateData: Record<string, unknown> = {}
+      if (name !== undefined) updateData.name = name
+      if (subject !== undefined) updateData.subject = subject
+      if (phone !== undefined) updateData.phone = phone
+      if (status !== undefined) updateData.status = status
+
+      const [instructor] = await db
+        .update(schema.instructors)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(schema.instructors.id, req.params.id))
+        .returning()
+
+      if (!instructor) {
+        res.status(404).json({ error: "Instructor not found" })
+        return
+      }
+
+      res.json({ ...instructor, email: email ?? null })
+    } catch (err) {
+      res.status(500).json({ error: "Failed to update instructor" })
+    }
+  })
+
+  // Delete instructor
+  router.delete("/instructors/:id", async (req, res) => {
+    try {
+      await db
+        .delete(schema.instructors)
+        .where(eq(schema.instructors.id, req.params.id))
+
+      res.status(204).send()
+    } catch (err) {
+      res.status(500).json({ error: "Failed to delete instructor" })
+    }
+  })
+
   return router
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -425,6 +426,8 @@ function NewGoalDialog({
 export function GoalsPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
   const { selectedOrgId } = useOrganization()
+  const { orgPrefix } = useParams<{ orgPrefix: string }>()
+  const navigate = useNavigate()
   const { success, error, info } = useToast()
 
   const [showNewDialog, setShowNewDialog] = useState(false)
@@ -772,21 +775,31 @@ export function GoalsPage() {
                             </p>
                           ) : (
                             goal.linkedCases.map((linkedCase) => (
-                              <div
+                              <button
                                 key={linkedCase.id}
-                                className="flex items-center justify-between rounded-lg px-3 py-2"
+                                type="button"
+                                onClick={() =>
+                                  navigate(`/${orgPrefix}/cases/${linkedCase.id}`)
+                                }
+                                className="flex items-center justify-between rounded-lg px-3 py-2 w-full text-left transition-colors group"
                                 style={{
                                   backgroundColor: "var(--bg-elevated)",
                                   border: "1px solid var(--border-default)",
                                 }}
                               >
-                                <span className="text-sm" style={{ color: "var(--text-primary)" }}>
+                                <span
+                                  className="text-sm group-hover:underline group-hover:decoration-teal-500"
+                                  style={{
+                                    color: "var(--text-primary)",
+                                    textUnderlineOffset: "3px",
+                                  }}
+                                >
                                   {linkedCase.title}
                                 </span>
                                 <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                                   {linkedCase.status}
                                 </span>
-                              </div>
+                              </button>
                             ))
                           )}
                         </div>

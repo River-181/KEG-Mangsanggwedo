@@ -55,5 +55,47 @@ export function scheduleRoutes(db: Db): Router {
     }
   })
 
+  // PATCH /organizations/:orgId/schedules/:id
+  router.patch("/organizations/:orgId/schedules/:id", async (req, res) => {
+    try {
+      const { id } = req.params
+      const { title, type, dayOfWeek, startTime, endTime, room, instructorId } = req.body
+
+      const updates: Record<string, unknown> = {}
+      if (title !== undefined) updates.title = title
+      if (type !== undefined) updates.type = type
+      if (dayOfWeek !== undefined) updates.dayOfWeek = Number(dayOfWeek)
+      if (startTime !== undefined) updates.startTime = startTime
+      if (endTime !== undefined) updates.endTime = endTime
+      if (room !== undefined) updates.room = room ?? null
+      if (instructorId !== undefined) updates.instructorId = instructorId ?? null
+
+      const [updated] = await db
+        .update(schema.schedules)
+        .set(updates)
+        .where(eq(schema.schedules.id, id))
+        .returning()
+
+      if (!updated) {
+        res.status(404).json({ error: "Schedule not found" })
+        return
+      }
+      res.json(updated)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to update schedule" })
+    }
+  })
+
+  // DELETE /organizations/:orgId/schedules/:id
+  router.delete("/organizations/:orgId/schedules/:id", async (req, res) => {
+    try {
+      const { id } = req.params
+      await db.delete(schema.schedules).where(eq(schema.schedules.id, id))
+      res.status(204).send()
+    } catch (err) {
+      res.status(500).json({ error: "Failed to delete schedule" })
+    }
+  })
+
   return router
 }

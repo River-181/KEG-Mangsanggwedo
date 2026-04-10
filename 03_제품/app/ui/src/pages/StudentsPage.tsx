@@ -85,6 +85,7 @@ interface StudentRecord {
   id: string
   name: string
   grade: string
+  classGroup?: string
   status: StudentStatus
   riskPercent: number
   registeredAt: string
@@ -341,6 +342,7 @@ function normalizeStudent(value: unknown): StudentRecord {
     counselingHistory: normalizeCounselingHistory(record.counselingHistory ?? record.counselings ?? record.consultations),
     shuttle,
     classCount: toNumberValue(record.classCount, record.scheduleCount, record.courseCount),
+    classGroup: toStringValue(record.classGroup, record.class_group, record.className) || undefined,
   }
 }
 
@@ -707,6 +709,7 @@ function StudentFormDialog({
   const isEdit = Boolean(student)
   const [name, setName] = useState("")
   const [grade, setGrade] = useState("")
+  const [classGroup, setClassGroup] = useState("")
   const [status, setStatus] = useState<StudentStatus>("active")
   const [parentName, setParentName] = useState("")
   const [parentPhone, setParentPhone] = useState("")
@@ -718,6 +721,7 @@ function StudentFormDialog({
     if (!open) return
     setName(student?.name ?? "")
     setGrade(student?.grade ?? "")
+    setClassGroup(student?.classGroup ?? "")
     setStatus(student?.status ?? "active")
     setParentName(student?.parent?.name ?? "")
     setParentPhone(student?.parent?.phone ?? student?.primaryPhone ?? "")
@@ -740,6 +744,7 @@ function StudentFormDialog({
       const payload = {
         name,
         grade,
+        classGroup: classGroup || undefined,
         status,
         parentName,
         parentPhone,
@@ -812,6 +817,11 @@ function StudentFormDialog({
                 </SelectContent>
               </Select>
             </div>
+            <Input
+              value={classGroup}
+              onChange={(event) => setClassGroup(event.target.value)}
+              placeholder="반 (예: 초등 영어 A반)"
+            />
           </div>
 
           <div className="space-y-2">
@@ -975,6 +985,12 @@ function StudentDetailSheet({
                           <p className="text-xs text-slate-500">학년</p>
                           <p className="mt-1 text-sm font-medium text-slate-900">{mergedStudent.grade}</p>
                         </div>
+                        {mergedStudent.classGroup && (
+                          <div>
+                            <p className="text-xs text-slate-500">반</p>
+                            <p className="mt-1 text-sm font-medium text-slate-900">{mergedStudent.classGroup}</p>
+                          </div>
+                        )}
                         <div>
                           <p className="text-xs text-slate-500">연락처</p>
                           <p className="mt-1 text-sm font-medium text-slate-900">{formatPhone(mergedStudent.primaryPhone)}</p>

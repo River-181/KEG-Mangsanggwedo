@@ -24,6 +24,7 @@ import { CostsPage } from "@/pages/CostsPage"
 import { ProjectsPage } from "@/pages/ProjectsPage"
 import { ProjectDetailPage } from "@/pages/ProjectDetailPage"
 import { StudentsPage } from "@/pages/StudentsPage"
+import { InstructorsPage } from "@/pages/InstructorsPage"
 
 export function App() {
   return (
@@ -55,6 +56,7 @@ export function App() {
         <Route path="projects/:id" element={<ProjectDetailPage />} />
         <Route path="students" element={<StudentsPage />} />
         <Route path="students/:id" element={<StudentsPage />} />
+        <Route path="instructors" element={<InstructorsPage />} />
       </Route>
       <Route path="/design-guide" element={<DesignGuidePage />} />
       <Route path="/" element={<Navigate to="/tanzania/dashboard" replace />} />

@@ -1,4 +1,4 @@
-// v0.3.0
+// v0.4.0
 import { useEffect, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { ChevronLeft, ChevronRight, Loader2, Plus, CalendarDays } from "lucide-react"
+import { ChevronLeft, ChevronRight, Loader2, Plus, CalendarDays, Pencil, Trash2 } from "lucide-react"
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -65,13 +65,6 @@ function getTypeColor(type: string) {
   return TYPE_COLORS[type] ?? TYPE_COLORS.regular
 }
 
-function getStudentsForClass(title: string): string[] {
-  if (title.includes("초등")) return ["홍길동", "박지우", "김하은", "이서준"]
-  if (title.includes("중등") || title.includes("이수아")) return ["이수아", "최민수", "정예린"]
-  if (title.includes("고등") || title.includes("수능") || title.includes("김영수")) return ["김영수", "박서현", "이준호", "한소희"]
-  if (title.includes("성인") || title.includes("토익")) return ["김철수", "이영희"]
-  return ["홍길동", "이수아"]
-}
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -142,6 +135,12 @@ function formatWeekLabel(dates: Date[]): string {
 
 // ─── ScheduleDetailDialog ──────────────────────────────────────────────────────
 
+interface InstructorOption {
+  id: string
+  name: string
+  subject: string
+}
+
 function ScheduleDetailDialog({
   schedule,
   open,
@@ -151,7 +150,83 @@ function ScheduleDetailDialog({
   open: boolean
   onClose: () => void
 }) {
+  const { selectedOrgId } = useOrganization()
+  const queryClient = useQueryClient()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState("")
+  const [editType, setEditType] = useState("regular")
+  const [editDayOfWeek, setEditDayOfWeek] = useState(1)
+  const [editStartTime, setEditStartTime] = useState("09:00")
+  const [editEndTime, setEditEndTime] = useState("10:00")
+  const [editRoom, setEditRoom] = useState("")
+  const [editInstructorId, setEditInstructorId] = useState<string>("")
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  // Instructor list for edit mode
+  const { data: instructors = [] } = useQuery<InstructorOption[]>({
+    queryKey: ["instructors", selectedOrgId],
+    queryFn: () => api.get<InstructorOption[]>(`/organizations/${selectedOrgId}/instructors`),
+    enabled: !!selectedOrgId && isEditing,
+  })
+
+  // Students for this schedule
+  const { data: allStudents = [] } = useQuery<{ id: string; name: string; scheduleId?: string | null }[]>({
+    queryKey: ["students", selectedOrgId],
+    queryFn: () => api.get<{ id: string; name: string; scheduleId?: string | null }[]>(`/organizations/${selectedOrgId}/students`),
+    enabled: !!selectedOrgId && !!schedule && (schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup"),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      schedulesApi.update(selectedOrgId!, schedule!.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(selectedOrgId ?? "") })
+      setIsEditing(false)
+      onClose()
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: () => schedulesApi.remove(selectedOrgId!, schedule!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(selectedOrgId ?? "") })
+      setConfirmDelete(false)
+      onClose()
+    },
+  })
+
+  const handleStartEdit = () => {
+    if (!schedule) return
+    setEditTitle(schedule.title)
+    setEditType(schedule.type)
+    setEditDayOfWeek(schedule.dayOfWeek)
+    setEditStartTime(schedule.startTime.substring(0, 5))
+    setEditEndTime(schedule.endTime.substring(0, 5))
+    setEditRoom(schedule.room ?? "")
+    setEditInstructorId(schedule.instructorId ?? "")
+    setIsEditing(true)
+  }
+
+  const handleSave = () => {
+    updateMutation.mutate({
+      title: editTitle,
+      type: editType,
+      dayOfWeek: editDayOfWeek,
+      startTime: editStartTime,
+      endTime: editEndTime,
+      room: editRoom || null,
+      instructorId: editInstructorId || null,
+    })
+  }
+
+  const handleClose = () => {
+    setIsEditing(false)
+    setConfirmDelete(false)
+    onClose()
+  }
+
   if (!schedule) return null
+
   const colors = getTypeColor(schedule.type)
   const dayLabel = DAYS_KO[schedule.dayOfWeek] ?? "?"
   const startH = parseHour(schedule.startTime)
@@ -166,9 +241,19 @@ function ScheduleDetailDialog({
   const isLegal = schedule.type === "legal"
   const isShuttle = schedule.type === "shuttle"
   const isLeave = schedule.type === "leave"
+  const isClassType = schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup"
+
+  // Students enrolled in this schedule (filter by scheduleId if available)
+  const enrolledStudents = allStudents.filter(s => s.scheduleId === schedule.id)
+
+  const inputStyle = {
+    backgroundColor: "var(--bg-secondary)",
+    border: "1px solid var(--border-default)",
+    color: "var(--text-primary)",
+  }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent className="max-w-md" style={{ backgroundColor: "var(--bg-base)", border: "1px solid var(--border-default)" }}>
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
@@ -185,96 +270,172 @@ function ScheduleDetailDialog({
               </span>
             )}
           </div>
-          <DialogTitle className="text-lg" style={{ color: "var(--text-primary)" }}>{schedule.title}</DialogTitle>
-          <DialogDescription>
-            매주 {dayLabel}요일 · {formatTimeRange(schedule.startTime, schedule.endTime)} · {durationLabel}
-          </DialogDescription>
+          <DialogTitle className="text-lg" style={{ color: "var(--text-primary)" }}>
+            {isEditing ? "일정 수정" : schedule.title}
+          </DialogTitle>
+          {!isEditing && (
+            <DialogDescription>
+              매주 {dayLabel}요일 · {formatTimeRange(schedule.startTime, schedule.endTime)} · {durationLabel}
+            </DialogDescription>
+          )}
         </DialogHeader>
 
-        <div className="space-y-3 mt-2">
-          {/* Color-coded time block */}
-          <div
-            className="rounded-xl px-4 py-3 flex items-center gap-3"
-            style={{ backgroundColor: colors.bg, border: `1px solid ${colors.dot}30` }}
-          >
-            <div className="text-2xl">{colors.icon}</div>
-            <div>
-              <p className="text-sm font-semibold" style={{ color: colors.text }}>
-                {formatTimeRange(schedule.startTime, schedule.endTime)}
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>
-                {durationLabel} · 매주 {dayLabel}요일
-              </p>
-            </div>
-          </div>
-
-          {/* Details grid */}
-          <div
-            className="rounded-xl overflow-hidden"
-            style={{ border: "1px solid var(--border-default)" }}
-          >
-            {!isShuttle && !isLeave && schedule.instructor && (
-              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
-                <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>강사</span>
-                <button onClick={() => { /* navigate to instructor in future */ }}
-                  className="text-sm font-medium hover:underline" style={{ color: "var(--color-teal-500)" }}>
-                  {schedule.instructor.name}
-                </button>
-                <span className="text-xs ml-auto" style={{ color: "var(--text-tertiary)" }}>{schedule.instructor.subject}</span>
-              </div>
-            )}
-            {schedule.room && (
-              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
-                <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>장소</span>
-                <span className="text-sm" style={{ color: "var(--text-primary)" }}>{schedule.room}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-3 px-4 py-2.5">
-              <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>반복</span>
-              <span className="text-sm" style={{ color: "var(--text-primary)" }}>매주 {dayLabel}요일</span>
-            </div>
-          </div>
-
-          {/* Context-specific notes */}
-          {isLegal && (
-            <div
-              className="rounded-lg px-4 py-3 text-xs"
-              style={{ backgroundColor: "rgba(239,68,68,0.06)", color: "#991b1b", border: "1px solid rgba(239,68,68,0.15)" }}
-            >
-              법정 기한입니다. 기한 내 처리하지 않으면 과태료가 부과될 수 있습니다.
-              에이전트가 D-3일에 자동 알림을 보냅니다.
-            </div>
-          )}
-          {isShuttle && (
-            <div
-              className="rounded-lg px-4 py-3 text-xs"
-              style={{ backgroundColor: "rgba(99,102,241,0.06)", color: "#3730a3", border: "1px solid rgba(99,102,241,0.15)" }}
-            >
-              차량 운행 일정입니다. 학생 탑승 명단은 학생 관리에서 확인하세요.
-            </div>
-          )}
-          {(schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup") && (
-            <div>
-              <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>수강 학생</p>
-              <div className="flex flex-wrap gap-1.5">
-                {getStudentsForClass(schedule.title).map((name, i) => (
-                  <span key={i} className="px-2 py-1 rounded-full text-xs"
-                    style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}>
-                    {name}
-                  </span>
+        {isEditing ? (
+          /* ─── Edit mode ─── */
+          <div className="space-y-3 mt-2">
+            <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)}
+              placeholder="일정 제목" className="w-full px-3 py-2 rounded-lg text-sm"
+              style={inputStyle} />
+            <div className="grid grid-cols-2 gap-2">
+              <select value={editType} onChange={e => setEditType(e.target.value)}
+                className="px-3 py-2 rounded-lg text-sm" style={inputStyle}>
+                {Object.entries(TYPE_COLORS).map(([k, v]) => (
+                  <option key={k} value={k}>{v.icon} {v.label}</option>
                 ))}
+              </select>
+              <select value={editDayOfWeek} onChange={e => setEditDayOfWeek(Number(e.target.value))}
+                className="px-3 py-2 rounded-lg text-sm" style={inputStyle}>
+                {[1,2,3,4,5,6].map(d => <option key={d} value={d}>{DAYS_KO[d]}요일</option>)}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs mb-1 block" style={{ color: "var(--text-tertiary)" }}>시작</label>
+                <input type="time" value={editStartTime} onChange={e => setEditStartTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-sm" style={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs mb-1 block" style={{ color: "var(--text-tertiary)" }}>종료</label>
+                <input type="time" value={editEndTime} onChange={e => setEditEndTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-sm" style={inputStyle} />
               </div>
             </div>
-          )}
-          {!isLegal && !isShuttle && !isLeave && (
-            <div
-              className="rounded-lg px-4 py-3 text-xs"
-              style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}
-            >
-              수강 학생 명단 및 출결 현황은 학생 관리 페이지에서 확인할 수 있습니다.
+            <input type="text" value={editRoom} onChange={e => setEditRoom(e.target.value)}
+              placeholder="장소 (선택)" className="w-full px-3 py-2 rounded-lg text-sm"
+              style={inputStyle} />
+            <select value={editInstructorId} onChange={e => setEditInstructorId(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg text-sm" style={inputStyle}>
+              <option value="">강사 미지정</option>
+              {instructors.map(inst => (
+                <option key={inst.id} value={inst.id}>{inst.name} ({inst.subject})</option>
+              ))}
+            </select>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button variant="outline" size="sm" onClick={() => setIsEditing(false)} className="text-xs">취소</Button>
+              <Button size="sm" disabled={!editTitle.trim() || updateMutation.isPending}
+                onClick={handleSave}
+                className="text-xs text-white" style={{ backgroundColor: "var(--color-teal-500)" }}>
+                {updateMutation.isPending ? <Loader2 size={13} className="animate-spin mr-1" /> : null}
+                저장
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          /* ─── View mode ─── */
+          <div className="space-y-3 mt-2">
+            {/* Color-coded time block */}
+            <div
+              className="rounded-xl px-4 py-3 flex items-center gap-3"
+              style={{ backgroundColor: colors.bg, border: `1px solid ${colors.dot}30` }}
+            >
+              <div className="text-2xl">{colors.icon}</div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: colors.text }}>
+                  {formatTimeRange(schedule.startTime, schedule.endTime)}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>
+                  {durationLabel} · 매주 {dayLabel}요일
+                </p>
+              </div>
+            </div>
+
+            {/* Details grid */}
+            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
+              {!isShuttle && !isLeave && schedule.instructor && (
+                <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
+                  <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>강사</span>
+                  <span className="text-sm font-medium" style={{ color: "var(--color-teal-500)" }}>
+                    {schedule.instructor.name}
+                  </span>
+                  <span className="text-xs ml-auto" style={{ color: "var(--text-tertiary)" }}>{schedule.instructor.subject}</span>
+                </div>
+              )}
+              {schedule.room && (
+                <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
+                  <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>장소</span>
+                  <span className="text-sm" style={{ color: "var(--text-primary)" }}>{schedule.room}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-3 px-4 py-2.5">
+                <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>반복</span>
+                <span className="text-sm" style={{ color: "var(--text-primary)" }}>매주 {dayLabel}요일</span>
+              </div>
+            </div>
+
+            {/* Context-specific notes */}
+            {isLegal && (
+              <div className="rounded-lg px-4 py-3 text-xs"
+                style={{ backgroundColor: "rgba(239,68,68,0.06)", color: "#991b1b", border: "1px solid rgba(239,68,68,0.15)" }}>
+                법정 기한입니다. 기한 내 처리하지 않으면 과태료가 부과될 수 있습니다.
+                에이전트가 D-3일에 자동 알림을 보냅니다.
+              </div>
+            )}
+            {isShuttle && (
+              <div className="rounded-lg px-4 py-3 text-xs"
+                style={{ backgroundColor: "rgba(99,102,241,0.06)", color: "#3730a3", border: "1px solid rgba(99,102,241,0.15)" }}>
+                차량 운행 일정입니다. 학생 탑승 명단은 학생 관리에서 확인하세요.
+              </div>
+            )}
+            {isClassType && (
+              <div>
+                <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>수강 학생</p>
+                {enrolledStudents.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {enrolledStudents.map(s => (
+                      <span key={s.id} className="px-2 py-1 rounded-full text-xs"
+                        style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}>
+                        {s.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    연결된 학생 없음 (학생 관리에서 배정)
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Action buttons */}
+            {confirmDelete ? (
+              <div className="rounded-lg px-4 py-3 text-xs space-y-2"
+                style={{ backgroundColor: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                <p style={{ color: "#991b1b" }}>이 일정을 삭제하시겠습니까?</p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setConfirmDelete(false)} className="text-xs h-7">취소</Button>
+                  <Button size="sm" disabled={deleteMutation.isPending}
+                    onClick={() => deleteMutation.mutate()}
+                    className="text-xs h-7 text-white" style={{ backgroundColor: "#ef4444" }}>
+                    {deleteMutation.isPending ? <Loader2 size={12} className="animate-spin mr-1" /> : null}
+                    삭제 확인
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-end gap-2 pt-1">
+                <Button variant="outline" size="sm" onClick={() => setConfirmDelete(true)}
+                  className="text-xs gap-1" style={{ color: "#ef4444", borderColor: "rgba(239,68,68,0.3)" }}>
+                  <Trash2 size={12} />
+                  삭제
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleStartEdit} className="text-xs gap-1">
+                  <Pencil size={12} />
+                  수정
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )
@@ -292,11 +453,19 @@ function NewScheduleDialog({ open, onClose }: { open: boolean; onClose: () => vo
   const [endTime, setEndTime] = useState("10:00")
   const [room, setRoom] = useState("")
   const [allDay, setAllDay] = useState(false)
+  const [instructorId, setInstructorId] = useState<string>("")
+
+  const { data: instructors = [] } = useQuery<InstructorOption[]>({
+    queryKey: ["instructors", selectedOrgId],
+    queryFn: () => api.get<InstructorOption[]>(`/organizations/${selectedOrgId}/instructors`),
+    enabled: !!selectedOrgId && open,
+  })
 
   const createMutation = useMutation({
     mutationFn: () => api.post(`/organizations/${selectedOrgId}/schedules`, {
       title, type, dayOfWeek, startTime: allDay ? "00:00" : startTime,
       endTime: allDay ? "23:59" : endTime, room: room || null,
+      instructorId: instructorId || null,
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(selectedOrgId ?? "") })
@@ -307,6 +476,7 @@ function NewScheduleDialog({ open, onClose }: { open: boolean; onClose: () => vo
       setEndTime("10:00")
       setRoom("")
       setAllDay(false)
+      setInstructorId("")
       onClose()
     },
   })
@@ -367,6 +537,16 @@ function NewScheduleDialog({ open, onClose }: { open: boolean; onClose: () => vo
           <input type="text" value={room} onChange={e => setRoom(e.target.value)}
             placeholder="장소 (선택)" className="w-full px-3 py-2 rounded-lg text-sm"
             style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }} />
+
+          {/* Instructor */}
+          <select value={instructorId} onChange={e => setInstructorId(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg text-sm"
+            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}>
+            <option value="">강사 미지정</option>
+            {instructors.map(inst => (
+              <option key={inst.id} value={inst.id}>{inst.name} ({inst.subject})</option>
+            ))}
+          </select>
 
           {/* Submit */}
           <div className="flex justify-end gap-2 pt-2">

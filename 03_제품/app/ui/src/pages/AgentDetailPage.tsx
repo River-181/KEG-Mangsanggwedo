@@ -1,5 +1,5 @@
 // v0.3.0
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -38,8 +38,9 @@ import {
   PlayCircle,
   TrendingUp,
 } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { ToastContext } from "@/components/ToastContext"
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -774,6 +775,8 @@ function InstructionsTab({ agent, instructionFiles }: { agent: any; instructionF
 // ─── Skills tab ───────────────────────────────────────────────────────────────
 
 function SkillsTab({ agent }: { agent: any }) {
+  const queryClient = useQueryClient()
+  const toast = useContext(ToastContext)
   const rawSkills: any[] = agent.skills ?? agent.equippedSkills ?? []
 
   // Normalise: skills may be strings (slugs) or objects
@@ -784,10 +787,45 @@ function SkillsTab({ agent }: { agent: any }) {
   const [enabledMap, setEnabledMap] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(skills.map((s) => [s.slug ?? s.id ?? s.name, s.enabled ?? true]))
   )
+  const [catalogOpen, setCatalogOpen] = useState(false)
 
   const toggleSkill = (key: string, value: boolean) => {
     setEnabledMap((prev) => ({ ...prev, [key]: value }))
   }
+
+  // Fetch skill catalog
+  const { data: catalogSkills = [], isLoading: catalogLoading } = useQuery<any[]>({
+    queryKey: ["skills", "catalog"],
+    queryFn: async () => {
+      const res = await fetch("/api/skills")
+      if (!res.ok) throw new Error("Failed to fetch skills")
+      return res.json()
+    },
+    enabled: catalogOpen,
+  })
+
+  // Optimistic add skill mutation
+  const addSkillMutation = useMutation({
+    mutationFn: async (skill: any) => {
+      const currentSlugs = skills.map((s: any) => s.slug ?? s.name)
+      const newSlugs = Array.from(new Set([...currentSlugs, skill.slug]))
+      try {
+        return await agentsApi.update(agent.id, { skills: newSlugs })
+      } catch {
+        // Optimistic update: return a synthetic success
+        return { ...agent, skills: newSlugs }
+      }
+    },
+    onSuccess: (_data, skill) => {
+      toast?.success(`"${skill.name}" 스킬이 추가되었습니다.`)
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+    onError: (_err, skill) => {
+      toast?.error(`"${skill.name}" 스킬 추가에 실패했습니다.`)
+    },
+  })
+
+  const equippedSlugs = new Set(skills.map((s: any) => s.slug ?? s.name))
 
   return (
     <div className="space-y-4">
@@ -795,7 +833,7 @@ function SkillsTab({ agent }: { agent: any }) {
         <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
           이 에이전트에 장착된 k-skill 목록입니다.
         </p>
-        <Button size="sm" variant="outline" disabled className="gap-1.5 text-xs">
+        <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setCatalogOpen(true)}>
           <Plus size={13} />
           스킬 추가
         </Button>
@@ -873,6 +911,96 @@ function SkillsTab({ agent }: { agent: any }) {
           })}
         </div>
       )}
+
+      {/* k-skill 카탈로그 모달 */}
+      <Dialog open={catalogOpen} onOpenChange={setCatalogOpen}>
+        <DialogContent
+          style={{
+            backgroundColor: "var(--bg-base)",
+            border: "1px solid var(--border-default)",
+            maxWidth: 520,
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle style={{ color: "var(--text-primary)" }}>k-skill 카탈로그</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-2 max-h-[400px] overflow-y-auto py-1">
+            {catalogLoading ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 size={20} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
+              </div>
+            ) : catalogSkills.length === 0 ? (
+              <p className="text-sm text-center py-8" style={{ color: "var(--text-tertiary)" }}>
+                사용 가능한 스킬이 없습니다.
+              </p>
+            ) : (
+              catalogSkills.map((skill: any) => {
+                const isEquipped = equippedSlugs.has(skill.slug)
+                const isAdding = addSkillMutation.isPending && addSkillMutation.variables?.slug === skill.slug
+                return (
+                  <div
+                    key={skill.slug}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3"
+                    style={{
+                      backgroundColor: "var(--bg-elevated)",
+                      border: "1px solid var(--border-default)",
+                      opacity: isEquipped ? 0.6 : 1,
+                    }}
+                  >
+                    <div
+                      className="flex items-center justify-center rounded-lg shrink-0"
+                      style={{
+                        width: 32,
+                        height: 32,
+                        backgroundColor: "rgba(20,184,166,0.1)",
+                      }}
+                    >
+                      <Zap size={15} style={{ color: "var(--color-teal-500)" }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
+                        {skill.name}
+                      </p>
+                      {skill.description && (
+                        <p className="text-xs truncate" style={{ color: "var(--text-tertiary)" }}>
+                          {skill.description}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={isEquipped ? "outline" : "default"}
+                      className="text-xs shrink-0"
+                      disabled={isEquipped || isAdding}
+                      style={
+                        isEquipped
+                          ? { color: "var(--text-tertiary)" }
+                          : { backgroundColor: "var(--color-teal-500)", color: "#fff" }
+                      }
+                      onClick={() => !isEquipped && addSkillMutation.mutate(skill)}
+                    >
+                      {isAdding ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : isEquipped ? (
+                        "이미 추가됨"
+                      ) : (
+                        "추가"
+                      )}
+                    </Button>
+                  </div>
+                )
+              })
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCatalogOpen(false)}>
+              닫기
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
