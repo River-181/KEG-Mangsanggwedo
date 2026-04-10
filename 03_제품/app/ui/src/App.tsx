@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom"
+import { useOrganization } from "@/context/OrganizationContext"
 import { Layout } from "@/components/Layout"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { InboxPage } from "@/pages/InboxPage"
@@ -25,6 +26,17 @@ import { ProjectsPage } from "@/pages/ProjectsPage"
 import { ProjectDetailPage } from "@/pages/ProjectDetailPage"
 import { StudentsPage } from "@/pages/StudentsPage"
 import { InstructorsPage } from "@/pages/InstructorsPage"
+
+function RootRedirect() {
+  const { organizations, isLoading } = useOrganization()
+  if (isLoading) return null
+  if (organizations.length === 0) {
+    // 학원이 없으면 온보딩 페이지로 — 기본 prefix "new"
+    return <Navigate to="/new/onboarding" replace />
+  }
+  const first = organizations[0]
+  return <Navigate to={`/${first.prefix}/dashboard`} replace />
+}
 
 export function App() {
   return (
@@ -59,7 +71,7 @@ export function App() {
         <Route path="instructors" element={<InstructorsPage />} />
       </Route>
       <Route path="/design-guide" element={<DesignGuidePage />} />
-      <Route path="/" element={<Navigate to="/tanzania/dashboard" replace />} />
+      <Route path="/" element={<RootRedirect />} />
     </Routes>
   )
 }
