@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
-import { Building2, Bot, Bell, AlertTriangle } from "lucide-react"
+import { Building2, Bot, Bell, AlertTriangle, MessageCircle, Link2, ExternalLink, Calendar } from "lucide-react"
 
 function SectionTitle({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
@@ -80,6 +80,10 @@ export function SettingsPage() {
   const [notifyAgentDone, setNotifyAgentDone] = useState(true)
   const [notifyApproval, setNotifyApproval] = useState(true)
   const [notifyRisk, setNotifyRisk] = useState(true)
+
+  const [kakaoEnabled, setKakaoEnabled] = useState(true)
+  const [smsEnabled, setSmsEnabled] = useState(false)
+  const [scheduleEnabled, setScheduleEnabled] = useState(true)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "설정" }])
@@ -246,6 +250,120 @@ export function SettingsPage() {
               description="학생 이탈 위험 점수가 임계값을 초과할 때 알림"
               value={notifyRisk}
               onChange={setNotifyRisk}
+            />
+          </div>
+        </div>
+
+        {/* 채널 연동 */}
+        <div className="rounded-xl p-5" style={cardStyle}>
+          <SectionTitle icon={<MessageCircle size={16} />} label="외부 채널 연동" />
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>
+            외부 채널에서 들어오는 문의가 자동으로 케이스로 변환됩니다. 소통 에이전트가 게이트 역할을 합니다.
+          </p>
+
+          <div className="flex flex-col gap-3">
+            {/* 카카오톡 */}
+            <div
+              className="flex items-center justify-between rounded-lg px-4 py-3"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex items-center justify-center rounded-lg"
+                  style={{ width: 36, height: 36, backgroundColor: "#FEE500" }}
+                >
+                  <MessageCircle size={18} style={{ color: "#3C1E1E" }} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    카카오톡 채널
+                  </p>
+                  <a
+                    href="http://pf.kakao.com/_raDdX"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs flex items-center gap-1 hover:underline"
+                    style={{ color: "var(--color-teal-500)" }}
+                  >
+                    pf.kakao.com/_raDdX <ExternalLink size={10} />
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full"
+                  style={{
+                    backgroundColor: kakaoEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
+                    color: kakaoEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                  }}
+                >
+                  {kakaoEnabled ? "연결됨" : "비활성"}
+                </span>
+                <Switch checked={kakaoEnabled} onCheckedChange={setKakaoEnabled} />
+              </div>
+            </div>
+
+            {/* SMS */}
+            <div
+              className="flex items-center justify-between rounded-lg px-4 py-3"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex items-center justify-center rounded-lg"
+                  style={{ width: 36, height: 36, backgroundColor: "rgba(59,130,246,0.1)" }}
+                >
+                  <MessageCircle size={18} style={{ color: "#3b82f6" }} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    SMS / 알림톡 (Solapi)
+                  </p>
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    학부모 알림 발송 + 수신 문의 자동 접수
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full"
+                  style={{
+                    backgroundColor: smsEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
+                    color: smsEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                  }}
+                >
+                  {smsEnabled ? "연결됨" : "미설정"}
+                </span>
+                <Switch checked={smsEnabled} onCheckedChange={setSmsEnabled} />
+              </div>
+            </div>
+
+            <p className="text-xs mt-1" style={{ color: "var(--text-disabled)" }}>
+              웹훅 URL: <code className="font-mono text-xs">/api/webhook/kakao</code>, <code className="font-mono text-xs">/api/webhook/sms</code>
+            </p>
+          </div>
+        </div>
+
+        {/* 모듈 관리 */}
+        <div className="rounded-xl p-5" style={cardStyle}>
+          <SectionTitle icon={<Calendar size={16} />} label="모듈 관리" />
+          <p className="text-xs mb-3" style={{ color: "var(--text-tertiary)" }}>
+            학원 운영에 맞게 기능 모듈을 활성화/비활성화합니다.
+          </p>
+
+          <div className="flex flex-col">
+            <ToggleRow
+              label="일정 관리"
+              description="수업, 상담, 이벤트, 법정기한 등 일정 캘린더 기능"
+              value={scheduleEnabled}
+              onChange={setScheduleEnabled}
+            />
+            <Separator style={{ backgroundColor: "var(--border-default)" }} />
+            <ToggleRow
+              label="출석/수납 관리"
+              description="학생 출석 및 수납 추적 (복잡할 수 있어 선택적 사용)"
+              value={false}
+              onChange={() => {}}
             />
           </div>
         </div>

@@ -52,6 +52,10 @@ async function seed() {
       agentTeamConfig: {
         orchestratorEnabled: true,
         maxConcurrentRuns: 4,
+        channels: {
+          kakao: { enabled: true, channelUrl: "http://pf.kakao.com/_raDdX", chatUrl: "http://pf.kakao.com/_raDdX/chat", botId: "69d80717ce25e33033041230" },
+          sms: { enabled: false, provider: "solapi" },
+        },
       },
     })
     .returning()
