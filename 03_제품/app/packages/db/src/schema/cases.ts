@@ -55,6 +55,7 @@ export const cases = pgTable("cases", {
   assigneeAgentId: uuid("assignee_agent_id").references(() => agents.id),
   checkoutRunId: uuid("checkout_run_id"),
   agentDraft: text("agent_draft"),
+  source: text(), // "manual" | "kakao" | "sms" | "web" | null
   metadata: jsonb(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -22,6 +22,7 @@ import { notificationRoutes } from "./routes/notifications.js"
 import { projectRoutes } from "./routes/projects.js"
 import { studentRoutes } from "./routes/students.js"
 import { scheduleRoutes } from "./routes/schedules.js"
+import { webhookRoutes } from "./routes/webhook.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -54,6 +55,7 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api", projectRoutes(db))
   app.use("/api", studentRoutes(db))
   app.use("/api", scheduleRoutes(db))
+  app.use("/api/webhook", webhookRoutes(db))
 
   return app
 }
