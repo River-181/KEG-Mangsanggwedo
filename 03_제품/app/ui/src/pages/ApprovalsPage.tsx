@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { approvalsApi } from "@/api/approvals"
-import { api, ApiError } from "@/api/client"
+import { casesApi } from "@/api/cases"
 import { queryKeys } from "@/lib/queryKeys"
 import { cn } from "@/lib/utils"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -37,18 +37,8 @@ function filterApprovals(approvals: any[], tab: ApprovalStatusTab) {
   return approvals
 }
 
-async function patchApproval(id: string, payload: { status: "approved" | "rejected"; reason?: string }) {
-  try {
-    return await api.patch(`/approvals/${id}`, payload)
-  } catch (error) {
-    if (payload.status === "approved") {
-      return approvalsApi.approve(id, payload)
-    }
-    if (error instanceof ApiError && error.status === 404) {
-      return approvalsApi.reject(id, payload)
-    }
-    return approvalsApi.reject(id, payload)
-  }
+async function decideApproval(id: string, decision: "approved" | "rejected", comment?: string) {
+  return approvalsApi.decide(id, decision, comment)
 }
 
 export function ApprovalsPage() {
@@ -76,6 +66,20 @@ export function ApprovalsPage() {
     enabled: !!selectedOrgId,
   })
 
+  const { data: allCases = [] } = useQuery({
+    queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
+    queryFn: () => casesApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId,
+  })
+
+  const caseTitleMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    for (const c of allCases as any[]) {
+      if (c.id) map[c.id] = c.title ?? c.identifier ?? c.id
+    }
+    return map
+  }, [allCases])
+
   const approvals = allApprovals as any[]
   const filteredApprovals = useMemo(
     () => filterApprovals(approvals, activeTab),
@@ -86,6 +90,12 @@ export function ApprovalsPage() {
   const approvedCount = approvals.filter((approval) => approval.status === "approved").length
   const rejectedCount = approvals.filter((approval) => approval.status === "rejected").length
 
+  function invalidateAll() {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
+    void queryClient.invalidateQueries({ queryKey: queryKeys.cases.list(selectedOrgId ?? "") })
+    void queryClient.invalidateQueries({ queryKey: queryKeys.activity.list(selectedOrgId ?? "") })
+  }
+
   const updateApprovalMutation = useMutation({
     mutationFn: async ({
       id,
@@ -95,19 +105,14 @@ export function ApprovalsPage() {
       id: string
       status: "approved" | "rejected"
       reason?: string
-    }) => patchApproval(id, { status, reason }),
+    }) => decideApproval(id, status, reason),
     onSuccess: (_data, variables) => {
       toast?.[variables.status === "approved" ? "success" : "info"](
         variables.status === "approved" ? "승인되었습니다." : "거절되었습니다."
       )
       setRejectDialog(null)
       setSelectedIds((current) => current.filter((id) => id !== variables.id))
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
-      })
+      invalidateAll()
     },
     onError: (_error, variables) => {
       toast?.error(
@@ -121,19 +126,14 @@ export function ApprovalsPage() {
   const bulkApproveMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) {
-        await patchApproval(id, { status: "approved" })
+        await decideApproval(id, "approved")
       }
       return ids.length
     },
     onSuccess: (count) => {
       toast?.success(`${count}건 승인 완료`)
       setSelectedIds([])
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
-      })
+      invalidateAll()
     },
     onError: () => {
       toast?.error("일괄 승인 중 오류가 발생했습니다.")
@@ -143,19 +143,14 @@ export function ApprovalsPage() {
   const bulkRejectMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) {
-        await patchApproval(id, { status: "rejected" })
+        await decideApproval(id, "rejected")
       }
       return ids.length
     },
     onSuccess: (count) => {
       toast?.info(`${count}건 거절 완료`)
       setSelectedIds([])
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
-      })
+      invalidateAll()
     },
     onError: () => {
       toast?.error("일괄 거절 중 오류가 발생했습니다.")
@@ -339,16 +334,24 @@ export function ApprovalsPage() {
                     const isPending =
                       updateApprovalMutation.isPending &&
                       updateApprovalMutation.variables?.id === approval.id
+                    const resolvedCaseId = approval.caseId ?? approval.case_id ?? approval.case?.id
+                    const resolvedCaseTitle =
+                      approval.case?.title ??
+                      approval.caseTitle ??
+                      (resolvedCaseId ? caseTitleMap[resolvedCaseId] : undefined)
 
                     return (
                       <ApprovalCard
                         key={approval.id}
-                        approval={approval}
+                        approval={{
+                          ...approval,
+                          caseTitle: resolvedCaseTitle,
+                        }}
                         selected={selectedIds.includes(approval.id)}
                         onSelectedChange={(checked) => toggleSelected(approval.id, checked)}
                         caseHref={
-                          approval.case?.id
-                            ? `/${orgPrefix ?? ""}/cases/${approval.case.id}`
+                          resolvedCaseId
+                            ? `/${orgPrefix ?? ""}/cases/${resolvedCaseId}`
                             : undefined
                         }
                         onApprove={() =>

@@ -1,759 +1,1245 @@
 import { useEffect, useMemo, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useNavigate, useParams } from "react-router-dom"
+import { agentsApi } from "@/api/agents"
+import { skillsApi } from "@/api/skills"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { useToast } from "@/context/ToastContext"
-import { agentsApi } from "@/api/agents"
-import { api } from "@/api/client"
-import { skillsApi } from "@/api/skills"
-import { queryKeys } from "@/lib/queryKeys"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Bot, CheckCircle2, ChevronDown, Download, Loader2, Plus, Puzzle, Trash2 } from "lucide-react"
+import { queryKeys } from "@/lib/queryKeys"
+import {
+  Bot,
+  CircleAlert,
+  CloudDownload,
+  Copy,
+  Download,
+  FileCode2,
+  FileText,
+  FolderTree,
+  GitBranch,
+  Loader2,
+  PackagePlus,
+  Puzzle,
+  RefreshCcw,
+  Rocket,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Upload,
+  Zap,
+} from "lucide-react"
 
-type SkillType = "builtin" | "external_mcp"
-type SkillFilter = "전체" | "설치됨" | "미설치" | "내장" | "외부 MCP"
-
-interface Skill {
-  slug: string
-  name: string
-  description: string
-  version: string
-  type: SkillType
-  installed: boolean
-  equippedAgents?: number
-  config?: unknown
-}
-
-interface AgentRecord {
+type SkillListItem = {
   id: string
-  name?: string
-  skills?: unknown[]
-  equippedSkills?: unknown[]
+  slug: string
+  namespace: string
+  displayName: string
+  version: string
+  summary: string
+  packageType: string
+  source: { kind: string; repo?: string; url?: string; path?: string; commit?: string; license?: string }
+  compatibility: { agentTypes: string[]; adapters: string[]; locales: string[] }
+  distribution: { exportTargets: string[]; editable: boolean; publishable: boolean }
+  installed: boolean
+  sourceBadge: string
+  runtimeHealth: Array<{ key: string; label: string; ready: boolean; requiredEnv: string[]; missingEnv: string[] }>
+  ready: boolean
+  mountedAgents: Array<{ agentId: string; agentName: string; mountOrder: number; enabled: boolean }>
+  fileCount: number
 }
 
-const FALLBACK_SKILLS: Skill[] = [
-  {
-    slug: "complaint-classifier",
-    name: "민원 분류기",
-    description: "학부모 민원 텍스트를 카테고리별로 자동 분류합니다. NLP 기반 분류 모델 사용.",
-    version: "1.2.0",
-    type: "builtin",
-    installed: true,
-    equippedAgents: 2,
-  },
-  {
-    slug: "churn-detector",
-    name: "이탈 감지기",
-    description: "학생 출결 패턴과 수업 참여도를 분석하여 이탈 위험 점수를 예측합니다.",
-    version: "0.9.1",
-    type: "builtin",
-    installed: true,
-    equippedAgents: 1,
-  },
-  {
-    slug: "sms-sender",
-    name: "문자 발송기",
-    description: "카카오 알림톡 및 SMS 자동 발송을 지원합니다. 카카오 비즈니스 계정 필요.",
-    version: "2.0.0",
-    type: "external_mcp",
-    installed: false,
-    equippedAgents: 0,
-  },
-  {
-    slug: "report-generator",
-    name: "리포트 생성기",
-    description: "주간/월간 원장 리포트를 자동 생성합니다. PDF 및 엑셀 내보내기 지원.",
-    version: "1.0.3",
-    type: "builtin",
-    installed: false,
-    equippedAgents: 0,
-  },
-  {
-    slug: "schedule-optimizer",
-    name: "일정 최적화기",
-    description: "강사 가용 시간과 학생 수요를 분석하여 최적 수업 시간표를 제안합니다.",
-    version: "0.5.0",
-    type: "external_mcp",
-    installed: false,
-    equippedAgents: 0,
-  },
-  {
-    slug: "parent-reply",
-    name: "학부모 답변 생성기",
-    description: "민원 내용을 분석하여 공감적이고 정중한 답변 초안을 자동 생성합니다.",
-    version: "1.1.0",
-    type: "builtin",
-    installed: true,
-    equippedAgents: 1,
-  },
+type SkillDetail = SkillListItem & {
+  runtime: {
+    injectionMode: string
+    requiredIntegrations: string[]
+    requiredSecrets: string[]
+    requiredEnv: string[]
+    requiredFiles: string[]
+  }
+  fileTree: SkillTreeNode[]
+  skillMarkdown: string
+  openaiYaml: string | null
+  installation: { status: string; config?: Record<string, unknown> } | null
+  readOnly: boolean
+}
+
+type SkillTreeNode = {
+  name: string
+  path: string
+  type: "file" | "directory"
+  size?: number
+  children?: SkillTreeNode[]
+}
+
+type AgentRecord = {
+  id: string
+  name: string
+  agentType: string
+}
+
+type SkillMount = {
+  slug: string
+  enabled?: boolean
+  mountOrder?: number
+}
+
+type FilterKey = "all" | "installed" | "owned" | "imported" | "issues"
+
+const FILTERS: Array<{ key: FilterKey; label: string }> = [
+  { key: "all", label: "전체" },
+  { key: "installed", label: "설치됨" },
+  { key: "owned", label: "우리 소유" },
+  { key: "imported", label: "외부/래퍼" },
+  { key: "issues", label: "설정 필요" },
 ]
 
-const FILTERS: SkillFilter[] = ["전체", "설치됨", "미설치", "내장", "외부 MCP"]
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-function normalizeSkill(skill: any): Skill {
+function normalizeSkillListItem(item: any): SkillListItem {
   return {
-    slug: String(skill.slug ?? skill.id ?? skill.name ?? `skill-${Date.now()}`),
-    name: String(skill.name ?? skill.slug ?? "이름 없는 스킬"),
-    description: String(skill.description ?? "설명이 없습니다."),
-    version: String(skill.version ?? "1.0.0"),
-    type: skill.type === "external_mcp" ? "external_mcp" : "builtin",
-    installed: Boolean(skill.installed),
-    equippedAgents: Number(skill.equippedAgents ?? skill.equipped_agents ?? 0),
-    config: skill.config ?? {},
+    id: String(item?.id ?? `${item?.namespace ?? "skill"}/${item?.slug ?? item?.name ?? "unknown"}`),
+    slug: String(item?.slug ?? item?.name ?? "unknown"),
+    namespace: String(item?.namespace ?? "legacy"),
+    displayName: String(item?.displayName ?? item?.name ?? item?.slug ?? "이름 없는 스킬"),
+    version: String(item?.version ?? "0.1.0"),
+    summary: String(item?.summary ?? item?.description ?? "설명이 없습니다."),
+    packageType: String(item?.packageType ?? item?.type ?? "builtin"),
+    source: {
+      kind: String(item?.source?.kind ?? item?.type ?? "local"),
+      repo: item?.source?.repo,
+      url: item?.source?.url,
+      path: item?.source?.path,
+      commit: item?.source?.commit,
+      license: item?.source?.license,
+    },
+    compatibility: {
+      agentTypes: Array.isArray(item?.compatibility?.agentTypes) ? item.compatibility.agentTypes : Array.isArray(item?.agentTypes) ? item.agentTypes : [],
+      adapters: Array.isArray(item?.compatibility?.adapters) ? item.compatibility.adapters : [],
+      locales: Array.isArray(item?.compatibility?.locales) ? item.compatibility.locales : [],
+    },
+    distribution: {
+      exportTargets: Array.isArray(item?.distribution?.exportTargets) ? item.distribution.exportTargets : ["codex", "claude-code", "cursor"],
+      editable: Boolean(item?.distribution?.editable ?? false),
+      publishable: Boolean(item?.distribution?.publishable ?? false),
+    },
+    installed: Boolean(item?.installed ?? false),
+    sourceBadge: String(item?.sourceBadge ?? item?.type ?? "Local"),
+    runtimeHealth: Array.isArray(item?.runtimeHealth) ? item.runtimeHealth : [],
+    ready: Boolean(item?.ready ?? true),
+    mountedAgents: Array.isArray(item?.mountedAgents) ? item.mountedAgents : [],
+    fileCount: Number(item?.fileCount ?? 0),
   }
 }
 
-function skillMatchesFilter(skill: Skill, filter: SkillFilter) {
-  switch (filter) {
-    case "설치됨":
-      return skill.installed
-    case "미설치":
-      return !skill.installed
-    case "내장":
-      return skill.type === "builtin"
-    case "외부 MCP":
-      return skill.type === "external_mcp"
-    default:
-      return true
+function normalizeSkillDetail(item: any): SkillDetail {
+  const normalized = normalizeSkillListItem(item)
+  return {
+    ...normalized,
+    runtime: {
+      injectionMode: String(item?.runtime?.injectionMode ?? "instructions"),
+      requiredIntegrations: Array.isArray(item?.runtime?.requiredIntegrations) ? item.runtime.requiredIntegrations : [],
+      requiredSecrets: Array.isArray(item?.runtime?.requiredSecrets) ? item.runtime.requiredSecrets : [],
+      requiredEnv: Array.isArray(item?.runtime?.requiredEnv) ? item.runtime.requiredEnv : [],
+      requiredFiles: Array.isArray(item?.runtime?.requiredFiles) ? item.runtime.requiredFiles : [],
+    },
+    fileTree: Array.isArray(item?.fileTree) ? item.fileTree : [],
+    skillMarkdown: String(item?.skillMarkdown ?? item?.instructions ?? item?.description ?? ""),
+    openaiYaml: typeof item?.openaiYaml === "string" ? item.openaiYaml : null,
+    installation: item?.installation ?? null,
+    readOnly: Boolean(item?.readOnly ?? normalized.namespace !== "hagent"),
   }
 }
 
-function extractAgentSkillSlugs(agent: AgentRecord): string[] {
-  const rawSkills = Array.isArray(agent.skills)
-    ? agent.skills
-    : Array.isArray(agent.equippedSkills)
-    ? agent.equippedSkills
-    : []
+function filterSkills(items: SkillListItem[], search: string, filter: FilterKey) {
+  const searchLower = search.trim().toLowerCase()
+  return items.filter((item) => {
+    const matchesSearch =
+      searchLower.length === 0 ||
+      [item.displayName, item.summary, item.slug, item.namespace].some((value) =>
+        value.toLowerCase().includes(searchLower),
+      )
 
-  return rawSkills
-    .map((skill) => {
-      if (typeof skill === "string") return skill
-      if (skill && typeof skill === "object") {
-        const data = skill as Record<string, unknown>
-        const slug = data.slug ?? data.id ?? data.name
-        return typeof slug === "string" ? slug : null
-      }
-      return null
-    })
-    .filter((value): value is string => Boolean(value))
+    if (!matchesSearch) return false
+
+    switch (filter) {
+      case "installed":
+        return item.installed
+      case "owned":
+        return item.namespace === "hagent"
+      case "imported":
+        return item.namespace !== "hagent"
+      case "issues":
+        return !item.ready
+      default:
+        return true
+    }
+  })
 }
 
-function TypeBadge({ type }: { type: SkillType }) {
-  const isBuiltin = type === "builtin"
-  return (
-    <Badge
-      className="text-xs border-0 px-2 py-0.5"
-      style={{
-        backgroundColor: isBuiltin ? "var(--color-primary-bg)" : "rgba(168,85,247,0.1)",
-        color: isBuiltin ? "var(--color-teal-500)" : "#a855f7",
-      }}
-    >
-      {isBuiltin ? "내장" : "외부 MCP"}
-    </Badge>
-  )
+function humanFileSize(size?: number) {
+  if (!size) return "0 B"
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function SkillCard({
-  skill,
-  isLoading,
-  onOpenDetail,
-  onInstall,
-  onRemove,
-}: {
-  skill: Skill
-  isLoading: boolean
-  onOpenDetail: () => void
-  onInstall: () => void
-  onRemove: () => void
-}) {
+function extractHeadings(markdown: string) {
+  return markdown
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("#"))
+    .map((line) => ({
+      depth: line.match(/^#+/)?.[0].length ?? 1,
+      text: line.replace(/^#+\s*/, ""),
+      id: line.replace(/^#+\s*/, "").toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-"),
+    }))
+}
+
+function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = filename
+  anchor.click()
+  URL.revokeObjectURL(url)
+}
+
+function MarkdownPreview({ markdown }: { markdown: string }) {
+  const blocks = markdown.split(/\n{2,}/).map((block) => block.trim()).filter(Boolean)
+
   return (
-    <div
-      className="rounded-xl flex flex-col overflow-hidden transition-all"
-      style={{
-        backgroundColor: "var(--bg-elevated)",
-        border: "1px solid var(--border-default)",
-        boxShadow: "var(--shadow-sm)",
-      }}
-    >
-      <button
-        className="flex items-start gap-3 p-4 w-full text-left"
-        onClick={onOpenDetail}
-        aria-label={`${skill.name} 상세 보기`}
-      >
-        <div
-          className="flex items-center justify-center rounded-lg shrink-0"
-          style={{
-            width: 36,
-            height: 36,
-            background: skill.installed ? "var(--color-primary-bg)" : "var(--bg-tertiary)",
-            color: skill.installed ? "var(--color-teal-500)" : "var(--text-tertiary)",
-          }}
-        >
-          <Puzzle size={18} />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-0.5">
-            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-              {skill.name}
-            </p>
-            <TypeBadge type={skill.type} />
-          </div>
-          <p className="text-xs mb-2" style={{ color: "var(--text-tertiary)" }}>
-            v{skill.version}
-          </p>
-          <p
-            className="text-xs leading-relaxed line-clamp-2"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {skill.description}
-          </p>
-        </div>
-
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          {isLoading ? (
-            <Loader2 size={14} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
-          ) : skill.installed ? (
-            <span
-              className="flex items-center gap-1 text-xs font-semibold"
-              style={{ color: "var(--color-success)" }}
+    <div className="space-y-4">
+      {blocks.map((block, index) => {
+        if (block.startsWith("```")) {
+          return (
+            <pre
+              key={index}
+              className="rounded-xl p-4 overflow-x-auto text-xs leading-relaxed"
+              style={{
+                backgroundColor: "var(--bg-secondary)",
+                border: "1px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
             >
-              <CheckCircle2 size={13} />
-              설치됨
-            </span>
-          ) : (
-            <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-              미설치
-            </span>
-          )}
-          <ChevronDown size={14} style={{ color: "var(--text-tertiary)" }} />
-        </div>
-      </button>
+              <code>{block.replace(/^```[^\n]*\n?/, "").replace(/\n```$/, "")}</code>
+            </pre>
+          )
+        }
 
-      <div
-        className="px-4 pb-4 flex items-center gap-2"
-        style={{ borderTop: "1px solid var(--border-default)" }}
-      >
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs"
-          onClick={onOpenDetail}
-        >
-          상세 보기
-        </Button>
-        {skill.installed ? (
-          <Button
-            size="sm"
-            variant="outline"
-            className="text-xs gap-1.5"
-            onClick={onRemove}
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
-            제거
-          </Button>
-        ) : (
-          <Button
-            size="sm"
-            className="text-xs gap-1.5 border-0 text-white"
-            style={{ backgroundColor: "var(--color-teal-500)" }}
-            onClick={onInstall}
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
-            설치
-          </Button>
-        )}
-      </div>
+        const lines = block.split("\n")
+        if (lines.every((line) => line.startsWith("- "))) {
+          return (
+            <ul key={index} className="space-y-2 pl-5 list-disc">
+              {lines.map((line) => (
+                <li key={line} className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {line.replace(/^- /, "")}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        const headingMatch = block.match(/^(#{1,3})\s+(.+)$/)
+        if (headingMatch) {
+          const depth = headingMatch[1].length
+          const text = headingMatch[2]
+          const Tag = depth === 1 ? "h1" : depth === 2 ? "h2" : "h3"
+          return (
+            <Tag
+              key={index}
+              id={text.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-")}
+              className={depth === 1 ? "text-2xl font-semibold" : depth === 2 ? "text-lg font-semibold" : "text-base font-semibold"}
+              style={{ color: "var(--text-primary)" }}
+            >
+              {text}
+            </Tag>
+          )
+        }
+
+        if (block.startsWith("---")) {
+          return (
+            <div
+              key={index}
+              className="rounded-xl p-4 text-xs leading-relaxed"
+              style={{
+                backgroundColor: "var(--bg-secondary)",
+                border: "1px solid var(--border-default)",
+                color: "var(--text-tertiary)",
+              }}
+            >
+              {block}
+            </div>
+          )
+        }
+
+        return (
+          <p key={index} className="text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
+            {block}
+          </p>
+        )
+      })}
     </div>
   )
 }
 
-export function SkillsPage() {
-  const { setBreadcrumbs } = useBreadcrumbs()
-  const { selectedOrgId } = useOrganization()
-  const { addToast } = useToast()
-  const [activeFilter, setActiveFilter] = useState<SkillFilter>("전체")
-  const [localSkills, setLocalSkills] = useState<Skill[]>(FALLBACK_SKILLS.map(normalizeSkill))
-  const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
-  const [detailSkillSlug, setDetailSkillSlug] = useState<string | null>(null)
-  const [advancedOpen, setAdvancedOpen] = useState(false)
-  const [configDrafts, setConfigDrafts] = useState<Record<string, string>>({})
-  const [equipTargetAgentId, setEquipTargetAgentId] = useState<string>("")
-  const [mockEquippedAgentsBySkill, setMockEquippedAgentsBySkill] = useState<Record<string, string[]>>({})
-  const [isSubmittingEquip, setIsSubmittingEquip] = useState(false)
-  const [showAddDialog, setShowAddDialog] = useState(false)
-  const [newSkill, setNewSkill] = useState({
-    slug: "",
-    name: "",
-    description: "",
-    type: "내장" as "내장" | "외부 MCP",
-    version: "1.0.0",
-  })
-
-  useEffect(() => {
-    setBreadcrumbs([{ label: "k-skill 레지스트리" }])
-  }, [setBreadcrumbs])
-
-  const { data: apiSkills, isLoading } = useQuery({
-    queryKey: queryKeys.skills.all,
-    queryFn: () => skillsApi.list(),
-    retry: false,
-  })
-
-  useEffect(() => {
-    if ((apiSkills as Skill[] | undefined)?.length) {
-      const normalized = (apiSkills as any[]).map(normalizeSkill)
-      setLocalSkills(normalized)
-      setConfigDrafts((prev) => {
-        const next = { ...prev }
-        for (const skill of normalized) {
-          if (!next[skill.slug]) {
-            next[skill.slug] = JSON.stringify(skill.config ?? {}, null, 2)
-          }
-        }
-        return next
-      })
-      return
-    }
-
-    setConfigDrafts((prev) => {
-      const next = { ...prev }
-      for (const skill of FALLBACK_SKILLS) {
-        if (!next[skill.slug]) {
-          next[skill.slug] = JSON.stringify(skill.config ?? {}, null, 2)
-        }
-      }
-      return next
-    })
-  }, [apiSkills])
-
-  const detailSkill = localSkills.find((skill) => skill.slug === detailSkillSlug) ?? null
-
-  const { data: agentsData = [] } = useQuery({
-    queryKey: queryKeys.agents.list(selectedOrgId ?? ""),
-    queryFn: () => agentsApi.list(selectedOrgId!),
-    enabled: Boolean(selectedOrgId && detailSkillSlug),
-    retry: false,
-  })
-
-  const equippedAgents = useMemo(() => {
-    if (!detailSkill) return []
-
-    const apiAgents = (agentsData as AgentRecord[]).filter((agent) =>
-      extractAgentSkillSlugs(agent).includes(detailSkill.slug)
-    )
-    const mockedAgentIds = new Set(mockEquippedAgentsBySkill[detailSkill.slug] ?? [])
-    const merged = [...apiAgents]
-
-    for (const agent of agentsData as AgentRecord[]) {
-      if (!mockedAgentIds.has(agent.id)) continue
-      if (!merged.find((existing) => existing.id === agent.id)) {
-        merged.push(agent)
-      }
-    }
-
-    return merged
-  }, [agentsData, detailSkill, mockEquippedAgentsBySkill])
-
-  const filteredSkills = localSkills.filter((skill) => skillMatchesFilter(skill, activeFilter))
-  const installedCount = localSkills.filter((skill) => skill.installed).length
-
-  const updateSkill = (slug: string, updater: (skill: Skill) => Skill) => {
-    setLocalSkills((prev) => prev.map((skill) => (skill.slug === slug ? updater(skill) : skill)))
-  }
-
-  const withSkillLoading = async (slug: string, action: () => Promise<void>) => {
-    setLoadingMap((prev) => ({ ...prev, [slug]: true }))
-    try {
-      await action()
-    } finally {
-      setLoadingMap((prev) => ({ ...prev, [slug]: false }))
-    }
-  }
-
-  const handleInstall = async (skill: Skill) => {
-    updateSkill(skill.slug, (current) => ({ ...current, installed: true }))
-
-    await withSkillLoading(skill.slug, async () => {
-      try {
-        await api.post(`/skills/${skill.slug}/install`, {
-          organizationId: selectedOrgId ?? undefined,
-        })
-        addToast(`${skill.name} 설치를 요청했습니다.`, "success")
-      } catch {
-        await delay(500)
-        addToast(`${skill.name} 설치를 mock 상태로 반영했습니다.`, "info")
-      }
-    })
-  }
-
-  const handleRemove = async (skill: Skill) => {
-    updateSkill(skill.slug, (current) => ({ ...current, installed: false }))
-
-    await withSkillLoading(skill.slug, async () => {
-      try {
-        await api.delete(`/skills/${skill.slug}`)
-        addToast(`${skill.name} 제거를 요청했습니다.`, "success")
-      } catch {
-        await delay(500)
-        addToast(`${skill.name} 제거를 mock 상태로 반영했습니다.`, "info")
-      }
-    })
-  }
-
-  const handleEquip = async () => {
-    if (!detailSkill || !equipTargetAgentId) return
-
-    const targetAgent = (agentsData as AgentRecord[]).find((agent) => agent.id === equipTargetAgentId)
-    if (!targetAgent) return
-
-    setIsSubmittingEquip(true)
-    try {
-      const existingSkills = extractAgentSkillSlugs(targetAgent)
-      if (!existingSkills.includes(detailSkill.slug)) {
-        try {
-          await api.patch(`/agents/${targetAgent.id}`, {
-            skills: [...existingSkills, detailSkill.slug],
-          })
-        } catch {
-          await delay(500)
-        }
-      }
-
-      setMockEquippedAgentsBySkill((prev) => {
-        const prevIds = new Set(prev[detailSkill.slug] ?? [])
-        prevIds.add(targetAgent.id)
-        return { ...prev, [detailSkill.slug]: Array.from(prevIds) }
-      })
-      updateSkill(detailSkill.slug, (skill) => ({
-        ...skill,
-        installed: true,
-        equippedAgents: Math.max(skill.equippedAgents ?? 0, equippedAgents.length + 1),
-      }))
-      addToast(`${targetAgent.name ?? "에이전트"}에 ${detailSkill.name}을 장착했습니다.`, "success")
-      setEquipTargetAgentId("")
-    } finally {
-      setIsSubmittingEquip(false)
-    }
-  }
-
-  const handleCreateSkill = async () => {
-    if (!newSkill.slug.trim() || !newSkill.name.trim()) return
-
-    const createdSkill: Skill = {
-      slug: newSkill.slug.trim(),
-      name: newSkill.name.trim(),
-      description: newSkill.description.trim() || "설명이 없습니다.",
-      version: newSkill.version.trim() || "1.0.0",
-      type: newSkill.type === "외부 MCP" ? "external_mcp" : "builtin",
-      installed: false,
-      equippedAgents: 0,
-      config: {},
-    }
-
-    setLocalSkills((prev) => [createdSkill, ...prev.filter((skill) => skill.slug !== createdSkill.slug)])
-    setConfigDrafts((prev) => ({
-      ...prev,
-      [createdSkill.slug]: JSON.stringify({}, null, 2),
-    }))
-
-    try {
-      await api.post("/skills", createdSkill)
-      addToast(`${createdSkill.name}을 추가했습니다.`, "success")
-    } catch {
-      await delay(500)
-      addToast(`${createdSkill.name}을 local mock으로 추가했습니다.`, "info")
-    }
-
-    setShowAddDialog(false)
-    setNewSkill({
-      slug: "",
-      name: "",
-      description: "",
-      type: "내장",
-      version: "1.0.0",
-    })
-  }
-
-  useEffect(() => {
-    if (detailSkill) {
-      setAdvancedOpen(false)
-    }
-  }, [detailSkill])
-
+function FileTree({
+  nodes,
+  selectedPath,
+  onSelect,
+  depth = 0,
+}: {
+  nodes: SkillTreeNode[]
+  selectedPath: string
+  onSelect: (nextPath: string) => void
+  depth?: number
+}) {
   return (
-    <ScrollArea className="h-full">
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-              k-skill 레지스트리
-            </h1>
-            <p className="text-sm mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-              {installedCount}/{localSkills.length} 설치됨
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {isLoading && (
-              <Loader2 size={18} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
-            )}
-            <Button
-              size="sm"
-              className="border-0 text-white text-xs gap-1"
-              style={{ backgroundColor: "var(--color-teal-500)" }}
-              onClick={() => setShowAddDialog(true)}
-            >
-              <Plus size={14} />
-              스킬 추가
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mb-5 flex-wrap">
-          {FILTERS.map((filter) => (
+    <div className="space-y-1">
+      {nodes.map((node) => {
+        const isSelected = selectedPath === node.path
+        return (
+          <div key={node.path}>
             <button
-              key={filter}
-              className="px-3 py-1 rounded-full text-xs font-medium transition-colors"
-              style={
-                filter === activeFilter
-                  ? { backgroundColor: "var(--color-teal-500)", color: "#fff" }
-                  : { backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }
-              }
-              onClick={() => setActiveFilter(filter)}
+              type="button"
+              className="w-full rounded-lg px-3 py-2 text-left flex items-center gap-2 transition-colors"
+              style={{
+                paddingLeft: 12 + depth * 14,
+                backgroundColor: isSelected ? "rgba(20,184,166,0.08)" : "transparent",
+                color: isSelected ? "var(--color-teal-500)" : "var(--text-secondary)",
+              }}
+              onClick={() => node.type === "file" && onSelect(node.path)}
             >
-              {filter}
+              {node.type === "directory" ? <FolderTree size={14} /> : <FileCode2 size={14} />}
+              <span className="text-xs font-medium truncate">{node.name}</span>
+              {node.type === "file" && (
+                <span className="ml-auto text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  {humanFileSize(node.size)}
+                </span>
+              )}
             </button>
-          ))}
-        </div>
+            {node.type === "directory" && node.children && node.children.length > 0 && (
+              <FileTree nodes={node.children} selectedPath={selectedPath} onSelect={onSelect} depth={depth + 1} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
+function SkillStatusBadge({ item }: { item: SkillListItem }) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Badge className="border-0 text-xs" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+        {item.namespace}
+      </Badge>
+      <Badge
+        className="border-0 text-xs"
+        style={{
+          backgroundColor: item.installed ? "rgba(20,184,166,0.12)" : "var(--bg-secondary)",
+          color: item.installed ? "var(--color-teal-500)" : "var(--text-tertiary)",
+        }}
+      >
+        {item.installed ? "Installed" : "Not Installed"}
+      </Badge>
+      <Badge
+        className="border-0 text-xs"
+        style={{
+          backgroundColor: item.ready ? "rgba(34,197,94,0.12)" : "rgba(245,158,11,0.12)",
+          color: item.ready ? "var(--color-success)" : "var(--color-warning, #f59e0b)",
+        }}
+      >
+        {item.ready ? "Ready" : "Config Needed"}
+      </Badge>
+      <Badge className="border-0 text-xs" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}>
+        {item.sourceBadge}
+      </Badge>
+    </div>
+  )
+}
+
+function SkillCard({
+  item,
+  active,
+  onClick,
+}: {
+  item: SkillListItem
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full rounded-2xl p-4 text-left transition-all"
+      style={{
+        background: active
+          ? "linear-gradient(180deg, rgba(20,184,166,0.12), rgba(15,23,42,0.02))"
+          : "var(--bg-elevated)",
+        border: `1px solid ${active ? "rgba(20,184,166,0.32)" : "var(--border-default)"}`,
+        boxShadow: active ? "0 16px 30px rgba(15,23,42,0.08)" : "var(--shadow-sm)",
+      }}
+    >
+      <div className="flex items-start gap-3">
         <div
-          className="grid gap-3"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+          className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+          style={{
+            backgroundColor: active ? "rgba(20,184,166,0.14)" : "var(--bg-secondary)",
+            color: active ? "var(--color-teal-500)" : "var(--text-tertiary)",
+          }}
         >
-          {filteredSkills.map((skill) => (
-            <SkillCard
-              key={skill.slug}
-              skill={skill}
-              isLoading={Boolean(loadingMap[skill.slug])}
-              onOpenDetail={() => setDetailSkillSlug(skill.slug)}
-              onInstall={() => void handleInstall(skill)}
-              onRemove={() => void handleRemove(skill)}
-            />
-          ))}
+          <Puzzle size={18} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+              {item.displayName}
+            </p>
+            <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+              v{item.version}
+            </span>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed line-clamp-2" style={{ color: "var(--text-secondary)" }}>
+            {item.summary}
+          </p>
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <Badge className="border-0 text-[11px]" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}>
+              {item.packageType}
+            </Badge>
+            <Badge className="border-0 text-[11px]" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}>
+              {item.mountedAgents.length} agents
+            </Badge>
+            {!item.ready && (
+              <Badge className="border-0 text-[11px]" style={{ backgroundColor: "rgba(245,158,11,0.12)", color: "#d97706" }}>
+                dependency
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
+    </button>
+  )
+}
 
-      <Dialog open={Boolean(detailSkill)} onOpenChange={(open) => !open && setDetailSkillSlug(null)}>
-        <DialogContent
+function CreateSkillDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  loading,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSubmit: (payload: { slug: string; displayName: string; summary: string }) => void
+  loading: boolean
+}) {
+  const [displayName, setDisplayName] = useState("")
+  const [slug, setSlug] = useState("")
+  const [summary, setSummary] = useState("")
+
+  useEffect(() => {
+    if (!open) {
+      setDisplayName("")
+      setSlug("")
+      setSummary("")
+    }
+  }, [open])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>새 k-skill 만들기</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="표시 이름" />
+          <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="slug" />
+          <Textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={5} placeholder="스킬 요약" />
+          <Button
+            className="w-full"
+            disabled={loading || !displayName.trim() || !slug.trim() || !summary.trim()}
+            onClick={() => onSubmit({ displayName, slug, summary })}
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            생성
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ImportSkillDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  loading,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSubmit: (payload: { slug: string; displayName: string; summary: string; github_repo: string }) => void
+  loading: boolean
+}) {
+  const [displayName, setDisplayName] = useState("")
+  const [slug, setSlug] = useState("")
+  const [summary, setSummary] = useState("")
+  const [repo, setRepo] = useState("")
+
+  useEffect(() => {
+    if (!open) {
+      setDisplayName("")
+      setSlug("")
+      setSummary("")
+      setRepo("")
+    }
+  }, [open])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>외부 스킬 가져오기</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="표시 이름" />
+          <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="slug" />
+          <Textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={4} placeholder="요약" />
+          <Input value={repo} onChange={(e) => setRepo(e.target.value)} placeholder="GitHub repository URL" />
+          <Button
+            className="w-full"
+            disabled={loading || !displayName.trim() || !slug.trim() || !summary.trim() || !repo.trim()}
+            onClick={() => onSubmit({ displayName, slug, summary, github_repo: repo })}
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+            가져오기
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function SkillsPage() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const toast = useToast()
+  const { orgPrefix, slug } = useParams<{ orgPrefix: string; slug?: string }>()
+  const { selectedOrgId } = useOrganization()
+  const { setBreadcrumbs } = useBreadcrumbs()
+  const [search, setSearch] = useState("")
+  const [filter, setFilter] = useState<FilterKey>("all")
+  const [selectedFilePath, setSelectedFilePath] = useState("SKILL.md")
+  const [createOpen, setCreateOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: "스킬 라이브러리", href: `/${orgPrefix}/skills` },
+      ...(slug ? [{ label: slug }] : []),
+    ])
+  }, [orgPrefix, setBreadcrumbs, slug])
+
+  const skillsQuery = useQuery({
+    queryKey: [...queryKeys.skills.all, selectedOrgId],
+    queryFn: async () => {
+      const data = await skillsApi.list(selectedOrgId ?? undefined)
+      return Array.isArray(data) ? data.map(normalizeSkillListItem) : []
+    },
+    enabled: Boolean(selectedOrgId),
+  })
+
+  const filteredSkills = useMemo(
+    () => filterSkills(skillsQuery.data ?? [], search, filter),
+    [filter, search, skillsQuery.data],
+  )
+
+  useEffect(() => {
+    if (!slug && filteredSkills.length > 0 && orgPrefix) {
+      navigate(`/${orgPrefix}/skills/${filteredSkills[0].slug}`, { replace: true })
+    }
+  }, [filteredSkills, navigate, orgPrefix, slug])
+
+  const detailQuery = useQuery({
+    queryKey: [...queryKeys.skills.detail(slug ?? "__empty__"), selectedOrgId],
+    queryFn: async () => normalizeSkillDetail(await skillsApi.get(slug!, selectedOrgId ?? undefined)),
+    enabled: Boolean(slug),
+  })
+
+  const agentsQuery = useQuery({
+    queryKey: queryKeys.agents.list(selectedOrgId ?? "__none__"),
+    queryFn: () => agentsApi.list(selectedOrgId!),
+    enabled: Boolean(selectedOrgId),
+  })
+
+  const fileContentQuery = useQuery({
+    queryKey: ["skills", slug, "file", selectedFilePath],
+    queryFn: () => skillsApi.getFileContent(slug!, selectedFilePath),
+    enabled: Boolean(slug && selectedFilePath),
+  })
+
+  useEffect(() => {
+    setSelectedFilePath("SKILL.md")
+  }, [slug])
+
+  const invalidateSkills = async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.skills.all })
+    if (slug) {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.skills.detail(slug) })
+    }
+  }
+
+  const installMutation = useMutation({
+    mutationFn: () => skillsApi.install(selectedOrgId!, slug!),
+    onSuccess: async () => {
+      toast.success("스킬을 조직에 설치했습니다.")
+      await invalidateSkills()
+    },
+    onError: () => toast.error("스킬 설치에 실패했습니다."),
+  })
+
+  const uninstallMutation = useMutation({
+    mutationFn: () => skillsApi.uninstall(selectedOrgId!, slug!),
+    onSuccess: async () => {
+      toast.success("스킬 설치를 해제했습니다.")
+      await invalidateSkills()
+    },
+    onError: () => toast.error("스킬 제거에 실패했습니다."),
+  })
+
+  const createMutation = useMutation({
+    mutationFn: (payload: { slug: string; displayName: string; summary: string }) =>
+      skillsApi.create({ ...payload, namespace: "hagent" }),
+    onSuccess: async (created) => {
+      setCreateOpen(false)
+      toast.success("새 스킬 패키지를 만들었습니다.")
+      await invalidateSkills()
+      if (orgPrefix) navigate(`/${orgPrefix}/skills/${created.slug}`)
+    },
+    onError: () => toast.error("스킬 생성에 실패했습니다."),
+  })
+
+  const importMutation = useMutation({
+    mutationFn: (payload: { slug: string; displayName: string; summary: string; github_repo: string }) =>
+      skillsApi.import({ ...payload, namespace: "community", packageType: "wrapper" }),
+    onSuccess: async (created) => {
+      setImportOpen(false)
+      toast.success("외부 스킬 메타데이터를 등록했습니다.")
+      await invalidateSkills()
+      if (orgPrefix) navigate(`/${orgPrefix}/skills/${created.slug}`)
+    },
+    onError: () => toast.error("스킬 import에 실패했습니다."),
+  })
+
+  const forkMutation = useMutation({
+    mutationFn: () => skillsApi.fork(slug!),
+    onSuccess: async () => {
+      toast.success("`hagent` 네임스페이스로 포크했습니다.")
+      await invalidateSkills()
+    },
+    onError: () => toast.error("포크에 실패했습니다."),
+  })
+
+  const syncMutation = useMutation({
+    mutationFn: () => skillsApi.syncCheck(slug!),
+    onSuccess: () => toast.success("업스트림 확인 작업을 기록했습니다."),
+    onError: () => toast.error("sync check에 실패했습니다."),
+  })
+
+  const exportMutation = useMutation({
+    mutationFn: (target: "codex" | "claude-code" | "cursor") => skillsApi.exportBundle(slug!, target),
+    onSuccess: (bundle) => {
+      downloadJson(bundle.bundleName, bundle)
+      toast.success("export bundle을 다운로드했습니다.")
+    },
+    onError: () => toast.error("bundle export에 실패했습니다."),
+  })
+
+  const equipMutation = useMutation({
+    mutationFn: async (agent: AgentRecord) => {
+      const current = (await agentsApi.listSkills(agent.id)) as SkillMount[]
+      if (current.some((item) => item.slug === slug)) return agent
+      const nextSkills = [...current, { slug: slug!, enabled: true, mountOrder: current.length }]
+      await agentsApi.updateSkills(agent.id, nextSkills)
+      return agent
+    },
+    onSuccess: async (agent) => {
+      toast.success(`${agent.name} 에이전트에 스킬을 장착했습니다.`)
+      await invalidateSkills()
+    },
+    onError: () => toast.error("에이전트 장착에 실패했습니다."),
+  })
+
+  const unequipMutation = useMutation({
+    mutationFn: async (agent: AgentRecord) => {
+      const current = (await agentsApi.listSkills(agent.id)) as SkillMount[]
+      const nextSkills = current
+        .filter((item) => item.slug !== slug)
+        .map((item, index) => ({ ...item, mountOrder: index }))
+      await agentsApi.updateSkills(agent.id, nextSkills)
+      return agent
+    },
+    onSuccess: async (agent) => {
+      toast.success(`${agent.name} 에이전트에서 스킬을 분리했습니다.`)
+      await invalidateSkills()
+    },
+    onError: () => toast.error("에이전트 분리에 실패했습니다."),
+  })
+
+  const detail = detailQuery.data as SkillDetail | undefined
+  const headings = useMemo(() => (detail ? extractHeadings(detail.skillMarkdown) : []), [detail])
+
+  return (
+    <>
+      <CreateSkillDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSubmit={(payload) => createMutation.mutate(payload)}
+        loading={createMutation.isPending}
+      />
+      <ImportSkillDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onSubmit={(payload) => importMutation.mutate(payload)}
+        loading={importMutation.isPending}
+      />
+
+      <div className="space-y-6">
+        <div
+          className="rounded-3xl p-6 md:p-8"
           style={{
-            backgroundColor: "var(--bg-base)",
+            background:
+              "radial-gradient(circle at top left, rgba(20,184,166,0.18), rgba(15,23,42,0.02) 55%), var(--bg-elevated)",
             border: "1px solid var(--border-default)",
           }}
         >
-          {detailSkill && (
-            <>
-              <DialogHeader>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <DialogTitle style={{ color: "var(--text-primary)" }}>{detailSkill.name}</DialogTitle>
-                    <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-                      v{detailSkill.version}
-                    </p>
-                  </div>
-                  <TypeBadge type={detailSkill.type} />
-                </div>
-              </DialogHeader>
-
-              <div className="flex flex-col gap-4 mt-3">
-                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                  {detailSkill.description}
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="space-y-3">
+              <Badge className="border-0 text-xs" style={{ backgroundColor: "rgba(20,184,166,0.12)", color: "var(--color-teal-500)" }}>
+                Paperclip-inspired Skill Library
+              </Badge>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-semibold" style={{ color: "var(--text-primary)" }}>
+                  HagentOS Skill Packages
+                </h1>
+                <p className="mt-2 max-w-3xl text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
+                  `repo-backed package registry`, `file tree browser`, `org install`, `agent mount`, `export bundle`
+                  를 한 곳에서 다룹니다. `SKILL.md` 본문과 `agents/openai.yaml`, source provenance, runtime
+                  dependency까지 함께 봅니다.
                 </p>
-
-                <div
-                  className="rounded-xl p-4"
-                  style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <Bot size={14} style={{ color: "var(--text-tertiary)" }} />
-                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                      이 스킬을 장착한 에이전트
-                    </p>
-                  </div>
-                  {equippedAgents.length > 0 ? (
-                    <div className="flex gap-1.5 flex-wrap">
-                      {equippedAgents.map((agent) => (
-                        <Badge
-                          key={agent.id}
-                          className="text-xs border-0 px-2 py-0.5"
-                          style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}
-                        >
-                          {agent.name ?? agent.id}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                      아직 장착한 에이전트가 없습니다.
-                    </p>
-                  )}
-                </div>
-
-                <div
-                  className="rounded-xl p-4"
-                  style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
-                >
-                  <button
-                    className="w-full flex items-center justify-between text-left"
-                    onClick={() => setAdvancedOpen((prev) => !prev)}
-                  >
-                    <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                      고급 설정
-                    </span>
-                    <ChevronDown
-                      size={14}
-                      style={{
-                        color: "var(--text-tertiary)",
-                        transform: advancedOpen ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.2s ease",
-                      }}
-                    />
-                  </button>
-                  {advancedOpen && (
-                    <Textarea
-                      className="mt-3 text-xs font-mono"
-                      value={configDrafts[detailSkill.slug] ?? JSON.stringify(detailSkill.config ?? {}, null, 2)}
-                      onChange={(event) =>
-                        setConfigDrafts((prev) => ({
-                          ...prev,
-                          [detailSkill.slug]: event.target.value,
-                        }))
-                      }
-                      rows={10}
-                      style={{
-                        backgroundColor: "var(--bg-base)",
-                        borderColor: "var(--border-default)",
-                        color: "var(--text-primary)",
-                        resize: "vertical",
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <Select value={equipTargetAgentId} onValueChange={setEquipTargetAgentId}>
-                    <SelectTrigger
-                      style={{
-                        backgroundColor: "var(--bg-elevated)",
-                        borderColor: "var(--border-default)",
-                        color: equipTargetAgentId ? "var(--text-primary)" : "var(--text-tertiary)",
-                      }}
-                    >
-                      <SelectValue placeholder="에이전트 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(agentsData as AgentRecord[]).map((agent) => (
-                        <SelectItem key={agent.id} value={agent.id}>
-                          {agent.name ?? agent.id}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Button
-                    className="border-0 text-white"
-                    style={{ backgroundColor: "var(--color-teal-500)" }}
-                    disabled={!equipTargetAgentId || isSubmittingEquip}
-                    onClick={() => void handleEquip()}
-                  >
-                    {isSubmittingEquip && <Loader2 size={14} className="animate-spin" />}
-                    이 스킬 에이전트에 장착하기
-                  </Button>
-                </div>
               </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent
-          style={{
-            backgroundColor: "var(--bg-base)",
-            border: "1px solid var(--border-default)",
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle style={{ color: "var(--text-primary)" }}>스킬 추가</DialogTitle>
-          </DialogHeader>
-
-          <div className="flex flex-col gap-3 mt-2">
-            <Input
-              placeholder="slug"
-              value={newSkill.slug}
-              onChange={(event) => setNewSkill((prev) => ({ ...prev, slug: event.target.value }))}
-              style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-            />
-            <Input
-              placeholder="이름"
-              value={newSkill.name}
-              onChange={(event) => setNewSkill((prev) => ({ ...prev, name: event.target.value }))}
-              style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-            />
-            <Textarea
-              placeholder="설명"
-              value={newSkill.description}
-              onChange={(event) => setNewSkill((prev) => ({ ...prev, description: event.target.value }))}
-              rows={4}
-              style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)", color: "var(--text-primary)", resize: "vertical" }}
-            />
-            <Select
-              value={newSkill.type}
-              onValueChange={(value: "내장" | "외부 MCP") => setNewSkill((prev) => ({ ...prev, type: value }))}
-            >
-              <SelectTrigger
-                style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-              >
-                <SelectValue placeholder="타입 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="내장">내장</SelectItem>
-                <SelectItem value="외부 MCP">외부 MCP</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="version"
-              value={newSkill.version}
-              onChange={(event) => setNewSkill((prev) => ({ ...prev, version: event.target.value }))}
-              style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
-            />
-
-            <div className="flex justify-end gap-2 mt-1">
-              <Button variant="ghost" size="sm" onClick={() => setShowAddDialog(false)}>
-                취소
+              <div className="flex items-center gap-3 flex-wrap text-xs" style={{ color: "var(--text-tertiary)" }}>
+                <span>{skillsQuery.data?.length ?? 0} packages</span>
+                <span>•</span>
+                <span>{(skillsQuery.data ?? []).filter((item) => item.installed).length} installed</span>
+                <span>•</span>
+                <span>{(skillsQuery.data ?? []).filter((item) => !item.ready).length} need config</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" className="gap-2" onClick={() => setImportOpen(true)}>
+                <Upload size={15} />
+                Import
               </Button>
-              <Button
-                size="sm"
-                className="border-0 text-white"
-                style={{ backgroundColor: "var(--color-teal-500)" }}
-                disabled={!newSkill.slug.trim() || !newSkill.name.trim()}
-                onClick={() => void handleCreateSkill()}
-              >
-                저장
+              <Button className="gap-2" onClick={() => setCreateOpen(true)}>
+                <PackagePlus size={15} />
+                Create Skill
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-    </ScrollArea>
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+          <aside
+            className="rounded-3xl overflow-hidden"
+            style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+          >
+            <div className="p-4 border-b" style={{ borderColor: "var(--border-default)" }}>
+              <div
+                className="flex items-center gap-2 rounded-xl px-3"
+                style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+              >
+                <Search size={14} style={{ color: "var(--text-tertiary)" }} />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search skills"
+                  className="border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+                />
+              </div>
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                {FILTERS.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => setFilter(item.key)}
+                    className="rounded-full px-3 py-1.5 text-xs whitespace-nowrap transition-colors"
+                    style={{
+                      backgroundColor: filter === item.key ? "rgba(20,184,166,0.12)" : "var(--bg-secondary)",
+                      color: filter === item.key ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <ScrollArea className="h-[calc(100vh-21rem)] min-h-[540px]">
+              <div className="p-4 space-y-3">
+                {skillsQuery.isLoading ? (
+                  <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-tertiary)" }}>
+                    <Loader2 size={16} className="animate-spin" />
+                    스킬 카탈로그를 불러오는 중...
+                  </div>
+                ) : (
+                  filteredSkills.map((item) => (
+                    <SkillCard
+                      key={item.id}
+                      item={item}
+                      active={slug === item.slug}
+                      onClick={() => orgPrefix && navigate(`/${orgPrefix}/skills/${item.slug}`)}
+                    />
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </aside>
+
+          <section
+            className="rounded-3xl overflow-hidden"
+            style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+          >
+            {detailQuery.isLoading || !detail ? (
+              <div className="h-full min-h-[720px] flex flex-col items-center justify-center gap-3">
+                <Loader2 size={22} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
+                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                  스킬 상세 정보를 불러오는 중...
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="p-6 md:p-8 border-b" style={{ borderColor: "var(--border-default)" }}>
+                  <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                    <div className="space-y-4">
+                      <SkillStatusBadge item={detail} />
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <h2 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+                            {detail.displayName}
+                          </h2>
+                          <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                            {detail.namespace}/{detail.slug}
+                          </span>
+                        </div>
+                        <p className="max-w-3xl text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
+                          {detail.summary}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 flex-wrap">
+                        {detail.compatibility.agentTypes.map((agentType) => (
+                          <Badge key={agentType} className="border-0 text-xs" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}>
+                            {agentType}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 xl:justify-end">
+                      {detail.installed ? (
+                        <Button
+                          variant="outline"
+                          disabled={uninstallMutation.isPending}
+                          className="gap-2"
+                          onClick={() => uninstallMutation.mutate()}
+                        >
+                          {uninstallMutation.isPending ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} />}
+                          Uninstall
+                        </Button>
+                      ) : (
+                        <Button
+                          disabled={installMutation.isPending || !selectedOrgId}
+                          className="gap-2"
+                          onClick={() => installMutation.mutate()}
+                        >
+                          {installMutation.isPending ? <Loader2 size={15} className="animate-spin" /> : <Rocket size={15} />}
+                          Install to Org
+                        </Button>
+                      )}
+                      {detail.readOnly && (
+                        <Button variant="outline" className="gap-2" disabled={forkMutation.isPending} onClick={() => forkMutation.mutate()}>
+                          {forkMutation.isPending ? <Loader2 size={15} className="animate-spin" /> : <GitBranch size={15} />}
+                          Fork as Local
+                        </Button>
+                      )}
+                      <Button variant="outline" className="gap-2" disabled={syncMutation.isPending} onClick={() => syncMutation.mutate()}>
+                        {syncMutation.isPending ? <Loader2 size={15} className="animate-spin" /> : <RefreshCcw size={15} />}
+                        Sync Check
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <Tabs defaultValue="overview" className="min-h-[660px]">
+                  <div className="px-6 pt-4 md:px-8">
+                    <TabsList variant="line" className="w-full justify-start gap-2 overflow-x-auto">
+                      <TabsTrigger value="overview">Overview</TabsTrigger>
+                      <TabsTrigger value="files">Files</TabsTrigger>
+                      <TabsTrigger value="skillmd">SKILL.md</TabsTrigger>
+                      <TabsTrigger value="runtime">Runtime</TabsTrigger>
+                      <TabsTrigger value="agents">Agents</TabsTrigger>
+                      <TabsTrigger value="source">Source</TabsTrigger>
+                    </TabsList>
+                  </div>
+
+                  <TabsContent value="overview" className="p-6 md:p-8 space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                      {[
+                        { label: "Version", value: `v${detail.version}`, icon: <FileText size={16} /> },
+                        { label: "Package Type", value: detail.packageType, icon: <Puzzle size={16} /> },
+                        { label: "Mounted Agents", value: String(detail.mountedAgents.length), icon: <Bot size={16} /> },
+                        { label: "Files", value: String(detail.fileTree.length), icon: <FolderTree size={16} /> },
+                      ].map((card) => (
+                        <div
+                          key={card.label}
+                          className="rounded-2xl p-4"
+                          style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                        >
+                          <div className="flex items-center gap-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                            {card.icon}
+                            {card.label}
+                          </div>
+                          <p className="mt-3 text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
+                            {card.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          <Sparkles size={16} />
+                          Skill Summary
+                        </div>
+                        <p className="mt-4 text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
+                          {detail.summary}
+                        </p>
+                        <div className="mt-5 flex gap-2 flex-wrap">
+                          {detail.distribution.exportTargets.map((target) => (
+                            <Button
+                              key={target}
+                              size="sm"
+                              variant="outline"
+                              className="gap-1.5"
+                              disabled={exportMutation.isPending}
+                              onClick={() => exportMutation.mutate(target as "codex" | "claude-code" | "cursor")}
+                            >
+                              {exportMutation.isPending ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                              Export {target}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          <ShieldCheck size={16} />
+                          Runtime Readiness
+                        </div>
+                        <div className="mt-4 space-y-3">
+                          {detail.runtimeHealth.length === 0 ? (
+                            <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                              등록된 external dependency가 없습니다.
+                            </p>
+                          ) : (
+                            detail.runtimeHealth.map((item) => (
+                              <div key={item.key} className="rounded-xl px-4 py-3" style={{ backgroundColor: "var(--bg-elevated)" }}>
+                                <div className="flex items-center gap-2">
+                                  {item.ready ? (
+                                    <ShieldCheck size={15} style={{ color: "var(--color-success)" }} />
+                                  ) : (
+                                    <CircleAlert size={15} style={{ color: "#d97706" }} />
+                                  )}
+                                  <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                                    {item.label}
+                                  </span>
+                                </div>
+                                {item.missingEnv.length > 0 && (
+                                  <p className="mt-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                    missing env: {item.missingEnv.join(", ")}
+                                  </p>
+                                )}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="files" className="p-6 md:p-8">
+                    <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+                      <div
+                        className="rounded-2xl p-4"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          <FolderTree size={16} />
+                          Package File Tree
+                        </div>
+                        <div className="mt-4">
+                          <FileTree nodes={detail.fileTree} selectedPath={selectedFilePath} onSelect={setSelectedFilePath} />
+                        </div>
+                      </div>
+
+                      <div
+                        className="rounded-2xl overflow-hidden"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: "var(--border-default)" }}>
+                          <div>
+                            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                              {fileContentQuery.data?.path ?? selectedFilePath}
+                            </p>
+                            <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                              {fileContentQuery.data?.language ?? "text"}
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1.5"
+                            onClick={() => navigator.clipboard.writeText(fileContentQuery.data?.content ?? "")}
+                          >
+                            <Copy size={14} />
+                            Copy
+                          </Button>
+                        </div>
+                        <ScrollArea className="h-[480px]">
+                          <pre className="p-4 text-xs leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>
+                            <code>{fileContentQuery.data?.content ?? detail.skillMarkdown}</code>
+                          </pre>
+                        </ScrollArea>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="skillmd" className="p-6 md:p-8">
+                    <div className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)]">
+                      <div
+                        className="rounded-2xl p-4"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          <Zap size={16} />
+                          Heading Map
+                        </div>
+                        <div className="mt-4 space-y-2">
+                          {headings.map((heading) => (
+                            <button
+                              key={heading.id}
+                              type="button"
+                              className="block w-full rounded-lg px-3 py-2 text-left text-xs"
+                              style={{
+                                paddingLeft: heading.depth === 1 ? 12 : heading.depth === 2 ? 18 : 26,
+                                backgroundColor: "var(--bg-elevated)",
+                                color: "var(--text-secondary)",
+                              }}
+                              onClick={() => document.getElementById(heading.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                            >
+                              {heading.text}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div
+                        className="rounded-2xl p-6"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <MarkdownPreview markdown={detail.skillMarkdown} />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="runtime" className="p-6 md:p-8">
+                    <div className="grid gap-6 xl:grid-cols-2">
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Declarative Contract
+                        </h3>
+                        <div className="mt-4 space-y-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+                          <p>injection mode: <strong>{detail.runtime.injectionMode}</strong></p>
+                          <p>required integrations: {detail.runtime.requiredIntegrations.join(", ") || "없음"}</p>
+                          <p>required secrets: {detail.runtime.requiredSecrets.join(", ") || "없음"}</p>
+                          <p>required env: {detail.runtime.requiredEnv.join(", ") || "없음"}</p>
+                          <p>required files: {detail.runtime.requiredFiles.join(", ") || "없음"}</p>
+                        </div>
+                      </div>
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Dependency Health
+                        </h3>
+                        <div className="mt-4 space-y-3">
+                          {detail.runtimeHealth.map((item) => (
+                            <div key={item.key} className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-elevated)" }}>
+                              <div className="flex items-center gap-2">
+                                {item.ready ? (
+                                  <ShieldCheck size={15} style={{ color: "var(--color-success)" }} />
+                                ) : (
+                                  <CircleAlert size={15} style={{ color: "#d97706" }} />
+                                )}
+                                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                                  {item.label}
+                                </span>
+                              </div>
+                              <p className="mt-2 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                required env: {item.requiredEnv.join(", ") || "없음"}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="agents" className="p-6 md:p-8">
+                    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Mounted Agents
+                        </h3>
+                        <div className="mt-4 space-y-3">
+                          {detail.mountedAgents.length === 0 ? (
+                            <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                              아직 이 스킬을 장착한 에이전트가 없습니다.
+                            </p>
+                          ) : (
+                            detail.mountedAgents.map((agent) => (
+                              <div key={agent.agentId} className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-elevated)" }}>
+                                <div className="flex items-center justify-between gap-3">
+                                  <div>
+                                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                                      {agent.agentName}
+                                    </p>
+                                    <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                      mount order {agent.mountOrder} · {agent.enabled ? "enabled" : "disabled"}
+                                    </p>
+                                  </div>
+                                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => orgPrefix && navigate(`/${orgPrefix}/agents/${agent.agentId}`)}>
+                                    <Bot size={14} />
+                                    Open Agent
+                                  </Button>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Equip to Agent
+                        </h3>
+                        <div className="mt-4 space-y-3">
+                          {(agentsQuery.data ?? []).map((agent) => {
+                            const mounted = detail.mountedAgents.find((item) => item.agentId === agent.id)
+                            return (
+                              <div key={agent.id} className="rounded-xl p-4 flex items-center gap-3" style={{ backgroundColor: "var(--bg-elevated)" }}>
+                                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(20,184,166,0.08)", color: "var(--color-teal-500)" }}>
+                                  <Bot size={16} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
+                                    {agent.name}
+                                  </p>
+                                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                    {agent.agentType}
+                                  </p>
+                                </div>
+                                {mounted ? (
+                                  <Button size="sm" variant="outline" disabled={unequipMutation.isPending} onClick={() => unequipMutation.mutate(agent)}>
+                                    분리
+                                  </Button>
+                                ) : (
+                                  <Button size="sm" disabled={equipMutation.isPending} onClick={() => equipMutation.mutate(agent)}>
+                                    장착
+                                  </Button>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="source" className="p-6 md:p-8">
+                    <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          Source & Provenance
+                        </h3>
+                        <div className="mt-4 space-y-3 text-sm" style={{ color: "var(--text-secondary)" }}>
+                          <p>kind: <strong>{detail.source.kind}</strong></p>
+                          <p>repo: {detail.source.repo ?? "-"}</p>
+                          <p>commit: {detail.source.commit ?? "-"}</p>
+                          <p>license: {detail.source.license ?? "-"}</p>
+                          <p>path: {detail.source.path ?? "-"}</p>
+                        </div>
+                        {detail.source.repo && (
+                          <Button variant="outline" className="mt-4 gap-1.5" asChild>
+                            <a href={detail.source.repo} target="_blank" rel="noreferrer">
+                              <CloudDownload size={14} />
+                              Open Source Repo
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                      <div
+                        className="rounded-2xl p-5"
+                        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                      >
+                        <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                          agents/openai.yaml
+                        </h3>
+                        <pre className="mt-4 rounded-xl p-4 text-xs overflow-x-auto" style={{ backgroundColor: "var(--bg-elevated)", color: "var(--text-primary)" }}>
+                          <code>{detail.openaiYaml ?? "No agents/openai.yaml"}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
+          </section>
+        </div>
+      </div>
+    </>
   )
 }

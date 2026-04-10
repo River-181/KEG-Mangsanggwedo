@@ -15,6 +15,7 @@ interface InstructionBarProps {
   onChange?: (value: string) => void
   onSubmit?: () => void
   loading?: boolean
+  disabled?: boolean
   placeholder?: string
   agents?: AgentMention[]
   className?: string
@@ -25,6 +26,7 @@ export function InstructionBar({
   onChange,
   onSubmit,
   loading = false,
+  disabled = false,
   placeholder = "오케스트레이터에게 지시하기...",
   agents = [],
   className,
@@ -64,9 +66,9 @@ export function InstructionBar({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder}
+        placeholder={disabled ? "조직을 선택해 주세요" : placeholder}
         rows={1}
-        disabled={loading}
+        disabled={loading || disabled}
         className="w-full resize-none border-0 bg-transparent p-4 pr-14 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[52px] max-h-[200px] overflow-y-auto"
         style={{
           color: "var(--text-primary)",
@@ -79,7 +81,7 @@ export function InstructionBar({
         <Button
           size="icon"
           onClick={onSubmit}
-          disabled={!value.trim() || loading}
+          disabled={!value.trim() || loading || disabled}
           className="h-8 w-8 rounded-lg border-0 text-white transition-opacity disabled:opacity-40"
           style={{ backgroundColor: "var(--color-teal-500)" }}
         >

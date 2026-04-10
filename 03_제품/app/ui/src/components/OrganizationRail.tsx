@@ -150,7 +150,7 @@ export function OrganizationRail() {
               </h2>
             </div>
             <p className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>
-              학원을 추가하면 에이전트 팀이 자동으로 구성됩니다.
+              학원을 추가하고 온보딩에서 원장 에이전트를 설정하세요.
             </p>
 
             <div className="space-y-3">

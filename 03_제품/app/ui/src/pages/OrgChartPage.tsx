@@ -1,5 +1,5 @@
-// v0.3.0
-import { useEffect } from "react"
+// v0.4.0 — reportsTo-based dynamic tree
+import { useEffect, useCallback } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -26,7 +26,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-// ─── Agent node types ─────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type AgentStatus = "idle" | "running" | "error" | "paused"
 
@@ -58,7 +58,7 @@ function StatusDot({ status }: { status: AgentStatus }) {
     running: "var(--color-teal-500)",
     error: "var(--color-danger)",
     paused: "#f59e0b",
-    idle: "var(--color-success, #6b7280)",
+    idle: "#6b7280",
   }
 
   return (
@@ -68,7 +68,10 @@ function StatusDot({ status }: { status: AgentStatus }) {
         width: 8,
         height: 8,
         backgroundColor: colorMap[status],
-        animation: status === "running" ? "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite" : undefined,
+        animation:
+          status === "running"
+            ? "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite"
+            : undefined,
         flexShrink: 0,
       }}
     />
@@ -87,7 +90,7 @@ function AgentNode({
   onClick?: () => void
 }) {
   const status = resolveStatus(agent)
-  const agentType: string = agent.type ?? agent.agentType ?? "worker"
+  const agentType: string = agent.agentType ?? agent.type ?? "worker"
 
   const statusLabel: Record<AgentStatus, string> = {
     idle: "대기",
@@ -96,7 +99,6 @@ function AgentNode({
     paused: "일시정지",
   }
 
-  // Resolve icon
   const iconKey = agent.icon as string | undefined
   const IconComponent = iconKey ? ICON_MAP[iconKey] : null
 
@@ -146,9 +148,11 @@ function AgentNode({
         >
           {agent.name ?? "에이전트"}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-          Claude
-        </p>
+        {agent.title && (
+          <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+            {agent.title}
+          </p>
+        )}
       </div>
       <Badge
         className="text-xs border-0 px-2 py-0.5"
@@ -212,10 +216,7 @@ function InstructorCard({ instructor }: { instructor: Instructor }) {
         <User size={18} style={{ color: "#3b82f6" }} />
       </div>
       <div>
-        <p
-          className="text-sm font-semibold"
-          style={{ color: "var(--text-primary)" }}
-        >
+        <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
           {instructor.name}
         </p>
         <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
@@ -250,52 +251,59 @@ function VLine({ height = 40 }: { height?: number }) {
   )
 }
 
-// ─── Org Chart layout ─────────────────────────────────────────────────────────
+// ─── Recursive OrgTree node ───────────────────────────────────────────────────
 
-function OrgTree({
-  orchestrator,
-  workers,
+function OrgTreeNode({
+  agent,
+  allAgents,
   onAgentClick,
+  isRoot,
 }: {
-  orchestrator: any
-  workers: any[]
+  agent: any
+  allAgents: any[]
   onAgentClick: (agent: any) => void
+  isRoot?: boolean
 }) {
+  const children = allAgents.filter(
+    (a: any) => a.reportsTo === agent.id || a.reports_to === agent.id,
+  )
+
   return (
     <div className="flex flex-col items-center">
-      {/* Orchestrator */}
       <AgentNode
-        agent={orchestrator}
-        size="lg"
-        onClick={() => onAgentClick(orchestrator)}
+        agent={agent}
+        size={isRoot ? "lg" : "default"}
+        onClick={() => onAgentClick(agent)}
       />
 
-      {workers.length > 0 && (
+      {children.length > 0 && (
         <>
-          {/* Vertical stem from orchestrator */}
           <VLine height={32} />
 
-          {/* Horizontal bar + vertical drops */}
-          <div style={{ position: "relative", width: "100%" }}>
-            {/* horizontal connector spanning all children */}
+          {/* Horizontal connector bar */}
+          {children.length > 1 && (
             <div
               style={{
-                position: "absolute",
-                top: 0,
-                left: `calc(100% / ${workers.length * 2})`,
-                right: `calc(100% / ${workers.length * 2})`,
+                position: "relative",
+                width: `calc(${children.length} * 220px - 60px)`,
                 height: 2,
                 backgroundColor: "var(--border-default)",
               }}
             />
-          </div>
+          )}
 
-          {/* Children row */}
-          <div className="flex items-start gap-8" style={{ paddingTop: 0 }}>
-            {workers.map((w) => (
-              <div key={w.id} className="flex flex-col items-center">
-                <VLine height={32} />
-                <AgentNode agent={w} onClick={() => onAgentClick(w)} />
+          <div
+            className="flex items-start gap-8"
+            style={{ flexWrap: children.length > 4 ? "wrap" : "nowrap", justifyContent: "center" }}
+          >
+            {children.map((child: any) => (
+              <div key={child.id} className="flex flex-col items-center">
+                {children.length === 1 ? null : <VLine height={24} />}
+                <OrgTreeNode
+                  agent={child}
+                  allAgents={allAgents}
+                  onAgentClick={onAgentClick}
+                />
               </div>
             ))}
           </div>
@@ -307,13 +315,28 @@ function OrgTree({
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
-function EmptyOrg() {
+function EmptyOrg({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-3 py-20">
+    <div className="flex flex-col items-center gap-4 py-20">
       <Bot size={40} style={{ color: "var(--text-tertiary)" }} />
-      <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-        에이전트가 없습니다. 에이전트를 추가하면 조직도가 표시됩니다.
-      </p>
+      <div className="text-center">
+        <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
+          아직 에이전트가 없습니다
+        </p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+          첫 에이전트를 생성하면 조직도가 표시됩니다.
+        </p>
+      </div>
+      {onNavigate && (
+        <Button
+          size="sm"
+          className="text-xs border-0 text-white"
+          style={{ backgroundColor: "var(--color-teal-500)" }}
+          onClick={onNavigate}
+        >
+          첫 에이전트 생성
+        </Button>
+      )}
     </div>
   )
 }
@@ -336,22 +359,27 @@ export function OrgChartPage() {
     enabled: !!selectedOrgId,
   })
 
-  // Classify orchestrator vs workers
-  const orchestrator = (agents as any[]).find(
-    (a: any) =>
-      a.type === "orchestrator" ||
-      a.agentType === "orchestrator" ||
-      a.isOrchestrator === true ||
-      a.name?.toLowerCase().includes("orchestrat")
-  ) ?? (agents as any[])[0] ?? null
+  const agentList = agents as any[]
 
-  const workers = (agents as any[]).filter((a: any) => a.id !== orchestrator?.id)
+  // Roots = agents with no reportsTo (or reportsTo === null/undefined/"")
+  const roots = agentList.filter(
+    (a: any) => !a.reportsTo && !a.reports_to,
+  )
 
-  const handleAgentClick = (agent: any) => {
+  const handleAgentClick = useCallback(
+    (agent: any) => {
+      if (orgPrefix) {
+        navigate(`/${orgPrefix}/agents/${agent.id}`)
+      }
+    },
+    [navigate, orgPrefix],
+  )
+
+  const handleCreateAgent = useCallback(() => {
     if (orgPrefix) {
-      navigate(`/${orgPrefix}/agents/${agent.id}`)
+      navigate(`/${orgPrefix}/agents/new`)
     }
-  }
+  }, [navigate, orgPrefix])
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -360,7 +388,10 @@ export function OrgChartPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
+              <h1
+                className="text-xl font-bold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 에이전트 조직도
               </h1>
               <p className="text-sm mt-0.5" style={{ color: "var(--text-tertiary)" }}>
@@ -368,11 +399,21 @@ export function OrgChartPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled className="text-xs gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-xs gap-1.5"
+              >
                 <Upload size={13} />
                 Import company
               </Button>
-              <Button variant="outline" size="sm" disabled className="text-xs gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-xs gap-1.5"
+              >
                 <Download size={13} />
                 Export company
               </Button>
@@ -381,7 +422,7 @@ export function OrgChartPage() {
 
           {/* Chart area */}
           <div
-            className="rounded-2xl p-8"
+            className="rounded-2xl p-8 overflow-x-auto"
             style={{
               backgroundColor: "var(--bg-elevated)",
               border: "1px solid var(--border-default)",
@@ -396,19 +437,36 @@ export function OrgChartPage() {
                   style={{ color: "var(--text-tertiary)" }}
                 />
               </div>
-            ) : !orchestrator ? (
-              <EmptyOrg />
+            ) : agentList.length === 0 ? (
+              <EmptyOrg onNavigate={handleCreateAgent} />
+            ) : roots.length === 0 ? (
+              /* All agents have reportsTo but none match — render flat */
+              <div className="flex flex-wrap gap-6 justify-center">
+                {agentList.map((agent: any) => (
+                  <AgentNode
+                    key={agent.id}
+                    agent={agent}
+                    onClick={() => handleAgentClick(agent)}
+                  />
+                ))}
+              </div>
             ) : (
-              <OrgTree
-                orchestrator={orchestrator}
-                workers={workers}
-                onAgentClick={handleAgentClick}
-              />
+              <div className="flex flex-col gap-12 items-center">
+                {roots.map((root: any) => (
+                  <OrgTreeNode
+                    key={root.id}
+                    agent={root}
+                    allAgents={agentList}
+                    onAgentClick={handleAgentClick}
+                    isRoot
+                  />
+                ))}
+              </div>
             )}
           </div>
 
           {/* Legend */}
-          {!isLoading && (agents as any[]).length > 0 && (
+          {!isLoading && agentList.length > 0 && (
             <div className="mt-4 flex items-center gap-6">
               {(
                 [
@@ -431,7 +489,10 @@ export function OrgChartPage() {
           {/* Human staff section */}
           <div className="mt-8">
             <div className="mb-4">
-              <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+              <h2
+                className="text-base font-semibold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 직원
               </h2>
               <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>

@@ -49,6 +49,7 @@ export const agents = pgTable(
     memory: jsonb().$type<Record<string, any>>().default({}),
     budgetLimit: integer("budget_limit"),
     budgetUsed: integer("budget_used").notNull().default(0),
+    reportsTo: uuid("reports_to").references((): any => agents.id),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },

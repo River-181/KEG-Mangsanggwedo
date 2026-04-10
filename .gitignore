@@ -60,3 +60,4 @@ assets/excaildraw/
 *.sqlite
 *.db
 *.local.json
+.playwright-cli/

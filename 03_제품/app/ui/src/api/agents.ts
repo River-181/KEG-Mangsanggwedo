@@ -13,4 +13,7 @@ export const agentsApi = {
   stop: (id: string) => api.post<any>(`/agents/${id}/stop`, {}),
   getMemory: (id: string) => api.get<any>(`/agents/${id}/memory`),
   updateMemory: (id: string, data: any) => api.patch<any>(`/agents/${id}/memory`, data),
+  listSkills: (id: string) => api.get<any[]>(`/agents/${id}/skills`),
+  updateSkills: (id: string, skills: Array<{ slug: string; enabled?: boolean; mountOrder?: number }>) =>
+    api.put<any>(`/agents/${id}/skills`, { skills }),
 }

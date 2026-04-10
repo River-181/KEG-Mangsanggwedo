@@ -57,6 +57,7 @@ export function App() {
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="activity" element={<ActivityPage />} />
         <Route path="skills" element={<SkillsPage />} />
+        <Route path="skills/:slug" element={<SkillsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="onboarding" element={<OnboardingPage />} />
         <Route path="documents" element={<DocumentsPage />} />

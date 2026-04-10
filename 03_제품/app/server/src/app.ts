@@ -24,6 +24,7 @@ import { studentRoutes } from "./routes/students.js"
 import { scheduleRoutes } from "./routes/schedules.js"
 import { webhookRoutes } from "./routes/webhook.js"
 import { agentInstructionsRoutes } from "./routes/agent-instructions.js"
+import { agentHireRoutes } from "./routes/agent-hires.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -58,6 +59,7 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api", studentRoutes(db))
   app.use("/api", scheduleRoutes(db))
   app.use("/api/webhook", webhookRoutes(db))
+  app.use("/api", agentHireRoutes(db))
 
   return app
 }

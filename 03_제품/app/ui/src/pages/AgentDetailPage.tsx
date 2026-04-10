@@ -1,6 +1,6 @@
 // v0.3.0
 import { useEffect, useState, useContext } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -980,63 +980,100 @@ function InstructionsTab({ agent, instructionFiles }: { agent: any; instructionF
 // ─── Skills tab ───────────────────────────────────────────────────────────────
 
 function SkillsTab({ agent }: { agent: any }) {
+  const navigate = useNavigate()
+  const { orgPrefix } = useParams<{ orgPrefix: string }>()
+  const { selectedOrgId } = useOrganization()
   const queryClient = useQueryClient()
   const toast = useContext(ToastContext)
-  const rawSkills: any[] = agent.skills ?? agent.equippedSkills ?? []
-
-  // Normalise: skills may be strings (slugs) or objects
-  const skills = rawSkills.map((s: any) =>
-    typeof s === "string" ? { slug: s, name: s, enabled: true } : { enabled: true, ...s }
-  )
-
-  const [enabledMap, setEnabledMap] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(skills.map((s) => [s.slug ?? s.id ?? s.name, s.enabled ?? true]))
-  )
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null)
   const [catalogOpen, setCatalogOpen] = useState(false)
 
-  const toggleSkill = (key: string, value: boolean) => {
-    setEnabledMap((prev) => ({ ...prev, [key]: value }))
-  }
+  const { data: mountedSkills = [], isLoading: mountedSkillsLoading } = useQuery<any[]>({
+    queryKey: ["agents", agent.id, "skills"],
+    queryFn: () => agentsApi.listSkills(agent.id),
+  })
 
-  // Fetch skill catalog
+  useEffect(() => {
+    if (!previewSlug && mountedSkills.length > 0) {
+      setPreviewSlug(mountedSkills[0].slug)
+    }
+  }, [mountedSkills, previewSlug])
+
   const { data: catalogSkills = [], isLoading: catalogLoading } = useQuery<any[]>({
     queryKey: ["skills", "catalog"],
-    queryFn: async () => {
-      const res = await fetch("/api/skills")
-      if (!res.ok) throw new Error("Failed to fetch skills")
-      return res.json()
-    },
+    queryFn: () => fetch(`/api/skills${selectedOrgId ? `?orgId=${selectedOrgId}` : ""}`).then((res) => res.json()),
     enabled: catalogOpen,
   })
 
-  // Optimistic add skill mutation
+  const previewDetailQuery = useQuery({
+    queryKey: ["skills", previewSlug, "preview", selectedOrgId],
+    queryFn: () => fetch(`/api/skills/${previewSlug}${selectedOrgId ? `?orgId=${selectedOrgId}` : ""}`).then((res) => res.json()),
+    enabled: Boolean(previewSlug),
+  })
+
+  const persistSkills = async (nextSkills: Array<{ slug: string; enabled?: boolean; mountOrder?: number }>) => {
+    await agentsApi.updateSkills(agent.id, nextSkills)
+    await queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    await queryClient.invalidateQueries({ queryKey: ["agents", agent.id, "skills"] })
+    await queryClient.invalidateQueries({ queryKey: queryKeys.skills.all })
+  }
+
   const addSkillMutation = useMutation({
     mutationFn: async (skill: any) => {
-      const currentSlugs = skills.map((s: any) => s.slug ?? s.name)
-      const newSlugs = Array.from(new Set([...currentSlugs, skill.slug]))
-      try {
-        return await agentsApi.update(agent.id, { skills: newSlugs })
-      } catch {
-        // Optimistic update: return a synthetic success
-        return { ...agent, skills: newSlugs }
-      }
+      const nextSkills = [
+        ...mountedSkills.map((item, index) => ({
+          slug: item.slug,
+          enabled: item.enabled ?? true,
+          mountOrder: item.mountOrder ?? index,
+        })),
+        {
+          slug: skill.slug,
+          enabled: true,
+          mountOrder: mountedSkills.length,
+        },
+      ]
+      await persistSkills(nextSkills)
+      return skill
     },
     onSuccess: (_data, skill) => {
       toast?.success(`"${skill.name}" 스킬이 추가되었습니다.`)
-      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+      setPreviewSlug(skill.slug)
+      setCatalogOpen(false)
     },
     onError: (_err, skill) => {
       toast?.error(`"${skill.name}" 스킬 추가에 실패했습니다.`)
     },
   })
 
-  const equippedSlugs = new Set(skills.map((s: any) => s.slug ?? s.name))
+  const updateSkillStateMutation = useMutation({
+    mutationFn: async ({
+      slug,
+      enabled,
+      remove = false,
+    }: {
+      slug: string
+      enabled?: boolean
+      remove?: boolean
+    }) => {
+      const nextSkills = mountedSkills
+        .filter((item) => (remove ? item.slug !== slug : true))
+        .map((item, index) => ({
+          slug: item.slug,
+          enabled: item.slug === slug ? (enabled ?? item.enabled ?? true) : item.enabled ?? true,
+          mountOrder: index,
+        }))
+      await persistSkills(nextSkills)
+    },
+    onError: () => toast?.error("스킬 상태를 저장하지 못했습니다."),
+  })
+
+  const equippedSlugs = new Set(mountedSkills.map((s: any) => s.slug ?? s.name))
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-          이 에이전트에 장착된 k-skill 목록입니다.
+          에이전트에 실제 장착된 skill package와 본문 preview를 확인합니다.
         </p>
         <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setCatalogOpen(true)}>
           <Plus size={13} />
@@ -1044,7 +1081,11 @@ function SkillsTab({ agent }: { agent: any }) {
         </Button>
       </div>
 
-      {skills.length === 0 ? (
+      {mountedSkillsLoading ? (
+        <div className="rounded-xl py-10 flex items-center justify-center" style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
+          <Loader2 size={18} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
+        </div>
+      ) : mountedSkills.length === 0 ? (
         <div
           className="rounded-xl py-10 flex flex-col items-center gap-2"
           style={{
@@ -1058,62 +1099,135 @@ function SkillsTab({ agent }: { agent: any }) {
           </p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {skills.map((skill: any, i: number) => {
-            const key = skill.slug ?? skill.id ?? skill.name ?? String(i)
-            const isEnabled = enabledMap[key] ?? true
-            return (
-              <div
-                key={key}
-                className="flex items-center gap-3 rounded-xl px-4 py-3"
-                style={{
-                  backgroundColor: "var(--bg-elevated)",
-                  border: "1px solid var(--border-default)",
-                  opacity: isEnabled ? 1 : 0.5,
-                }}
-              >
-                <div
-                  className="flex items-center justify-center rounded-lg shrink-0"
+        <div className="grid gap-4 xl:grid-cols-[1fr_0.95fr]">
+          <div className="space-y-2">
+            {mountedSkills.map((skill: any, i: number) => {
+              const key = skill.slug ?? skill.id ?? skill.name ?? String(i)
+              const isPreview = previewSlug === skill.slug
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-left"
                   style={{
-                    width: 32,
-                    height: 32,
-                    backgroundColor: isEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
+                    backgroundColor: isPreview ? "rgba(20,184,166,0.08)" : "var(--bg-elevated)",
+                    border: `1px solid ${isPreview ? "rgba(20,184,166,0.24)" : "var(--border-default)"}`,
+                    opacity: skill.enabled === false ? 0.6 : 1,
                   }}
+                  onClick={() => setPreviewSlug(skill.slug)}
                 >
-                  <Zap size={15} style={{ color: isEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)" }} />
+                  <div
+                    className="flex items-center justify-center rounded-lg shrink-0"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      backgroundColor: isPreview ? "rgba(20,184,166,0.12)" : "var(--bg-tertiary)",
+                    }}
+                  >
+                    <Zap size={15} style={{ color: isPreview ? "var(--color-teal-500)" : "var(--text-tertiary)" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>
+                      {skill.displayName ?? skill.name ?? skill.slug}
+                    </p>
+                    <p className="text-xs truncate" style={{ color: "var(--text-tertiary)" }}>
+                      {skill.summary ?? skill.sourceBadge ?? "k-skill"}
+                    </p>
+                  </div>
+                  <Badge className="text-xs border-0 shrink-0" style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}>
+                    #{skill.mountOrder ?? i}
+                  </Badge>
+                  <Switch
+                    checked={skill.enabled !== false}
+                    onCheckedChange={(nextValue) =>
+                      updateSkillStateMutation.mutate({ slug: skill.slug, enabled: nextValue })
+                    }
+                    onClick={(event) => event.stopPropagation()}
+                  />
+                </button>
+              )
+            })}
+          </div>
+
+          <div
+            className="rounded-xl p-4"
+            style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+          >
+            {previewDetailQuery.isLoading || !previewDetailQuery.data ? (
+              <div className="py-10 flex items-center justify-center">
+                <Loader2 size={18} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
+              </div>
+            ) : (
+              <>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {previewDetailQuery.data.displayName}
+                    </p>
+                    <p className="mt-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                      {previewDetailQuery.data.namespace}/{previewDetailQuery.data.slug}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => orgPrefix && navigate(`/${orgPrefix}/skills/${previewDetailQuery.data.slug}`)}
+                  >
+                    <ChevronRight size={14} />
+                    전체 보기
+                  </Button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-sm font-medium truncate"
+                <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {previewDetailQuery.data.summary}
+                </p>
+                <div className="mt-4 flex gap-2 flex-wrap">
+                  {(previewDetailQuery.data.runtimeHealth ?? []).map((item: any) => (
+                    <Badge
+                      key={item.key}
+                      className="text-xs border-0"
+                      style={{
+                        backgroundColor: item.ready ? "rgba(20,184,166,0.1)" : "rgba(245,158,11,0.12)",
+                        color: item.ready ? "var(--color-teal-500)" : "#d97706",
+                      }}
+                    >
+                      {item.label}
+                    </Badge>
+                  ))}
+                </div>
+                <div
+                  className="mt-4 rounded-xl p-3 max-h-[260px] overflow-y-auto"
+                  style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+                >
+                  <pre
+                    className="text-xs whitespace-pre-wrap leading-relaxed"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    {skill.name ?? skill.slug ?? "알 수 없는 스킬"}
-                  </p>
-                  {skill.description && (
-                    <p
-                      className="text-xs truncate"
-                      style={{ color: "var(--text-tertiary)" }}
-                    >
-                      {skill.description}
-                    </p>
-                  )}
+                    <code>{String(previewDetailQuery.data.skillMarkdown ?? "").slice(0, 1200)}</code>
+                  </pre>
                 </div>
-                <Badge
-                  className="text-xs border-0 shrink-0"
-                  style={{
-                    backgroundColor: isEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
-                    color: isEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)",
-                  }}
-                >
-                  {skill.category ?? "k-skill"}
-                </Badge>
-                <Switch
-                  checked={isEnabled}
-                  onCheckedChange={(v) => toggleSkill(key, v)}
-                />
-              </div>
-            )
-          })}
+                <div className="mt-4 flex items-center justify-between gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() =>
+                      updateSkillStateMutation.mutate({
+                        slug: previewDetailQuery.data.slug,
+                        remove: true,
+                      })
+                    }
+                  >
+                    <XCircle size={14} />
+                    분리
+                  </Button>
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    Agent view에서 `SKILL.md` 본문 미리보기를 제공합니다.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 

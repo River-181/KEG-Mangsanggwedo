@@ -149,6 +149,49 @@ export async function executeAgentRun(
         })
         .where(eq(schema.agentRuns.id, runId))
 
+      // Update case status and assignee even when pending approval
+      const pendingStatus =
+        agentType === "complaint"
+          ? "in_review"
+          : agentType === "retention"
+            ? "in_progress"
+            : "in_progress"
+
+      await db
+        .update(schema.cases)
+        .set({
+          status: pendingStatus,
+          assigneeAgentId: agentId,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.cases.id, caseId))
+
+      // Insert agent comment summarising analysis (pending approval)
+      let pendingCommentContent: string
+      if (agentType === "complaint") {
+        const output = agentOutput as {
+          category?: string
+          severity?: string
+          suggestedReply?: string
+        }
+        pendingCommentContent = `[민원분석] 카테고리: ${output.category ?? "-"}, 심각도: ${output.severity ?? "-"}\n\n초안: ${output.suggestedReply ?? ""}`
+      } else if (agentType === "retention") {
+        const output = agentOutput as {
+          riskLevel?: string
+          reasoning?: string
+        }
+        pendingCommentContent = `[이탈분석] 위험도: ${output.riskLevel ?? "-"}\n\n${output.reasoning ?? ""}`
+      } else {
+        pendingCommentContent = JSON.stringify(agentOutput, null, 2)
+      }
+
+      await db.insert(schema.caseComments).values({
+        caseId,
+        authorType: "agent",
+        authorId: agentId,
+        content: pendingCommentContent,
+      })
+
       publishEvent(organizationId, "agent.run.pending_approval", {
         runId,
         agentId,

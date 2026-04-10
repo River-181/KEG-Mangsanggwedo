@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { casesApi } from "@/api/cases"
@@ -167,7 +167,11 @@ export function DashboardPage() {
   const toast = useContext(ToastContext)
   const [instruction, setInstruction] = useState("")
 
-  const [lastDispatchResult, setLastDispatchResult] = useState<{ plan: string; runs: string[] } | null>(null)
+  const [lastDispatchResult, setLastDispatchResult] = useState<{
+    plan: string
+    runs: string[]
+    caseId?: string
+  } | null>(null)
 
   const dispatchMutation = useMutation({
     mutationFn: () =>
@@ -176,10 +180,10 @@ export function DashboardPage() {
       setInstruction("")
       setLastDispatchResult(data)
       toast?.success(`오케스트레이터 실행 완료 — ${data.runs.length}개 에이전트 배정`)
-      queryClient.invalidateQueries({ queryKey: queryKeys.cases.list(selectedOrgId ?? "") })
-      queryClient.invalidateQueries({ queryKey: queryKeys.agents.list(selectedOrgId ?? "") })
-      queryClient.invalidateQueries({ queryKey: queryKeys.activity.list(selectedOrgId ?? "") })
-      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cases.list(selectedOrgId ?? "") })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.list(selectedOrgId ?? "") })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.activity.list(selectedOrgId ?? "") })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
       // Auto-dismiss after 8 seconds
       setTimeout(() => setLastDispatchResult(null), 8000)
     },
@@ -281,6 +285,7 @@ export function DashboardPage() {
           onChange={setInstruction}
           onSubmit={() => dispatchMutation.mutate()}
           loading={dispatchMutation.isPending}
+          disabled={!selectedOrgId}
         />
       </div>
 
@@ -303,9 +308,20 @@ export function DashboardPage() {
                 <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
                   {lastDispatchResult.plan}
                 </p>
-                <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-                  {lastDispatchResult.runs.length}개 에이전트 실행 시작됨
-                </p>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    {lastDispatchResult.runs.length}개 에이전트 실행 시작됨
+                  </p>
+                  {lastDispatchResult.caseId && (
+                    <Link
+                      to={`/${orgPrefix}/cases/${lastDispatchResult.caseId}`}
+                      className="text-xs font-medium underline"
+                      style={{ color: "var(--color-teal-500)" }}
+                    >
+                      케이스 보기
+                    </Link>
+                  )}
+                </div>
               </div>
               <button
                 onClick={() => setLastDispatchResult(null)}
