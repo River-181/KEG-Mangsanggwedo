@@ -5,13 +5,17 @@ import { Sidebar } from "./Sidebar"
 import { BreadcrumbBar } from "./BreadcrumbBar"
 import { PropertiesPanel } from "./PropertiesPanel"
 import { MobileTabBar } from "./MobileTabBar"
+import { GlobalCommandPalette } from "./CommandPalette"
 import { useSidebar } from "@/context/SidebarContext"
 import { useOrganization } from "@/context/OrganizationContext"
+import { useSSE } from "@/hooks/useSSE"
 
 export function Layout() {
   const { sidebarOpen, isMobile, closeSidebar } = useSidebar()
   const { orgPrefix } = useParams<{ orgPrefix: string }>()
-  const { setSelectedOrgByPrefix, isLoading } = useOrganization()
+  const { setSelectedOrgByPrefix, isLoading, selectedOrgId } = useOrganization()
+
+  useSSE(selectedOrgId)
 
   useEffect(() => {
     if (orgPrefix && !isLoading) {
@@ -69,6 +73,9 @@ export function Layout() {
 
       {/* Mobile bottom tab bar */}
       {isMobile && <MobileTabBar />}
+
+      {/* Global Command Palette (Cmd+K / Ctrl+K) */}
+      <GlobalCommandPalette />
     </div>
   )
 }

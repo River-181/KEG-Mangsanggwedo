@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react"
+import { useEffect, useContext, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -8,10 +8,81 @@ import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { ApprovalCard } from "@/components/ApprovalCard"
 import { EmptyState } from "@/components/EmptyState"
 import { ToastContext } from "@/components/ToastContext"
-import { CheckCircle, Loader2, AlertCircle, Clock } from "lucide-react"
+import { CheckCircle, Loader2, AlertCircle, Clock, CheckCircle2, XCircle } from "lucide-react"
+
+// ─── Decision note dialog ─────────────────────────────────────────────────────
+
+interface DecisionNoteDialogProps {
+  action: "approve" | "reject"
+  onConfirm: (note: string) => void
+  onCancel: () => void
+  isPending: boolean
+}
+
+function DecisionNoteDialog({ action, onConfirm, onCancel, isPending }: DecisionNoteDialogProps) {
+  const [note, setNote] = useState("")
+  const isApprove = action === "approve"
+
+  return (
+    <div
+      className="mt-2 rounded-xl p-3 space-y-2"
+      style={{
+        backgroundColor: isApprove ? "rgba(20,184,166,0.06)" : "rgba(239,68,68,0.06)",
+        border: `1px solid ${isApprove ? "rgba(20,184,166,0.2)" : "rgba(239,68,68,0.2)"}`,
+      }}
+    >
+      <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {isApprove ? "승인 메모 (선택사항)" : "반려 사유 (선택사항)"}
+      </p>
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder={isApprove ? "승인 이유나 메모를 남기세요..." : "반려 사유를 입력하세요..."}
+        rows={2}
+        className="w-full rounded-lg p-2 text-xs resize-none focus:outline-none"
+        style={{
+          backgroundColor: "var(--bg-elevated)",
+          border: "1px solid var(--border-default)",
+          color: "var(--text-primary)",
+        }}
+      />
+      <div className="flex justify-end gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-xs h-7"
+          onClick={onCancel}
+          disabled={isPending}
+        >
+          취소
+        </Button>
+        <Button
+          size="sm"
+          className="text-xs h-7 gap-1.5"
+          style={{
+            backgroundColor: isApprove ? "var(--color-teal-500)" : "var(--color-danger)",
+            color: "#fff",
+          }}
+          disabled={isPending}
+          onClick={() => onConfirm(note)}
+        >
+          {isPending ? (
+            <Loader2 size={11} className="animate-spin" />
+          ) : isApprove ? (
+            <CheckCircle2 size={11} />
+          ) : (
+            <XCircle size={11} />
+          )}
+          {isApprove ? "승인 확정" : "반려 확정"}
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 type TabValue = "all" | "pending" | "done"
 
@@ -29,6 +100,8 @@ export function ApprovalsPage() {
   const { selectedOrgId } = useOrganization()
   const queryClient = useQueryClient()
   const toast = useContext(ToastContext)
+  // Track which approval is in the decision flow: { id, action }
+  const [pendingDecision, setPendingDecision] = useState<{ id: string; action: "approve" | "reject" } | null>(null)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "승인 큐" }])
@@ -45,8 +118,8 @@ export function ApprovalsPage() {
   })
 
   const approve = useMutation({
-    mutationFn: (id: string) => approvalsApi.approve(id),
-    onMutate: async (id) => {
+    mutationFn: ({ id }: { id: string; note?: string }) => approvalsApi.approve(id),
+    onMutate: async ({ id }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
       })
@@ -58,7 +131,7 @@ export function ApprovalsPage() {
       )
       return { prev }
     },
-    onError: (_err, _id, ctx) => {
+    onError: (_err, _vars, ctx) => {
       queryClient.setQueryData(
         queryKeys.approvals.list(selectedOrgId ?? ""),
         ctx?.prev
@@ -66,6 +139,7 @@ export function ApprovalsPage() {
       toast?.error("승인 처리에 실패했습니다.")
     },
     onSuccess: () => {
+      setPendingDecision(null)
       toast?.success("승인되었습니다.")
       queryClient.invalidateQueries({
         queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
@@ -79,8 +153,8 @@ export function ApprovalsPage() {
   })
 
   const reject = useMutation({
-    mutationFn: (id: string) => approvalsApi.reject(id),
-    onMutate: async (id) => {
+    mutationFn: ({ id }: { id: string; note?: string }) => approvalsApi.reject(id),
+    onMutate: async ({ id }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
       })
@@ -92,7 +166,7 @@ export function ApprovalsPage() {
       )
       return { prev }
     },
-    onError: (_err, _id, ctx) => {
+    onError: (_err, _vars, ctx) => {
       queryClient.setQueryData(
         queryKeys.approvals.list(selectedOrgId ?? ""),
         ctx?.prev
@@ -100,6 +174,7 @@ export function ApprovalsPage() {
       toast?.error("반려 처리에 실패했습니다.")
     },
     onSuccess: () => {
+      setPendingDecision(null)
       toast?.info("반려되었습니다.")
       queryClient.invalidateQueries({
         queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
@@ -224,14 +299,30 @@ export function ApprovalsPage() {
                       />
                     ) : (
                       filtered.map((approval: any) => (
-                        <ApprovalCard
-                          key={approval.id}
-                          approval={approval}
-                          onApprove={() => approve.mutate(approval.id)}
-                          onReject={() => reject.mutate(approval.id)}
-                          approving={approve.isPending && approve.variables === approval.id}
-                          rejecting={reject.isPending && reject.variables === approval.id}
-                        />
+                        <div key={approval.id}>
+                          <ApprovalCard
+                            approval={approval}
+                            onApprove={() => setPendingDecision({ id: approval.id, action: "approve" })}
+                            onReject={() => setPendingDecision({ id: approval.id, action: "reject" })}
+                            approving={approve.isPending && approve.variables?.id === approval.id}
+                            rejecting={reject.isPending && reject.variables?.id === approval.id}
+                          />
+                          {pendingDecision != null && pendingDecision.id === approval.id && (
+                            <DecisionNoteDialog
+                              action={pendingDecision.action}
+                              isPending={approve.isPending || reject.isPending}
+                              onCancel={() => setPendingDecision(null)}
+                              onConfirm={(note) => {
+                                const action = pendingDecision!.action
+                                if (action === "approve") {
+                                  approve.mutate({ id: approval.id, note })
+                                } else {
+                                  reject.mutate({ id: approval.id, note })
+                                }
+                              }}
+                            />
+                          )}
+                        </div>
                       ))
                     )}
                   </div>

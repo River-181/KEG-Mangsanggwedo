@@ -5,6 +5,7 @@ import { cn, timeAgo } from "@/lib/utils"
 import { Identity } from "./Identity"
 import { StatusBadge } from "./StatusBadge"
 import type { RunStatus } from "./StatusBadge"
+import { ApprovalPayloadRenderer } from "./ApprovalPayloadRenderer"
 
 interface ApprovalCase {
   id: string
@@ -121,17 +122,7 @@ export function ApprovalCard({
             {caseTitle}
           </p>
         )}
-        {approval.payload?.draft && (
-          <p
-            className="text-xs rounded-lg p-3 leading-relaxed line-clamp-3"
-            style={{
-              backgroundColor: "var(--bg-secondary)",
-              color: "var(--text-secondary)",
-            }}
-          >
-            {approval.payload.draft}
-          </p>
-        )}
+        <ApprovalPayloadRenderer payload={approval.payload} type={approval.level} />
       </CardContent>
 
       <CardFooter className="px-4 pb-4 pt-0">

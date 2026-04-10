@@ -24,4 +24,14 @@ export const queryKeys = {
   runs: {
     detail: (id: string) => ["runs", id] as const,
   },
+  documents: {
+    list: (orgId: string) => ["documents", "list", orgId] as const,
+    detail: (id: string) => ["documents", id] as const,
+  },
+  routines: {
+    list: (orgId: string) => ["routines", "list", orgId] as const,
+  },
+  goals: {
+    list: (orgId: string) => ["goals", "list", orgId] as const,
+  },
 }

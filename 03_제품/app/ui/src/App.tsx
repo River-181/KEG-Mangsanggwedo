@@ -16,6 +16,11 @@ import { SettingsPage } from "@/pages/SettingsPage"
 import { OnboardingPage } from "@/pages/OnboardingPage"
 import { DesignGuidePage } from "@/pages/DesignGuidePage"
 import { OrgChartPage } from "@/pages/OrgChartPage"
+import { DocumentsPage } from "@/pages/DocumentsPage"
+import { NewAgentPage } from "@/pages/NewAgentPage"
+import { RoutinesPage } from "@/pages/RoutinesPage"
+import { GoalsPage } from "@/pages/GoalsPage"
+import { CostsPage } from "@/pages/CostsPage"
 
 export function App() {
   return (
@@ -37,6 +42,12 @@ export function App() {
         <Route path="skills" element={<SkillsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="onboarding" element={<OnboardingPage />} />
+        <Route path="documents" element={<DocumentsPage />} />
+        <Route path="documents/:id" element={<DocumentsPage />} />
+        <Route path="agents/new" element={<NewAgentPage />} />
+        <Route path="routines" element={<RoutinesPage />} />
+        <Route path="goals" element={<GoalsPage />} />
+        <Route path="costs" element={<CostsPage />} />
       </Route>
       <Route path="/design-guide" element={<DesignGuidePage />} />
       <Route path="/" element={<Navigate to="/tanzania/dashboard" replace />} />

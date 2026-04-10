@@ -152,5 +152,20 @@ export function caseRoutes(db: Db): Router {
     }
   })
 
+  // POST comment on a case
+  router.post("/cases/:id/comments", async (req, res) => {
+    try {
+      const [comment] = await db.insert(schema.caseComments).values({
+        caseId: req.params.id,
+        content: req.body.body ?? req.body.content ?? "",
+        authorType: req.body.authorType ?? "user",
+        authorId: req.body.authorName ?? req.body.authorId ?? "원장",
+      }).returning()
+      res.status(201).json(comment)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to create comment" })
+    }
+  })
+
   return router
 }

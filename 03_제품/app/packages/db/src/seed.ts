@@ -27,7 +27,10 @@ async function seed() {
     await db.delete(schema.parents).where(eq(schema.parents.organizationId, oid))
     await db.delete(schema.students).where(eq(schema.students.organizationId, oid))
     await db.delete(schema.instructors).where(eq(schema.instructors.organizationId, oid))
+    await db.delete(schema.opsGoals).where(eq(schema.opsGoals.organizationId, oid))
     await db.delete(schema.opsGroups).where(eq(schema.opsGroups.organizationId, oid))
+    await db.delete(schema.routines).where(eq(schema.routines.organizationId, oid))
+    await db.delete(schema.documents).where(eq(schema.documents.organizationId, oid))
     await db.delete(schema.agents).where(eq(schema.agents.organizationId, oid))
     await db.delete(schema.organizations).where(eq(schema.organizations.id, oid))
   }
@@ -1023,6 +1026,98 @@ async function seed() {
       agentId: orchestratorAgent.id,
       status: "pending",
       dedupKey: `wakeup:orchestrator:daily:${dateStr(0)}`,
+    },
+  ])
+
+  // 14. Documents (5개 — 학원 운영 문서)
+  await db.insert(schema.documents).values([
+    {
+      organizationId: org.id,
+      title: "학원 운영 정책",
+      body: "탄자니아 영어학원 운영 정책입니다.\n\n1. 운영 시간: 평일 10:00~22:00, 토 09:00~18:00, 일·공휴일 휴원\n2. 수업 결석 시 사전 연락 필수 (최소 2시간 전)\n3. 보강 수업은 결석 후 2주 이내 신청 가능\n4. 수강 등록은 매월 1~5일, 재등록은 기존 수강생 우선",
+      category: "policy",
+      tags: ["운영", "정책", "공지"],
+    },
+    {
+      organizationId: org.id,
+      title: "환불 규정",
+      body: "학원법 제18조에 따른 환불 규정입니다.\n\n- 수강 시작 전: 수강료 전액 환불\n- 수강 1/3 경과 전: 수강료의 2/3 환불\n- 수강 1/2 경과 전: 수강료의 1/2 환불\n- 수강 1/2 경과 후: 환불 불가\n\n환불 신청: 원장 면담 후 7영업일 이내 처리",
+      category: "policy",
+      tags: ["환불", "정책", "학원법"],
+    },
+    {
+      organizationId: org.id,
+      title: "자주 묻는 질문 (FAQ)",
+      body: "Q. 레벨 테스트는 어떻게 진행되나요?\nA. 입원 시 무료 레벨 테스트(30분)를 실시하며, 문법·독해·회화 항목을 평가합니다.\n\nQ. 반 변경이 가능한가요?\nA. 수강 시작 후 1개월 이내 1회 무료 반 변경이 가능합니다.\n\nQ. 교재비는 별도인가요?\nA. 네, 교재비는 수강료와 별도입니다. 학기 시작 시 안내드립니다.\n\nQ. 결석한 경우 보강은 어떻게 받나요?\nA. 결석 후 2주 이내에 담당 강사에게 보강 신청 후 조율합니다.",
+      category: "faq",
+      tags: ["FAQ", "문의", "입원"],
+    },
+    {
+      organizationId: org.id,
+      title: "학부모 상담 스크립트",
+      body: "## 민원 접수 초기 응대\n\n1. 인사: \"안녕하세요, 탄자니아 영어학원입니다. 무엇을 도와드릴까요?\"\n2. 공감 표현: \"불편을 드려서 죄송합니다. 말씀해 주신 내용 잘 들었습니다.\"\n3. 확인: \"확인 후 [시간] 이내에 연락드리겠습니다.\"\n4. 마무리: \"감사합니다. 좋은 하루 되세요.\"\n\n## 환불 요청 응대\n\n학원법 규정을 안내하고, 원장 면담 일정을 잡는다.\n환불 규정 문서 참조.",
+      category: "script",
+      tags: ["상담", "스크립트", "민원"],
+    },
+    {
+      organizationId: org.id,
+      title: "차량 안전 규정",
+      body: "탄자니아 영어학원 셔틀버스 운행 안전 규정입니다.\n\n1. 셔틀버스 운행 노선: 대치역 ↔ 학원 (평일 오후 3회)\n2. 탑승 시 반드시 안전벨트 착용\n3. 하차 시 보호자 또는 교사 확인 필수\n4. 차량 내 음식물 섭취 금지\n5. 운전기사 연락처: 010-2673-9999",
+      category: "manual",
+      tags: ["셔틀", "안전", "운영"],
+    },
+  ])
+
+  // 15. Routines (3개 — 자동화 루틴)
+  await db.insert(schema.routines).values([
+    {
+      organizationId: org.id,
+      agentId: complaintAgent.id,
+      name: "매일 07:00 민원 처리",
+      schedule: "0 7 * * *",
+      enabled: true,
+    },
+    {
+      organizationId: org.id,
+      agentId: retentionAgent.id,
+      name: "매주 월 이탈 위험 분석",
+      schedule: "0 8 * * 1",
+      enabled: true,
+    },
+    {
+      organizationId: org.id,
+      agentId: orchestratorAgent.id,
+      name: "매월 1일 운영 리포트",
+      schedule: "0 9 1 * *",
+      enabled: true,
+    },
+  ])
+
+  // 16. Goals (3개 — 계층형 운영 목표)
+  const [goalParent] = await db.insert(schema.opsGoals).values({
+    organizationId: org.id,
+    title: "학원 운영 최적화",
+    description: "AI 에이전트를 활용해 학원 운영 효율을 높이고 학부모·학생 만족도를 극대화한다.",
+    status: "active",
+    targetDate: "2026-12-31",
+  }).returning()
+
+  await db.insert(schema.opsGoals).values([
+    {
+      organizationId: org.id,
+      parentGoalId: goalParent.id,
+      title: "학생 만족도 향상",
+      description: "이탈 위험 학생 조기 감지 및 맞춤 개입으로 재등록률 85% 이상 달성",
+      status: "active",
+      targetDate: "2026-06-30",
+    },
+    {
+      organizationId: org.id,
+      parentGoalId: goalParent.id,
+      title: "민원 응답 시간 단축",
+      description: "AI 에이전트 자동 초안 생성으로 학부모 민원 평균 응답 시간을 24시간 이내로 단축",
+      status: "active",
+      targetDate: "2026-03-31",
     },
   ])
 

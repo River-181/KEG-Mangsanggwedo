@@ -8,7 +8,6 @@ import { casesApi } from "@/api/cases"
 import { approvalsApi } from "@/api/approvals"
 import { queryKeys } from "@/lib/queryKeys"
 import { api } from "@/api/client"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -34,7 +33,6 @@ import {
   Bot,
   Loader2,
   AlertCircle,
-  Send,
 } from "lucide-react"
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -201,119 +199,105 @@ function AgentDraftSection({
   )
 }
 
-// ─── Comment section ──────────────────────────────────────────────────────────
+// ─── Chat thread ──────────────────────────────────────────────────────────────
 
-function CommentSection({
+function ChatThread({
   caseId,
   comments,
 }: {
   caseId: string
   comments: any[]
 }) {
-  const [text, setText] = useState("")
+  const [newComment, setNewComment] = useState("")
   const toast = useContext(ToastContext)
   const queryClient = useQueryClient()
 
-  const addComment = useMutation({
-    mutationFn: (body: string) =>
-      api.post(`/cases/${caseId}/comments`, { body }),
+  const sendMutation = useMutation({
+    mutationFn: async () => {
+      return api.post(`/cases/${caseId}/comments`, {
+        body: newComment,
+        authorType: "user",
+        authorName: "원장",
+      })
+    },
     onSuccess: () => {
-      setText("")
-      queryClient.invalidateQueries({ queryKey: queryKeys.cases.detail(caseId) })
+      setNewComment("")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cases.detail(caseId) })
     },
     onError: () => toast?.error("댓글 등록에 실패했습니다."),
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = text.trim()
-    if (!trimmed) return
-    addComment.mutate(trimmed)
-  }
-
   return (
-    <div className="space-y-3">
-      <h3
-        className="text-sm font-semibold"
-        style={{ color: "var(--text-primary)" }}
-      >
-        댓글 {comments.length > 0 && `(${comments.length})`}
-      </h3>
-
-      {comments.length > 0 && (
-        <div className="space-y-3">
-          {comments.map((comment: any, i: number) => {
-            const author =
-              comment.author?.name ?? comment.authorName ?? "알 수 없음"
-            const createdAt = comment.createdAt ?? comment.created_at ?? ""
-            return (
-              <div key={comment.id ?? i} className="flex gap-3">
+    <div className="space-y-1">
+      {/* Messages */}
+      <div className="space-y-3">
+        {(comments ?? []).map((c: any, i: number) => {
+          const isAgent = c.authorType === "agent" || c.author_type === "agent"
+          const authorName = c.authorName ?? c.author_name ?? c.authorId ?? c.author_id ?? (isAgent ? "에이전트" : "원장")
+          const createdAt = c.createdAt ?? c.created_at ?? ""
+          return (
+            <div
+              key={c.id ?? i}
+              className="rounded-xl px-4 py-3"
+              style={{
+                backgroundColor: "var(--bg-elevated)",
+                borderLeft: isAgent ? "3px solid var(--color-teal-500)" : "3px solid transparent",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-1.5">
                 <Identity
-                  name={author}
-                  type="user"
-                  size="sm"
-                  showName={false}
+                  name={authorName}
+                  type={isAgent ? "agent" : "user"}
+                  size="xs"
                 />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className="text-xs font-medium"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      {author}
-                    </span>
-                    {createdAt && (
-                      <span
-                        className="text-xs"
-                        style={{ color: "var(--text-tertiary)" }}
-                      >
-                        {timeAgo(createdAt)}
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className="text-sm"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {comment.body ?? comment.content ?? ""}
-                  </p>
-                </div>
+                {createdAt && (
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    {timeAgo(createdAt)}
+                  </span>
+                )}
               </div>
-            )
-          })}
-        </div>
-      )}
+              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>
+                {c.body ?? c.content ?? ""}
+              </p>
+            </div>
+          )
+        })}
+      </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      {/* Input */}
+      <div
+        className="flex gap-2 mt-4 rounded-xl p-3"
+        style={{
+          backgroundColor: "var(--bg-elevated)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
         <Textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="댓글 입력..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="댓글을 입력하세요... (에이전트에게 지시하거나 메모를 남길 수 있습니다)"
           rows={2}
-          className="flex-1 resize-none text-sm"
-          style={{
-            backgroundColor: "var(--bg-secondary)",
-            border: "1px solid var(--border-default)",
-          }}
+          className="flex-1 text-sm resize-none bg-transparent focus:outline-none border-0 shadow-none"
+          style={{ color: "var(--text-primary)" }}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey))
-              handleSubmit(e as any)
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && newComment.trim()) {
+              sendMutation.mutate()
+            }
           }}
         />
         <Button
-          type="submit"
           size="sm"
-          disabled={!text.trim() || addComment.isPending}
-          className="self-end gap-1.5"
+          className="self-end text-xs h-8 shrink-0"
+          style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+          disabled={!newComment.trim() || sendMutation.isPending}
+          onClick={() => sendMutation.mutate()}
         >
-          {addComment.isPending ? (
-            <Loader2 size={13} className="animate-spin" />
-          ) : (
-            <Send size={13} />
-          )}
-          등록
+          {sendMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : "전송"}
         </Button>
-      </form>
+      </div>
+      <p className="text-xs mt-1" style={{ color: "var(--text-disabled)" }}>
+        Cmd+Enter로 전송
+      </p>
     </div>
   )
 }
@@ -528,8 +512,16 @@ export function CaseDetailPage() {
 
         <Separator />
 
-        {/* Comments */}
-        <CommentSection caseId={caseData.id} comments={comments} />
+        {/* Chat thread */}
+        <div>
+          <h2
+            className="text-sm font-semibold mb-3"
+            style={{ color: "var(--text-primary)" }}
+          >
+            대화 {comments.length > 0 && `(${comments.length})`}
+          </h2>
+          <ChatThread caseId={caseData.id} comments={comments} />
+        </div>
       </div>
     </ScrollArea>
   )

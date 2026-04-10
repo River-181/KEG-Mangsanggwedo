@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -346,31 +346,84 @@ function OverviewTab({ agent, runs }: { agent: any; runs: any[] }) {
 // ─── Instructions tab ─────────────────────────────────────────────────────────
 
 function InstructionsTab({ agent }: { agent: any }) {
-  const prompt = agent.systemPrompt ?? agent.system_prompt ?? agent.instructions ?? ""
+  const queryClient = useQueryClient()
+  const original = agent.systemPrompt ?? agent.system_prompt ?? agent.instructions ?? ""
+  const [value, setValue] = useState(original)
+  const isDirty = value !== original
+
+  const saveMutation = useMutation({
+    mutationFn: () => agentsApi.update(agent.id, { systemPrompt: value }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+  })
+
+  // Reset when agent changes
+  useEffect(() => {
+    setValue(original)
+  }, [original])
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 relative">
+      {/* Floating save bar */}
+      {isDirty && (
+        <div
+          className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-xl px-4 py-3 mb-2"
+          style={{
+            backgroundColor: "rgba(var(--bg-elevated-rgb, 255,255,255), 0.9)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--border-default)",
+            boxShadow: "var(--shadow-md)",
+          }}
+        >
+          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            변경사항이 있습니다
+          </span>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-xs h-7"
+              onClick={() => setValue(original)}
+            >
+              취소
+            </Button>
+            <Button
+              size="sm"
+              className="text-xs h-7 gap-1.5"
+              style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+              disabled={saveMutation.isPending}
+              onClick={() => saveMutation.mutate()}
+            >
+              {saveMutation.isPending ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <CheckCircle2 size={12} />
+              )}
+              저장
+            </Button>
+          </div>
+        </div>
+      )}
+
       <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-        이 프롬프트로 에이전트가 동작합니다. 변경은 설정 탭에서 가능합니다.
+        에이전트의 시스템 프롬프트를 편집합니다. 변경 후 저장하면 다음 실행부터 반영됩니다.
       </p>
-      <div
-        className="rounded-xl p-4 overflow-auto"
+
+      <textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        rows={20}
+        className="w-full rounded-xl p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-teal-500/30"
         style={{
           backgroundColor: "var(--bg-secondary)",
           border: "1px solid var(--border-default)",
-          maxHeight: "60vh",
+          color: "var(--text-primary)",
+          fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+          minHeight: "300px",
         }}
-      >
-        <pre
-          className="text-sm leading-relaxed whitespace-pre-wrap"
-          style={{
-            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-            color: "var(--text-primary)",
-          }}
-        >
-          {prompt || "등록된 지시사항이 없습니다."}
-        </pre>
-      </div>
+        placeholder="에이전트 시스템 프롬프트를 입력하세요..."
+      />
     </div>
   )
 }

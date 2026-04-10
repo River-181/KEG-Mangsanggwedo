@@ -20,6 +20,7 @@ import { useOrganization } from "@/context/OrganizationContext"
 import { useSidebar } from "@/context/SidebarContext"
 import { useQuery } from "@tanstack/react-query"
 import { casesApi } from "@/api/cases"
+import { agentsApi } from "@/api/agents"
 import { queryKeys } from "@/lib/queryKeys"
 import { NewCaseDialog } from "@/components/NewCaseDialog"
 import { cn } from "@/lib/utils"
@@ -90,6 +91,16 @@ function Divider() {
   return <div className="my-2 mx-3" style={{ height: 1, background: "var(--border-default)" }} />
 }
 
+function AgentStatusDot({ status }: { status?: string }) {
+  const classes: Record<string, string> = {
+    running: "w-2 h-2 rounded-full bg-teal-500 animate-pulse",
+    idle: "w-2 h-2 rounded-full bg-gray-400",
+    error: "w-2 h-2 rounded-full bg-red-500",
+    paused: "w-2 h-2 rounded-full bg-amber-500",
+  }
+  return <span className={classes[status ?? ""] ?? classes.idle} />
+}
+
 export function Sidebar() {
   const { orgPrefix } = useParams<{ orgPrefix: string }>()
   const base = `/${orgPrefix}`
@@ -106,6 +117,15 @@ export function Sidebar() {
     queryFn: () => casesApi.list(selectedOrgId!),
     enabled: !!selectedOrgId,
   })
+
+  const { data: agents = [] } = useQuery({
+    queryKey: queryKeys.agents.list(selectedOrgId ?? ""),
+    queryFn: () => agentsApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId,
+  })
+
+  const [agentsExpanded, setAgentsExpanded] = useState(true)
+  const MAX_AGENTS = 6
 
   const handleNavClick = () => {
     if (isMobile) closeSidebar()
@@ -171,6 +191,46 @@ export function Sidebar() {
           icon={<Network size={16} />}
           label="에이전트 조직도"
         />
+
+        {/* Live agent list */}
+        {(agents as any[]).length > 0 && (
+          <div className="mt-1">
+            {agentsExpanded &&
+              (agents as any[]).slice(0, MAX_AGENTS).map((agent) => (
+                <NavLink
+                  key={agent.id}
+                  to={`${base}/agents/${agent.id}`}
+                  onClick={handleNavClick}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors",
+                      isActive
+                        ? "font-semibold"
+                        : "hover:bg-[var(--bg-tertiary)]"
+                    )
+                  }
+                  style={({ isActive }) => ({
+                    color: isActive ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                    backgroundColor: isActive ? "var(--color-primary-bg)" : undefined,
+                  })}
+                >
+                  <AgentStatusDot status={agent.status} />
+                  <span className="truncate flex-1">{agent.name}</span>
+                </NavLink>
+              ))}
+            {(agents as any[]).length > MAX_AGENTS && (
+              <button
+                onClick={() => setAgentsExpanded((v) => !v)}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs w-full rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
+                style={{ color: "var(--text-disabled)" }}
+              >
+                {agentsExpanded
+                  ? `접기`
+                  : `더 보기 (+${(agents as any[]).length - MAX_AGENTS})`}
+              </button>
+            )}
+          </div>
+        )}
 
         <SectionLabel label="기관 관리" />
         <NavItem to={`${base}/skills`} icon={<Puzzle size={16} />} label="k-skill 레지스트리" />

@@ -14,6 +14,10 @@ import { runRoutes } from "./routes/runs.js"
 import { orchestratorRoutes } from "./routes/orchestrator.js"
 import { eventsRoutes } from "./routes/events.js"
 import { heartbeatRoutes } from "./routes/heartbeat.js"
+import { documentRoutes } from "./routes/documents.js"
+import { routineRoutes } from "./routes/routines.js"
+import { goalRoutes } from "./routes/goals.js"
+import { dashboardRoutes } from "./routes/dashboard.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -38,6 +42,10 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api/orchestrator", orchestratorRoutes(db))
   app.use("/api", eventsRoutes(db))
   app.use("/api/heartbeat", heartbeatRoutes(db))
+  app.use("/api", documentRoutes(db))
+  app.use("/api", routineRoutes(db))
+  app.use("/api", goalRoutes(db))
+  app.use("/api", dashboardRoutes(db))
 
   return app
 }
