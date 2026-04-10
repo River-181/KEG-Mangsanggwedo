@@ -12,8 +12,13 @@ import {
   Search,
   Sun,
   Moon,
-  ChevronRight,
   Network,
+  BookOpen,
+  Clock,
+  Target,
+  Wallet,
+  CheckSquare,
+  Calendar,
 } from "lucide-react"
 import { useTheme } from "@/context/ThemeContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -177,8 +182,9 @@ export function Sidebar() {
 
         <SectionLabel label="Work" />
         <NavItem to={`${base}/cases`} icon={<FileText size={16} />} label="케이스" />
-        <NavItem to={`${base}/auto-runs`} icon={<ChevronRight size={16} />} label="자동 실행" disabled />
-        <NavItem to={`${base}/goals`} icon={<ChevronRight size={16} />} label="운영 목표" disabled />
+        <NavItem to={`${base}/approvals`} icon={<CheckSquare size={16} />} label="승인" />
+        <NavItem to={`${base}/routines`} icon={<Clock size={16} />} label="자동 실행" />
+        <NavItem to={`${base}/goals`} icon={<Target size={16} />} label="운영 목표" />
 
         <SectionLabel label="에이전트 팀" />
         <NavItem
@@ -233,7 +239,10 @@ export function Sidebar() {
         )}
 
         <SectionLabel label="기관 관리" />
+        <NavItem to={`${base}/documents`} icon={<BookOpen size={16} />} label="문서" />
         <NavItem to={`${base}/skills`} icon={<Puzzle size={16} />} label="k-skill 레지스트리" />
+        <NavItem to={`${base}/costs`} icon={<Wallet size={16} />} label="비용" />
+        <NavItem to={`${base}/schedule`} icon={<Calendar size={16} />} label="일정" />
         <NavItem to={`${base}/activity`} icon={<Activity size={16} />} label="처리 이력" />
         <NavItem to={`${base}/settings`} icon={<Settings size={16} />} label="설정" />
       </nav>
@@ -261,7 +270,7 @@ export function Sidebar() {
           </span>
         </button>
         <span className="text-xs px-1" style={{ color: "var(--text-disabled)" }}>
-          v0.1.0
+          v0.2.0
         </span>
       </div>
 
