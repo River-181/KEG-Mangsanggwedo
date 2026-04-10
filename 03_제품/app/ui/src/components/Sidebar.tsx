@@ -1,3 +1,4 @@
+// v0.3.0
 import { useState } from "react"
 import { NavLink, useParams } from "react-router-dom"
 import {
@@ -19,6 +20,14 @@ import {
   Wallet,
   CheckSquare,
   Calendar,
+  Brain,
+  Shield,
+  Heart,
+  Sparkles,
+  Cpu,
+  Cog,
+  Lightbulb,
+  FolderKanban,
 } from "lucide-react"
 import { useTheme } from "@/context/ThemeContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -98,12 +107,23 @@ function Divider() {
 
 function AgentStatusDot({ status }: { status?: string }) {
   const classes: Record<string, string> = {
-    running: "w-2 h-2 rounded-full bg-teal-500 animate-pulse",
-    idle: "w-2 h-2 rounded-full bg-gray-400",
-    error: "w-2 h-2 rounded-full bg-red-500",
-    paused: "w-2 h-2 rounded-full bg-amber-500",
+    running: "w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse shrink-0",
+    idle: "w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0",
+    error: "w-1.5 h-1.5 rounded-full bg-red-500 shrink-0",
+    paused: "w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0",
   }
   return <span className={classes[status ?? ""] ?? classes.idle} />
+}
+
+const sidebarAgentIconMap: Record<string, React.FC<{ size: number }>> = {
+  brain: ({ size }) => <Brain size={size} style={{ color: "var(--color-teal-500)" }} />,
+  shield: ({ size }) => <Shield size={size} style={{ color: "var(--color-teal-500)" }} />,
+  heart: ({ size }) => <Heart size={size} style={{ color: "#ef4444" }} />,
+  calendar: ({ size }) => <Calendar size={size} style={{ color: "#8b5cf6" }} />,
+  sparkles: ({ size }) => <Sparkles size={size} style={{ color: "#f59e0b" }} />,
+  cpu: ({ size }) => <Cpu size={size} style={{ color: "#3b82f6" }} />,
+  cog: ({ size }) => <Cog size={size} style={{ color: "#6b7280" }} />,
+  lightbulb: ({ size }) => <Lightbulb size={size} style={{ color: "#10b981" }} />,
 }
 
 export function Sidebar() {
@@ -182,6 +202,7 @@ export function Sidebar() {
 
         <SectionLabel label="Work" />
         <NavItem to={`${base}/cases`} icon={<FileText size={16} />} label="케이스" />
+        <NavItem to={`${base}/projects`} icon={<FolderKanban size={16} />} label="프로젝트" />
         <NavItem to={`${base}/approvals`} icon={<CheckSquare size={16} />} label="승인" />
         <NavItem to={`${base}/routines`} icon={<Clock size={16} />} label="자동 실행" />
         <NavItem to={`${base}/goals`} icon={<Target size={16} />} label="운영 목표" />
@@ -202,28 +223,35 @@ export function Sidebar() {
         {(agents as any[]).length > 0 && (
           <div className="mt-1">
             {agentsExpanded &&
-              (agents as any[]).slice(0, MAX_AGENTS).map((agent) => (
-                <NavLink
-                  key={agent.id}
-                  to={`${base}/agents/${agent.id}`}
-                  onClick={handleNavClick}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors",
-                      isActive
-                        ? "font-semibold"
-                        : "hover:bg-[var(--bg-tertiary)]"
-                    )
-                  }
-                  style={({ isActive }) => ({
-                    color: isActive ? "var(--color-teal-500)" : "var(--text-tertiary)",
-                    backgroundColor: isActive ? "var(--color-primary-bg)" : undefined,
-                  })}
-                >
-                  <AgentStatusDot status={agent.status} />
-                  <span className="truncate flex-1">{agent.name}</span>
-                </NavLink>
-              ))}
+              (agents as any[]).slice(0, MAX_AGENTS).map((agent) => {
+                const AgentIcon = agent.icon ? sidebarAgentIconMap[agent.icon] : undefined
+                return (
+                  <NavLink
+                    key={agent.id}
+                    to={`${base}/agents/${agent.id}`}
+                    onClick={handleNavClick}
+                    className={({ isActive }) =>
+                      cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors",
+                        isActive
+                          ? "font-semibold"
+                          : "hover:bg-[var(--bg-tertiary)]"
+                      )
+                    }
+                    style={({ isActive }) => ({
+                      color: isActive ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                      backgroundColor: isActive ? "var(--color-primary-bg)" : undefined,
+                    })}
+                  >
+                    {AgentIcon
+                      ? <AgentIcon size={12} />
+                      : <Bot size={12} style={{ color: "var(--text-tertiary)" }} />
+                    }
+                    <span className="truncate flex-1">{agent.name}</span>
+                    <AgentStatusDot status={agent.status} />
+                  </NavLink>
+                )
+              })}
             {(agents as any[]).length > MAX_AGENTS && (
               <button
                 onClick={() => setAgentsExpanded((v) => !v)}

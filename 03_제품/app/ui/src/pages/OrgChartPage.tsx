@@ -1,5 +1,7 @@
+// v0.3.0
 import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { agentsApi } from "@/api/agents"
@@ -7,29 +9,57 @@ import { queryKeys } from "@/lib/queryKeys"
 import { Identity } from "@/components/Identity"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Upload, Download, Loader2, Bot } from "lucide-react"
+import {
+  Upload,
+  Download,
+  Loader2,
+  Bot,
+  User,
+  Brain,
+  Shield,
+  Heart,
+  Calendar,
+  Sparkles,
+  Cpu,
+  Cog,
+  Lightbulb,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // ─── Agent node types ─────────────────────────────────────────────────────────
 
-type AgentStatus = "idle" | "running" | "error"
+type AgentStatus = "idle" | "running" | "error" | "paused"
 
 function resolveStatus(agent: any): AgentStatus {
   const s = agent.status ?? ""
   if (s === "running") return "running"
   if (s === "error" || s === "failed") return "error"
+  if (s === "paused") return "paused"
   return "idle"
+}
+
+// ─── Icon map ────────────────────────────────────────────────────────────────
+
+const ICON_MAP: Record<string, React.ElementType> = {
+  brain: Brain,
+  shield: Shield,
+  heart: Heart,
+  calendar: Calendar,
+  sparkles: Sparkles,
+  cpu: Cpu,
+  cog: Cog,
+  lightbulb: Lightbulb,
 }
 
 // ─── Status dot ───────────────────────────────────────────────────────────────
 
 function StatusDot({ status }: { status: AgentStatus }) {
-  const color =
-    status === "running"
-      ? "var(--color-teal-500)"
-      : status === "error"
-      ? "var(--color-danger)"
-      : "var(--color-success)"
+  const colorMap: Record<AgentStatus, string> = {
+    running: "var(--color-teal-500)",
+    error: "var(--color-danger)",
+    paused: "#f59e0b",
+    idle: "var(--color-success, #6b7280)",
+  }
 
   return (
     <span
@@ -37,7 +67,7 @@ function StatusDot({ status }: { status: AgentStatus }) {
       style={{
         width: 8,
         height: 8,
-        backgroundColor: color,
+        backgroundColor: colorMap[status],
         animation: status === "running" ? "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite" : undefined,
         flexShrink: 0,
       }}
@@ -47,7 +77,15 @@ function StatusDot({ status }: { status: AgentStatus }) {
 
 // ─── Agent node card ──────────────────────────────────────────────────────────
 
-function AgentNode({ agent, size = "default" }: { agent: any; size?: "lg" | "default" }) {
+function AgentNode({
+  agent,
+  size = "default",
+  onClick,
+}: {
+  agent: any
+  size?: "lg" | "default"
+  onClick?: () => void
+}) {
   const status = resolveStatus(agent)
   const agentType: string = agent.type ?? agent.agentType ?? "worker"
 
@@ -55,11 +93,16 @@ function AgentNode({ agent, size = "default" }: { agent: any; size?: "lg" | "def
     idle: "대기",
     running: "실행 중",
     error: "오류",
+    paused: "일시정지",
   }
+
+  // Resolve icon
+  const iconKey = agent.icon as string | undefined
+  const IconComponent = iconKey ? ICON_MAP[iconKey] : null
 
   return (
     <div
-      className="flex flex-col items-center gap-2 rounded-xl p-4"
+      className="flex flex-col items-center gap-2 rounded-xl cursor-pointer hover:scale-105 transition-transform"
       style={{
         backgroundColor: "var(--bg-elevated)",
         border: "1px solid var(--border-default)",
@@ -69,8 +112,33 @@ function AgentNode({ agent, size = "default" }: { agent: any; size?: "lg" | "def
         textAlign: "center",
         boxShadow: "var(--shadow-sm)",
       }}
+      onClick={onClick}
     >
-      <Identity name={agent.name ?? "에이전트"} type="agent" size={size === "lg" ? "lg" : "default"} showName={false} />
+      {IconComponent ? (
+        <div
+          style={{
+            width: size === "lg" ? 40 : 32,
+            height: size === "lg" ? 40 : 32,
+            borderRadius: "50%",
+            backgroundColor: "var(--color-primary-bg)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <IconComponent
+            size={size === "lg" ? 20 : 16}
+            style={{ color: "var(--color-teal-500)" }}
+          />
+        </div>
+      ) : (
+        <Identity
+          name={agent.name ?? "에이전트"}
+          type="agent"
+          size={size === "lg" ? "lg" : "default"}
+          showName={false}
+        />
+      )}
       <div>
         <p
           className="text-sm font-semibold truncate"
@@ -101,6 +169,72 @@ function AgentNode({ agent, size = "default" }: { agent: any; size?: "lg" | "def
   )
 }
 
+// ─── Human staff card ─────────────────────────────────────────────────────────
+
+interface Instructor {
+  id: string
+  name: string
+  subject: string
+}
+
+const DEFAULT_INSTRUCTORS: Instructor[] = [
+  { id: "inst-1", name: "김민수", subject: "영어회화" },
+  { id: "inst-2", name: "박서연", subject: "문법" },
+  { id: "inst-3", name: "이준호", subject: "독해" },
+  { id: "inst-4", name: "최하늘", subject: "토익" },
+]
+
+function InstructorCard({ instructor }: { instructor: Instructor }) {
+  return (
+    <div
+      className="flex flex-col items-center gap-2 rounded-xl"
+      style={{
+        backgroundColor: "rgba(59,130,246,0.06)",
+        border: "1px solid var(--border-default)",
+        borderRadius: "var(--radius-lg, 12px)",
+        padding: "16px",
+        minWidth: 140,
+        textAlign: "center",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          backgroundColor: "rgba(59,130,246,0.15)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <User size={18} style={{ color: "#3b82f6" }} />
+      </div>
+      <div>
+        <p
+          className="text-sm font-semibold"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {instructor.name}
+        </p>
+        <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+          {instructor.subject}
+        </p>
+      </div>
+      <Badge
+        className="text-xs border-0 px-2 py-0.5"
+        style={{
+          backgroundColor: "rgba(59,130,246,0.12)",
+          color: "#3b82f6",
+        }}
+      >
+        직원
+      </Badge>
+    </div>
+  )
+}
+
 // ─── Connector lines ──────────────────────────────────────────────────────────
 
 function VLine({ height = 40 }: { height?: number }) {
@@ -116,29 +250,25 @@ function VLine({ height = 40 }: { height?: number }) {
   )
 }
 
-function HConnector({ count }: { count: number }) {
-  if (count <= 1) return null
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: "calc(100% / (2 * " + count + "))",
-        right: "calc(100% / (2 * " + count + "))",
-        height: 2,
-        backgroundColor: "var(--border-default)",
-      }}
-    />
-  )
-}
-
 // ─── Org Chart layout ─────────────────────────────────────────────────────────
 
-function OrgTree({ orchestrator, workers }: { orchestrator: any; workers: any[] }) {
+function OrgTree({
+  orchestrator,
+  workers,
+  onAgentClick,
+}: {
+  orchestrator: any
+  workers: any[]
+  onAgentClick: (agent: any) => void
+}) {
   return (
     <div className="flex flex-col items-center">
       {/* Orchestrator */}
-      <AgentNode agent={orchestrator} size="lg" />
+      <AgentNode
+        agent={orchestrator}
+        size="lg"
+        onClick={() => onAgentClick(orchestrator)}
+      />
 
       {workers.length > 0 && (
         <>
@@ -165,7 +295,7 @@ function OrgTree({ orchestrator, workers }: { orchestrator: any; workers: any[] 
             {workers.map((w) => (
               <div key={w.id} className="flex flex-col items-center">
                 <VLine height={32} />
-                <AgentNode agent={w} />
+                <AgentNode agent={w} onClick={() => onAgentClick(w)} />
               </div>
             ))}
           </div>
@@ -193,6 +323,8 @@ function EmptyOrg() {
 export function OrgChartPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
   const { selectedOrgId } = useOrganization()
+  const navigate = useNavigate()
+  const { orgPrefix } = useParams<{ orgPrefix: string }>()
 
   useEffect(() => {
     setBreadcrumbs([{ label: "에이전트 조직도" }])
@@ -214,6 +346,12 @@ export function OrgChartPage() {
   ) ?? (agents as any[])[0] ?? null
 
   const workers = (agents as any[]).filter((a: any) => a.id !== orchestrator?.id)
+
+  const handleAgentClick = (agent: any) => {
+    if (orgPrefix) {
+      navigate(`/${orgPrefix}/agents/${agent.id}`)
+    }
+  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -261,18 +399,25 @@ export function OrgChartPage() {
             ) : !orchestrator ? (
               <EmptyOrg />
             ) : (
-              <OrgTree orchestrator={orchestrator} workers={workers} />
+              <OrgTree
+                orchestrator={orchestrator}
+                workers={workers}
+                onAgentClick={handleAgentClick}
+              />
             )}
           </div>
 
           {/* Legend */}
           {!isLoading && (agents as any[]).length > 0 && (
             <div className="mt-4 flex items-center gap-6">
-              {[
-                { status: "idle" as AgentStatus, label: "대기" },
-                { status: "running" as AgentStatus, label: "실행 중" },
-                { status: "error" as AgentStatus, label: "오류" },
-              ].map(({ status, label }) => (
+              {(
+                [
+                  { status: "idle" as AgentStatus, label: "대기" },
+                  { status: "running" as AgentStatus, label: "실행 중" },
+                  { status: "error" as AgentStatus, label: "오류" },
+                  { status: "paused" as AgentStatus, label: "일시정지" },
+                ] as { status: AgentStatus; label: string }[]
+              ).map(({ status, label }) => (
                 <div key={status} className="flex items-center gap-1.5">
                   <StatusDot status={status} />
                   <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
@@ -282,6 +427,31 @@ export function OrgChartPage() {
               ))}
             </div>
           )}
+
+          {/* Human staff section */}
+          <div className="mt-8">
+            <div className="mb-4">
+              <h2 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+                직원
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                학원 강사 및 스태프
+              </p>
+            </div>
+            <div
+              className="rounded-2xl p-6"
+              style={{
+                backgroundColor: "var(--bg-elevated)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              <div className="flex flex-wrap gap-4">
+                {DEFAULT_INSTRUCTORS.map((instructor) => (
+                  <InstructorCard key={instructor.id} instructor={instructor} />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </ScrollArea>
     </div>

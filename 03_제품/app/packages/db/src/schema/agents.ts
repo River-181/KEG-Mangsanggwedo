@@ -1,3 +1,4 @@
+// v0.3.0
 import {
   integer,
   jsonb,
@@ -44,6 +45,8 @@ export const agents = pgTable(
     skills: jsonb().default([]),
     adapterType: text("adapter_type").notNull().default("claude_local"),
     adapterConfig: jsonb("adapter_config"),
+    icon: text(),
+    memory: jsonb().$type<Record<string, any>>().default({}),
     budgetLimit: integer("budget_limit"),
     budgetUsed: integer("budget_used").notNull().default(0),
     createdAt: timestamp("created_at").defaultNow().notNull(),

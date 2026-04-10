@@ -1,6 +1,8 @@
+// v0.3.0
 import { useEffect, useState } from "react"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { Separator } from "@/components/ui/separator"
+import { Switch } from "@/components/ui/switch"
 import { Building2, Bot, Bell, AlertTriangle } from "lucide-react"
 
 function SectionTitle({ icon, label }: { icon: React.ReactNode; label: string }) {
@@ -57,20 +59,10 @@ function ToggleRow({ label, description, value, onChange }: ToggleRowProps) {
           </p>
         )}
       </div>
-      <button
-        role="switch"
-        aria-checked={value}
-        onClick={() => onChange(!value)}
-        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0"
-        style={{
-          backgroundColor: value ? "var(--color-teal-500)" : "var(--border-default)",
-        }}
-      >
-        <span
-          className="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
-          style={{ transform: value ? "translateX(18px)" : "translateX(2px)" }}
-        />
-      </button>
+      <Switch
+        checked={value}
+        onCheckedChange={onChange}
+      />
     </div>
   )
 }

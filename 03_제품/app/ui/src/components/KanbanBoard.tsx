@@ -1,10 +1,17 @@
+// v0.3.0
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Card, CardContent } from "@/components/ui/card"
 import { StatusIcon, CaseStatus } from "@/components/StatusIcon"
 import { Identity } from "@/components/Identity"
 import { CaseTypeBadge } from "@/components/CaseTypeBadge"
 import { CaseSeverityBadge } from "@/components/CaseSeverityBadge"
 import { cn } from "@/lib/utils"
+import { casesApi } from "@/api/cases"
+import { agentsApi } from "@/api/agents"
+import { queryKeys } from "@/lib/queryKeys"
+import { useOrganization } from "@/context/OrganizationContext"
 
 interface KanbanBoardProps {
   cases: any[]
@@ -50,22 +57,36 @@ const COLUMNS: ColumnConfig[] = [
   },
 ]
 
-function KanbanCard({ c, orgPrefix }: { c: any; orgPrefix: string }) {
+function KanbanCard({
+  c,
+  orgPrefix,
+  onDragStart,
+}: {
+  c: any
+  orgPrefix: string
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, caseId: string) => void
+}) {
   const navigate = useNavigate()
-  const assigneeName =
-    c.assignee?.name ?? c.agent?.name ?? null
-  const assigneeType: "agent" | "user" =
-    c.agent?.name ? "agent" : "user"
+  const [isDragging, setIsDragging] = useState(false)
+  const assigneeName = c.assignee?.name ?? c.agent?.name ?? null
+  const assigneeType: "agent" | "user" = c.agent?.name ? "agent" : "user"
 
   return (
     <Card
+      draggable={true}
       className="cursor-pointer transition-shadow hover:shadow-md mb-2"
       style={{
         backgroundColor: "var(--bg-base)",
         border: "1px solid var(--border-default)",
         borderRadius: 10,
+        opacity: isDragging ? 0.5 : 1,
       }}
       onClick={() => navigate(`/${orgPrefix}/cases/${c.id}`)}
+      onDragStart={(e) => {
+        setIsDragging(true)
+        onDragStart(e, c.id)
+      }}
+      onDragEnd={() => setIsDragging(false)}
     >
       <CardContent className="px-3 pt-3 pb-2.5 space-y-2">
         {/* Identifier + title */}
@@ -113,18 +134,34 @@ function KanbanColumn({
   config,
   cards,
   orgPrefix,
+  isDragOver,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onCardDragStart,
 }: {
   config: ColumnConfig
   cards: any[]
   orgPrefix: string
+  isDragOver: boolean
+  onDragOver: (e: React.DragEvent<HTMLDivElement>, status: CaseStatus) => void
+  onDragLeave: () => void
+  onDrop: (e: React.DragEvent<HTMLDivElement>, status: CaseStatus) => void
+  onCardDragStart: (e: React.DragEvent<HTMLDivElement>, caseId: string) => void
 }) {
   return (
     <div
       className="flex flex-col rounded-xl min-w-[220px] w-[220px] flex-shrink-0"
       style={{
         backgroundColor: config.tint,
-        border: "1px solid var(--border-default)",
+        border: isDragOver
+          ? "2px dashed var(--color-teal-500)"
+          : "1px solid var(--border-default)",
+        transition: "border 0.15s ease",
       }}
+      onDragOver={(e) => onDragOver(e, config.status)}
+      onDragLeave={onDragLeave}
+      onDrop={(e) => onDrop(e, config.status)}
     >
       {/* Column header */}
       <div
@@ -164,7 +201,12 @@ function KanbanColumn({
           </div>
         ) : (
           cards.map((c) => (
-            <KanbanCard key={c.id} c={c} orgPrefix={orgPrefix} />
+            <KanbanCard
+              key={c.id}
+              c={c}
+              orgPrefix={orgPrefix}
+              onDragStart={onCardDragStart}
+            />
           ))
         )}
       </div>
@@ -174,6 +216,53 @@ function KanbanColumn({
 
 export function KanbanBoard({ cases }: KanbanBoardProps) {
   const { orgPrefix } = useParams<{ orgPrefix: string }>()
+  const { selectedOrgId } = useOrganization()
+  const queryClient = useQueryClient()
+
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null)
+
+  const updateCaseMutation = useMutation({
+    mutationFn: async ({ caseId, status, assigneeAgentId }: { caseId: string; status: string; assigneeAgentId?: string }) => {
+      await casesApi.update(caseId, { status })
+      if (status === "in_progress" && assigneeAgentId) {
+        await agentsApi.wakeup(assigneeAgentId, { caseId })
+      }
+    },
+    onSuccess: () => {
+      if (selectedOrgId) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.cases.list(selectedOrgId) })
+      }
+    },
+  })
+
+  const handleCardDragStart = (e: React.DragEvent<HTMLDivElement>, caseId: string) => {
+    e.dataTransfer.setData("caseId", caseId)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, status: CaseStatus) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setDragOverColumn(status)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverColumn(null)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, status: CaseStatus) => {
+    e.preventDefault()
+    setDragOverColumn(null)
+    const caseId = e.dataTransfer.getData("caseId")
+    if (!caseId) return
+
+    const droppedCase = cases.find((c) => c.id === caseId)
+    if (!droppedCase || droppedCase.status === status) return
+
+    const assigneeAgentId = droppedCase.assigneeAgentId ?? droppedCase.agent?.id ?? undefined
+
+    updateCaseMutation.mutate({ caseId, status, assigneeAgentId })
+  }
 
   const grouped = COLUMNS.reduce<Record<string, any[]>>(
     (acc, col) => {
@@ -204,6 +293,11 @@ export function KanbanBoard({ cases }: KanbanBoardProps) {
             config={col}
             cards={grouped[col.status] ?? []}
             orgPrefix={orgPrefix ?? ""}
+            isDragOver={dragOverColumn === col.status}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onCardDragStart={handleCardDragStart}
           />
         ))}
       </div>

@@ -34,4 +34,11 @@ export const queryKeys = {
   goals: {
     list: (orgId: string) => ["goals", "list", orgId] as const,
   },
+  notifications: {
+    list: (orgId: string) => ["notifications", "list", orgId] as const,
+  },
+  projects: {
+    list: (orgId: string) => ["projects", "list", orgId] as const,
+    detail: (id: string) => ["projects", id] as const,
+  },
 }

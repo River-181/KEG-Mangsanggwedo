@@ -1,3 +1,4 @@
+// v0.3.0
 import { Router } from "express"
 import { eq } from "drizzle-orm"
 import type { Db } from "@hagent/db"
@@ -70,6 +71,38 @@ export function agentRoutes(db: Db): Router {
       res.json(updated)
     } catch (err) {
       res.status(500).json({ error: "Failed to update agent" })
+    }
+  })
+
+  // GET /agents/:id/memory
+  router.get("/agents/:id/memory", async (req, res) => {
+    try {
+      const [agent] = await db.select().from(schema.agents)
+        .where(eq(schema.agents.id, req.params.id))
+      if (!agent) { res.status(404).json({ error: "Not found" }); return }
+      res.json(agent.memory ?? {})
+    } catch (err) {
+      res.status(500).json({ error: "Failed to fetch memory" })
+    }
+  })
+
+  // PATCH /agents/:id/memory
+  router.patch("/agents/:id/memory", async (req, res) => {
+    try {
+      const [agent] = await db.select().from(schema.agents)
+        .where(eq(schema.agents.id, req.params.id))
+      if (!agent) { res.status(404).json({ error: "Not found" }); return }
+
+      const currentMemory = (agent.memory as Record<string, any>) ?? {}
+      const merged = { ...currentMemory, ...req.body }
+
+      const [updated] = await db.update(schema.agents)
+        .set({ memory: merged as any, updatedAt: new Date() })
+        .where(eq(schema.agents.id, req.params.id))
+        .returning()
+      res.json(updated.memory)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to update memory" })
     }
   })
 

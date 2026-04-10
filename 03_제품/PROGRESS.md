@@ -18,9 +18,10 @@ aliases: [dev-progress, 개발진행]
 | 항목 | 상태 |
 |------|------|
 | 전략 | **Plan A** (하이브리드 — Paperclip 패턴 흡수 + 학원 도메인 커스텀) |
-| Phase | **Phase 2 진행 중** (v0.2.0 갭 채우기 병렬 공격) |
-| 마지막 릴리스 | **v0.1.0** (커밋 4f0fa38, 179파일 22,765줄) |
-| 현재 목표 | Phase 2: 문서 워크스페이스 + 에이전트 생성 + CommandPalette + SSE + 채팅 스레드 |
+| Phase | **v0.3.0 착수 대기** (Paperclip 라이브 피드백 반영) |
+| 마지막 릴리스 | **v0.2.0 완료** — 21페이지, 40+컴포넌트, 15 API routes, ~7,000 LOC (커밋 5e91989) |
+| 현재 목표 | v0.3.0: 칸반 DnD + 인박스 실데이터 + 에이전트 정체성 + 학생관리 + OrgChart 인터랙션 |
+| v0.3.0 플랜 | `03_제품/app/docs/superpowers/plans/2026-04-10-hagent-os-v0.3.0.md` |
 | 데모 학원 | **탄자니아 영어학원** (대치동, 영어, 초/중/고/성인) |
 | Mock 모드 | Claude API 키 없어도 1.5초 지연 mock 응답 동작 |
 | 블로커 | 없음 (embedded-postgres→brew postgres@17 해결 완료) |
@@ -159,11 +160,30 @@ aliases: [dev-progress, 개발진행]
 - [x] **지시 → Orchestrator → Complaint → 초안 → 승인 → 완결** 전체 E2E (mock)
 - [x] SSE 서버 동작
 - [x] Activity 기록 자동 생성
-- [ ] 문서 워크스페이스 동작
-- [ ] 에이전트 생성 동작
-- [ ] CommandPalette + SSE 클라이언트 동작
+- [x] 문서 워크스페이스 동작
+- [x] 에이전트 생성 동작
+- [x] CommandPalette + SSE 클라이언트 동작
 
-**완료일**: —
+**완료일**: 2026-04-10
+
+---
+
+## Phase 2.5: Paperclip 피드백 반영 (v0.3.0) — 🔵 진행 중
+
+### Round 1 (4 에이전트 병렬)
+- 🔵 칸반 드래그앤드롭 → 상태 변경 + in_progress 시 에이전트 자동 wakeup
+- 🔵 OrgChart 클릭→에이전트 이동 + 인간 직원 노드 + 에이전트 아이콘
+- 🔵 shadcn Switch 설치 + 토글 가시성 수정 (Settings, Routines, AgentDetail)
+- 🔵 에이전트 아이콘 시스템 (brain/shield/heart/calendar → lucide 매핑)
+- 🔵 인박스 실제 데이터 + 인라인 승인/거절 액션
+- 🔵 프로젝트 페이지 (ops_groups 활용, 온보딩 프로젝트)
+- 🔵 에이전트 메모리 시스템 (SOUL + 일별 노트 + 학습 패턴)
+- 🔵 에이전트 상세 강화 (실행 트랜스크립트 펼침, Configuration 강화)
+
+### Round 2 (대기)
+- [ ] 학생/학부모 관리 페이지 + 개인정보 마스킹
+- [ ] 일정 캘린더 강화 (DB 데이터, 월간/주간, 수업→학생)
+- [ ] 지식베이스 검색 + AI 생성 문서 배지
 
 ---
 

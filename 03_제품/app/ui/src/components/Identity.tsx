@@ -1,4 +1,5 @@
-import { Bot, User, Zap } from "lucide-react"
+// v0.3.0
+import { Bot, User, Zap, Brain, Shield, Heart, Calendar, Sparkles, Cpu, Cog, Lightbulb } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
@@ -10,8 +11,20 @@ interface IdentityProps {
   avatarUrl?: string
   size?: IdentitySize
   type?: IdentityType
+  icon?: string
   className?: string
   showName?: boolean
+}
+
+const agentIconMap: Record<string, React.FC<{ size: number }>> = {
+  brain: ({ size }) => <Brain size={size} style={{ color: "var(--color-teal-500)" }} />,
+  shield: ({ size }) => <Shield size={size} style={{ color: "var(--color-teal-500)" }} />,
+  heart: ({ size }) => <Heart size={size} style={{ color: "#ef4444" }} />,
+  calendar: ({ size }) => <Calendar size={size} style={{ color: "#8b5cf6" }} />,
+  sparkles: ({ size }) => <Sparkles size={size} style={{ color: "#f59e0b" }} />,
+  cpu: ({ size }) => <Cpu size={size} style={{ color: "#3b82f6" }} />,
+  cog: ({ size }) => <Cog size={size} style={{ color: "#6b7280" }} />,
+  lightbulb: ({ size }) => <Lightbulb size={size} style={{ color: "#10b981" }} />,
 }
 
 const sizeConfig: Record<IdentitySize, { avatar: string; icon: number; text: string; gap: string }> = {
@@ -41,18 +54,23 @@ export function Identity({
   avatarUrl,
   size = "default",
   type = "user",
+  icon,
   className,
   showName = true,
 }: IdentityProps) {
-  const { avatar, icon, text, gap } = sizeConfig[size]
-  const { bg, icon: Icon } = typeConfig[type] ?? typeConfig.user
+  const { avatar, icon: iconSize, text, gap } = sizeConfig[size]
+  const { bg, icon: TypeIcon } = typeConfig[type] ?? typeConfig.user
+  const CustomIcon = icon ? agentIconMap[icon] : undefined
 
   return (
     <span className={cn("inline-flex items-center", gap, className)}>
       <Avatar className={cn(avatar, "shrink-0")}>
         {avatarUrl && <AvatarImage src={avatarUrl} alt={name} />}
         <AvatarFallback className={cn("rounded-full", bg)}>
-          <Icon size={sizeConfig[size].icon} />
+          {CustomIcon
+            ? <CustomIcon size={iconSize} />
+            : <TypeIcon size={iconSize} />
+          }
         </AvatarFallback>
       </Avatar>
       {showName && (
@@ -60,6 +78,7 @@ export function Identity({
           {name}
         </span>
       )}
+
     </span>
   )
 }

@@ -1,3 +1,4 @@
+// v0.3.0
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -12,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import { Identity } from "@/components/Identity"
 import { StatusBadge } from "@/components/StatusBadge"
 import {
@@ -72,11 +74,14 @@ function statusLabel(status: string): string {
 
 // ─── run row ─────────────────────────────────────────────────────────────────
 
-function RunRow({ run }: { run: any }) {
+function RunRow({ run, expanded, onToggle }: { run: any; expanded?: boolean; onToggle?: () => void }) {
   const runStatus = run.status ?? "completed"
   const caseTitle = run.case?.title ?? run.caseTitle ?? "케이스 없음"
   const tokens = run.tokensUsed ?? run.tokens_used ?? null
   const startedAt = run.startedAt ?? run.started_at ?? run.createdAt ?? ""
+  const duration = run.durationMs ?? run.duration_ms ?? null
+  const inputData = run.input ?? run.inputData ?? null
+  const outputData = run.output ?? run.outputData ?? run.result ?? null
 
   const icon =
     runStatus === "running" ? (
@@ -90,23 +95,133 @@ function RunRow({ run }: { run: any }) {
     )
 
   return (
-    <div className="flex items-center gap-3 py-2.5 px-1">
-      <span className="shrink-0">{icon}</span>
-      <span
-        className="flex-1 text-sm truncate"
-        style={{ color: "var(--text-primary)" }}
+    <div>
+      <div
+        className="flex items-center gap-3 py-2.5 px-1 cursor-pointer select-none"
+        onClick={onToggle}
       >
-        {caseTitle}
-      </span>
-      {tokens != null && (
-        <span className="text-xs shrink-0" style={{ color: "var(--text-tertiary)" }}>
-          {tokens.toLocaleString()} 토큰
+        <span className="shrink-0">{icon}</span>
+        <span
+          className="flex-1 text-sm truncate"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {caseTitle}
         </span>
-      )}
-      {startedAt && (
-        <span className="text-xs shrink-0 w-16 text-right" style={{ color: "var(--text-tertiary)" }}>
-          {timeAgo(startedAt)}
-        </span>
+        {tokens != null && (
+          <span className="text-xs shrink-0" style={{ color: "var(--text-tertiary)" }}>
+            {tokens.toLocaleString()} 토큰
+          </span>
+        )}
+        {startedAt && (
+          <span className="text-xs shrink-0 w-16 text-right" style={{ color: "var(--text-tertiary)" }}>
+            {timeAgo(startedAt)}
+          </span>
+        )}
+        {onToggle && (
+          <ChevronRight
+            size={13}
+            className="shrink-0 transition-transform"
+            style={{
+              color: "var(--text-tertiary)",
+              transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          />
+        )}
+      </div>
+
+      {expanded && (
+        <div
+          className="mx-1 mb-3 rounded-xl p-3 space-y-3"
+          style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+        >
+          {/* Meta row */}
+          <div className="flex flex-wrap gap-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
+            {startedAt && <span>시작: {new Date(startedAt).toLocaleString("ko-KR")}</span>}
+            {duration != null && <span>소요: {(duration / 1000).toFixed(1)}초</span>}
+            {tokens != null && <span>토큰: {tokens.toLocaleString()}</span>}
+            <span
+              className="px-1.5 py-0.5 rounded text-xs font-medium"
+              style={{
+                backgroundColor: runStatus === "completed"
+                  ? "rgba(34,197,94,0.1)"
+                  : runStatus === "failed"
+                  ? "rgba(239,68,68,0.1)"
+                  : "rgba(107,114,128,0.1)",
+                color: runStatus === "completed"
+                  ? "var(--color-success)"
+                  : runStatus === "failed"
+                  ? "var(--color-danger)"
+                  : "var(--text-tertiary)",
+              }}
+            >
+              {runStatus === "completed" ? "완료" : runStatus === "failed" ? "실패" : runStatus}
+            </span>
+          </div>
+
+          {/* Input */}
+          {inputData != null && (
+            <div>
+              <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>입력</p>
+              <pre
+                className="text-xs rounded-lg p-3 overflow-auto max-h-40 whitespace-pre-wrap break-all"
+                style={{
+                  backgroundColor: "var(--bg-tertiary)",
+                  color: "var(--text-primary)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {typeof inputData === "string" ? inputData : JSON.stringify(inputData, null, 2)}
+              </pre>
+            </div>
+          )}
+
+          {/* Output */}
+          {outputData != null && (
+            <div>
+              <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>출력</p>
+              {typeof outputData === "object" && outputData?.draft ? (
+                <div>
+                  <div
+                    className="text-sm rounded-lg p-3 leading-relaxed whitespace-pre-wrap"
+                    style={{
+                      backgroundColor: "rgba(20,184,166,0.06)",
+                      border: "1px solid rgba(20,184,166,0.2)",
+                      color: "var(--text-primary)",
+                    }}
+                  >
+                    {outputData.draft}
+                  </div>
+                  {Object.keys(outputData).filter(k => k !== "draft").length > 0 && (
+                    <pre
+                      className="text-xs rounded-lg p-3 mt-2 overflow-auto max-h-40 whitespace-pre-wrap break-all"
+                      style={{
+                        backgroundColor: "var(--bg-tertiary)",
+                        color: "var(--text-primary)",
+                        fontFamily: "'JetBrains Mono', monospace",
+                      }}
+                    >
+                      {JSON.stringify(
+                        Object.fromEntries(Object.entries(outputData).filter(([k]) => k !== "draft")),
+                        null, 2
+                      )}
+                    </pre>
+                  )}
+                </div>
+              ) : (
+                <pre
+                  className="text-xs rounded-lg p-3 overflow-auto max-h-40 whitespace-pre-wrap break-all"
+                  style={{
+                    backgroundColor: "var(--bg-tertiary)",
+                    color: "var(--text-primary)",
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  {typeof outputData === "string" ? outputData : JSON.stringify(outputData, null, 2)}
+                </pre>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
@@ -159,7 +274,7 @@ function BudgetBar({
 
 // ─── Overview tab ─────────────────────────────────────────────────────────────
 
-function OverviewTab({ agent, runs }: { agent: any; runs: any[] }) {
+function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory: any }) {
   const queryClient = useQueryClient()
   const currentRun = runs.find((r) => r.status === "running")
   const recentRuns = runs.slice(0, 5)
@@ -339,6 +454,54 @@ function OverviewTab({ agent, runs }: { agent: any; runs: any[] }) {
           )}
         </div>
       </div>
+
+      {/* Agent Memory */}
+      {memory && Object.keys(memory).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+            에이전트 메모리
+          </h3>
+          <div className="space-y-2">
+            {/* Soul / Identity */}
+            {memory?.soul && (
+              <div className="rounded-xl p-4" style={{ backgroundColor: "rgba(20,184,166,0.04)", border: "1px solid rgba(20,184,166,0.2)" }}>
+                <p className="text-xs font-medium mb-1" style={{ color: "var(--color-teal-500)" }}>정체성</p>
+                <p className="text-sm" style={{ color: "var(--text-primary)" }}>{memory.soul}</p>
+              </div>
+            )}
+
+            {/* Daily Notes */}
+            {memory?.dailyNotes && Object.keys(memory.dailyNotes).length > 0 && (
+              <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
+                <p className="text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>최근 메모</p>
+                {Object.entries(memory.dailyNotes as Record<string, string>)
+                  .sort(([a], [b]) => b.localeCompare(a))
+                  .slice(0, 3)
+                  .map(([date, note]) => (
+                    <div key={date} className="mb-2 last:mb-0">
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{date}</span>
+                      <p className="text-sm" style={{ color: "var(--text-primary)" }}>{note}</p>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {/* Learned Patterns */}
+            {(memory?.learnedPatterns as string[] | undefined)?.length ? (
+              <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}>
+                <p className="text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>학습된 패턴</p>
+                <ul className="space-y-1">
+                  {(memory.learnedPatterns as string[]).map((p, i) => (
+                    <li key={i} className="text-sm flex items-start gap-2" style={{ color: "var(--text-primary)" }}>
+                      <span style={{ color: "var(--color-teal-500)" }}>•</span> {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -431,7 +594,20 @@ function InstructionsTab({ agent }: { agent: any }) {
 // ─── Skills tab ───────────────────────────────────────────────────────────────
 
 function SkillsTab({ agent }: { agent: any }) {
-  const skills: any[] = agent.skills ?? agent.equippedSkills ?? []
+  const rawSkills: any[] = agent.skills ?? agent.equippedSkills ?? []
+
+  // Normalise: skills may be strings (slugs) or objects
+  const skills = rawSkills.map((s: any) =>
+    typeof s === "string" ? { slug: s, name: s, enabled: true } : { enabled: true, ...s }
+  )
+
+  const [enabledMap, setEnabledMap] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(skills.map((s) => [s.slug ?? s.id ?? s.name, s.enabled ?? true]))
+  )
+
+  const toggleSkill = (key: string, value: boolean) => {
+    setEnabledMap((prev) => ({ ...prev, [key]: value }))
+  }
 
   return (
     <div className="space-y-4">
@@ -460,52 +636,61 @@ function SkillsTab({ agent }: { agent: any }) {
         </div>
       ) : (
         <div className="space-y-2">
-          {skills.map((skill: any, i: number) => (
-            <div
-              key={skill.id ?? skill.slug ?? i}
-              className="flex items-center gap-3 rounded-xl px-4 py-3"
-              style={{
-                backgroundColor: "var(--bg-elevated)",
-                border: "1px solid var(--border-default)",
-              }}
-            >
+          {skills.map((skill: any, i: number) => {
+            const key = skill.slug ?? skill.id ?? skill.name ?? String(i)
+            const isEnabled = enabledMap[key] ?? true
+            return (
               <div
-                className="flex items-center justify-center rounded-lg shrink-0"
+                key={key}
+                className="flex items-center gap-3 rounded-xl px-4 py-3"
                 style={{
-                  width: 32,
-                  height: 32,
-                  backgroundColor: "rgba(20,184,166,0.1)",
+                  backgroundColor: "var(--bg-elevated)",
+                  border: "1px solid var(--border-default)",
+                  opacity: isEnabled ? 1 : 0.5,
                 }}
               >
-                <Zap size={15} style={{ color: "var(--color-teal-500)" }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p
-                  className="text-sm font-medium truncate"
-                  style={{ color: "var(--text-primary)" }}
+                <div
+                  className="flex items-center justify-center rounded-lg shrink-0"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    backgroundColor: isEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
+                  }}
                 >
-                  {skill.name ?? skill.slug ?? "알 수 없는 스킬"}
-                </p>
-                {skill.description && (
+                  <Zap size={15} style={{ color: isEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)" }} />
+                </div>
+                <div className="flex-1 min-w-0">
                   <p
-                    className="text-xs truncate"
-                    style={{ color: "var(--text-tertiary)" }}
+                    className="text-sm font-medium truncate"
+                    style={{ color: "var(--text-primary)" }}
                   >
-                    {skill.description}
+                    {skill.name ?? skill.slug ?? "알 수 없는 스킬"}
                   </p>
-                )}
+                  {skill.description && (
+                    <p
+                      className="text-xs truncate"
+                      style={{ color: "var(--text-tertiary)" }}
+                    >
+                      {skill.description}
+                    </p>
+                  )}
+                </div>
+                <Badge
+                  className="text-xs border-0 shrink-0"
+                  style={{
+                    backgroundColor: isEnabled ? "rgba(20,184,166,0.1)" : "var(--bg-tertiary)",
+                    color: isEnabled ? "var(--color-teal-500)" : "var(--text-tertiary)",
+                  }}
+                >
+                  {skill.category ?? "k-skill"}
+                </Badge>
+                <Switch
+                  checked={isEnabled}
+                  onCheckedChange={(v) => toggleSkill(key, v)}
+                />
               </div>
-              <Badge
-                className="text-xs border-0 shrink-0"
-                style={{
-                  backgroundColor: "rgba(20,184,166,0.1)",
-                  color: "var(--color-teal-500)",
-                }}
-              >
-                {skill.category ?? "k-skill"}
-              </Badge>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
@@ -516,12 +701,28 @@ function SkillsTab({ agent }: { agent: any }) {
 
 function SettingsTab({ agent }: { agent: any }) {
   const settings = agent.settings ?? {}
+
+  const agentTypeLabel: Record<string, string> = {
+    orchestrator: "오케스트레이터",
+    complaint: "민원담당",
+    retention: "이탈방어",
+    scheduler: "스케줄러",
+    intake: "인테이크",
+    staff: "스태프",
+    compliance: "컴플라이언스",
+    notification: "알림",
+  }
+
   const rows = [
     { label: "에이전트 ID", value: agent.id },
-    { label: "역할", value: agent.role ?? "-" },
+    { label: "에이전트 유형", value: agentTypeLabel[agent.agentType] ?? agent.agentType ?? "-" },
+    { label: "모델", value: agent.model ?? settings.model ?? "claude-sonnet-4-6" },
+    { label: "어댑터", value: agent.adapterType ?? "-" },
+    { label: "슬러그", value: agent.slug ?? "-" },
+    { label: "생성일", value: agent.createdAt ? formatDate(agent.createdAt) : "-" },
+    { label: "최근 업데이트", value: agent.updatedAt ? formatDate(agent.updatedAt) : "-" },
     { label: "최대 토큰", value: agent.maxTokens ?? settings.maxTokens ?? "-" },
     { label: "온도", value: agent.temperature ?? settings.temperature ?? "-" },
-    { label: "모델", value: agent.model ?? settings.model ?? "-" },
     {
       label: "자동 실행",
       value: agent.autoRun ?? settings.autoRun ? "활성화" : "비활성화",
@@ -529,32 +730,43 @@ function SettingsTab({ agent }: { agent: any }) {
   ]
 
   return (
-    <div
-      className="rounded-xl overflow-hidden"
-      style={{
-        backgroundColor: "var(--bg-elevated)",
-        border: "1px solid var(--border-default)",
-      }}
-    >
-      {rows.map((row, i) => (
+    <div className="space-y-4">
+      {agent.description && (
         <div
-          key={row.label}
-          className={cn(
-            "flex items-center justify-between px-4 py-3",
-            i < rows.length - 1 && "border-b border-[var(--border-default)]"
-          )}
+          className="rounded-xl p-4"
+          style={{ backgroundColor: "rgba(20,184,166,0.04)", border: "1px solid rgba(20,184,166,0.2)" }}
         >
-          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            {row.label}
-          </span>
-          <span
-            className="text-sm font-medium font-mono"
-            style={{ color: "var(--text-primary)" }}
-          >
-            {String(row.value)}
-          </span>
+          <p className="text-xs font-medium mb-1" style={{ color: "var(--color-teal-500)" }}>설명</p>
+          <p className="text-sm" style={{ color: "var(--text-primary)" }}>{agent.description}</p>
         </div>
-      ))}
+      )}
+      <div
+        className="rounded-xl overflow-hidden"
+        style={{
+          backgroundColor: "var(--bg-elevated)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
+        {rows.map((row, i) => (
+          <div
+            key={row.label}
+            className={cn(
+              "flex items-center justify-between px-4 py-3",
+              i < rows.length - 1 && "border-b border-[var(--border-default)]"
+            )}
+          >
+            <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              {row.label}
+            </span>
+            <span
+              className="text-sm font-medium font-mono text-right max-w-[60%] truncate"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {String(row.value)}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -562,6 +774,8 @@ function SettingsTab({ agent }: { agent: any }) {
 // ─── Run history tab ──────────────────────────────────────────────────────────
 
 function RunHistoryTab({ runs }: { runs: any[] }) {
+  const [expandedRunId, setExpandedRunId] = useState<string | null>(null)
+
   if (runs.length === 0) {
     return (
       <div
@@ -588,9 +802,17 @@ function RunHistoryTab({ runs }: { runs: any[] }) {
       }}
     >
       <div className="divide-y divide-[var(--border-default)]">
-        {runs.map((run: any, i: number) => (
-          <RunRow key={run.id ?? i} run={run} />
-        ))}
+        {runs.map((run: any, i: number) => {
+          const runId = run.id ?? String(i)
+          return (
+            <RunRow
+              key={runId}
+              run={run}
+              expanded={expandedRunId === runId}
+              onToggle={() => setExpandedRunId(expandedRunId === runId ? null : runId)}
+            />
+          )
+        })}
       </div>
     </div>
   )
@@ -667,6 +889,13 @@ export function AgentDetailPage() {
   } = useQuery({
     queryKey: queryKeys.agents.detail(id!),
     queryFn: () => agentsApi.get(id!),
+    enabled: !!id,
+  })
+
+  // ── fetch agent memory ─────────────────────────────────────────────────────
+  const { data: memory = {} } = useQuery({
+    queryKey: ["agents", id, "memory"],
+    queryFn: () => agentsApi.getMemory(id!),
     enabled: !!id,
   })
 
@@ -751,7 +980,7 @@ export function AgentDetailPage() {
           <ScrollArea className="h-full">
             <div className="p-6 max-w-2xl mx-auto">
               <TabsContent value="overview" className="mt-0">
-                <OverviewTab agent={agent} runs={agentRuns} />
+                <OverviewTab agent={agent} runs={agentRuns} memory={memory} />
               </TabsContent>
 
               <TabsContent value="instructions" className="mt-0">

@@ -18,6 +18,8 @@ import { documentRoutes } from "./routes/documents.js"
 import { routineRoutes } from "./routes/routines.js"
 import { goalRoutes } from "./routes/goals.js"
 import { dashboardRoutes } from "./routes/dashboard.js"
+import { notificationRoutes } from "./routes/notifications.js"
+import { projectRoutes } from "./routes/projects.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -46,6 +48,8 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api", routineRoutes(db))
   app.use("/api", goalRoutes(db))
   app.use("/api", dashboardRoutes(db))
+  app.use("/api", notificationRoutes(db))
+  app.use("/api", projectRoutes(db))
 
   return app
 }

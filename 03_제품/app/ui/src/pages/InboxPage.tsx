@@ -1,53 +1,30 @@
-import { useEffect, useState } from "react"
+// v0.3.0
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
-import { CheckCircle2, AlertTriangle, Bot, FilePlus, Bell } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useOrganization } from "@/context/OrganizationContext"
+import { notificationsApi } from "@/api/notifications"
+import { approvalsApi } from "@/api/approvals"
+import { queryKeys } from "@/lib/queryKeys"
+import { ApprovalCard } from "@/components/ApprovalCard"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { CheckCircle2, AlertTriangle, Bot, FilePlus, Bell, Clock } from "lucide-react"
+import { cn, timeAgo } from "@/lib/utils"
 
-type NotificationType = "approval_needed" | "risk_detected" | "agent_completed" | "case_created"
+type NotificationType = "approval_needed" | "risk_detected" | "agent_completed" | "case_created" | "reminder"
 
 interface Notification {
   id: string
   type: NotificationType
   title: string
   body: string
-  time: string
+  entityType?: string
+  entityId?: string
   read: boolean
+  createdAt: string
 }
-
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  {
-    id: "n1",
-    type: "approval_needed",
-    title: "승인 요청",
-    body: "민원담당이 C-001 응답 초안을 생성했습니다",
-    time: "5분 전",
-    read: false,
-  },
-  {
-    id: "n2",
-    type: "risk_detected",
-    title: "이탈 위험 감지",
-    body: "이수아(중2) 이탈 위험 점수 0.82",
-    time: "10분 전",
-    read: false,
-  },
-  {
-    id: "n3",
-    type: "agent_completed",
-    title: "에이전트 완료",
-    body: "민원담당이 민원 3건 분류를 완료했습니다",
-    time: "15분 전",
-    read: true,
-  },
-  {
-    id: "n4",
-    type: "case_created",
-    title: "새 케이스",
-    body: "C-005 성인부 대체 강사 요청이 등록되었습니다",
-    time: "1시간 전",
-    read: true,
-  },
-]
 
 function notificationIcon(type: NotificationType) {
   switch (type) {
@@ -59,43 +36,131 @@ function notificationIcon(type: NotificationType) {
       return <Bot size={18} style={{ color: "var(--color-teal-500)" }} />
     case "case_created":
       return <FilePlus size={18} style={{ color: "var(--text-secondary)" }} />
+    case "reminder":
+      return <Clock size={18} style={{ color: "var(--color-teal-500)" }} />
+    default:
+      return <Bell size={18} style={{ color: "var(--text-secondary)" }} />
   }
+}
+
+const GROUP_ORDER: NotificationType[] = ["approval_needed", "agent_completed", "case_created", "risk_detected", "reminder"]
+const GROUP_LABELS: Record<NotificationType, string> = {
+  approval_needed: "승인 대기",
+  agent_completed: "에이전트 알림",
+  case_created: "케이스 알림",
+  risk_detected: "위험 감지",
+  reminder: "리마인더",
 }
 
 export function InboxPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS)
+  const { selectedOrgId } = useOrganization()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     setBreadcrumbs([{ label: "알림함" }])
   }, [setBreadcrumbs])
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
+    queryKey: queryKeys.notifications.list(selectedOrgId ?? ""),
+    queryFn: () => notificationsApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId,
+  })
 
-  const markRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    )
+  const { data: approvals = [] } = useQuery<any[]>({
+    queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
+    queryFn: () => approvalsApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId,
+  })
+
+  const markReadMutation = useMutation({
+    mutationFn: (id: string) => notificationsApi.markRead(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.list(selectedOrgId ?? "") })
+    },
+  })
+
+  const approvesMutation = useMutation({
+    mutationFn: (id: string) => approvalsApi.approve(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
+    },
+  })
+
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => approvalsApi.reject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
+    },
+  })
+
+  const markAllRead = async () => {
+    const unread = notifications.filter((n) => !n.read)
+    await Promise.all(unread.map((n) => notificationsApi.markRead(n.id)))
+    queryClient.invalidateQueries({ queryKey: queryKeys.notifications.list(selectedOrgId ?? "") })
   }
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  const unreadCount = notifications.filter((n) => !n.read).length
+
+  // Group notifications by type
+  const grouped = GROUP_ORDER.reduce<Record<string, Notification[]>>((acc, type) => {
+    const items = notifications.filter((n) => n.type === type)
+    if (items.length > 0) acc[type] = items
+    return acc
+  }, {})
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.read) {
+      markReadMutation.mutate(notification.id)
+    }
+    const orgPrefix = window.location.pathname.split("/")[1]
+    if (notification.entityType === "case" && notification.entityId) {
+      navigate(`/${orgPrefix}/cases/${notification.entityId}`)
+    } else if (notification.entityType === "agent_run" && notification.entityId) {
+      navigate(`/${orgPrefix}/agents`)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto">
+        <div className="h-8 w-48 rounded animate-pulse mb-6" style={{ background: "var(--bg-tertiary)" }} />
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "var(--bg-tertiary)" }} />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-          알림함
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+            알림함
+          </h1>
+          {unreadCount > 0 && (
+            <Badge
+              className="text-xs font-bold px-2 py-0.5 border-0"
+              style={{ background: "var(--color-teal-500)", color: "#fff" }}
+            >
+              {unreadCount}
+            </Badge>
+          )}
+        </div>
         {unreadCount > 0 && (
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={markAllRead}
-            className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-[var(--bg-secondary)]"
-            style={{ color: "var(--color-teal-500)", border: "1px solid var(--border-default)" }}
+            className="text-xs border"
+            style={{ color: "var(--color-teal-500)", borderColor: "var(--border-default)" }}
           >
-            모두 읽음 처리
-          </button>
+            모두 읽음
+          </Button>
         )}
       </div>
       <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
@@ -117,52 +182,109 @@ export function InboxPage() {
           </p>
         </div>
       ) : (
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{
-            border: "1px solid var(--border-default)",
-            boxShadow: "var(--shadow-sm)",
-          }}
-        >
-          {notifications.map((notification, idx) => (
-            <button
-              key={notification.id}
-              onClick={() => markRead(notification.id)}
-              className={cn(
-                "w-full flex items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[var(--bg-secondary)]",
-                idx !== 0 && "border-t"
-              )}
-              style={{
-                backgroundColor: notification.read ? "var(--bg-elevated)" : "var(--bg-secondary)",
-                borderColor: "var(--border-default)",
-              }}
-            >
-              <div className="mt-0.5 shrink-0">{notificationIcon(notification.type)}</div>
+        <div className="space-y-6">
+          {(Object.entries(grouped) as [NotificationType, Notification[]][]).map(([type, items]) => (
+            <div key={type}>
+              <h2 className="text-xs font-semibold uppercase tracking-wider mb-2 px-1" style={{ color: "var(--text-tertiary)" }}>
+                {GROUP_LABELS[type]}
+              </h2>
+              <div
+                className="rounded-xl overflow-hidden"
+                style={{
+                  border: "1px solid var(--border-default)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                {items.map((notification, idx) => {
+                  // For approval_needed, find the matching approval and render ApprovalCard
+                  if (type === "approval_needed" && notification.entityId) {
+                    const approval = approvals.find((a) => a.id === notification.entityId)
+                    if (approval) {
+                      return (
+                        <div
+                          key={notification.id}
+                          className={cn(idx !== 0 && "border-t")}
+                          style={{
+                            borderColor: "var(--border-default)",
+                            backgroundColor: notification.read ? "var(--bg-elevated)" : "var(--bg-secondary)",
+                          }}
+                        >
+                          <ApprovalCard
+                            approval={approval}
+                            onApprove={(id) => approvesMutation.mutate(id)}
+                            onReject={(id) => rejectMutation.mutate(id)}
+                            isPending={approvesMutation.isPending || rejectMutation.isPending}
+                            pendingAction={approvesMutation.isPending ? "approve" : "reject"}
+                          />
+                        </div>
+                      )
+                    }
+                  }
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn("text-sm", !notification.read && "font-semibold")}
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {notification.title}
-                  </span>
-                  {!notification.read && (
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: "var(--color-teal-500)" }}
-                    />
-                  )}
-                </div>
-                <p className="text-xs mt-0.5 truncate" style={{ color: "var(--text-secondary)" }}>
-                  {notification.body}
-                </p>
+                  return (
+                    <div
+                      key={notification.id}
+                      className={cn(
+                        "flex items-start gap-3 px-4 py-3.5",
+                        idx !== 0 && "border-t",
+                        (notification.entityType === "case" || notification.entityType === "agent_run") &&
+                          "cursor-pointer hover:bg-[var(--bg-secondary)] transition-colors"
+                      )}
+                      style={{
+                        backgroundColor: notification.read ? "var(--bg-elevated)" : "var(--bg-secondary)",
+                        borderColor: "var(--border-default)",
+                      }}
+                      onClick={() => handleNotificationClick(notification)}
+                      role={notification.entityType ? "button" : undefined}
+                    >
+                      <div className="mt-0.5 shrink-0">{notificationIcon(type)}</div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={cn("text-sm", !notification.read && "font-semibold")}
+                            style={{ color: "var(--text-primary)" }}
+                          >
+                            {notification.title}
+                          </span>
+                          {!notification.read && (
+                            <span
+                              className="w-2 h-2 rounded-full shrink-0"
+                              style={{ backgroundColor: "var(--color-teal-500)" }}
+                            />
+                          )}
+                        </div>
+                        <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                          {notification.body}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                          {timeAgo(notification.createdAt)}
+                        </span>
+                        {notification.entityType === "case" && (
+                          <span
+                            className="text-xs px-2 py-0.5 rounded"
+                            style={{ background: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
+                          >
+                            케이스 보기
+                          </span>
+                        )}
+                        {notification.entityType === "agent_run" && (
+                          <span
+                            className="text-xs px-2 py-0.5 rounded"
+                            style={{ background: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
+                          >
+                            상세 보기
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-
-              <span className="text-xs shrink-0 mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-                {notification.time}
-              </span>
-            </button>
+            </div>
           ))}
         </div>
       )}

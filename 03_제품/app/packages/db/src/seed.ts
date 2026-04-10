@@ -18,6 +18,7 @@ async function seed() {
     const oid = existingOrg.id
     // Delete in reverse FK dependency order
     await db.delete(schema.activityEvents).where(eq(schema.activityEvents.organizationId, oid))
+    await db.delete(schema.notifications).where(eq(schema.notifications.organizationId, oid))
     await db.delete(schema.approvals).where(eq(schema.approvals.organizationId, oid))
     await db.delete(schema.wakeupRequests).where(eq(schema.wakeupRequests.organizationId, oid))
     await db.delete(schema.agentRuns).where(eq(schema.agentRuns.organizationId, oid))
@@ -65,6 +66,15 @@ async function seed() {
             "탄자니아 영어학원 운영 전반을 조율하는 오케스트레이터입니다. 학부모 영어 관련 민원, 수강생 이탈, 수업 스케줄 등 모든 케이스를 분류하고 적절한 에이전트에게 배정합니다.",
           skills: ["complaint-classifier"],
           adapterType: "claude_local",
+          icon: "brain",
+          memory: {
+            soul: "탄자니아 영어학원의 총괄 매니저. 모든 업무를 조율하고 적절한 에이전트에게 배분합니다.",
+            dailyNotes: {
+              "2026-04-10": "학원 시스템 초기 설정 완료. 4개 에이전트 팀 구성됨. 민원 처리 파이프라인 가동 시작.",
+              "2026-04-09": "탄자니아 영어학원 온보딩 프로세스 시작. 학원 정보 수집 및 기본 설정 진행.",
+            },
+            learnedPatterns: ["민원은 민원담당에게 즉시 배분", "이탈 위험은 주 1회 체크"],
+          },
         },
         {
           organizationId: org.id,
@@ -76,6 +86,14 @@ async function seed() {
             "탄자니아 영어학원 학부모 민원을 접수하고 분석하여 적절한 답변 초안을 작성합니다. 영어 수업 관련 성적 불만, 반 변경, 환불 등 민원 유형을 파악하고 항상 공감적이고 해결 지향적인 톤으로 응대합니다.",
           skills: ["complaint-classifier", "korean-tone-guide"],
           adapterType: "claude_local",
+          icon: "shield",
+          memory: {
+            soul: "학부모 민원을 전문적으로 처리합니다. 탄자니아 영어학원의 톤앤매너를 유지하면서 신속하게 대응합니다.",
+            dailyNotes: {
+              "2026-04-10": "C-001 수업 불만족 민원 처리. 학부모에게 보강 수업 안내 초안 작성 완료.",
+            },
+            learnedPatterns: ["환불 요청은 항상 Level 2 승인 필요", "수업 불만은 보강으로 먼저 제안"],
+          },
         },
         {
           organizationId: org.id,
@@ -87,6 +105,14 @@ async function seed() {
             "탄자니아 영어학원 수강생의 출석 패턴, 단어 시험 점수, 상담 이력 등을 분석하여 이탈 위험 학생을 조기에 감지하고 맞춤형 대응 전략을 제안합니다.",
           skills: ["churn-risk-calculator", "korean-tone-guide"],
           adapterType: "claude_local",
+          icon: "heart",
+          memory: {
+            soul: "학생 이탈 위험을 분석하고 예방 조치를 제안합니다. 출석률, 성적 변화, 수납 지연 등을 종합적으로 분석합니다.",
+            dailyNotes: {
+              "2026-04-10": "이수아(중2) 이탈 위험 점수 0.82 감지. 최근 3주 출석률 40% 하락, 수납 2개월 지연.",
+            },
+            learnedPatterns: ["출석률 60% 이하 + 수납 지연 = 높은 이탈 위험"],
+          },
         },
         {
           organizationId: org.id,
@@ -98,6 +124,12 @@ async function seed() {
             "탄자니아 영어학원 강사 대타, 보강 수업, 시간표 조정 등 영어 수업 스케줄 관련 요청을 처리합니다.",
           skills: ["google-calendar-mcp"],
           adapterType: "claude_local",
+          icon: "calendar",
+          memory: {
+            soul: "수업 일정, 상담 예약, 보강 일정을 관리합니다. 강사와 교실 가용성을 고려하여 최적 일정을 배정합니다.",
+            dailyNotes: {},
+            learnedPatterns: [],
+          },
         },
       ])
       .returning()
@@ -611,7 +643,7 @@ async function seed() {
   ])
 
   // 8. OpsGroups
-  const [opsComplaint, opsStudent] = await db
+  const [opsComplaint, opsStudent, opsOnboarding] = await db
     .insert(schema.opsGroups)
     .values([
       {
@@ -625,6 +657,12 @@ async function seed() {
         name: "수강생 관리",
         description: "이탈 방지 및 재등록 관리",
         color: "#3b82f6",
+      },
+      {
+        organizationId: org.id,
+        name: "온보딩",
+        description: "신규 수강생 등록 및 초기 적응 지원",
+        color: "#10b981",
       },
     ])
     .returning()
@@ -817,7 +855,7 @@ async function seed() {
     .returning()
 
   // 11. Approvals (2개 — pending)
-  await db.insert(schema.approvals).values([
+  const [approval1] = await db.insert(schema.approvals).values([
     {
       organizationId: org.id,
       agentRunId: run1.id,
@@ -853,7 +891,7 @@ async function seed() {
         parentName: "이어머니",
       },
     },
-  ])
+  ]).returning()
 
   // 12. ActivityEvents (15개)
   await db.insert(schema.activityEvents).values([
@@ -1118,6 +1156,65 @@ async function seed() {
       description: "AI 에이전트 자동 초안 생성으로 학부모 민원 평균 응답 시간을 24시간 이내로 단축",
       status: "active",
       targetDate: "2026-03-31",
+    },
+  ])
+
+  // 17. Link some cases to onboarding project
+  await db.update(schema.cases)
+    .set({ opsGroupId: opsOnboarding.id })
+    .where(eq(schema.cases.id, caseC003.id))
+
+  // 18. Notifications (5개)
+  await db.insert(schema.notifications).values([
+    {
+      organizationId: org.id,
+      type: "approval_needed",
+      title: "승인 요청",
+      body: "민원담당이 C-001 응답 초안을 생성했습니다",
+      entityType: "approval",
+      entityId: approval1.id,
+      read: false,
+      createdAt: minsAgo(5),
+    },
+    {
+      organizationId: org.id,
+      type: "agent_completed",
+      title: "에이전트 작업 완료",
+      body: "이탈위험분석이 완료되었습니다",
+      entityType: "agent_run",
+      entityId: run2.id,
+      read: false,
+      createdAt: minsAgo(10),
+    },
+    {
+      organizationId: org.id,
+      type: "case_created",
+      title: "새 케이스 등록",
+      body: "민원 C-003이 자동 등록되었습니다",
+      entityType: "case",
+      entityId: caseC003.id,
+      read: true,
+      createdAt: minsAgo(30),
+    },
+    {
+      organizationId: org.id,
+      type: "risk_detected",
+      title: "이탈 위험 감지",
+      body: "이수아(중2) 이탈 위험 점수 0.82",
+      entityType: "student",
+      entityId: stdSua.id,
+      read: true,
+      createdAt: minsAgo(60),
+    },
+    {
+      organizationId: org.id,
+      type: "reminder",
+      title: "상담 일정 알림",
+      body: "내일 14:00 김민서 학부모 상담 예정",
+      entityType: "schedule",
+      entityId: schedElem1.id,
+      read: true,
+      createdAt: minsAgo(120),
     },
   ])
 

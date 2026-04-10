@@ -1,4 +1,4 @@
-// v0.2.0
+// v0.3.0
 import { useEffect, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -7,6 +7,7 @@ import { routinesApi } from "@/api/routines"
 import { queryKeys } from "@/lib/queryKeys"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Switch } from "@/components/ui/switch"
 import { EmptyState } from "@/components/EmptyState"
 import { Clock, Plus, Loader2, Bot } from "lucide-react"
 
@@ -91,34 +92,6 @@ const FALLBACK_ROUTINES = [
   },
 ]
 
-// ─── Toggle switch ────────────────────────────────────────────────────────────
-
-function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button
-      onClick={() => onChange(!enabled)}
-      className="relative inline-flex items-center rounded-full transition-colors shrink-0"
-      style={{
-        width: 36,
-        height: 20,
-        backgroundColor: enabled ? "var(--color-teal-500)" : "var(--bg-tertiary)",
-      }}
-      aria-checked={enabled}
-      role="switch"
-    >
-      <span
-        className="absolute rounded-full bg-white transition-transform"
-        style={{
-          width: 14,
-          height: 14,
-          left: 3,
-          transform: enabled ? "translateX(16px)" : "translateX(0)",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-        }}
-      />
-    </button>
-  )
-}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -244,7 +217,10 @@ export function RoutinesPage() {
                   </div>
 
                   {/* Toggle */}
-                  <Toggle enabled={isEnabled} onChange={(v) => handleToggle(routine.id, v)} />
+                  <Switch
+                    checked={isEnabled}
+                    onCheckedChange={(v) => handleToggle(routine.id, v)}
+                  />
                 </div>
               )
             })}
