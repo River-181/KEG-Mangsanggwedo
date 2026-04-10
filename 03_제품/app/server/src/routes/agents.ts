@@ -95,8 +95,8 @@ export function agentRoutes(db: Db): Router {
       writeFileSync(join(agentDir, "SOUL.md"), buildSoulMd(name, agentType), "utf-8")
 
       res.status(201).json(agent)
-    } catch (err) {
-      res.status(500).json({ error: "Failed to create agent" })
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to create agent", detail: err?.message ?? String(err) })
     }
   })
 
