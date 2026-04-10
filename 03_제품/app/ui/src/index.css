@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Toss-style spacing */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+
+  /* Toss teal brand */
+  --color-teal-50: #e6fafa;
+  --color-teal-100: #b3f0f0;
+  --color-teal-300: #26c7c7;
+  --color-teal-500: #0ea5b0;
+  --color-teal-600: #0891a0;
+  --color-teal-700: #077e8d;
+
+  --color-primary: var(--color-teal-500);
+  --color-primary-hover: var(--color-teal-600);
+  --color-primary-bg: var(--color-teal-50);
+
+  --color-success: #03b26c;
+  --color-warning: #ffc342;
+  --color-danger: #f04452;
+  --color-info: var(--color-teal-500);
+}
+
+:root {
+  --bg-base: #ffffff;
+  --bg-secondary: #f6f7f9;
+  --bg-tertiary: #f2f4f6;
+  --bg-elevated: #ffffff;
+
+  --text-primary: #191f28;
+  --text-secondary: #4e5968;
+  --text-tertiary: #8b95a1;
+  --text-disabled: #b0b8c1;
+
+  --border-default: #e5e8eb;
+  --border-focus: var(--color-teal-500);
+
+  --shadow-sm: 0 1px 4px rgba(2,32,71,0.05);
+  --shadow-md: 0 4px 16px rgba(2,32,71,0.08), 0 1px 4px rgba(2,32,71,0.04);
+  --shadow-lg: 0 8px 32px rgba(2,32,71,0.10), 0 2px 8px rgba(2,32,71,0.06);
+}
+
+.dark {
+  --bg-base: #17171c;
+  --bg-secondary: #202027;
+  --bg-tertiary: #2c2c35;
+  --bg-elevated: #2c2c35;
+
+  --text-primary: #ffffff;
+  --text-secondary: #c3c3c6;
+  --text-tertiary: #8b8b92;
+
+  --border-default: #2c2c35;
+}
+
+body {
+  font-family: "Toss Product Sans", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+}

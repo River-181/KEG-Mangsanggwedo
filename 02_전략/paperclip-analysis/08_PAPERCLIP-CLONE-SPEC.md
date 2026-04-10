@@ -1,9 +1,9 @@
 ---
 tags:
-  - type/analysis
+  - type/reference
   - area/strategy
-  - status/complete
-date: 2026-04-09
+  - status/active
+date: 2026-04-10
 up: "[[paperclip-analysis]]"
 ---
 
@@ -137,6 +137,34 @@ paperclip-master/
 ---
 
 ## 4. 전체 화면 구성 및 기능 명세
+
+### 4.0 스크린샷으로 추가 확인된 UX 사실
+
+아래 항목은 로컬 `paperclip-capture/` 스크린샷 묶음을 다시 읽고 보강한 내용이다. 즉 코드 구조 추론이 아니라 실제 UI 표면에서 다시 확인된 복제 대상이다.
+
+1. **첫 경험은 chat이 아니라 setup과 board다**
+   - 온보딩은 `회사 생성 -> 회사 설정 입력 -> 운영 보드 진입` 흐름으로 보인다.
+   - 빈 상태에서 먼저 보이는 것은 대화창이 아니라 `빈 문서`, `새 이슈`, `새 프로젝트`, `새 루틴`, `조직도`, `설정`이다.
+
+2. **빈 상태 설계가 강하다**
+   - `새 이슈 생성 모달`, `새 프로젝트 생성 모달`, `루틴 생성 모달`, `문서 작성 모달`, `플러그인 매니저 빈 상태`, `빈 작업 화면`이 따로 존재한다.
+   - 따라서 clone 시에는 “데이터가 있을 때”보다 “아직 아무것도 없을 때 무엇을 클릭하게 하는가”를 먼저 맞춰야 한다.
+
+3. **문서 편집이 1급 시민이다**
+   - 문서 목록, 문서 상세 리더, 본문 편집, 속성 패널, 태그 강조, 새 문서 작성 폼이 별도 화면으로 보인다.
+   - 따라서 `Issue만 있는 툴`이 아니라 `문서-작업-실행`이 함께 도는 워크스페이스로 보는 게 맞다.
+
+4. **설정 화면 비중이 높다**
+   - `Company Settings`, `AI 정책`, `Content Manager`, 고급 설정, 기본 정보 편집, 프롬프트 편집 화면이 별도로 존재한다.
+   - 즉 운영판 MVP라도 설정 UX를 placeholder 수준으로 두면 원본과 체감 차이가 커진다.
+
+5. **실행 중인 작업은 list보다 live detail이 중요하다**
+   - Inbox/Issue 상세 계열 캡처에서 “새 이슈 상세 + 라이브 런” 화면이 반복적으로 보인다.
+   - 복제 시에는 단순 작업목록보다 `선택된 작업 + 라이브 transcript + 우측 속성` 경험을 먼저 맞추는 편이 낫다.
+
+6. **조직도는 decorative가 아니라 실제 entrypoint다**
+   - `조직도-보드-에이전트-배치-화면`, `조직도-또는-에이전트-맵-화면`, `CEO-에이전트-대시보드` 캡처를 보면 agent map이 독립 surface다.
+   - 즉 clone에서도 org chart는 나중 장식이 아니라 핵심 탐색 화면이다.
 
 ### 4.1 레이아웃 쉘 (Layout Shell)
 
@@ -390,6 +418,28 @@ paperclip-master/
 **탭: Configuration (ProjectProperties)** — 상태, 목표 날짜, 설명, 담당 에이전트
 
 **탭: Budget (BudgetPolicyCard)** — 에이전트 상세와 동일한 예산 정책 카드
+
+---
+
+### 화면 8.5: Documents / Knowledge Workspace
+
+스크린샷에서 반복 확인된 별도 작업 영역이다. `Issue Detail > Documents` 서브섹션 수준을 넘어, 문서 목록과 본문 편집이 하나의 독립 surface처럼 보인다.
+
+**복제 시 최소 포함 요소**:
+- 좌측: 문서 목록 또는 테이블
+- 중앙: 선택 문서 본문 리더/에디터
+- 우측: 속성 패널 (`title`, `tags`, `updatedAt`, 연결 이슈/프로젝트)
+- 상단: `New document`, 검색, 보기 전환
+
+**화면 상태**:
+- 빈 상태: "아직 문서 없음" + `New document`
+- 리스트 상태: 문서 제목, 요약, 갱신시각
+- 상세 읽기 상태: 렌더된 마크다운
+- 편집 상태: 본문 에디터 + dirty save bar
+
+**우리 clone 해석**:
+- EduPaperclip에서는 이 영역이 `운영 매뉴얼`, `상담 스크립트`, `학원 정책`, `차량 규정`, `환불 기준`, `수강 안내 FAQ` 저장소가 될 가능성이 높다.
+- 따라서 문서는 단순 attachment가 아니라 `도메인 지식 베이스`다.
 
 ---
 
@@ -1009,7 +1059,73 @@ volumes: pgdata, paperclip-data
 
 ---
 
-## 11. Paperclip의 차별점
+## 11.5 화면 복제 우선순위
+
+다른 에이전트가 clone할 때는 전체 20+ 화면을 한 번에 복제하지 말고 아래 순서로 자른다.
+
+### Phase 1. 운영 쉘 복제
+- Layout Shell
+- Dashboard
+- Issues 목록
+- Issue 상세의 `Chat + Properties`
+
+이 단계의 목표는 "운영판처럼 보이는가"다.
+
+### Phase 2. 실행/조직 복제
+- Agents 목록
+- Agent 상세 `Dashboard / Runs / Configuration`
+- Org Chart
+- Inbox
+
+이 단계의 목표는 "AI 팀을 관리하는 컨트롤 플레인처럼 보이는가"다.
+
+### Phase 3. 지식/설정 복제
+- Documents workspace
+- Company Skills
+- Company Settings
+- Adapter/Plugin Manager
+
+이 단계의 목표는 "운영 지식과 확장 구조가 갖춰졌는가"다.
+
+### Phase 4. 고급 운영 복제
+- Routines
+- Approvals
+- Costs
+- Activity
+- Execution Workspace 상세
+
+이 단계의 목표는 "사람 승인, 비용, 반복 업무, 감사로그까지 닫히는가"다.
+
+---
+
+## 12. Clone Scope Contract
+
+다른 에이전트는 아래 원칙으로만 clone을 진행한다.
+
+### 반드시 맞춰야 하는 것
+- 왼쪽 고정 네비게이션 기반 `board-first shell`
+- `Dashboard -> Issues -> Issue Detail -> Agents -> Org -> Settings`로 이어지는 정보 구조
+- `list + detail + right properties panel` 패턴
+- 빈 상태에서의 CTA
+- live run/transcript를 볼 수 있는 surface
+- 문서와 작업이 같은 워크스페이스에 공존하는 구조
+
+### 그대로 복제하지 않아도 되는 것
+- provider별 비용 카드의 세부 수치 레이아웃
+- 모든 plugin slot의 exact 위치
+- multi-company 완전 구현
+- 원본의 모든 route 수
+- 원본 색상, 아이콘, spacing token
+
+### clone 성공 기준
+- 다른 에이전트가 앱을 켰을 때 "chat app"이 아니라 "AI 운영 control plane"으로 인식한다.
+- 빈 데이터 상태에서도 다음 행동이 명확하다.
+- 새 작업 생성, 작업 선택, 라이브 실행 보기, 에이전트 구성, 조직 탐색까지 데모가 이어진다.
+- 문서와 작업이 한 제품 안에서 연결된다.
+
+---
+
+## 13. Paperclip의 차별점
 
 1. **"회사" 멘탈 모델**: 에이전트를 도구가 아닌 직원으로 모델링 — 조직도, 역할, 보고 라인, 예산, 거버넌스
 
@@ -1027,7 +1143,7 @@ volumes: pgdata, paperclip-data
 
 ---
 
-## 12. 기술 스택 요약
+## 14. 기술 스택 요약
 
 | 계층 | 기술 |
 |------|------|
@@ -1044,4 +1160,69 @@ volumes: pgdata, paperclip-data
 
 ---
 
-*분석 완료: 2026-04-09 | 병렬 에이전트 4개 투입 | 소스: paperclip-master/ 직접 코드 분석*
+## 15. 다른 에이전트를 위한 구현 입력 계약
+
+이 문서를 받고 구현하는 에이전트는 최소 아래 입력을 먼저 확정한다.
+
+1. **복제 대상 범위**
+   - `Phase 1 shell only`
+   - `Phase 1 + 2`
+   - `full control plane`
+
+2. **도메인 번역**
+   - `Company`를 우리 제품에서 무엇으로 부를지
+   - `Issue`를 학원 운영 용어로 무엇으로 부를지
+   - `Agent`를 사용자에게 어떻게 노출할지
+
+3. **문서 workspace 포함 여부**
+   - 포함하면 `Knowledge / Policy / FAQ / Operations` 중 어떤 타입이 먼저 필요한지
+
+4. **실행 surface**
+   - 라이브 transcript를 바로 보여줄지
+   - 요약 카드만 먼저 보여줄지
+
+5. **설정 범위**
+   - `Company Settings`만 먼저 만들지
+   - `Adapters / Plugins / Skills`까지 한 번에 넣을지
+
+### 권장 기본값
+- 범위: `Phase 1 + 2`
+- 문서 workspace: 포함
+- live transcript: 포함
+- multi-company: 제외
+- 비용/승인: placeholder 또는 read-only
+
+### 권장 로컬 폴더 계약
+```text
+app/
+  routes/
+    dashboard/
+    issues/
+    agents/
+    org/
+    documents/
+    settings/
+  features/
+    shell/
+    issue-detail/
+    live-run/
+    properties-panel/
+    document-workspace/
+  entities/
+    company/
+    agent/
+    issue/
+    document/
+    activity/
+  mocks/
+    dashboard.ts
+    issues.ts
+    agents.ts
+    documents.ts
+```
+
+이 정도 구조면 다른 에이전트가 `화면 복제 -> 더미 데이터 연결 -> 실제 spec 번역` 순서로 안전하게 진행할 수 있다.
+
+---
+
+*분석 갱신: 2026-04-10 | 코드 분석 + 로컬 스크린샷 재검토 반영 | 소스: `paperclip-master/` 직접 코드 분석, `paperclip-capture/` UI 캡처 세트*

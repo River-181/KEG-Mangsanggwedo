@@ -1,0 +1,10 @@
+{
+  "name": "hagentos-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HagentOS MVP prototype for Korean education operations",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  }
+}

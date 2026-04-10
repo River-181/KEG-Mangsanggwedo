@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>HagentOS Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="icon-rail">
+        <div class="rail-logo">H</div>
+        <button class="rail-dot is-active" aria-label="dashboard"></button>
+        <button class="rail-dot" aria-label="agents"></button>
+        <button class="rail-dot" aria-label="projects"></button>
+        <div class="rail-spacer"></div>
+        <button class="rail-plus" type="button">+</button>
+      </aside>
+
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <div>
+            <p class="sidebar-label">Operating System</p>
+            <h1>HagentOS</h1>
+          </div>
+          <span class="live-counter" id="liveCounter">0 live</span>
+        </div>
+
+        <label class="search-wrap">
+          <span>Search</span>
+          <input id="quickSearch" type="text" placeholder="Find cases or agents" />
+        </label>
+
+        <nav class="primary-nav">
+          <button class="nav-item is-active" type="button">Dashboard</button>
+          <button class="nav-item" type="button">Inbox</button>
+          <button class="nav-item" type="button">Approvals</button>
+        </nav>
+
+        <section class="side-section">
+          <div class="section-title-row">
+            <span class="section-title">Projects</span>
+            <button class="mini-plus" type="button">+</button>
+          </div>
+          <div id="projectList" class="project-list"></div>
+        </section>
+
+        <section class="side-section">
+          <span class="section-title">Work</span>
+          <div id="workList" class="work-list"></div>
+        </section>
+
+        <section class="side-section">
+          <span class="section-title">Agents</span>
+          <div id="agentList" class="agent-list"></div>
+        </section>
+
+        <div class="sidebar-foot">
+          <span class="foot-label">Institution</span>
+          <strong id="sidebarInstitution">HagentOS</strong>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="workspace-topbar">
+          <div id="breadcrumbs" class="breadcrumbs"></div>
+          <div class="topbar-meta">
+            <span id="topStatus" class="status-pill">idle</span>
+            <span id="topHint" class="top-hint"></span>
+          </div>
+        </header>
+
+        <main class="workspace-main">
+          <section class="panel-dark agent-stage">
+            <div id="agentHero"></div>
+            <div id="latestRun"></div>
+          </section>
+
+          <section id="chartGrid" class="chart-grid"></section>
+
+          <section class="content-grid">
+            <div class="panel-dark issues-panel">
+              <div class="panel-bar">
+                <div>
+                  <p class="panel-tag">Work</p>
+                  <h2>Recent Operational Cases</h2>
+                </div>
+                <button class="ghost-link" type="button">See All</button>
+              </div>
+              <div id="issuesTable"></div>
+            </div>
+
+            <div class="right-rail-panels">
+              <section class="panel-dark compact-panel" id="approvalQueue"></section>
+              <section class="panel-dark compact-panel" id="commandCenter"></section>
+              <section class="panel-dark compact-panel" id="institutionPanel"></section>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

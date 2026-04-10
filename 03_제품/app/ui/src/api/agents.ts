@@ -1,0 +1,13 @@
+import { api } from "./client"
+
+export const agentsApi = {
+  list: (orgId: string) => api.get<any[]>(`/organizations/${orgId}/agents`),
+  get: (id: string) => api.get<any>(`/agents/${id}`),
+  create: (orgId: string, data: unknown) =>
+    api.post<any>(`/organizations/${orgId}/agents`, data),
+  update: (id: string, data: unknown) => api.patch<any>(`/agents/${id}`, data),
+  delete: (id: string) => api.delete<void>(`/agents/${id}`),
+  wakeup: (id: string, body?: { reason?: string; caseId?: string }) =>
+    api.post<any>(`/agents/${id}/wakeup`, body ?? {}),
+  stop: (id: string) => api.post<any>(`/agents/${id}/stop`, {}),
+}
