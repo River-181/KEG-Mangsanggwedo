@@ -78,6 +78,45 @@ export function studentRoutes(db: Db): Router {
     }
   })
 
+  // POST /organizations/:orgId/students
+  router.post("/organizations/:orgId/students", async (req, res) => {
+    try {
+      const { orgId } = req.params
+      const { name, grade, parentName, parentPhone, shuttle } = req.body
+
+      if (!name) {
+        res.status(400).json({ error: "name required" })
+        return
+      }
+
+      const [student] = await db
+        .insert(schema.students)
+        .values({
+          organizationId: orgId,
+          name,
+          grade: grade ?? "",
+          status: "active",
+          enrolledAt: new Date().toISOString().split("T")[0],
+        })
+        .returning()
+
+      if (parentName) {
+        await db.insert(schema.parents).values({
+          organizationId: orgId,
+          studentId: student.id,
+          name: parentName,
+          relation: "부모",
+          phone: parentPhone ?? "",
+          email: "",
+        })
+      }
+
+      res.status(201).json(student)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to create student" })
+    }
+  })
+
   // Instructors list
   router.get("/organizations/:orgId/instructors", async (req, res) => {
     try {

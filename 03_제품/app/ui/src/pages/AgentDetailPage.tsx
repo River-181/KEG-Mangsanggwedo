@@ -537,7 +537,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
 
 // ─── Instructions tab ─────────────────────────────────────────────────────────
 
-function InstructionsTab({ agent }: { agent: any }) {
+function InstructionsTab({ agent, instructionFiles }: { agent: any; instructionFiles: any[] }) {
   const queryClient = useQueryClient()
   const original = agent.systemPrompt ?? agent.system_prompt ?? agent.instructions ?? ""
   const [value, setValue] = useState(original)
@@ -595,6 +595,37 @@ function InstructionsTab({ agent }: { agent: any }) {
               저장
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Instruction files */}
+      {instructionFiles.length > 0 && (
+        <div className="space-y-2 mb-4">
+          <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
+            지침 파일 ({instructionFiles.length}개)
+          </p>
+          {instructionFiles.map((f: any) => (
+            <details key={f.filename} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
+              <summary
+                className="px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2"
+                style={{ color: "var(--text-primary)" }}
+              >
+                <FileText size={14} style={{ color: "var(--color-teal-500)" }} />
+                {f.filename}
+              </summary>
+              <pre
+                className="px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap overflow-auto max-h-[400px]"
+                style={{
+                  backgroundColor: "var(--bg-secondary)",
+                  color: "var(--text-secondary)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  borderTop: "1px solid var(--border-default)",
+                }}
+              >
+                {f.content}
+              </pre>
+            </details>
+          ))}
         </div>
       )}
 
@@ -921,6 +952,16 @@ export function AgentDetailPage() {
     enabled: !!id,
   })
 
+  // ── fetch instruction files ────────────────────────────────────────────────
+  const { data: instructionFiles = { files: [] } } = useQuery({
+    queryKey: ["agents", id, "instructions"],
+    queryFn: async () => {
+      const res = await fetch(`/api/agents/${id}/instructions`)
+      return res.json()
+    },
+    enabled: !!id,
+  })
+
   // ── fetch agent memory ─────────────────────────────────────────────────────
   const { data: memory = {} } = useQuery({
     queryKey: ["agents", id, "memory"],
@@ -1013,7 +1054,7 @@ export function AgentDetailPage() {
               </TabsContent>
 
               <TabsContent value="instructions" className="mt-0">
-                <InstructionsTab agent={agent} />
+                <InstructionsTab agent={agent} instructionFiles={(instructionFiles as any).files ?? []} />
               </TabsContent>
 
               <TabsContent value="skills" className="mt-0">

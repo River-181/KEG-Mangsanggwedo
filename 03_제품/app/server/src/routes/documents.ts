@@ -33,12 +33,19 @@ export function documentRoutes(db: Db): Router {
   // Create document
   router.post("/organizations/:orgId/documents", async (req, res) => {
     try {
+      const { title, category, body, tags } = req.body
+
+      if (!title) {
+        res.status(400).json({ error: "title required" })
+        return
+      }
+
       const [doc] = await db.insert(schema.documents).values({
         organizationId: req.params.orgId,
-        title: req.body.title ?? "제목 없음",
-        body: req.body.body ?? "",
-        category: req.body.category ?? "general",
-        tags: req.body.tags ?? [],
+        title,
+        category: category ?? "general",
+        body: body ?? "",
+        tags: tags ?? [],
       }).returning()
       res.status(201).json(doc)
     } catch (err) {

@@ -1,5 +1,5 @@
-// v0.3.0
-import { useEffect, useState } from "react"
+// v0.4.0
+import { useEffect, useState, type ReactNode } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -81,6 +81,164 @@ const CATEGORY_COLORS: Record<string, { bg: string; color: string }> = {
   manual: { bg: "rgba(168,85,247,0.12)", color: "#a855f7" },
   script: { bg: "rgba(245,158,11,0.12)", color: "#f59e0b" },
   general: { bg: "var(--bg-tertiary)", color: "var(--text-secondary)" },
+}
+
+// ─── Markdown body renderer ───────────────────────────────────────────────────
+
+function MarkdownBody({ text }: { text: string }) {
+  const lines = text.split("\n")
+  const elements: ReactNode[] = []
+  let i = 0
+
+  while (i < lines.length) {
+    const line = lines[i]
+
+    // H2
+    if (line.startsWith("## ")) {
+      elements.push(
+        <h2
+          key={i}
+          className="text-base font-bold mt-5 mb-2 first:mt-0"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {line.slice(3)}
+        </h2>
+      )
+      i++
+      continue
+    }
+
+    // H3
+    if (line.startsWith("### ")) {
+      elements.push(
+        <h3
+          key={i}
+          className="text-sm font-semibold mt-4 mb-1.5"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {line.slice(4)}
+        </h3>
+      )
+      i++
+      continue
+    }
+
+    // H1
+    if (line.startsWith("# ")) {
+      elements.push(
+        <h1
+          key={i}
+          className="text-lg font-bold mt-4 mb-2 first:mt-0"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {line.slice(2)}
+        </h1>
+      )
+      i++
+      continue
+    }
+
+    // Unordered list item
+    if (/^[-*] /.test(line)) {
+      const listItems: ReactNode[] = []
+      while (i < lines.length && /^[-*] /.test(lines[i])) {
+        listItems.push(
+          <li key={i} className="text-sm leading-relaxed ml-4" style={{ color: "var(--text-secondary)" }}>
+            <InlineMarkdown text={lines[i].slice(2)} />
+          </li>
+        )
+        i++
+      }
+      elements.push(
+        <ul key={`ul-${i}`} className="list-disc list-inside space-y-1 my-2">
+          {listItems}
+        </ul>
+      )
+      continue
+    }
+
+    // Ordered list item
+    if (/^\d+\. /.test(line)) {
+      const listItems: ReactNode[] = []
+      while (i < lines.length && /^\d+\. /.test(lines[i])) {
+        const match = lines[i].match(/^\d+\. (.*)$/)
+        listItems.push(
+          <li key={i} className="text-sm leading-relaxed ml-4" style={{ color: "var(--text-secondary)" }}>
+            <InlineMarkdown text={match ? match[1] : lines[i]} />
+          </li>
+        )
+        i++
+      }
+      elements.push(
+        <ol key={`ol-${i}`} className="list-decimal list-inside space-y-1 my-2">
+          {listItems}
+        </ol>
+      )
+      continue
+    }
+
+    // Blank line → spacer
+    if (line.trim() === "") {
+      elements.push(<div key={i} className="h-2" />)
+      i++
+      continue
+    }
+
+    // Paragraph
+    elements.push(
+      <p key={i} className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+        <InlineMarkdown text={line} />
+      </p>
+    )
+    i++
+  }
+
+  return <div className="space-y-0.5">{elements}</div>
+}
+
+function InlineMarkdown({ text }: { text: string }) {
+  // Parse **bold**, *italic*, `code`
+  const parts: ReactNode[] = []
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g
+  let last = 0
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > last) {
+      parts.push(text.slice(last, match.index))
+    }
+    const token = match[0]
+    if (token.startsWith("**")) {
+      parts.push(
+        <strong key={match.index} className="font-semibold" style={{ color: "var(--text-primary)" }}>
+          {token.slice(2, -2)}
+        </strong>
+      )
+    } else if (token.startsWith("*")) {
+      parts.push(
+        <em key={match.index} className="italic">
+          {token.slice(1, -1)}
+        </em>
+      )
+    } else if (token.startsWith("`")) {
+      parts.push(
+        <code
+          key={match.index}
+          className="px-1 py-0.5 rounded text-xs font-mono"
+          style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
+        >
+          {token.slice(1, -1)}
+        </code>
+      )
+    }
+    last = match.index + token.length
+  }
+
+  if (last < text.length) {
+    parts.push(text.slice(last))
+  }
+
+  return <>{parts}</>
 }
 
 function CategoryBadge({ category }: { category: string }) {
@@ -363,23 +521,55 @@ export function DocumentsPage() {
         <ScrollArea className="flex-1">
           {displayDoc ? (
             <div className="p-6 max-w-2xl">
-              <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-xl font-bold flex-1" style={{ color: "var(--text-primary)" }}>
+              {/* Title row */}
+              <div className="flex items-start gap-3 mb-2">
+                <h2 className="text-xl font-bold flex-1 leading-snug" style={{ color: "var(--text-primary)" }}>
                   {displayDoc.title}
                 </h2>
                 <CategoryBadge category={displayDoc.category} />
               </div>
-              {(displayDoc.updatedAt ?? displayDoc.updated_at) && (
-                <p className="text-xs mb-5" style={{ color: "var(--text-tertiary)" }}>
-                  마지막 수정: {formatDate(displayDoc.updatedAt ?? displayDoc.updated_at)}
-                </p>
-              )}
-              <div
-                className="text-sm leading-relaxed whitespace-pre-wrap"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                {displayDoc.body}
+
+              {/* Meta row: AI badge + date */}
+              <div className="flex items-center gap-2 flex-wrap mb-5">
+                {(displayDoc.tags?.includes("ai-generated") || !displayDoc.author) && (
+                  <Badge
+                    className="text-xs border-0 px-2 py-0.5"
+                    style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "var(--color-teal-500)" }}
+                  >
+                    AI 생성
+                  </Badge>
+                )}
+                {displayDoc.author && (
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    {displayDoc.author}
+                  </span>
+                )}
+                {(displayDoc.updatedAt ?? displayDoc.updated_at) && (
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    마지막 수정: {formatDate(displayDoc.updatedAt ?? displayDoc.updated_at)}
+                  </span>
+                )}
               </div>
+
+              {/* Tags */}
+              {displayDoc.tags && displayDoc.tags.filter((t) => t !== "ai-generated").length > 0 && (
+                <div className="flex gap-1.5 flex-wrap mb-5">
+                  {displayDoc.tags.filter((t) => t !== "ai-generated").map((tag) => (
+                    <Badge
+                      key={tag}
+                      className="text-xs border-0 px-2 py-0.5"
+                      style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Divider */}
+              <div className="mb-5" style={{ borderTop: "1px solid var(--border-default)" }} />
+
+              <MarkdownBody text={displayDoc.body} />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full py-24">

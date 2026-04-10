@@ -232,7 +232,7 @@ export function DashboardPage() {
   }))
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full min-h-0">
       {/* Instruction bar */}
       <div
         className="px-6 py-3"

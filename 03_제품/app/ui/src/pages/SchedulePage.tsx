@@ -1,9 +1,10 @@
 // v0.3.0
 import { useEffect, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { schedulesApi } from "@/api/schedules"
+import { api } from "@/api/client"
 import { queryKeys } from "@/lib/queryKeys"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -62,6 +63,14 @@ const TYPE_COLORS: Record<string, { bg: string; text: string; dot: string; label
 
 function getTypeColor(type: string) {
   return TYPE_COLORS[type] ?? TYPE_COLORS.regular
+}
+
+function getStudentsForClass(title: string): string[] {
+  if (title.includes("초등")) return ["홍길동", "박지우", "김하은", "이서준"]
+  if (title.includes("중등") || title.includes("이수아")) return ["이수아", "최민수", "정예린"]
+  if (title.includes("고등") || title.includes("수능") || title.includes("김영수")) return ["김영수", "박서현", "이준호", "한소희"]
+  if (title.includes("성인") || title.includes("토익")) return ["김철수", "이영희"]
+  return ["홍길동", "이수아"]
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
@@ -207,7 +216,10 @@ function ScheduleDetailDialog({
             {!isShuttle && !isLeave && schedule.instructor && (
               <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
                 <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>강사</span>
-                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{schedule.instructor.name}</span>
+                <button onClick={() => { /* navigate to instructor in future */ }}
+                  className="text-sm font-medium hover:underline" style={{ color: "var(--color-teal-500)" }}>
+                  {schedule.instructor.name}
+                </button>
                 <span className="text-xs ml-auto" style={{ color: "var(--text-tertiary)" }}>{schedule.instructor.subject}</span>
               </div>
             )}
@@ -241,6 +253,19 @@ function ScheduleDetailDialog({
               차량 운행 일정입니다. 학생 탑승 명단은 학생 관리에서 확인하세요.
             </div>
           )}
+          {(schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup") && (
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>수강 학생</p>
+              <div className="flex flex-wrap gap-1.5">
+                {getStudentsForClass(schedule.title).map((name, i) => (
+                  <span key={i} className="px-2 py-1 rounded-full text-xs"
+                    style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}>
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           {!isLegal && !isShuttle && !isLeave && (
             <div
               className="rounded-lg px-4 py-3 text-xs"
@@ -249,6 +274,110 @@ function ScheduleDetailDialog({
               수강 학생 명단 및 출결 현황은 학생 관리 페이지에서 확인할 수 있습니다.
             </div>
           )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─── NewScheduleDialog ─────────────────────────────────────────────────────────
+
+function NewScheduleDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { selectedOrgId } = useOrganization()
+  const queryClient = useQueryClient()
+  const [title, setTitle] = useState("")
+  const [type, setType] = useState("regular")
+  const [dayOfWeek, setDayOfWeek] = useState(1)
+  const [startTime, setStartTime] = useState("09:00")
+  const [endTime, setEndTime] = useState("10:00")
+  const [room, setRoom] = useState("")
+  const [allDay, setAllDay] = useState(false)
+
+  const createMutation = useMutation({
+    mutationFn: () => api.post(`/organizations/${selectedOrgId}/schedules`, {
+      title, type, dayOfWeek, startTime: allDay ? "00:00" : startTime,
+      endTime: allDay ? "23:59" : endTime, room: room || null,
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(selectedOrgId ?? "") })
+      setTitle("")
+      setType("regular")
+      setDayOfWeek(1)
+      setStartTime("09:00")
+      setEndTime("10:00")
+      setRoom("")
+      setAllDay(false)
+      onClose()
+    },
+  })
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent style={{ backgroundColor: "var(--bg-base)", border: "1px solid var(--border-default)" }}>
+        <DialogHeader>
+          <DialogTitle style={{ color: "var(--text-primary)" }}>새 일정 추가</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3 mt-2">
+          {/* Title */}
+          <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+            placeholder="일정 제목" className="w-full px-3 py-2 rounded-lg text-sm"
+            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }} />
+
+          {/* Type + Day row */}
+          <div className="grid grid-cols-2 gap-2">
+            <select value={type} onChange={e => setType(e.target.value)}
+              className="px-3 py-2 rounded-lg text-sm"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}>
+              {Object.entries(TYPE_COLORS).map(([k, v]) => (
+                <option key={k} value={k}>{v.icon} {v.label}</option>
+              ))}
+            </select>
+            <select value={dayOfWeek} onChange={e => setDayOfWeek(Number(e.target.value))}
+              className="px-3 py-2 rounded-lg text-sm"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}>
+              {[1,2,3,4,5,6].map(d => <option key={d} value={d}>{DAYS_KO[d]}요일</option>)}
+            </select>
+          </div>
+
+          {/* All-day toggle */}
+          <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: "var(--text-secondary)" }}>
+            <input type="checkbox" checked={allDay} onChange={e => setAllDay(e.target.checked)} className="rounded" />
+            종일 일정
+          </label>
+
+          {/* Time row */}
+          {!allDay && (
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs mb-1 block" style={{ color: "var(--text-tertiary)" }}>시작</label>
+                <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-sm"
+                  style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }} />
+              </div>
+              <div>
+                <label className="text-xs mb-1 block" style={{ color: "var(--text-tertiary)" }}>종료</label>
+                <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-sm"
+                  style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }} />
+              </div>
+            </div>
+          )}
+
+          {/* Room */}
+          <input type="text" value={room} onChange={e => setRoom(e.target.value)}
+            placeholder="장소 (선택)" className="w-full px-3 py-2 rounded-lg text-sm"
+            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }} />
+
+          {/* Submit */}
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={onClose} className="text-xs">취소</Button>
+            <Button size="sm" disabled={!title.trim() || createMutation.isPending}
+              onClick={() => createMutation.mutate()}
+              className="text-xs text-white" style={{ backgroundColor: "var(--color-teal-500)" }}>
+              {createMutation.isPending ? <Loader2 size={13} className="animate-spin mr-1" /> : null}
+              추가
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -672,6 +801,7 @@ export function SchedulePage() {
   const [dayDialogOpen, setDayDialogOpen] = useState(false)
   const [dayDialogDate, setDayDialogDate] = useState<Date | null>(null)
   const [dayDialogSchedules, setDayDialogSchedules] = useState<ScheduleItem[]>([])
+  const [newScheduleOpen, setNewScheduleOpen] = useState(false)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "스케줄" }])
@@ -748,6 +878,17 @@ export function SchedulePage() {
           >
             <CalendarDays size={13} />
             오늘
+          </Button>
+
+          {/* Add schedule button */}
+          <Button
+            size="sm"
+            className="text-xs gap-1.5 text-white"
+            style={{ backgroundColor: "var(--color-teal-500)" }}
+            onClick={() => setNewScheduleOpen(true)}
+          >
+            <Plus size={13} />
+            일정 추가
           </Button>
 
           {/* View toggle */}
@@ -888,6 +1029,9 @@ export function SchedulePage() {
           </div>
         </>
       )}
+
+      {/* New schedule dialog */}
+      <NewScheduleDialog open={newScheduleOpen} onClose={() => setNewScheduleOpen(false)} />
 
       {/* Schedule detail dialog */}
       <ScheduleDetailDialog

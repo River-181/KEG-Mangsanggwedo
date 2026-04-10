@@ -23,6 +23,7 @@ import { projectRoutes } from "./routes/projects.js"
 import { studentRoutes } from "./routes/students.js"
 import { scheduleRoutes } from "./routes/schedules.js"
 import { webhookRoutes } from "./routes/webhook.js"
+import { agentInstructionsRoutes } from "./routes/agent-instructions.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -39,6 +40,7 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api/health", healthRoutes(db))
   app.use("/api/organizations", organizationRoutes(db))
   app.use("/api", caseRoutes(db))
+  app.use("/api/agents", agentInstructionsRoutes(db))
   app.use("/api", agentRoutes(db))
   app.use("/api", approvalRoutes(db))
   app.use("/api", activityRoutes(db))
