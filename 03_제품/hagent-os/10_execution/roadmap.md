@@ -1,9 +1,11 @@
 ---
 tags: [area/product, type/reference, status/active, workflow/execution]
-date: 2026-04-09
+date: 2026-04-10
 up: "[[hagent-os/README]]"
 ---
 # Roadmap
+
+> 마지막 업데이트: 2026-04-10 (v0.4.0 커밋 후)
 
 ## 역할 분담
 - **이승보(승)**: AI 에이전트/오케스트레이터 설계 및 구현, Claude API 연결, 대회 전략
@@ -12,48 +14,57 @@ up: "[[hagent-os/README]]"
 
 ---
 
-## Phase 0: 대회 최종 스프린트 (D-4, ~4/13)
+## Phase 0: 대회 최종 스프린트 (D-3, ~4/13)
 
 ### 목표
 Must-have 기능만 구현. 평가 기준 점수 최대화.
 
 ### Day별 목표
 
-**D5 (4/10 목): 인프라 + 단일 흐름 스켈레톤**
-- [ ] Vite + React 19 + Express v5 + Drizzle ORM 초기화 — 용
-- [ ] 핵심 테이블만: Organization, Agent, Case, AgentRun, Approval — 승+용
-- [ ] embedded-postgres 로컬 개발 환경 구성 — 용
-- [ ] local_trusted 모드 (인증 없이 시작) — 용
-- [ ] Mock 데이터 투입 (학생 10명, 민원 3건) — 승
-- [ ] Claude API 키 환경변수 설정, 연결 확인 — 승
+**D5 (4/10 목): 인프라 + 앱 스켈레톤 + 운영 갭 해소** ✅ 완료
+- [x] Vite + React 19 + Express v5 + Drizzle ORM 초기화
+- [x] 핵심 테이블: Organization, Agent, Case, AgentRun, Approval, Student, Instructor, Schedule, Attendance, Documents, Routines, Goals, OpsGroups, ActivityEvents, Notifications 등 22+ 테이블
+- [x] PostgreSQL 17 로컬 + Drizzle ORM 마이그레이션 구성
+- [x] local_trusted 모드 (인증 없이 시작)
+- [x] Seed 데이터: 탄자니아 영어학원 (학생 10명, 강사 5명, 수업 12개, 민원 케이스 5건, 에이전트 7종)
+- [x] Claude API 연결 (mock fallback 포함)
+- [x] E2E 파이프라인: dispatch → orchestrator → complaint agent → AgentRun → Approval
+- [x] 카카오톡/SMS 웹훅 → 케이스 자동 생성 + 에이전트 배정
+- [x] 24개 페이지: Dashboard, Inbox, Cases(+칸반), CaseDetail, Approvals, Agents, AgentDetail, OrgChart, Schedule, Students, Instructors, Goals, Routines, Projects, Documents, Skills, Costs, Activity, Settings, Onboarding 등
+- [x] 에이전트 Controls: Assign Task, Run Heartbeat, Pause/Resume
+- [x] 에이전트 Instructions (파일 뷰어 + 시스템 프롬프트 편집)
+- [x] k-skill 카탈로그 12종 + 에이전트 스킬 장착 모달
+- [x] 운영 갭 감사 + P0/P1 즉시 수정 (InstructorsPage, SchedulePage 편집/삭제, 반배정, 일괄승인)
+- [x] DB 스키마 v2: students(classGroup/shuttle), instructors(email), student_schedules 테이블
+- [x] 커밋: f32570b, 9a4c80c
 
-**D6 (4/11 금): 민원 단일 흐름 완성**
-- [ ] Complaint Agent (Claude API 연결) — 승
-- [ ] 케이스 생성 → 에이전트 실행 → 초안 생성 — 승
-- [ ] Approval 상태 머신 (pending → approved/rejected) — 용
-- [ ] Backend API (민원 조회, 승인 업데이트) — 용
-- [ ] 기본 에이전트 동작 테스트 — 승
+**D6 (4/11 금): 에이전트 E2E 검증 + 온보딩 + 배포** ← 현재 여기
+- [ ] DB 마이그레이션 실행 (0002_education_schema_v2.sql) — 용
+- [ ] OnboardingPage 완성: 학원명 입력 → 에이전트팀 자동 배치 → 대시보드 리디렉션 — 용
+- [ ] 에이전트 E2E 재검증: dispatch → run → approval 실시간 SSE 확인 — 승
+- [ ] Heartbeat cron 동작 확인 (node-cron 07:00) — 승
+- [ ] Railway/Render 배포 + 환경변수 설정 — 용
+- [ ] GitHub README 작성 (라이브 URL 포함) — 용
+- [ ] 데모 스크립트 v0.1 작성 (2분 시연 경로) — 승+용
 
-**D7 (4/12 토): 승인 대시보드 + Heartbeat**
-- [ ] 승인 카드 UI (카드 + 원클릭 승인) — 용
-- [ ] node-cron 07:00 heartbeat (Orchestrator → Complaint + Retention) — 승
-- [ ] Retention Agent (기본 이탈 감지) — 승
-- [ ] 모바일 반응형 — 용
-- [ ] 데모 시나리오 준비 (민원 2~3건) — 승+용
+**D7 (4/12 토): 안정화 + 데모 리허설**
+- [ ] 데모 시나리오 실제 실행 2회 (민원 접수 → 에이전트 처리 → 승인) — 승+용
+- [ ] AI 리포트 초안 완성 (제출 필수) — 승
+- [ ] 버그 수정 및 UI 폴리싱 — 용
+- [ ] k-skill 실제 동작 확인 (refund-calculator, k-education-law-lookup) — 승
 
-**D8 (4/13 일): 완성 + 배포**
-- [ ] GitHub 정리 + 라이브 데모 환경 배포 — 용
-- [ ] k-skill 레지스트리 UI (정적 카탈로그) — 용
-- [ ] 데모 시나리오 최종 테스트 — 승+용
-- [ ] 제출 — 용
+**D8 (4/13 일): 제출**
+- [ ] 최종 데모 테스트 — 승+용
+- [ ] 제출 패키징 (README + AI 리포트 + 라이브 URL + GitHub) — 용
+- [ ] 제출 마감 24:00 전 완료
 
-**절대 하지 않는 것 (D5-D8):**
-- [ ] Google Calendar sync → v1.1
-- [ ] 카카오/SMS → v1.1
-- [ ] Scheduler Agent 실제 에이전트 로직 → UI만
-- [ ] 복잡한 인증 → local_trusted 모드로 시작
+**절대 하지 않는 것 (D6-D8):**
+- [ ] Google Calendar sync → Phase 1
+- [ ] 카카오 i 오픈빌더 실제 연결 → Phase 1 (웹훅 엔드포인트만 준비됨)
+- [ ] Scheduler Agent 실제 에이전트 로직 → UI+루틴 완성으로 대체
+- [ ] 복잡한 인증 → local_trusted 모드로 제출
 
-> **Codex + Opus 검증 결과**: 원래 계획보다 30-40% 축소. 민원 처리 단일 흐름 완성이 우선.
+> **현재 상태**: D5 예상 범위를 크게 초과 달성. D6는 배포·온보딩·E2E 검증에 집중.
 
 ---
 
