@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { casesApi } from "@/api/cases"
+import { agentsApi } from "@/api/agents"
 import { queryKeys } from "@/lib/queryKeys"
 import { useOrganization } from "@/context/OrganizationContext"
 import { ToastContext } from "@/components/ToastContext"
@@ -42,12 +43,7 @@ const severityOptions = [
   { value: "low", label: "낮음", color: "var(--text-tertiary)" },
 ]
 
-const DEMO_AGENTS = [
-  { id: "agent-001", name: "민원담당" },
-  { id: "agent-002", name: "이탈방어" },
-  { id: "agent-003", name: "보강관리" },
-  { id: "agent-004", name: "환불처리" },
-]
+// Agent list is fetched from API in the component
 
 // ─── initial state ──────────────────────────────────────────────────────────
 
@@ -79,6 +75,13 @@ export function NewCaseDialog({ open, onOpenChange, casesCount = 0 }: NewCaseDia
 
   const [form, setForm] = useState(defaultForm)
   const [errors, setErrors] = useState<{ title?: string }>({})
+
+  // Fetch real agents
+  const { data: agents = [] } = useQuery({
+    queryKey: queryKeys.agents.list(selectedOrgId ?? ""),
+    queryFn: () => agentsApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId && open,
+  })
 
   const nextId = `C-${String(casesCount + 1).padStart(3, "0")}`
 
@@ -187,7 +190,7 @@ export function NewCaseDialog({ open, onOpenChange, casesCount = 0 }: NewCaseDia
                   <SelectValue placeholder="에이전트 선택" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DEMO_AGENTS.map((a) => (
+                  {(agents as any[]).map((a: any) => (
                     <SelectItem key={a.id} value={a.id} className="text-xs">
                       {a.name}
                     </SelectItem>

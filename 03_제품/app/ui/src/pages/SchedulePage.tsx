@@ -6,6 +6,7 @@ import { useOrganization } from "@/context/OrganizationContext"
 import { schedulesApi } from "@/api/schedules"
 import { queryKeys } from "@/lib/queryKeys"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Loader2, Plus, CalendarDays } from "lucide-react"
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -45,16 +46,18 @@ const DAY_INDEX_MAP: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6:
 
 // ─── Type color config ─────────────────────────────────────────────────────────
 
-type ScheduleType = "regular" | "special" | "makeup" | "counseling" | "event" | "admin" | "legal"
+type ScheduleType = "regular" | "special" | "makeup" | "counseling" | "event" | "admin" | "legal" | "shuttle" | "leave"
 
-const TYPE_COLORS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  regular:    { bg: "#ccfbf1", text: "#0f766e", dot: "#14b8a6", label: "수업" },
-  special:    { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", label: "특강" },
-  makeup:     { bg: "#dbeafe", text: "#1e40af", dot: "#3b82f6", label: "보강" },
-  counseling: { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", label: "상담" },
-  event:      { bg: "#ede9fe", text: "#6d28d9", dot: "#8b5cf6", label: "이벤트" },
-  admin:      { bg: "#f3f4f6", text: "#374151", dot: "#6b7280", label: "행정" },
-  legal:      { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444", label: "법정기한" },
+const TYPE_COLORS: Record<string, { bg: string; text: string; dot: string; label: string; icon: string }> = {
+  regular:    { bg: "#ccfbf1", text: "#0f766e", dot: "#14b8a6", label: "수업", icon: "📚" },
+  special:    { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", label: "특강", icon: "⭐" },
+  makeup:     { bg: "#dbeafe", text: "#1e40af", dot: "#3b82f6", label: "보강", icon: "🔄" },
+  counseling: { bg: "#fef9c4", text: "#854d0e", dot: "#ca8a04", label: "상담", icon: "💬" },
+  event:      { bg: "#ede9fe", text: "#6d28d9", dot: "#8b5cf6", label: "이벤트", icon: "🎉" },
+  admin:      { bg: "#f3f4f6", text: "#374151", dot: "#6b7280", label: "행정", icon: "📋" },
+  legal:      { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444", label: "법정기한", icon: "⚖️" },
+  shuttle:    { bg: "#e0e7ff", text: "#3730a3", dot: "#6366f1", label: "등하원", icon: "🚐" },
+  leave:      { bg: "#fef3c7", text: "#92400e", dot: "#d97706", label: "휴가", icon: "🏖️" },
 }
 
 function getTypeColor(type: string) {
@@ -142,49 +145,110 @@ function ScheduleDetailDialog({
   if (!schedule) return null
   const colors = getTypeColor(schedule.type)
   const dayLabel = DAYS_KO[schedule.dayOfWeek] ?? "?"
+  const startH = parseHour(schedule.startTime)
+  const endH = parseHour(schedule.endTime)
+  const startM = parseMinute(schedule.startTime)
+  const endM = parseMinute(schedule.endTime)
+  const durationMin = (endH * 60 + endM) - (startH * 60 + startM)
+  const durationLabel = durationMin >= 60
+    ? `${Math.floor(durationMin / 60)}시간${durationMin % 60 > 0 ? ` ${durationMin % 60}분` : ""}`
+    : `${durationMin}분`
+
+  const isLegal = schedule.type === "legal"
+  const isShuttle = schedule.type === "shuttle"
+  const isLeave = schedule.type === "leave"
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" style={{ backgroundColor: "var(--bg-base)", border: "1px solid var(--border-default)" }}>
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
             <span
-              className="px-2 py-0.5 rounded-full text-xs font-semibold"
+              className="px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
               style={{ backgroundColor: colors.bg, color: colors.text }}
             >
+              <span>{colors.icon}</span>
               {colors.label}
             </span>
+            {isLegal && (
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#ef4444" }}>
+                필수
+              </span>
+            )}
           </div>
-          <DialogTitle className="text-lg">{schedule.title}</DialogTitle>
+          <DialogTitle className="text-lg" style={{ color: "var(--text-primary)" }}>{schedule.title}</DialogTitle>
           <DialogDescription>
-            {dayLabel}요일 · {formatTimeRange(schedule.startTime, schedule.endTime)}
+            매주 {dayLabel}요일 · {formatTimeRange(schedule.startTime, schedule.endTime)} · {durationLabel}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3 mt-2">
-          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-            <span className="font-medium w-16" style={{ color: "var(--text-tertiary)" }}>강사</span>
-            <span>{schedule.instructor?.name ?? "미배정"}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-            <span className="font-medium w-16" style={{ color: "var(--text-tertiary)" }}>과목</span>
-            <span>{schedule.instructor?.subject ?? "—"}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-            <span className="font-medium w-16" style={{ color: "var(--text-tertiary)" }}>강의실</span>
-            <span>{schedule.room ?? "미정"}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-            <span className="font-medium w-16" style={{ color: "var(--text-tertiary)" }}>수업시간</span>
-            <span>{formatTimeRange(schedule.startTime, schedule.endTime)}</span>
+          {/* Color-coded time block */}
+          <div
+            className="rounded-xl px-4 py-3 flex items-center gap-3"
+            style={{ backgroundColor: colors.bg, border: `1px solid ${colors.dot}30` }}
+          >
+            <div className="text-2xl">{colors.icon}</div>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: colors.text }}>
+                {formatTimeRange(schedule.startTime, schedule.endTime)}
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>
+                {durationLabel} · 매주 {dayLabel}요일
+              </p>
+            </div>
           </div>
 
+          {/* Details grid */}
           <div
-            className="rounded-lg px-4 py-3 text-sm mt-2"
-            style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}
+            className="rounded-xl overflow-hidden"
+            style={{ border: "1px solid var(--border-default)" }}
           >
-            학생 명단 및 출결 현황은 준비 중입니다.
+            {!isShuttle && !isLeave && schedule.instructor && (
+              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
+                <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>강사</span>
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{schedule.instructor.name}</span>
+                <span className="text-xs ml-auto" style={{ color: "var(--text-tertiary)" }}>{schedule.instructor.subject}</span>
+              </div>
+            )}
+            {schedule.room && (
+              <div className="flex items-center gap-3 px-4 py-2.5" style={{ borderBottom: "1px solid var(--border-default)" }}>
+                <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>장소</span>
+                <span className="text-sm" style={{ color: "var(--text-primary)" }}>{schedule.room}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-3 px-4 py-2.5">
+              <span className="text-xs w-14 shrink-0" style={{ color: "var(--text-tertiary)" }}>반복</span>
+              <span className="text-sm" style={{ color: "var(--text-primary)" }}>매주 {dayLabel}요일</span>
+            </div>
           </div>
+
+          {/* Context-specific notes */}
+          {isLegal && (
+            <div
+              className="rounded-lg px-4 py-3 text-xs"
+              style={{ backgroundColor: "rgba(239,68,68,0.06)", color: "#991b1b", border: "1px solid rgba(239,68,68,0.15)" }}
+            >
+              법정 기한입니다. 기한 내 처리하지 않으면 과태료가 부과될 수 있습니다.
+              에이전트가 D-3일에 자동 알림을 보냅니다.
+            </div>
+          )}
+          {isShuttle && (
+            <div
+              className="rounded-lg px-4 py-3 text-xs"
+              style={{ backgroundColor: "rgba(99,102,241,0.06)", color: "#3730a3", border: "1px solid rgba(99,102,241,0.15)" }}
+            >
+              차량 운행 일정입니다. 학생 탑승 명단은 학생 관리에서 확인하세요.
+            </div>
+          )}
+          {!isLegal && !isShuttle && !isLeave && (
+            <div
+              className="rounded-lg px-4 py-3 text-xs"
+              style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)" }}
+            >
+              수강 학생 명단 및 출결 현황은 학생 관리 페이지에서 확인할 수 있습니다.
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -305,7 +369,7 @@ function WeeklyView({
                         <button
                           key={block.id}
                           onClick={() => onSelectSchedule(block)}
-                          className="w-full text-left rounded-md px-2 py-1.5 text-xs mb-1 transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                          className="w-full text-left rounded-md px-2 py-1.5 text-xs mb-1 transition-all duration-150 hover:shadow-sm hover:-translate-y-px focus:outline-none focus:ring-2 focus:ring-offset-1"
                           style={{
                             backgroundColor: colors.bg,
                             color: colors.text,
@@ -314,7 +378,10 @@ function WeeklyView({
                             display: "block",
                           }}
                         >
-                          <div className="font-semibold leading-tight">{block.title}</div>
+                          <div className="flex items-center gap-1 font-semibold leading-tight">
+                            <span className="text-[10px]">{colors.icon}</span>
+                            <span className="truncate">{block.title}</span>
+                          </div>
                           {block.instructor && (
                             <div className="mt-0.5 opacity-80">{block.instructor.name}</div>
                           )}
@@ -415,7 +482,7 @@ function MonthlyView({
               <button
                 key={ci}
                 onClick={() => dayItems.length > 0 && onDayClick(date, dayItems)}
-                className="min-h-[80px] p-2 text-left transition-colors hover:bg-opacity-80 focus:outline-none"
+                className="min-h-[100px] p-1.5 text-left transition-all duration-150 hover:bg-[rgba(20,184,166,0.03)] focus:outline-none"
                 style={{
                   backgroundColor: isToday ? "rgba(20,184,166,0.04)" : "var(--bg-elevated)",
                   borderLeft: ci > 0 ? "1px solid var(--border-default)" : undefined,
@@ -434,21 +501,24 @@ function MonthlyView({
                 >
                   {date.getDate()}
                 </div>
-                <div className="flex flex-wrap gap-0.5 mt-0.5">
-                  {dayItems.slice(0, 4).map((s, i) => {
+                <div className="flex flex-col gap-0.5 mt-0.5 overflow-hidden">
+                  {dayItems.slice(0, 3).map((s, i) => {
                     const colors = getTypeColor(s.type)
                     return (
-                      <span
+                      <div
                         key={i}
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: colors.dot }}
+                        className="flex items-center gap-1 rounded px-1 py-0.5 text-[10px] leading-tight truncate"
+                        style={{ backgroundColor: colors.bg, color: colors.text }}
                         title={s.title}
-                      />
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: colors.dot }} />
+                        <span className="truncate">{s.title}</span>
+                      </div>
                     )
                   })}
-                  {dayItems.length > 4 && (
-                    <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                      +{dayItems.length - 4}
+                  {dayItems.length > 3 && (
+                    <span className="text-[10px] px-1" style={{ color: "var(--text-tertiary)" }}>
+                      +{dayItems.length - 3}개 더
                     </span>
                   )}
                 </div>
@@ -478,32 +548,42 @@ function DayScheduleDialog({
 }) {
   if (!date) return null
   const dateLabel = `${date.getMonth() + 1}월 ${date.getDate()}일 (${DAYS_KO[date.getDay()]})`
+  // Sort by start time
+  const sorted = [...schedules].sort((a, b) => a.startTime.localeCompare(b.startTime))
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm" style={{ backgroundColor: "var(--bg-base)", border: "1px solid var(--border-default)" }}>
         <DialogHeader>
-          <DialogTitle>{dateLabel} 일정</DialogTitle>
-          <DialogDescription>이 날의 수업 일정입니다.</DialogDescription>
+          <DialogTitle style={{ color: "var(--text-primary)" }}>{dateLabel} 일정</DialogTitle>
+          <DialogDescription>{sorted.length}개 일정</DialogDescription>
         </DialogHeader>
-        <div className="space-y-2 mt-2">
-          {schedules.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>일정이 없습니다.</p>
+        <div className="space-y-1.5 mt-2">
+          {sorted.length === 0 ? (
+            <p className="text-sm py-4 text-center" style={{ color: "var(--text-tertiary)" }}>일정이 없습니다.</p>
           ) : (
-            schedules.map((s) => {
+            sorted.map((s) => {
               const colors = getTypeColor(s.type)
               return (
                 <button
                   key={s.id}
                   onClick={() => { onClose(); onSelectSchedule(s) }}
-                  className="w-full text-left rounded-lg px-3 py-2.5 text-sm transition-opacity hover:opacity-80 focus:outline-none"
+                  className="w-full text-left rounded-lg px-3 py-2.5 text-sm transition-all duration-150 hover:shadow-sm hover:-translate-y-px focus:outline-none"
                   style={{ backgroundColor: colors.bg, color: colors.text, border: `1px solid ${colors.dot}30` }}
                 >
-                  <div className="font-semibold">{s.title}</div>
-                  <div className="text-xs opacity-70 mt-0.5">
-                    {formatTimeRange(s.startTime, s.endTime)}
-                    {s.instructor && ` · ${s.instructor.name}`}
-                    {s.room && ` · ${s.room}`}
+                  <div className="flex items-center gap-2">
+                    <span>{colors.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{s.title}</div>
+                      <div className="text-xs opacity-70 mt-0.5 flex items-center gap-1.5">
+                        <span>{formatTimeRange(s.startTime, s.endTime)}</span>
+                        {s.instructor && <span>· {s.instructor.name}</span>}
+                        {s.room && <span>· {s.room}</span>}
+                      </div>
+                    </div>
+                    <span className="text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${colors.dot}20`, color: colors.text }}>
+                      {colors.label}
+                    </span>
                   </div>
                 </button>
               )
@@ -586,6 +666,7 @@ export function SchedulePage() {
 
   const [viewMode, setViewMode] = useState<"weekly" | "monthly">("weekly")
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [typeFilter, setTypeFilter] = useState<string | null>(null)
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleItem | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const [dayDialogOpen, setDayDialogOpen] = useState(false)
@@ -601,6 +682,10 @@ export function SchedulePage() {
     queryFn: () => schedulesApi.list(selectedOrgId!),
     enabled: !!selectedOrgId,
   })
+
+  const filteredSchedules = typeFilter
+    ? (schedules as ScheduleItem[]).filter((s) => s.type === typeFilter)
+    : (schedules as ScheduleItem[])
 
   const weekDates = getWeekDates(currentDate)
 
@@ -645,14 +730,26 @@ export function SchedulePage() {
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-            스케줄
+            일정 관리
           </h1>
           <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>
-            수업 일정 관리
+            수업, 상담, 등하원, 법정기한 등 모든 일정
           </p>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Today button */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1.5"
+            onClick={() => setCurrentDate(new Date())}
+            style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
+          >
+            <CalendarDays size={13} />
+            오늘
+          </Button>
+
           {/* View toggle */}
           <div
             className="flex rounded-lg overflow-hidden text-sm"
@@ -664,8 +761,8 @@ export function SchedulePage() {
                 onClick={() => setViewMode(mode)}
                 className="px-3 py-1.5 font-medium transition-colors"
                 style={{
-                  backgroundColor: viewMode === mode ? "var(--bg-primary)" : "var(--bg-secondary)",
-                  color: viewMode === mode ? "var(--text-primary)" : "var(--text-tertiary)",
+                  backgroundColor: viewMode === mode ? "var(--color-primary-bg)" : "var(--bg-secondary)",
+                  color: viewMode === mode ? "var(--color-teal-500)" : "var(--text-tertiary)",
                 }}
               >
                 {mode === "weekly" ? "주간" : "월간"}
@@ -718,17 +815,53 @@ export function SchedulePage() {
         </div>
       )}
 
+      {/* Type filter pills */}
+      {!isLoading && !isError && (
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          <button
+            onClick={() => setTypeFilter(null)}
+            className="px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
+            style={{
+              backgroundColor: !typeFilter ? "var(--color-teal-500)" : "var(--bg-tertiary)",
+              color: !typeFilter ? "#fff" : "var(--text-secondary)",
+            }}
+          >
+            전체 ({(schedules as any[]).length})
+          </button>
+          {Object.entries(TYPE_COLORS).map(([type, c]) => {
+            const count = (schedules as ScheduleItem[]).filter((s) => s.type === type).length
+            if (count === 0) return null
+            const isActive = typeFilter === type
+            return (
+              <button
+                key={type}
+                onClick={() => setTypeFilter(isActive ? null : type)}
+                className="px-2.5 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1"
+                style={{
+                  backgroundColor: isActive ? c.bg : "var(--bg-tertiary)",
+                  color: isActive ? c.text : "var(--text-secondary)",
+                  border: isActive ? `1px solid ${c.dot}40` : "1px solid transparent",
+                }}
+              >
+                <span>{c.icon}</span>
+                {c.label} ({count})
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {!isLoading && !isError && (
         <>
           {viewMode === "weekly" ? (
             <WeeklyView
-              schedules={schedules}
+              schedules={filteredSchedules}
               weekDates={weekDates}
               onSelectSchedule={handleSelectSchedule}
             />
           ) : (
             <MonthlyView
-              schedules={schedules}
+              schedules={filteredSchedules}
               year={currentDate.getFullYear()}
               month={currentDate.getMonth()}
               onDayClick={handleDayClick}
@@ -736,18 +869,21 @@ export function SchedulePage() {
           )}
 
           {/* Bottom section */}
-          <div className="mt-6 space-y-3">
-            <div>
-              <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>
-                수업 유형
-              </p>
-              <Legend schedules={schedules} />
-            </div>
-            <div>
+          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
               <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>
                 담당 강사
               </p>
-              <InstructorList schedules={schedules} />
+              <InstructorList schedules={schedules as ScheduleItem[]} />
+            </div>
+            <div className="sm:text-right">
+              <p className="text-xs mb-1" style={{ color: "var(--text-tertiary)" }}>
+                총 {(schedules as any[]).length}개 일정
+                {typeFilter && ` (${filteredSchedules.length}개 필터됨)`}
+              </p>
+              <p className="text-xs" style={{ color: "var(--text-disabled)" }}>
+                일정 추가/수정은 에이전트에게 지시하거나 대시보드에서 가능합니다.
+              </p>
             </div>
           </div>
         </>

@@ -1,5 +1,5 @@
-import { useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useContext, useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -16,6 +16,8 @@ import { MetricCard } from "@/components/MetricCard"
 import { ActiveAgentsPanel } from "@/components/ActiveAgentsPanel"
 import { ActivityRow } from "@/components/ActivityRow"
 import { InstructionBar } from "@/components/InstructionBar"
+import { ToastContext } from "@/components/ToastContext"
+import { orchestratorApi } from "@/api/orchestrator"
 import { StatusIcon } from "@/components/StatusIcon"
 import { PriorityIcon } from "@/components/PriorityIcon"
 import { DashboardCharts } from "@/components/DashboardCharts"
@@ -137,6 +139,28 @@ export function DashboardPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
   const { selectedOrgId } = useOrganization()
   const { orgPrefix } = useParams<{ orgPrefix: string }>()
+  const queryClient = useQueryClient()
+  const toast = useContext(ToastContext)
+  const [instruction, setInstruction] = useState("")
+
+  const [lastDispatchResult, setLastDispatchResult] = useState<{ plan: string; runs: string[] } | null>(null)
+
+  const dispatchMutation = useMutation({
+    mutationFn: () =>
+      orchestratorApi.dispatch({ instruction, organizationId: selectedOrgId! }),
+    onSuccess: (data) => {
+      setInstruction("")
+      setLastDispatchResult(data)
+      toast?.success(`오케스트레이터 실행 완료 — ${data.runs.length}개 에이전트 배정`)
+      queryClient.invalidateQueries({ queryKey: queryKeys.cases.list(selectedOrgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.agents.list(selectedOrgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.activity.list(selectedOrgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
+      // Auto-dismiss after 8 seconds
+      setTimeout(() => setLastDispatchResult(null), 8000)
+    },
+    onError: () => toast?.error("디스패치에 실패했습니다."),
+  })
 
   useEffect(() => {
     setBreadcrumbs([{ label: "대시보드" }])
@@ -214,11 +238,48 @@ export function DashboardPage() {
         className="px-6 py-3"
         style={{ borderBottom: "1px solid var(--border-default)" }}
       >
-        <InstructionBar agents={agentMentions} />
+        <InstructionBar
+          agents={agentMentions}
+          value={instruction}
+          onChange={setInstruction}
+          onSubmit={() => dispatchMutation.mutate()}
+          loading={dispatchMutation.isPending}
+        />
       </div>
 
       <ScrollArea className="flex-1">
         <div className="p-6 max-w-6xl mx-auto space-y-6">
+          {/* Dispatch result banner */}
+          {lastDispatchResult && (
+            <div
+              className="rounded-xl px-4 py-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300"
+              style={{
+                backgroundColor: "rgba(20,184,166,0.06)",
+                border: "1px solid rgba(20,184,166,0.2)",
+              }}
+            >
+              <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: "var(--color-teal-500)" }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium" style={{ color: "var(--color-teal-500)" }}>
+                  오케스트레이터 실행 완료
+                </p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+                  {lastDispatchResult.plan}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                  {lastDispatchResult.runs.length}개 에이전트 실행 시작됨
+                </p>
+              </div>
+              <button
+                onClick={() => setLastDispatchResult(null)}
+                className="text-xs shrink-0 px-2 py-1 rounded hover:bg-[var(--bg-tertiary)] transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
+              >
+                닫기
+              </button>
+            </div>
+          )}
+
           {/* Active agents panel */}
           {(allRuns.length > 0 || runningAgents.length > 0) && (
             <ActiveAgentsPanel agents={agents as any[]} runs={allRuns} />

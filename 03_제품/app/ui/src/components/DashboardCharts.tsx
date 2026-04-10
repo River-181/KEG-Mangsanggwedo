@@ -67,7 +67,7 @@ export function RunActivityChart({ activity }: { activity: any[] }) {
   const maxCount = Math.max(...days.map((d) => d.count), 1)
 
   return (
-    <Card className="border-0" style={{ backgroundColor: "var(--bg-base)", boxShadow: "var(--shadow-sm)" }}>
+    <Card className="transition-all duration-200 hover:shadow-md" style={{ backgroundColor: "var(--bg-elevated)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-default)" }}>
       <CardContent className="p-4">
         <div className="text-sm font-medium mb-0.5" style={{ color: "var(--text-primary)" }}>
           실행 활동
@@ -120,7 +120,7 @@ export function PriorityChart({ cases }: { cases: any[] }) {
   const max = Math.max(...Object.values(counts), 1)
 
   return (
-    <Card className="border-0" style={{ backgroundColor: "var(--bg-base)", boxShadow: "var(--shadow-sm)" }}>
+    <Card className="transition-all duration-200 hover:shadow-md" style={{ backgroundColor: "var(--bg-elevated)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-default)" }}>
       <CardContent className="p-4">
         <div className="text-sm font-medium mb-0.5" style={{ color: "var(--text-primary)" }}>
           우선순위별 케이스
@@ -164,7 +164,7 @@ export function StatusChart({ cases }: { cases: any[] }) {
   ]
 
   return (
-    <Card className="border-0" style={{ backgroundColor: "var(--bg-base)", boxShadow: "var(--shadow-sm)" }}>
+    <Card className="transition-all duration-200 hover:shadow-md" style={{ backgroundColor: "var(--bg-elevated)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-default)" }}>
       <CardContent className="p-4">
         <div className="text-sm font-medium mb-0.5" style={{ color: "var(--text-primary)" }}>
           상태별 케이스
@@ -201,7 +201,7 @@ export function SuccessRateChart({ agents }: { agents: any[] }) {
   })
 
   return (
-    <Card className="border-0" style={{ backgroundColor: "var(--bg-base)", boxShadow: "var(--shadow-sm)" }}>
+    <Card className="transition-all duration-200 hover:shadow-md" style={{ backgroundColor: "var(--bg-elevated)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border-default)" }}>
       <CardContent className="p-4">
         <div className="text-sm font-medium mb-0.5" style={{ color: "var(--text-primary)" }}>
           성공률

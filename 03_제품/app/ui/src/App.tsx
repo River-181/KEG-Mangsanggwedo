@@ -38,6 +38,7 @@ export function App() {
         <Route path="approvals" element={<ApprovalsPage />} />
         <Route path="approvals/:id" element={<ApprovalDetailPage />} />
         <Route path="agents" element={<AgentsPage />} />
+        <Route path="agents/new" element={<NewAgentPage />} />
         <Route path="agents/:id" element={<AgentDetailPage />} />
         <Route path="org" element={<OrgChartPage />} />
         <Route path="schedule" element={<SchedulePage />} />
@@ -47,7 +48,6 @@ export function App() {
         <Route path="onboarding" element={<OnboardingPage />} />
         <Route path="documents" element={<DocumentsPage />} />
         <Route path="documents/:id" element={<DocumentsPage />} />
-        <Route path="agents/new" element={<NewAgentPage />} />
         <Route path="routines" element={<RoutinesPage />} />
         <Route path="goals" element={<GoalsPage />} />
         <Route path="costs" element={<CostsPage />} />

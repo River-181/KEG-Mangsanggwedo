@@ -112,6 +112,17 @@ function KanbanCard({
           {c.type && <CaseTypeBadge type={c.type} />}
           {c.severity && <CaseSeverityBadge severity={c.severity} />}
           {c.urgency && !c.severity && <CaseSeverityBadge severity={c.urgency} />}
+          {c.source && c.source !== "manual" && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+              style={{
+                backgroundColor: c.source === "kakao" ? "#FEE500" : "rgba(59,130,246,0.1)",
+                color: c.source === "kakao" ? "#3C1E1E" : "#3b82f6",
+              }}
+            >
+              {c.source === "kakao" ? "카카오" : "SMS"}
+            </span>
+          )}
         </div>
 
         {/* Assignee */}

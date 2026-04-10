@@ -275,6 +275,31 @@ export function CasesPage() {
         </button>
       </div>
 
+      {/* Stats summary */}
+      <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
+          <span className="font-semibold" style={{ color: "var(--text-primary)" }}>{cases.length}</span>
+          전체 케이스
+        </div>
+        <span style={{ color: "var(--border-default)" }}>|</span>
+        {[
+          { status: "in_progress", label: "진행 중", color: "var(--color-teal-500)" },
+          { status: "todo", label: "할 일", color: "#3b82f6" },
+          { status: "backlog", label: "백로그", color: "var(--text-tertiary)" },
+          { status: "done", label: "완료", color: "var(--color-success)" },
+        ].map(({ status, label, color }) => {
+          const count = (cases as any[]).filter((c: any) => c.status === status).length
+          if (count === 0) return null
+          return (
+            <div key={status} className="flex items-center gap-1 text-xs">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+              <span style={{ color: "var(--text-tertiary)" }}>{label}</span>
+              <span className="font-medium" style={{ color: "var(--text-primary)" }}>{count}</span>
+            </div>
+          )
+        })}
+      </div>
+
       {/* Filter bar */}
       <div className="mb-4">
         <FilterBar

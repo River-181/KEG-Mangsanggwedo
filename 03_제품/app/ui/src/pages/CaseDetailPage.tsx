@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -33,6 +33,8 @@ import {
   Bot,
   Loader2,
   AlertCircle,
+  Play,
+  FileText,
 } from "lucide-react"
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -63,6 +65,110 @@ const caseTypeLabel: Record<string, string> = {
   inquiry: "문의",
   churn: "이탈",
   schedule: "일정",
+}
+
+// ─── Activity Timeline ────────────────────────────────────────────────────────
+
+function ActivityTimeline({ caseData }: { caseData: any }) {
+  const events: { time: string; type: string; label: string; detail?: string; icon: React.ReactNode }[] = []
+
+  // Case created
+  const createdAt = caseData.createdAt ?? caseData.created_at
+  if (createdAt) {
+    events.push({
+      time: createdAt,
+      type: 'created',
+      label: '케이스 생성',
+      detail: caseData.source ? `출처: ${caseData.source}` : undefined,
+      icon: <FileText size={14} style={{ color: "var(--text-tertiary)" }} />,
+    })
+  }
+
+  // Runs
+  for (const run of (caseData.runs ?? [])) {
+    const startedAt = run.startedAt ?? run.started_at ?? run.createdAt
+    const agentName = run.agentName ?? run.agent?.name ?? '에이전트'
+    if (startedAt) {
+      events.push({
+        time: startedAt,
+        type: 'run_start',
+        label: `${agentName} 실행 시작`,
+        icon: <Play size={14} style={{ color: "var(--color-teal-500)" }} />,
+      })
+    }
+    const completedAt = run.completedAt ?? run.completed_at
+    if (completedAt && run.status === 'completed') {
+      events.push({
+        time: completedAt,
+        type: 'run_complete',
+        label: `${agentName} 작업 완료`,
+        detail: run.tokensUsed ? `${run.tokensUsed.toLocaleString()} 토큰 사용` : undefined,
+        icon: <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />,
+      })
+    }
+    if (completedAt && run.status === 'failed') {
+      events.push({
+        time: completedAt,
+        type: 'run_failed',
+        label: `${agentName} 실행 실패`,
+        icon: <XCircle size={14} style={{ color: "var(--color-danger)" }} />,
+      })
+    }
+  }
+
+  // Approvals
+  for (const approval of (caseData.approvals ?? [])) {
+    if (approval.status === 'approved') {
+      events.push({
+        time: approval.updatedAt ?? approval.updated_at ?? '',
+        type: 'approved',
+        label: '초안 승인됨',
+        icon: <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />,
+      })
+    }
+    if (approval.status === 'rejected') {
+      events.push({
+        time: approval.updatedAt ?? approval.updated_at ?? '',
+        type: 'rejected',
+        label: '초안 반려됨',
+        icon: <XCircle size={14} style={{ color: "var(--color-danger)" }} />,
+      })
+    }
+  }
+
+  // Sort by time descending
+  events.sort((a, b) => b.time.localeCompare(a.time))
+
+  if (events.length === 0) return null
+
+  return (
+    <div>
+      <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+        활동 타임라인
+      </h2>
+      <div className="space-y-0">
+        {events.map((ev, i) => (
+          <div key={i} className="flex gap-3 pb-3">
+            <div className="flex flex-col items-center">
+              <div className="shrink-0 mt-0.5">{ev.icon}</div>
+              {i < events.length - 1 && (
+                <div className="w-px flex-1 mt-1" style={{ backgroundColor: "var(--border-default)" }} />
+              )}
+            </div>
+            <div className="pb-1">
+              <p className="text-sm" style={{ color: "var(--text-primary)" }}>{ev.label}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{timeAgo(ev.time)}</span>
+                {ev.detail && (
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>· {ev.detail}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 // ─── Agent draft section ──────────────────────────────────────────────────────
@@ -348,6 +454,21 @@ export function CaseDetailPage() {
     onError: () => toast?.error("변경에 실패했습니다."),
   })
 
+  // ── dispatch agent mutation ────────────────────────────────────────────────
+  const dispatchForCase = useMutation({
+    mutationFn: async () => {
+      return api.post("/orchestrator/dispatch", {
+        instruction: `케이스 "${caseData?.title}" (${caseData?.type}) 처리. 설명: ${caseData?.description ?? '없음'}`,
+        organizationId: selectedOrgId!,
+      })
+    },
+    onSuccess: () => {
+      toast?.success("에이전트가 배정되었습니다.")
+      queryClient.invalidateQueries({ queryKey: queryKeys.cases.detail(id!) })
+    },
+    onError: () => toast?.error("에이전트 배정에 실패했습니다."),
+  })
+
   // ── panel: CaseProperties ──────────────────────────────────────────────────
   useEffect(() => {
     if (!caseData) return
@@ -441,6 +562,17 @@ export function CaseDetailPage() {
                   </Badge>
                 )}
                 <PriorityIcon priority={caseData.priority ?? 4} size={14} />
+                {caseData.source && caseData.source !== 'manual' && (
+                  <Badge
+                    className="text-xs border-0"
+                    style={{
+                      backgroundColor: caseData.source === 'kakao' ? '#FEE500' : 'rgba(59,130,246,0.1)',
+                      color: caseData.source === 'kakao' ? '#3C1E1E' : '#3b82f6',
+                    }}
+                  >
+                    {caseData.source === 'kakao' ? '카카오톡' : 'SMS'}
+                  </Badge>
+                )}
               </div>
               <h1
                 className="text-xl font-bold leading-snug"
@@ -451,7 +583,7 @@ export function CaseDetailPage() {
             </div>
           </div>
 
-          {/* Status select */}
+          {/* Status select + assign agent */}
           <div className="flex items-center gap-3 pl-7">
             <Select
               value={status}
@@ -473,6 +605,24 @@ export function CaseDetailPage() {
                 ))}
               </SelectContent>
             </Select>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs h-7"
+              onClick={() => {
+                if (selectedOrgId) {
+                  dispatchForCase.mutate()
+                }
+              }}
+              disabled={dispatchForCase.isPending || hasActiveRun}
+            >
+              {dispatchForCase.isPending ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <Bot size={13} />
+              )}
+              에이전트 배정
+            </Button>
           </div>
         </div>
 
@@ -500,6 +650,9 @@ export function CaseDetailPage() {
             </p>
           </div>
         )}
+
+        {/* Activity timeline */}
+        <ActivityTimeline caseData={caseData} />
 
         {/* Agent draft */}
         {agentDraft && (

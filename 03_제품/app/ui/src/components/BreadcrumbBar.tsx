@@ -27,7 +27,7 @@ export function BreadcrumbBar() {
         </button>
       )}
 
-      <nav className="flex items-center gap-1 text-sm">
+      <nav className="flex items-center gap-1 text-sm flex-1">
         {breadcrumbs.map((crumb, i) => {
           const isLast = i === breadcrumbs.length - 1
           return (
@@ -60,6 +60,18 @@ export function BreadcrumbBar() {
           )
         })}
       </nav>
+
+      {/* Cmd+K hint */}
+      <kbd
+        className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs shrink-0"
+        style={{
+          backgroundColor: "var(--bg-tertiary)",
+          color: "var(--text-tertiary)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
+        <span style={{ fontSize: 11 }}>&#8984;</span>K
+      </kbd>
     </div>
   )
 }

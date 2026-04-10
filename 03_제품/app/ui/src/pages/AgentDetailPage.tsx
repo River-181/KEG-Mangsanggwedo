@@ -74,7 +74,7 @@ function statusLabel(status: string): string {
 
 // ─── run row ─────────────────────────────────────────────────────────────────
 
-function RunRow({ run, expanded, onToggle }: { run: any; expanded?: boolean; onToggle?: () => void }) {
+function RunRow({ run, expanded, onToggle, showRerun }: { run: any; expanded?: boolean; onToggle?: () => void; showRerun?: boolean }) {
   const runStatus = run.status ?? "completed"
   const caseTitle = run.case?.title ?? run.caseTitle ?? "케이스 없음"
   const tokens = run.tokensUsed ?? run.tokens_used ?? null
@@ -221,6 +221,13 @@ function RunRow({ run, expanded, onToggle }: { run: any; expanded?: boolean; onT
               )}
             </div>
           )}
+
+          {/* Re-run link */}
+          {showRerun && run.status !== "running" && (
+            <p className="text-xs mt-2" style={{ color: "var(--color-teal-500)", cursor: "pointer" }}>
+              이 케이스 다시 실행 →
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -277,7 +284,15 @@ function BudgetBar({
 function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory: any }) {
   const queryClient = useQueryClient()
   const currentRun = runs.find((r) => r.status === "running")
-  const recentRuns = runs.slice(0, 5)
+  const sortedRuns = [...runs].sort((a, b) => {
+    const aTime = a.startedAt ?? a.started_at ?? a.createdAt ?? ""
+    const bTime = b.startedAt ?? b.started_at ?? b.createdAt ?? ""
+    return bTime.localeCompare(aTime)
+  })
+  const recentRuns = sortedRuns.slice(0, 5)
+  const [expandedRunId, setExpandedRunId] = useState<string | null>(
+    recentRuns.length > 0 ? (recentRuns[0].id ?? null) : null
+  )
   const isRunning = agent.status === "running" || !!currentRun
 
   const wakeupMutation = useMutation({
@@ -360,7 +375,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
         </div>
 
         {/* Control buttons */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
           {isRunning ? (
             <Button
               size="sm"
@@ -392,6 +407,10 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
               에이전트 실행
             </Button>
           )}
+          {/* Quick dispatch hint */}
+          <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
+            대시보드에서 오케스트레이터에게 지시하면 이 에이전트가 자동으로 배정됩니다.
+          </p>
         </div>
       </div>
 
@@ -447,9 +466,19 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
             </p>
           ) : (
             <div className="divide-y divide-[var(--border-default)]">
-              {recentRuns.map((run: any, i: number) => (
-                <RunRow key={run.id ?? i} run={run} />
-              ))}
+              {recentRuns.map((run: any, i: number) => {
+                const runId = run.id ?? String(i)
+                const isExpanded = expandedRunId === runId
+                return (
+                  <RunRow
+                    key={runId}
+                    run={run}
+                    expanded={isExpanded}
+                    onToggle={() => setExpandedRunId(isExpanded ? null : runId)}
+                    showRerun
+                  />
+                )
+              })}
             </div>
           )}
         </div>

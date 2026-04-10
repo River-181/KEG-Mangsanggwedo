@@ -59,10 +59,11 @@ function AgentCard({
 
   return (
     <Card
-      className="border-0"
+      className="transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
       style={{
-        backgroundColor: "var(--bg-base)",
+        backgroundColor: "var(--bg-elevated)",
         boxShadow: "var(--shadow-sm)",
+        border: "1px solid var(--border-default)",
       }}
     >
       <CardContent className="p-4">

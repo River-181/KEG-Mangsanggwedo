@@ -183,7 +183,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
-          className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-sm font-semibold transition-colors"
+          className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:brightness-110 hover:shadow-md active:scale-[0.98]"
           style={{
             background: "var(--color-teal-500)",
             color: "#fff",
@@ -300,7 +300,7 @@ export function Sidebar() {
           </span>
         </button>
         <span className="text-xs px-1" style={{ color: "var(--text-disabled)" }}>
-          v0.2.0
+          v0.3.0
         </span>
       </div>
 

@@ -47,14 +47,15 @@ export function MetricCard({
   return (
     <Card
       className={cn(
-        "border-0 transition-shadow",
-        href && "cursor-pointer hover:shadow-md",
+        "transition-all duration-200",
+        href && "cursor-pointer hover:shadow-md hover:-translate-y-0.5",
         urgent && "ring-1 ring-amber-400/50",
         className
       )}
       style={{
-        backgroundColor: "var(--bg-base)",
+        backgroundColor: "var(--bg-elevated)",
         boxShadow: "var(--shadow-sm)",
+        border: "1px solid var(--border-default)",
       }}
       onClick={handleClick}
     >

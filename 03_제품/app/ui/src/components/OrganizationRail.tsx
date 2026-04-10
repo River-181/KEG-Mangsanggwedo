@@ -76,7 +76,7 @@ export function OrganizationRail() {
           transform: "rotate(180deg)",
         }}
       >
-        v0.1
+        v0.3
       </span>
     </div>
   )
