@@ -91,6 +91,8 @@ def to_float(value: str) -> float:
 def is_external_row(row: dict[str, str]) -> bool:
     client = clean(row["client_app"]).lower()
     provider = clean(row["provider"]).lower()
+    if provider not in {"openai", "perplexity", "google", "xai", "notebooklm"}:
+        return False
     if "claude" in client or provider == "anthropic":
         return False
     return True

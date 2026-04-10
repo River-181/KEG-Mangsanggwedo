@@ -1,3 +1,12 @@
+---
+tags:
+  - area/strategy
+  - type/source
+  - status/archived
+date: 2026-04-09
+up: "[[research-external-ai-archive]]"
+---
+
 프롬프트 : EduSwarm 프로젝트를 위한 현장 페인 포인트 Top 10을 역할별(운영자 vs 교사)로 정리하고, 각 항목에 데이터·출처·실제 사례를 붙여주세요
 
 

@@ -30,6 +30,7 @@ aliases:
 
 ## 파일 가이드
 
+- [[00]] — Paperclip 소개 영상 원문 트랜스크립트 (1차 출처)
 - [[01-ui-entrypoints]] — UI 구조, 진입점, 첫 화면 흐름
 - [[02-data-context-model]] — 데이터 구조, 컨텍스트, 원본 데이터 접근 방식
 - [[03-agent-skill-structure]] — 에이전트 역할, skill/package, orchestration 구조
@@ -37,6 +38,7 @@ aliases:
 - [[05-open-questions]] — 분석 후에도 남는 질문과 로컬 디렉토리 확정 전 체크리스트
 - [[06-runtime-control-plane-map]] — 실제 monorepo, runtime layer, deployment mode, control-plane surface
 - [[07-plugin-adapter-extensibility]] — plugin SDK, adapter model, skill 배포/확장 포인트
+- [[08_PAPERCLIP-CLONE-SPEC]] — 소스코드 직접 분석 기반 완전 복제 명세서 (에이전트 4개 병렬 투입)
 
 ## 분석 원칙
 

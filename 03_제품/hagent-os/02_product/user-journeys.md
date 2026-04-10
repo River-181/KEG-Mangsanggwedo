@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # User Journeys
 
 > Before/After 흐름 + 핵심 사용 시나리오

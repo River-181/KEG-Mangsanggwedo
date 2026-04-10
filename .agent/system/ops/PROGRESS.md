@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 진행상황
@@ -12,11 +12,11 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-09 (Day 4)
+> 마지막 업데이트: 2026-04-10 (Day 5)
 
 ---
 
-## 현재 단계: Day 4 완전 완료 — 기획·디자인·UI 아키텍처 전체 확정, 앱 개발 대기
+## 현재 단계: Day 5 진행 중 — 기획·지식체계 정리 완료, 앱 스켈레톤 착수 대기
 
 ## 완료된 작업
 
@@ -106,6 +106,16 @@ aliases:
 - [x] `06_LLM위키/` 레이어 도입
 - [x] `index.md`, `overview.md`, `schema.md`, `log.md` 생성
 - [x] `karpathy-llm-wiki-adaptation.md`로 현재 vault 매핑 문서화
+- [x] 전략 문서, 도메인 조사, `research-results` raw mirror 1차 ingest 완료
+- [x] 문제/심사/운영/compliance/control-plane 축 wiki note 확장
+- [x] `wiki-candidate-harvest` 프로젝트 스킬 생성 및 실사용
+
+### LLM 위키 운영 확장 ✅
+- [x] `06_LLM위키/sources/`에 raw source와 `research-results` 미러 반영
+- [x] `문제_선택_점수표_문법`, `문제_후보_뱅크와_탈락_문법`, `KEG_7일_MVP_플레이북` 승격
+- [x] `Paperclip_vs_HagentOS_설계_갭`, `학원_운영_법규_체크리스트`, `학원_운영_루프_지도` 승격
+- [x] `운영_Control_Plane_모델`, `한국_교육_도메인_적합성_갭` 승격
+- [x] `06_LLM위키/tasks/프로젝트_지식화_후보_스캔.md` 생성
 
 ### 데일리/메모리 보강 ✅
 - [x] 누락된 `2026-04-07.md`, `2026-04-08.md` 생성
@@ -137,6 +147,9 @@ aliases:
 - [x] `02_전략` 루트를 `00_foundation / 01_problem-framing / 02_prompts / 03_decisions / paperclip-analysis / research-results / tasks / archive` 구조로 재정리
 - [x] 전략 MOC, 프롬프트, 문제 정의 문서 경로를 새 구조 기준으로 갱신
 - [x] 현재 1순위를 `학원 운영자 민원·예외 처리 OS`로 재정렬
+- [x] 운영 안내 문서 (`AGENTS`, `workspace-atlas`, `README`, `dashboard`)를 새 전략 구조 기준으로 정렬
+- [x] `탄자니아 영어학원` 로고/카카오 채널/챗봇 이미지 17건에 날짜 포함 제목을 부여해 제출용 캡션 기준을 정리
+- [x] `2026-04-10` daily note 생성 및 `daily-memory`, `PLAN`, `master-evidence-ledger` 동기화
 
 ### Paperclip 코드 해체 분석 ✅
 - [x] `02_전략/paperclip-analysis/paperclip-master/`에 실제 reference repo 로컬 복제본 배치
@@ -153,7 +166,7 @@ aliases:
 | --------------------- | --------------- | ----------------- | ------------ |
 | Claude Opus 4.6       | Claude Code CLI | 제품 기획, k-skill 설계 | hagent-os/ 기획 문서 10개 + k-skill 생태계 반영 (Day 4) |
 | GPT-5.4 (ChatGPT Pro) | Web             | 전략 설계, 플레이북 작성    | 플레이북 v0.1 완료 |
-| GPT-5 (Codex)         | Desktop App     | 리서치 운영, NLM 통합, 증빙 정리 | Bottom-Up 딥리서치 + Studio report export 완료 |
+| GPT-5 (Codex)         | Desktop App     | 리서치 운영, LLM 위키 구축, 증빙 정리 | LLM wiki 확장 + `wiki-candidate-harvest` 스킬 생성/실사용 완료 |
 | Perplexity            | Web             | 리서치 수집            | 운영자/교사 페인포인트 리서치 완료 |
 
 ---
@@ -233,3 +246,10 @@ aliases:
 3. **설계 기준** — `design.md` (색상 토큰), `INDEX.md` (문서 색인)
 4. **Google Calendar OAuth** — D7 전 credentials 준비
 5. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 확인
+
+## 참고: 현재 위키 핵심 진입점
+
+- `06_LLM위키/index.md`
+- `06_LLM위키/overview.md`
+- `06_LLM위키/log.md`
+- `06_LLM위키/tasks/프로젝트_지식화_후보_스캔.md`

@@ -1,7 +1,10 @@
 ---
-tags: [type/analysis, area/strategy, status/complete]
+tags:
+  - type/analysis
+  - area/strategy
+  - status/complete
 date: 2026-04-09
-up: "[[_02_전략_MOC]]"
+up: "[[paperclip-analysis]]"
 ---
 
 # Paperclip 완전 분석 및 복제 명세서

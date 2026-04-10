@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/active
   - workflow/evidence-source
-date: 2026-04-09
+date: 2026-04-10
 up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
@@ -381,6 +381,22 @@ aliases:
 
 ## 2026-04-09
 
+### S-MTG-019
+
+- DateTime: 2026-04-09 / Offline Meeting
+- Phase: Product Alignment
+- Tool/Client: Human Meeting
+- Model:
+- Goal: 승보님과 UI 및 핵심 컨셉을 공유하고 개발 착수 가능 여부를 정렬한다
+- What changed: UI가 준비되어 이제 개발에 들어갈 수 있다는 공감대가 생겼고 핵심 컨셉이 `학원 데이터 자산화 + 쉬운 AI 에이전트 활용`으로 명확해졌다
+- Why it mattered: 소규모 학원 타깃과 로컬 우선 오픈소스 전략을 제품 베팅으로 더 분명하게 합의했다
+- Artifacts: UI 시안 | 기획 문서 | 모델링 결과
+- AI usage strategy: 사람 간 미팅에서 제품 가설을 압축하고 이후 구현 기준선을 확정했다
+- Evidence value: 핵심 컨셉 합의와 타깃/배포 철학 정렬
+- Report section hint: 제품 정의 근거 | 핵심 컨셉 | 의사결정
+- Token note: no AI usage in this session
+- Follow-up: 다음 단계는 UI 기준으로 실제 개발 착수
+
 ### S-OPS-017
 
 - DateTime: 2026-04-09 / Desktop App
@@ -404,14 +420,14 @@ aliases:
 - Tool/Client: Codex
 - Model: GPT-5.4
 - Goal: `03_제품/hagent-os` 기획 문서를 수정 없이 읽고 현재 제품 방향을 학습한다
-- What changed: HagentOS의 현재 제품 방향이 `학원 운영자 민원·예외 처리 OS`
-- Why it mattered: `board-first AI 팀`
-- Artifacts: `k-skill registry`
-- AI usage strategy: `통합 스케줄러` 축으로 정리되어 있음을 확인했다
-- Evidence value: 이후 구현과 피드백이 기존 전략 메모가 아니라 실제 제품 문서 정본을 기준으로 이루어질 수 있게 되었다
-- Report section hint: `03_제품/hagent-os/README.md` | `00_vision/` | `01_strategy/` | `02_product/`
-- Token note: Codex는 문서를 수정하지 않고 제품 방향을 읽어 현재 설계의 중심축과 미정 영역만 학습했다
-- Follow-up: 제품 정본 학습과 방향 정합성 확보
+- What changed: HagentOS의 현재 제품 방향이 학원 운영자 민원·예외 처리 OS와 board-first AI 팀과 k-skill registry와 통합 스케줄러 축으로 정리되어 있음을 제품 정본 관점에서 재확인했다
+- Why it mattered: 이후 구현과 피드백이 기존 전략 메모가 아니라 실제 제품 문서 정본을 기준으로 이루어질 수 있게 되었다
+- Artifacts: `03_제품/hagent-os/README.md` | `00_vision/` | `01_strategy/` | `02_product/`
+- AI usage strategy: Codex는 문서를 수정하지 않고 제품 방향을 읽어 현재 설계의 중심축과 미정 영역만 학습했다
+- Evidence value: 제품 정본 학습과 방향 정합성 확보
+- Report section hint: 제품 정의 근거 | 워크플로우 | AI 활용 전략
+- Token note: exact unavailable estimate
+- Follow-up: 향후 구현/비평/리팩터링은 hagent-os 문서군을 기준으로 진행
 
 ### S-STRAT-016
 
@@ -429,34 +445,20 @@ aliases:
 - Token note: exact unavailable estimate
 - Follow-up: 다음으로 problem-definition-source와 scorecard에 반영
 
-### S-PROD-019
+## 2026-04-10
 
-- DateTime: 2026-04-09 / CLI
-- Phase: Product Planning
-- Tool/Client: Claude Code (Sonnet 4.6 + Opus subagents + Haiku subagents + Codex reviews)
-- Model: Sonnet 4.6
-- Goal: HagentOS 기획 문서 세트 완성 — 00_vision ~ 10_execution + 03_domain + 04_ai-agents + 05_workflows + 06_policies
-- What changed: 30+ 기획 문서가 10개 폴더 카테고리에 걸쳐 신규 생성 및 갱신되었다. Codex 리뷰 3라운드 수행, CRITICAL/HIGH 17건 수정 완료.
-- Why it mattered: 개발 착수를 위한 완전한 기획 기반이 확보되었다. 아키텍처·도메인·워크플로우·정책 레이어가 모두 정본으로 고정되어 구현 착수 준비가 완료되었다.
-- Artifacts: `03_제품/hagent-os/` 전체 구조 (00_vision / 01_strategy / 02_product / 03_domain / 04_ai-agents / 05_workflows / 06_policies / 07_tech / 08_ux / 09_data / 10_execution)
-- AI usage strategy: Opus(복잡한 아키텍처 및 전략 문서), Sonnet(도메인·워크플로우·정책 반복 생성), Haiku(반복 정책 문서 및 포맷 정규화), Codex(3라운드 교차 리뷰 및 비판적 피드백)
-- Evidence value: 대회 AI 활용 증빙 + 기획→개발 전환 기록. 복수 AI 분업 구조의 실증 사례.
-- Report section hint: AI 활용 과정 | 기획 | 멀티에이전트 분업 전략 | 도구 선택 이유
-- Token note: Sonnet/Opus/Haiku exact token source exists in Claude JSONL; Codex exact unavailable estimate
-- Follow-up: 기획 문서 기반으로 MVP 구현 착수 (complaint-draft 스킬 + Orchestrator Agent 우선)
+### S-OPS-020
 
-### S-PROD-020
-
-- DateTime: 2026-04-09T22:00+09:00
-- Phase: 기획 마무리 / 브랜드 확정
-- Tool/Client: Claude Code (Sonnet 4.6 + Haiku)
-- Model: claude-sonnet-4-6 (main) + claude-haiku-4-5 (반복 작업)
-- Goal: 브랜드 문서 세트 작성 + 메모리/로그 전체 업데이트
-- What changed: brand/identity.md, brand/visual-language.md, brand/landing-page.md 생성. design.md Toss 토큰 반영. ux-concepts.md 복제 언어 제거. information-architecture.md 22개 라우트 확정. _research/paperclip-ui-reference.md 4화면 분석. DB 스택 PostgreSQL+Drizzle 확정. 메모리 3개 파일 (project_hagent_os_state.md 신규 + daily-memory.md 갱신 + master-evidence-ledger.md 이 항목) 생성/업데이트.
-- Why it mattered: 디자인 시스템·브랜드·UI 아키텍처 전체 확정. 메모리 시스템이 현재 상태를 완전히 반영. D5 개발 착수 기반 완성.
-- Artifacts: 03_제품/hagent-os/brand/ (3개 파일) | design.md | _research/paperclip-ui-reference.md | .claude/projects/.../memory/project_hagent_os_state.md | .agent/system/memory/daily-memory.md
-- AI usage strategy: Sonnet(브랜드 창의 작업) + Haiku(메모리 업데이트 및 반복 작업)
-- Evidence value: AI 활용 전략 섹션 — 역할별 모델 선택 증거. 메모리 시스템 안정화 기록.
-- Report section hint: AI 활용 전략 > 모델 선택 기준 | 운영 프로세스
-- Token note: Sonnet exact token source exists in Claude JSONL; Haiku exact token source exists in Claude JSONL
-- Follow-up: D5 앱 스켈레톤 시작
+- DateTime: 2026-04-10 / Desktop App
+- Phase: Workspace Sync
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: Day 5 기준 운영 문서와 증빙 정본을 다시 동기화하고 구현 전 문서 충돌을 기록한다
+- What changed: Day 5 daily와 운영 문서가 최신화됐고 구현 전에 잠가야 할 블로커 4개가 문서로 압축되었다
+- Why it mattered: 다음 구현 세션이 모바일 탭바와 앱 셸과 폰트와 브랜드 claim 충돌을 모른 채 진행되는 위험을 줄였다
+- Artifacts: [[PLAN]] | [[PROGRESS]] | [[project-dashboard]] | [[daily-memory]] | [[2026-04-10]]
+- AI usage strategy: Codex를 운영 문서 동기화와 design review findings 압축에 사용했다
+- Evidence value: 운영 상태 최신화와 구현 전 기준선 기록
+- Report section hint: 워크플로우 | AI 활용 전략 | 의사결정
+- Token note: exact unavailable estimate
+- Follow-up: dispatch와 usage stats 재생성

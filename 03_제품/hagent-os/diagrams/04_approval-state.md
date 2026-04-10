@@ -67,19 +67,36 @@ stateDiagram-v2
     }
 
     state level2 {
-        [*] --> escalated_to_human
-        escalated_to_human --> [*] : 원장 직접 처리
-        note right of escalated_to_human
-            복잡 민원·환불·법적 이슈
+        [*] --> draft_edit_required
+        draft_edit_required --> human_editing : 원장 편집기 진입
+        human_editing --> approved_after_edit : 편집 후 승인/발송
+        human_editing --> rejected_after_edit : 반려 또는 저장
+        approved_after_edit --> [*] : Case 완결
+        rejected_after_edit --> [*] : AgentRun 재시작 또는 보류
+        note right of draft_edit_required
+            복잡 민원·환불 안내문
+            초안은 주되 편집 후 발송
         end note
     }
 
-    state level3_4 {
-        [*] --> human_required
-        human_required --> [*] : 원장 결정 후 완결
-        note right of human_required
-            L3: 상담·개입 결정
-            L4: 정보 제공 → 인간 행동 대기
+    state level3 {
+        [*] --> analysis_ready
+        analysis_ready --> decision_required : 원장 액션 선택
+        decision_required --> action_chosen : 상담 생성 / 보류 / 재배정
+        action_chosen --> [*] : 후속 액션 기록
+        note right of decision_required
+            L3: 분석 + 사람 결정
+            예: 상담 여부, 개입 강도
+        end note
+    }
+
+    state level4 {
+        [*] --> info_only
+        info_only --> human_reference : 참고자료 열람
+        human_reference --> [*] : 사람 수동 처리
+        note right of info_only
+            L4: 정보 제공만
+            법적/감정적 판단은 인간 책임
         end note
     }
 ```
@@ -92,9 +109,10 @@ stateDiagram-v2
 |----------|------|:-----:|------|
 | Complaint | 민원 분류 + 로그 | **0** | 자동 완결 |
 | Complaint | 일반 응답 초안 | **1** | 원클릭 승인 |
-| Complaint | 복잡/환불/법적 | **2** | 에스컬레이션 |
+| Complaint | 복잡한 응답/환불 안내 | **2** | 편집 후 승인 |
 | Retention | 위험 점수 + 대시보드 | **0** | 자동 완결 |
 | Retention | 학부모 안내 메시지 | **1** | 원클릭 승인 |
 | Retention | 상담/개입 결정 | **3** | 원장 결정 |
+| Complaint / Compliance | 법적/감정적 분쟁 참고자료 | **4** | 정보 제공만 |
 | Scheduler | 일정 자동 업데이트 | **0** | 자동 완결 |
 | Scheduler | 강사 대체 제안 | **1** | 원클릭 승인 |

@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # User Personas
 
 > HagentOS 사용자 페르소나 3축

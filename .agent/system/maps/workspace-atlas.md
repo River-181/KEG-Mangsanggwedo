@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[.agent/system/README]]"
 aliases:
   - workspace-atlas
@@ -60,6 +60,12 @@ aliases:
 │   └── tasks/
 ├── 05_제출/
 ├── 06_LLM위키/
+│   ├── concepts/
+│   ├── comparisons/
+│   ├── entities/
+│   ├── problems/
+│   ├── sources/
+│   ├── theses/
 │   └── tasks/
 ├── assets/
 ├── .agent/
@@ -95,6 +101,7 @@ aliases:
 | 오늘의 단기 맥락 확인 | `.agent/system/memory/daily-memory.md` |
 | 지속 위키 확인 | `06_LLM위키/index.md` |
 | LLM 위키 운영 규칙 확인 | `.agent/system/contracts/llm-wiki-operations.md` |
+| 위키 후보 스캔 규칙 확인 | `.agent/skills/wiki-candidate-harvest/SKILL.md` |
 | 증빙 직접 기록 위치 확인 | `04_증빙/01_핵심로그/master-evidence-ledger.md` |
 
 ## 4. 메모리 → 증빙 흐름
@@ -130,6 +137,7 @@ flowchart LR
 | 기억 변경 | `daily-memory.md`, 필요 시 `long-term-memory.md` |
 | 대시보드/일정 구조 변경 | `project-dashboard.md`, `PLAN.md`, `PROGRESS.md`, `04_증빙/03_daily/` |
 | LLM wiki 변경 | `06_LLM위키/index.md`, `06_LLM위키/log.md`, 필요 시 `master-evidence-ledger.md` |
+| 위키 후보 발굴 규칙 변경 | `.agent/skills/wiki-candidate-harvest/`, `skills-registry.md`, `PROGRESS.md` |
 | 리포트 가치 정보 발생 | `04_증빙/01_핵심로그/` |
 | 세션 종료 | `04_증빙/01_핵심로그/master-evidence-ledger.md`, 필요 시 `decision-log.md`, 필요 시 `prompt-catalog.md` |
 | MOC 구조 변경 | `_MOC/_MOC_HOME.md`, `00 HOME.md`, `workspace-atlas.md` |

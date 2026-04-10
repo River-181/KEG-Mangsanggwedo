@@ -3,25 +3,80 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-06
+date: 2026-04-09
 up: "[[_MOC_HOME]]"
 aliases:
   - 제품
-status: draft
 ---
 # 제품
 
-> 아이디어 확정 후 채워질 섹션. 현재는 뼈대만 준비.
+## HagentOS 허브
+
+- [[k-edu-zero-human]] — 전체 개요, 아키텍처, 기술스택 (단일 진입점)
+- [[hagent-os/INDEX]] — 개발자용 빠른 문서 찾기 인덱스
+
+## 비전·전략
+
+- [[00_vision/core-bet|Core Bet]] — 핵심 베팅과 차별점
+- [[00_vision/success-metrics|Success Metrics]] — 성공 지표
+- [[01_strategy/market-and-customer|시장·고객]] — TAM/SAM/SOM + 고객 세그먼트
+- [[01_strategy/value-and-competition|가치·경쟁]] — 차별화 포인트
+- [[01_strategy/go-to-market|GTM]] — 출시 전략
 
 ## 제품 정의
 
-- [[problem-definition]] — 선택된 문제 정의
-- [[user-personas]] — 대상 사용자 페르소나
-- [[architecture]] — 기술 아키텍처
+- [[02_product/prd|PRD]] — 제품 전체 명세 (단일 진실 원본)
+- [[02_product/mvp-scope|MVP Scope]] — Must/Should 우선순위
+- [[02_product/user-personas|페르소나]] — 타깃 원장 페르소나
+- [[02_product/user-journeys|유저저니]] — 주요 사용자 여정
 
-## 데모
+## AI 에이전트
 
-- [[demo-script]] — 데모 대본 (90초 / 180초)
+- [[04_ai-agents/agent-design|에이전트 설계]] — 전체 설계 원칙
+- [[04_ai-agents/agent-roles/orchestrator|오케스트레이터]] — 총괄 에이전트
+- [[04_ai-agents/agent-roles/complaint|민원 에이전트]]
+- [[04_ai-agents/agent-roles/retention|이탈방어 에이전트]]
+- [[04_ai-agents/agent-roles/intake|신규상담 에이전트]]
+- [[04_ai-agents/agent-roles/scheduler|일정관리 에이전트]]
+- [[04_ai-agents/agent-roles/notification|알림 에이전트]]
+
+## 워크플로우
+
+- [[05_workflows/complaint-handling|민원 처리 흐름]]
+- [[05_workflows/churn-detection|이탈 감지 흐름]]
+- [[05_workflows/morning-briefing|아침 브리핑]]
+- [[05_workflows/new-enrollment|신규 등록]]
+- [[05_workflows/schedule-management|수업 일정]]
+- [[05_workflows/compliance-alert|규정 준수 알림]]
+
+## 도메인·데이터·정책
+
+- [[03_domain/academy-operations|학원 운영 개념]]
+- [[08_data/domain-model|도메인 모델]]
+- [[06_policies/ai-safety-policy|AI 안전 정책]]
+- [[07_integrations/integrations|외부 연동]]
+
+## UX·디자인
+
+- [[09_ux/information-architecture|IA]]
+- [[09_ux/ux-concepts|UX 컨셉]]
+- [[DESIGN|디자인 시스템]]
+- [[brand/identity|브랜드 아이덴티티]]
+- [[brand/landing-page|랜딩 페이지]]
+
+## 실행
+
+- [[10_execution/roadmap|로드맵]] — 일별 목표 + 역할
+- [[10_execution/open-questions|미해결 질문]]
+
+## 다이어그램
+
+- [[00_system-context]]
+- [[01_demo-user-flow]]
+- [[02_orchestrator-sequence]]
+- [[03_erd]]
+- [[04_approval-state]]
+- [[05_ia-screen-map]]
 
 ## 코드
 

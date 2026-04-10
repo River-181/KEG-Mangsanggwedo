@@ -97,10 +97,10 @@ Orchestrator Agent  ←── 목표 + 컨텍스트 + 예산
 감사 로거 → 모든 AI 처리 내역 자동 저장
 ```
 
-### 인증 구조 (Dual Auth)
+### 인증 구조 (local_trusted)
 
-- **Board cookie**: 원장 웹 로그인 (next-auth JWT, 단일 계정 MVP)
-- **Agent JWT**: 에이전트 간 통신용 토큰 (내부 API 보안)
+- **MVP**: local_trusted 모드 — 인증 없이 단일 원장 세션 고정
+- **Agent JWT**: 에이전트 간 통신용 토큰 (내부 API 보안, 추후)
 
 ### 제로 휴먼 레벨 (케이스별 결정)
 
@@ -156,7 +156,7 @@ D5(4/10)부터 개발 시작. `03_제품/app/` 디렉토리에 생성 예정.
 
 | Day | 날짜 | 목표 | 담당 |
 |-----|------|------|------|
-| **D5** | 4/10 목 | 스켈레톤 & 인프라 — Next.js + PostgreSQL + Drizzle + next-auth + Mock 데이터 | 승(에이전트)+용(인프라) |
+| **D5** | 4/10 목 | 스켈레톤 & 인프라 — Vite + React 19 + Express v5 + embedded-postgres + Drizzle + Mock 데이터 | 승(에이전트)+용(인프라) |
 | **D6** | 4/11 금 | 에이전트 코어 — Orchestrator + Complaint Agent + Retention Agent | 승(에이전트)+용(API) |
 | **D7** | 4/12 토 | Approval Dashboard UI + Heartbeat cron + 온보딩 | 용(UI)+승(cron) |
 | **D8** | 4/13 일 | 데모 테스트 + 자체 검수 + 최종 배포 제출 | 승+용 |
@@ -179,16 +179,16 @@ D5(4/10)부터 개발 시작. `03_제품/app/` 디렉토리에 생성 예정.
 
 ## 기술 스택 (확정)
 
-| Layer | Tech | 비고 |
-|-------|------|------|
-| Frontend | Next.js 15 (App Router) + Tailwind CSS v4 + shadcn/ui | Toss 스타일, primary #0ea5b0 |
-| Backend | Node.js + TypeScript | API Routes (Next.js) |
-| DB | PostgreSQL + Drizzle ORM | 로컬 Docker / 배포 Neon.tech |
-| AI | Claude API (Sonnet 4.6) | Orchestrator + 전문 에이전트 |
-| Auth | next-auth (JWT) | 단일 원장 계정 MVP |
-| Scheduler | node-cron | heartbeat 방식 자동 실행 |
-| Deploy | Vercel + Neon.tech | 프론트+백엔드 통합 배포 |
-| Design | "Toss Product Sans" / "Noto Sans KR", Lucide icons | 모바일 반응형 |
+| Layer | Tech | 비고                          |
+| --------- | ----------------------------------------------------- | --------------------------- |
+| Frontend | React 19 + Vite + React Router v7 + Tailwind CSS | 4존 레이아웃, SPA               |
+| Backend | Express v5 + TypeScript (ESM) | 에이전트 런타임 포함               |
+| DB | PostgreSQL + Drizzle ORM | embedded-postgres(로컬) / 외부 PG URL(클라우드) |
+| AI | Claude API (Sonnet 4.6) | Orchestrator + 전문 에이전트      |
+| Auth | local_trusted (인증 없음) | MVP: 단일 원장, 세션 고정           |
+| Scheduler | node-cron | heartbeat 방식 자동 실행          |
+| Deploy | GitHub 오픈소스 설치형 + 별도 랜딩 페이지 | Paperclip 배포 모델             |
+| Design | "Toss Product Sans" / "Noto Sans KR", Lucide icons | 모바일 반응형                     |
 
 ---
 
@@ -272,16 +272,16 @@ HagentOS의 4번째 핵심 차별점. 에이전트가 한국 서비스 생태계
 
 ### 확정 (변경 불가)
 
-| 항목 | 결정 내용 |
-|------|-----------|
-| 제품명 | HagentOS |
-| MVP 타겟 | 학원 원장 (사교육) |
-| 기술 스택 | Next.js + PostgreSQL + Drizzle + Claude API + next-auth + node-cron |
-| 디자인 | Toss 스타일, primary teal #0ea5b0, shadcn/ui |
-| Must 에이전트 | Orchestrator, Complaint, Retention, Scheduler |
-| 인증 | next-auth JWT, 단일 원장 계정 |
-| 배포 | Vercel + Neon.tech |
-| 제출 마감 | 2026-04-13 24:00 (D-4) |
+| 항목        | 결정 내용                                                               |
+| --------- | ------------------------------------------------------------------- |
+| 제품명       | HagentOS                                                            |
+| MVP 타겟    | 학원 원장 (사교육)                                                         |
+| 기술 스택     | React 19 + Vite + Express v5 + PostgreSQL + Drizzle + Claude API + node-cron |
+| 디자인       | Toss 스타일, primary teal `#0ea5b0`, shadcn/ui                         |
+| Must 에이전트 | Orchestrator, Complaint, Retention, Scheduler                       |
+| 인증        | local_trusted (인증 없음, 단일 원장 세션 고정)                                  |
+| 배포        | GitHub 오픈소스 설치형 + 별도 랜딩 페이지                                        |
+| 제출 마감     | 2026-04-13 24:00 (D-4)                                              |
 
 ### 미결 (D5 이후 결정)
 

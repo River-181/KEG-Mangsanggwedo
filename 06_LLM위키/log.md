@@ -126,3 +126,44 @@ aliases:
 	- [[프로젝트_지식화_후보_스캔]]
 - next:
 	- `problem-scorecard`, `problem-bank`, `playbook` 순으로 wiki 승격
+
+## [2026-04-09] ingest | scorecard, problem bank, playbook 승격
+
+- action: ingest
+- reason: 문제 선택 문법과 7일 실행 doctrine을 위키 상위 축으로 고정하기 위함
+- touched:
+	- [[문제_선택_점수표_문법]]
+	- [[문제_후보_뱅크와_탈락_문법]]
+	- [[KEG_7일_MVP_플레이북]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `gap-analysis-paperclip-vs-hagent`를 comparison으로 승격
+	- `legal-requirements`를 법규 체크리스트로 승격
+
+## [2026-04-10] ingest | 제품 갭, 법규 체크리스트, 운영 루프 승격
+
+- action: ingest
+- reason: 제품 설계 비교축과 운영/compliance 구조를 위키에서 바로 참조 가능하게 만들기 위함
+- touched:
+	- [[Paperclip_vs_HagentOS_설계_갭]]
+	- [[학원_운영_법규_체크리스트]]
+	- [[학원_운영_루프_지도]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `운영_Control_Plane_모델` 생성
+	- `한국_교육_도메인_적합성_갭` 생성
+
+## [2026-04-10] ingest | control plane와 도메인 적합성 갭 승격
+
+- action: ingest
+- reason: Paperclip 해석을 제품 개념 축과 한국 교육 번역 축으로 고정하기 위함
+- touched:
+	- [[운영_Control_Plane_모델]]
+	- [[한국_교육_도메인_적합성_갭]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `pain-points`를 기존 솔루션 공백 note로 승격
+	- `data-assets`를 데이터 자산 지도 note로 승격

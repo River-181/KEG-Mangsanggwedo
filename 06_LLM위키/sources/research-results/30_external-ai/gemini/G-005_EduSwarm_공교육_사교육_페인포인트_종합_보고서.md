@@ -1,3 +1,12 @@
+---
+tags:
+  - area/wiki
+  - type/source
+  - status/archived
+date: 2026-04-09
+up: "[[research-results-source-hub]]"
+---
+
 # EduSwarm(역할 기반 AI 에이전트 스웜) 프로젝트를 위한 공교육·사교육 페인포인트 종합 보고서
 
 ## Executive summary

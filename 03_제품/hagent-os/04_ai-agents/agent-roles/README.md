@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # HagentOS Agent Roles
 
 ## 개요

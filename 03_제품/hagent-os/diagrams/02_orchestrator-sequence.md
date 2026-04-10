@@ -53,9 +53,20 @@ sequenceDiagram
         API->>DB: UPDATE Approval {status: approved}
         API->>DB: UPDATE Case {status: resolved, approvedBy: userId}
         API->>DB: INSERT ActivityEvent {action: approved}
-    else approvalLevel == 2 (에스컬레이션)
-        CA->>DB: UPDATE Case {status: escalated, severity: high}
-        CA-->>원장: 알림 (직접 처리 필요)
+    else approvalLevel == 2 (편집 후 승인)
+        CA->>AQ: INSERT Approval {level: 2, status: pending}
+        AQ-->>원장: 알림 (편집 후 승인 필요)
+        원장->>API: POST /approvals/:id/edit-and-approve
+        API->>DB: UPDATE Approval {status: approved}
+        API->>DB: UPDATE Case {status: resolved, approvedBy: userId}
+        API->>DB: INSERT ActivityEvent {action: approved}
+    else approvalLevel in {3,4} (사람 결정/정보 제공)
+        CA->>AQ: INSERT Approval {level: 3|4, status: pending}
+        AQ-->>원장: 알림 (상담 결정 또는 참고자료 확인)
+        원장->>API: POST /approvals/:id/decide
+        API->>DB: UPDATE Approval {status: approved}
+        API->>DB: UPDATE Case {status: escalated|resolved}
+        API->>DB: INSERT ActivityEvent {action: approved}
     end
 
     DB->>DB: INSERT TokenUsageEvent {costCents, model}
@@ -79,6 +90,6 @@ sequenceDiagram
 |-------|------|------|
 | 0 | 분류·기록·집계 | AgentRun → completed (즉시) |
 | 1 | 초안 발송 | Approval Queue → 원장 원클릭 |
-| 2 | 복잡·환불·법적 | Escalated → 원장 직접 처리 |
-| 3 | 상담·개입 결정 | Human Required → 원장 결정 |
-| 4 | 정보 제공만 | 자동 완결, 결과 알림만 |
+| 2 | 편집 후 발송 | Approval Queue → 편집 후 승인 |
+| 3 | 상담·개입 결정 | Approval Queue → 원장 액션 선택 |
+| 4 | 정보 제공만 | Approval Queue → 참고자료 확인 후 수동 처리 |

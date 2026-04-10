@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 계획
@@ -12,7 +12,7 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 자신의 역할에 해당하는 작업을 찾아 실행한다.
-> 마지막 업데이트: 2026-04-09 (Day 4)
+> 마지막 업데이트: 2026-04-10 (Day 5)
 
 ---
 
@@ -24,41 +24,43 @@ aliases:
 | 1 | 04-07 | 문제 리서치 → 후보 3개 축소 | problem-bank, scorecard 완성 |
 | 2 | 04-08 | 의사결정 스프린트 → 1개 확정 | decision-sprint, scope-board 확정 |
 | 3 | 04-09 | 뼈대 앱 + 핵심 플로우 | 첫 배포, 데모 크리티컬 작동 |
-| 4 | 04-10 | 기능 동결, QA, UX | 주요 버그 0개 |
-| 5 | 04-11 | README, AI 리포트, judge review | 제출물 초안 완성 |
+| 4 | 04-10 | 구현 전 정본 잠금 + 앱 스켈레톤 착수 | UI/IA 정본 잠금, 앱 시작 가능 |
+| 5 | 04-11 | 핵심 기능 + QA + README/AI 리포트 | 제출물 초안 완성 |
 | 6 | 04-12 | 시연 리허설, 안정화 | 데모 2분 통과 |
 | 7 | 04-13 | ==제출== | 마감 24:00 전 제출 완료 |
 
 ---
 
-## 현재 우선순위 (Day 4)
+## 현재 우선순위 (Day 5)
 
 ### P0 — 지금 당장
-1. **hagent-os/ 기획 문서 세트 완성**
-   - 담당: Product Agent (Claude Opus 4.6)
-   - 상태: 00_vision, 01_strategy, 02_product ✅ 완료 + k-skill 반영 ✅
-   - 남은 것: `03_domain/`, `04_ai-agents/`, `05_workflows/` ~ `10_execution/`
-2. **k-skill 카탈로그 정본 작성**
-   - 담당: Product Agent
-   - 산출물: `04_ai-agents/` 하위에 에이전트 설계 + 스킬 카탈로그
-   - 핵심: 에이전트 × 스킬 매핑, 외부 한국형 도구(korean-law-mcp, HWP 등) 연동 설계
+1. **앱 스켈레톤 착수**
+   - 담당: Builder Agent
+   - 산출물: `03_제품/app/` 실행 가능한 초기 구조
+2. **구현 전 정본 충돌 해소**
+   - 담당: PM Agent + Product Agent
+   - 산출물: `DESIGN / brand / 09_ux` 기준선 잠금
+   - 핵심: 모바일 탭바, 앱 셸, 폰트, 브랜드 claim를 하나로 맞춘다
 
 ### P1 — 오늘 안에 맞출 것
-3. **앱 스켈레톤 준비**
-   - 담당: Builder Agent
-   - 산출물: `03_제품/app/` Next.js + Supabase 초기 구조
+3. **최소 데모 플로우 1개 연결**
+   - 담당: Builder Agent + Product Agent
+   - 산출물: 온보딩 또는 민원/FAQ 흐름 중 1개를 실제 상태/화면으로 연결
 4. **k-skill 프로토타입 구현**
    - 담당: Builder Agent
    - 산출물: `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 3~5개
-5. **Evidence Gate 운영 유지**
+5. **브랜드/채널 증빙 정리 유지**
+   - 담당: Evidence Agent
+   - 산출물: 로고/카카오 채널 캡처 제목 정리, daily/ledger 동기화
+6. **Evidence Gate 운영 유지**
    - 담당: Evidence Agent
    - 산출물: `ai-session-intake.csv`, `master-evidence-ledger.md`
 
 ### P2 — Day 5 준비
-6. **오케스트레이터 + Agent 2개 핵심 개발**
+7. **오케스트레이터 + Agent 2개 핵심 개발**
    - 담당: Builder Agent
    - 산출물: Orchestrator + Complaint Agent + Retention Agent 동작
-7. **승인 대시보드 + k-skill 레지스트리 UI**
+8. **승인 대시보드 + k-skill 레지스트리 UI**
    - 담당: Builder Agent
    - 산출물: 카드 UI + 스킬 카탈로그 UI
 

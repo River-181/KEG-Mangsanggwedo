@@ -3,12 +3,12 @@ tags:
   - area/evidence
   - type/report
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-09 17:25 KST
+> 생성 시각: 2026-04-10 06:04 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -18,7 +18,8 @@ up: "[[_04_증빙_MOC]]"
 |---|---:|---|---:|---:|
 | 2026-04-06 | 16 | ChatGPT, Claude Code, Codex, Perplexity | 18 | 195,000 |
 | 2026-04-08 | 6 | Codex | 8 | 84,000 |
-| 2026-04-09 | 3 | Codex | 3 | 33,000 |
+| 2026-04-09 | 4 | Codex, Human Meeting | 3 | 33,000 |
+| 2026-04-10 | 1 | Codex | 1 | 6,000 |
 
 ## Prompt Promotion Candidates
 
@@ -27,7 +28,7 @@ up: "[[_04_증빙_MOC]]"
 - `S-PPLX-001` Perplexity: P-005와 P-006은 승격 가치가 높음
 - `S-EVID-015` Codex: P-009 evidence orchestrator prompt는 재사용 가치 있음
 - `S-OPS-011` Codex: P-007과 P-008은 재사용 프롬프트 자산으로 승격 가치 높음
-- `S-PROD-018` Codex: 제품 정의 근거 | 워크플로우 | AI 활용 전략
+- `S-OPS-020` Codex: Day 5 구현 전 정본 잠금을 위한 운영 프롬프트로 재사용 가능
 
 ## Decision Promotion Candidates
 
@@ -48,8 +49,10 @@ up: "[[_04_증빙_MOC]]"
 - `S-OPS-014` Codex: 보안 gate 추가를 decision 후보로 검토 가능
 - `S-RES-013` Codex: NotebookLM을 리서치 합성 도구로 검증
 - `S-STRAT-010` Codex: LLM 위키 레이어 도입
-- `S-PROD-018` Codex: exact unavailable estimate
+- `S-MTG-019` Human Meeting: 소규모 학원 타깃; 로컬 데이터 자산화; 무거운 SaaS 회피; 오픈소스 극대화
+- `S-PROD-018` Codex: HagentOS를 제품명 정본으로 사용; MVP는 학원 원장 민원·예외 처리 OS로 본다
 - `S-STRAT-016` Codex: paperclip 해체 분석을 문제 정의 입력으로 승격
+- `S-OPS-020` Codex: 모바일 탭바/앱 셸/폰트/브랜드 claim를 구현 전 잠근다
 
 ## Daily Note Hints
 
@@ -75,8 +78,10 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-08` / `S-OPS-014`: 공개 저장소 운영 원칙을 장기 기억에 유지
 - `2026-04-08` / `S-RES-013`: 담임 모드 우선 가설을 memory에 유지
 - `2026-04-08` / `S-STRAT-010`: 지식 시스템 변경을 장기 기억에 남길 것
-- `2026-04-09` / `S-PROD-018`: 향후 구현/비평/리팩터링은 hagent-os 문서군을 기준으로 진행
+- `2026-04-09` / `S-MTG-019`: 승보님과 개발 착수 공감대 형성
+- `2026-04-09` / `S-PROD-018`: 제품 정본을 읽은 뒤 그 기준으로만 판단할 것
 - `2026-04-09` / `S-STRAT-016`: 메모리와 대시보드를 현재 상태로 맞춘 이유를 남길 것
+- `2026-04-10` / `S-OPS-020`: Day 5 운영 문서 동기화와 구현 전 블로커 기록
 
 ## Memory Sync Hints
 
@@ -86,8 +91,9 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-08` / `S-EVID-015`: 외부 AI 사용 통계 왜곡 방지 맥락 유지
 - `2026-04-08` / `S-OPS-011`: 태그/계층 규칙 변경 사실을 장기 기억에 남길 것
 - `2026-04-08` / `S-OPS-012`: 데일리와 daily-memory 동기화 이유를 기억에 남길 것
+- `2026-04-09` / `S-MTG-019`: 이 합의는 이후 제품 판단 기준으로 계속 유지
 - `2026-04-09` / `S-OPS-017`: 반복 요청에서도 intake-first 규칙을 유지했다는 점을 기억에 남길 것
-- `2026-04-09` / `S-STRAT-016`: logged
+- `2026-04-10` / `S-OPS-020`: 다음 세션은 이 4개 충돌을 우선 해소하고 앱 스켈레톤으로 간다
 
 ## Open Notes
 

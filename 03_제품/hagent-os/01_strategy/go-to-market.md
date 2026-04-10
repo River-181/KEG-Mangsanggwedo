@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # Go-to-Market
 
 > 시장 진입 전략과 확장 경로

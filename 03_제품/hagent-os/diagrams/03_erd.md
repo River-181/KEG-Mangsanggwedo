@@ -6,7 +6,7 @@ aliases: [erd, 도메인-erd]
 ---
 # ERD — HagentOS 핵심 도메인 모델
 
-> Drizzle ORM + PostgreSQL 기준. 핵심 12개 테이블.
+> Drizzle ORM + PostgreSQL 기준. 아래는 `MVP Core ERD`이며, Must 범위 테이블을 우선 표시한다.
 > 전체 스키마 정본: [[08_data/domain-model]]
 
 ```mermaid
@@ -69,6 +69,15 @@ erDiagram
         enum invocationSource "timer|assignment|on_demand|automation"
     }
 
+    WakeupRequest {
+        uuid id PK
+        uuid agentId FK
+        text triggerType
+        jsonb triggerPayload
+        int coalescedCount
+        timestamptz claimedAt
+    }
+
     Approval {
         uuid id PK
         uuid agentRunId FK
@@ -76,6 +85,35 @@ erDiagram
         enum status "pending|approved|rejected"
         uuid approvedBy
         timestamptz decidedAt
+    }
+
+    Parent {
+        uuid id PK
+        uuid organizationId FK
+        text name
+        text phone
+        enum preferredChannel "kakao|sms|email"
+    }
+
+    Schedule {
+        uuid id PK
+        uuid organizationId FK
+        enum type "class|consult|bus|inspection|legal_deadline|other"
+        text title
+        timestamptz startAt
+        timestamptz endAt
+        text externalSync
+        enum status "scheduled|completed|cancelled|rescheduled"
+    }
+
+    Notification {
+        uuid id PK
+        uuid organizationId FK
+        uuid caseId FK
+        text type
+        enum channel "in_app|email|kakao|sms"
+        enum status "pending|sent|failed"
+        uuid recipientId
     }
 
     OpsGroup {
@@ -138,6 +176,9 @@ erDiagram
 
     Organization ||--o{ Agent : "owns"
     Organization ||--o{ Case : "owns"
+    Organization ||--o{ Parent : "owns"
+    Organization ||--o{ Schedule : "owns"
+    Organization ||--o{ Notification : "owns"
     Organization ||--o{ OpsGroup : "owns"
     Organization ||--o{ OpsGoal : "owns"
     Organization ||--o{ ActivityEvent : "logs"
@@ -145,16 +186,33 @@ erDiagram
 
     Agent ||--o{ AgentRun : "executes"
     Agent ||--o{ AgentKey : "has"
+    Agent ||--o{ WakeupRequest : "wakes"
     Agent |o--o| Agent : "reportsTo"
 
+    WakeupRequest ||--o{ AgentRun : "triggers"
     AgentRun ||--o| Approval : "gates"
     AgentRun ||--o{ TokenUsageEvent : "incurs"
 
     Case }o--o| Student : "concerns"
+    Case }o--o| Parent : "reportedBy"
     Case }o--o| OpsGoal : "links"
     Case |o--o| AgentRun : "checkoutRun"
     Case |o--o| Case : "parentId"
+    Case ||--o{ Notification : "emits"
+    Schedule ||--o{ Notification : "reminds"
 ```
+
+---
+
+## MVP Core vs Extended
+
+### MVP Core (바로 구현 기준)
+
+`Organization`, `Agent`, `WakeupRequest`, `AgentRun`, `Case`, `Approval`, `Student`, `Parent`, `Schedule`, `Notification`
+
+### Extended (v1.1+ / 운영 확장)
+
+`AgentKey`, `OpsGroup`, `OpsGoal`, `ActivityEvent`, `TokenBudget`, `TokenUsageEvent`
 
 ---
 
@@ -164,9 +222,13 @@ erDiagram
 |---------|--------|------|
 | Must | Organization | 멀티테넌시 루트 |
 | Must | Agent | 에이전트 영속 엔티티 |
+| Must | WakeupRequest | 에이전트 wakeup dedup / claim |
 | Must | Case | 민원 케이스 |
 | Must | AgentRun | 실행 감사 추적 |
 | Must | Approval | 승인 게이트 |
+| Must | Parent | 민원 제기자 연결 |
+| Must | Schedule | 통합 스케줄러 |
+| Must | Notification | 인앱/이메일 알림 저장 |
 | Should | Student | 이탈 위험 점수 |
 | Should | TokenBudget | API 예산 관리 |
 | Later | OpsGroup / OpsGoal | v1.1 |

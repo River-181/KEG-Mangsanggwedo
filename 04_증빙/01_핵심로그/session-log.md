@@ -3,31 +3,57 @@ tags:
   - area/evidence
   - type/log
   - status/active
-date: 2026-04-06
+date: 2026-04-10
 up: "[[_04_증빙_MOC]]"
 ---
 # 세션 기록
 
 > archive/reference.
-> 앞으로 세션 직접 기록은 [[master-evidence-ledger]]를 사용한다.
+> intake 기반 파생 로그. 직접 입력은 `ai-session-intake.csv`를 사용한다.
 
 ## 2026-04-06
 
-| Session_ID | 시각 | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | Evidence updates | Gate status | 다음행동 | 상태 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| S-001 | 14:00 | Contest Research | 대회 개요 정리 및 워크스페이스 구조화 | CLI | Claude Code | Opus 4.6 | User + Claude | 공지PDF, 홍보PDF 2종, 플레이북, 이메일 | 전체 워크스페이스 구조, MOC 6개, 에이전트 8개, 증빙 체계 | 평탄 구조 채택, .agent 중립, .context 공유 | 개요서, 구조화 결과, 초기 증빙 로그 반영 | Passed | 증빙 시스템 확장 | Done |
-| S-002 | 17:00 | Workspace Setup | 증빙 시스템 개선 + 포터블 환경 | CLI | Claude Code | Opus 4.6 | User + Claude | 플레이북, 엑셀 트래커 | 분석문서, setup.sh, skills/, portable-config | 엑셀→마크다운 전환, 포터블 공간 | 통계/증빙 설계 문서 반영 | Passed | PLAN/PROGRESS 생성 | Done |
-| S-003 | 17:30 | Workspace Setup | 멀티에이전트 조율 + Codex 평가 통합 | CLI | Claude Code | Opus 4.6 | User + Claude + Codex | Codex 평가, PROGRESS/PLAN 필요성 | `.agent/system/ops/PROGRESS.md`, `.agent/system/ops/PLAN.md`, `CLAUDE.md` 업데이트 | 멀티에이전트 동기화 체계 도입 | 평가 보고서와 운영 개선 기록 반영 | Passed | 증빙 확장 + 아키텍처 시각화 | Done |
-| S-GPT-001 | - | Contest Research | 대회 개요 정리 및 준비 로드맵 | Web | ChatGPT | GPT-5.4 | User + GPT | 공식 URL, 공지 PDF, 홍보 PDF 2종 | 공지 개요서, Prompt Tracker workbook | 증빙 중심 운영 | 관련 프롬프트와 산출물 반영 | Passed | 워크스페이스 고도화 | Done |
-| S-OPS-001 | 19:00 | Workspace Setup | 운영 정본 V2 실제 반영 | Desktop | Codex | GPT-5 | User + Codex | 승인된 V2 계획, 기존 운영 문서 일체 | `.agent/system/` 골격, 계약 문서, 맵 다이어그램, `.context` 흡수 방향 확정 | `.agent/system`을 공용 정본으로 채택 | 시스템 정본 문서, 로그 인터페이스, 리다이렉션 반영 | Passed | 문제 리서치 세션에서 첫 실전 Evidence Gate 검증 | Done |
-| S-OPS-002 | 20:10 | Workspace Cleanup | 루트 단순화와 위치 정합성 정리 | Desktop | Codex | GPT-5 | User + Codex | 현재 폴더 구조, `.agent`, `.claude`, `03_제품`, `04_증빙` | 운영 파일 `.agent/system/ops/` 이동, `.claude` 최소화, `.context` 제거, 제품 코드 위치 정리 | 운영 자산은 `.agent`로 흡수하고 `.claude`는 최소 어댑터로 유지 | 경로 수정, 운영 계약 수정, 로그/결정 기록 반영 | Passed | 문제 리서치 시작 전 첫 실전 운용 검증 | Done |
-| S-OPS-003 | 21:00 | Workspace Cleanup | memory/maps/evidence를 처음 보는 사용자 기준으로 단순화 | Desktop | Codex | GPT-5 | User + Codex | 사용자 요구, 기존 memory/maps/evidence 구조 | 장기기억/일일기억, workspace atlas, 핵심로그/분석자료/daily, workspace-sync skill | memory와 maps의 파일 수 축소, 증빙 구역화, sync 스킬 도입 | 새 구조와 새 경로를 정본 문서와 로그에 반영 | Passed | 문제 리서치 세션에서 workspace-sync 스킬 실전 적용 | Done |
-| S-OPS-004 | 21:20 | Workspace Setup | GitHub 운영 스킬 추가 | Desktop | Codex | GPT-5 | User + Codex | 사용자 요청, 현재 운영 규칙, 증빙 구조 | `github-workflow` skill, registry 반영 | GitHub 작업도 Evidence Gate와 증빙 규칙을 따르도록 결정 | 스킬 파일, registry, usage/session log 반영 | Passed | 실제 GitHub issue/commit 작업에서 첫 사용 | Done |
-| S-OPS-005 | 21:45 | Workspace Setup | Obsidian-first 운영 기준 명시 | Desktop | Codex | GPT-5 | User + Codex | 사용자 지시, obsidian CLI, Obsidian 관련 글로벌 스킬, 공용 운영 문서 | `obsidian-workspace` skill, Obsidian-first 원칙이 반영된 AGENTS/CLAUDE/system docs | 이 저장소의 문서 레이어를 Obsidian vault로 공식 규정하고 note/base 작업은 Obsidian 규칙과 스킬을 우선 사용 | 새 스킬, registry, 공용 문서, usage/session/decision/gate 로그 반영 | Passed | 실제 note/MOC/base 작업에서 `obsidian` CLI 실사용 패턴 정착 | Done |
-| S-OPS-006 | 22:10 | Workspace Setup | Claude runtime command layer 설계 및 추가 | Desktop | Codex | GPT-5 | User + Codex | Claude Code 공식 slash command 문서, 기존 agents/skills, 운영 정본 문서 | `.claude/commands/` 6종, `claude-command-stack.md`, atlas/registry/portable-config/CLAUDE 반영 | commands는 최소 6개 엔트리포인트만 두고, 복잡한 로직은 기존 agents/skills를 재사용하도록 결정 | command registry, runtime commands, usage/session/decision/gate 로그 반영 | Passed | 실제 Claude Code에서 `/session-start`, `/problem-scan`부터 실사용 검증 | Done |
-| S-OPS-007 | 22:25 | Workspace Setup | GitHub issue/project 관리 스킬 확장 | Desktop | Codex | GPT-5 | User + Codex | 사용자 요청, `gh issue`, `gh project`, PM 대시보드, 기존 GitHub 스킬 | `github-issue-ops`, `github-project-ops`, updated `github-workflow`, registry/README 반영 | GitHub 운영을 commit/release와 issue/project board로 분리하고 상위 workflow가 이를 오케스트레이션하도록 결정 | 스킬 파일, registry, usage/session/decision/gate 로그 반영 | Passed | 실제 issue triage와 project board 생성에서 첫 검증 | Done |
-| S-RES-013 | 23:10 | Research Ops | 리서치 작업 공간 구축과 NotebookLM 통합 | Desktop | Codex + `nlm` | GPT-5 + NotebookLM | User + Codex | `06_LLM위키/sources/01~05`, `gemini/grok/perplexity` 결과, `02_전략/research-results/` | 리서치 허브/플랜/프롬프트/로그, 통합 브리프, NotebookLM 노트북 `KEG EduSwarm Research 2026-04-08`, 리서치 문서 18개 업로드 | 리서치 결과를 NotebookLM 합성 계층까지 연결해 `담임 모드` 우선 가설을 도출 | master evidence, daily memory, progress 업데이트 | Passed | scorecard 반영 및 최종 문제 1개 압축 | Done |
-| S-RES-014 | 00:20 | Research Ops | Bottom-Up Academy 전용 NotebookLM 리서치 실행 | Desktop | Codex + `nlm` | GPT-5 + NotebookLM | User + Codex | `00-bottom-up-academy-research-source`, `00-notebooklm-bottom-up-prompts`, `00-problem-definition-source`, `R-005`, `R-006`, `gemini/grok/perplexity`, `06_LLM위키/sources/01~05` | 노트북 `KEG Bottom-Up Academy Research 2026-04-09`, 소스 18개 업로드, `R-008_NLM_바텀업학원리서치합성.md` | `담임 우세`만으로 확정하지 않고 `운영자 모드`, `민원/이탈`, `도메인팩` 축을 다시 비교하기로 함 | research-log, progress, daily-memory, daily note, usage/session/master evidence 업데이트 | Passed | `problem-scorecard`와 decision-sprint에 바텀업 기준 반영 | Done |
-| S-RES-015 | 01:15 | Research Ops | Bottom-Up 노트북에 딥리서치와 Studio report를 추가 실행 | Desktop | Codex + `nlm` | GPT-5 + NotebookLM | User + Codex | Bottom-Up 노트북, deep research query, custom report prompt | 웹 딥리서치 소스 22개 import, report artifact `0b7335a0-17b2-4ed2-b085-a69b0b25f315`, Google Docs export, `R-009_NLM_딥리서치_및_스튜디오보고서.md` | `nlm`은 단순 query 도구가 아니라 source discovery + studio report export까지 포함하는 리서치 런타임으로 사용하기로 정리 | research-log, progress, daily-memory, daily note, usage/session/master evidence 업데이트 | Passed | scorecard와 decision-sprint에 deep research 결과 반영 | Done |
-| S-RES-016 | 02:00 | Research Ops | 한국 학원 운영 도메인 보강과 리서치 폴더 구조 정돈 | Desktop | Codex + `nlm` + Web | GPT-5 + NotebookLM | User + Codex | 웹 검색, Bottom-Up 노트북, `R-008`, `R-009`, 학원 운영/법규/솔루션 페이지 | `20_domain-analysis/` 4문서, `domain-research-hub.md`, `research-folder-guide.md`, 허브 연결 업데이트 | 학원 운영 도메인은 `업무/기존 솔루션 한계/법규/데이터` 4축으로 계속 누적하고, `research-results` 하나를 정본으로 유지하기로 정리 | research-log, progress, daily-memory, daily note, usage/session/master evidence 업데이트 | Passed | NotebookLM 새 딥리서치 결과 import 후 scorecard에 직접 반영 | Done |
-| S-RES-017 | 02:35 | Research Ops | 리서치 폴더를 단일 정본 구조로 재통합하고 scorecard를 새 기준으로 갱신 | Desktop | Codex + `nlm` | GPT-5 + NotebookLM | User + Codex | 새 deep research import 상태, `research-results` 전체, `R-008`, `R-009`, `20_domain-analysis/`, `01-problem-scorecard.md` | `research-results` 4층 구조 정리, `01-problem-scorecard.md` 전면 개편 | `_research`를 제거하고 `research-results` 하나만 정본으로 쓰며, 첫 문제 1순위를 `학원 운영자 민원·예외 처리 OS`로 정리 | daily-memory, progress, daily note, usage/session/master evidence 업데이트 | Passed | `decision-sprint`, `bet-memo`, `scope-board` 갱신 | Done |
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-001 | Contest Research | 대회 개요 정리와 워크스페이스 구조화를 시작한다 | CLI | Claude Code | Opus 4.6 | User + Claude | 공지 PDF  /  홍보 PDF  /  플레이북 | [[바이브코딩공모전_공지]]  /  `_MOC/`  /  `.agent/agents/` | 평탄 구조와 증빙 중심 운영 시작 | 증빙 시스템 확장 단계로 연결 | logged |
+| S-002 | Workspace Setup | 증빙 시스템 개선과 포터블 환경을 정리한다 | CLI | Claude Code | Opus 4.6 | User + Claude | 플레이북  /  엑셀 트래커 | evidence-system-improvement-analysis.md  /  setup.sh  /  portable-config.md | 엑셀 기반 기록 체계의 한계가 드러남 | PLAN/PROGRESS 생성으로 이어짐 | logged |
+| S-003 | Workspace Setup | 멀티에이전트 조율 체계를 도입한다 | CLI | Claude Code | Opus 4.6 | User + Claude + Codex | Codex 평가  /  운영 문서 | [[.agent/system/ops/PLAN]]  /  [[.agent/system/ops/PROGRESS]] | PLAN/PROGRESS 도입 계기 | 증빙 확장과 아키텍처 시각화로 연결 | logged |
+| S-CODEX-001 | Workspace Setup | 워크스페이스 전반을 평가해 약점과 개선점을 찾는다 | Desktop App | Codex | GPT-5 | User + Codex | 전체 워크스페이스 | [[codex-workspace-evaluation]] | Codex 평가서를 통해 개선 방향 확보 | 평가 결과를 운영 문서에 통합 | logged |
+| S-CODEX-002 | Workspace Setup | AI-native 운영감사 보고서를 작성하고 수정한다 | Desktop App | Codex | GPT-5 | User + Codex | 플레이북  /  AGENTS  /  CLAUDE  /  증빙 로그 | [[ai-native-workspace-audit-report]] | - | 운영 정본 V2 구현으로 연결 | logged |
+| S-GPT-001 | Contest Research | 대회 개요와 준비 로드맵의 큰 그림을 잡는다 | Web | ChatGPT | GPT-5.4 | User + GPT | 공식 URL  /  공지 PDF  /  홍보 PDF 2종 | [[바이브코딩공모전_공지]]  /  [[vibe_contest_master_playbook_v0_1]]  /  KEG_AI_Prompt_Tracker.xlsx | - | 후속 리서치와 구현 분업 검증 | logged |
+| S-OPS-001 | Workspace Setup | 공용 운영 정본 V2를 실제 파일 구조로 반영한다 | Desktop App | Codex | GPT-5 | User + Codex | 승인된 V2 계획  /  기존 운영 문서 | [[workspace-contract]]  /  [[workspace-atlas]]  /  `.agent/system/` | `.agent/system`을 canonical로 채택 | 문제 리서치 세션에서도 같은 구조가 유효한지 검증 | logged |
+| S-OPS-002 | Workspace Cleanup | 루트 구조와 경로 정합성을 단순화한다 | Desktop App | Codex | GPT-5 | User + Codex | 현재 폴더 구조  /  `.agent`  /  `.claude`  /  `03_제품`  /  `04_증빙` | `.agent/system/ops/`  /  `.claude/`  /  `03_제품/` | 루트 최소화와 `.context` 제거 결정 | 실전 운용 검증으로 연결 | logged |
+| S-OPS-003 | Workspace Cleanup | 처음 보는 사용자 기준으로 memory/maps/evidence를 단순화한다 | Desktop App | Codex | GPT-5 | User + Codex | 기존 memory/maps/evidence 구조  /  사용자 요구 | [[long-term-memory]]  /  [[daily-memory]]  /  [[workspace-atlas]] | memory/maps/evidence 단순화 결정 | workspace-sync 실전 적용 검증 | logged |
+| S-OPS-004 | Workspace Setup | GitHub 운영 전용 스킬을 추가한다 | Desktop App | Codex | GPT-5 | User + Codex | 사용자 요청  /  운영 규칙  /  증빙 구조 | `.agent/skills/github-workflow/SKILL.md`  /  registry | GitHub 작업을 evidence gate와 연결 | 실제 GitHub issue/commit 작업에서 검증 | logged |
+| S-OPS-005 | Workspace Setup | Obsidian-first 운영 기준을 정본 문서에 명시한다 | Desktop App | Codex | GPT-5 | User + Codex | 사용자 지시  /  obsidian CLI  /  공용 운영 문서 | `.agent/skills/obsidian-workspace/SKILL.md`  /  [[AGENTS]] | 문서 레이어를 Obsidian 자산으로 취급 | 실제 note/MOC/base 작업에서 실전 적용 | logged |
+| S-OPS-006 | Workspace Setup | Claude runtime command layer를 얇게 설계한다 | Desktop App | Codex | GPT-5 | User + Codex | Claude Code slash command 문서  /  기존 agents/skills | `.claude/commands/`  /  [[claude-command-stack]] | command layer를 얇게 유지하는 방향 | Claude runtime 실사용 검증 | logged |
+| S-OPS-007 | Workspace Setup | GitHub issue/project 운영 스킬을 분리한다 | Desktop App | Codex | GPT-5 | User + Codex | 사용자 요청  /  `gh issue --help`  /  `gh project --help` | `.agent/skills/github-issue-ops/`  /  `.agent/skills/github-project-ops/` | GitHub management flow 분리 | 실제 issue triage와 board 생성에서 검증 | logged |
+| S-OPS-008 | Workspace Setup | 증빙 입력을 단일 원장 체계로 전환한다 | Desktop App | Codex | GPT-5 | User + Codex | 기존 핵심 로그  /  공용 규칙 | [[master-evidence-ledger]]  /  [[memory-evidence-policy]] | 단일 원장 전략 도입 | 실제 세션 운영에서 체계 검증 | logged |
+| S-OPS-009 | Workspace Setup | MOC를 중앙화하고 도구 문서를 저장소 내부로 가져온다 | Desktop App | Codex | GPT-5 | User + Codex | 기존 MOC 구조  /  tool docs | 다른 워크스페이스나 전역 환경에 덜 의존하는 포터블 구조가 되었다 | - | exact unavailable estimate | logged |
+| S-PPLX-001 | Contest Research | 기관 의도와 유사 대회 패턴을 리서치한다 | Web | Perplexity | Search+AI | User + Perplexity | 기관 정보  /  대회 공지  /  웹 검색 결과 | [[기관_분석_및_심사_전략]]  /  [[계보_포지셔닝_분석]] | - | 실제 문제 후보 평가 시 조사 재활용 | logged |
+
+## 2026-04-08
+
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-EVID-015 | Evidence Operations | Codex 세션도 증빙 원장과 외부 AI 사용 집계에 포함되게 만든다 | Desktop App | Codex | GPT-5.4 | User + Codex | 기존 evidence docs  /  external-ai-usage.csv | [[master-evidence-ledger]]  /  `external-ai-usage.csv` | - | nightly 집계 시 stats 재생성 | logged |
+| S-OPS-011 | Workspace Operations | 태그와 계층 규칙을 vault 전반에 일관되게 적용한다 | Desktop App | Codex | GPT-5 | User + Codex | note frontmatter  /  dashboard/base  /  규칙 문서 | [[tagging-system]]  /  `tag-audit.sh`  /  templates | DEC-015와 DEC-016의 실행 근거 | 새 note 생성 기본값으로 동일 규칙 유지 | logged |
+| S-OPS-012 | Evidence | 대시보드와 계획/진행/데일리/메모리를 제출용으로 정렬한다 | Desktop App | Codex | GPT-5 | User + Codex | project dashboard  /  PLAN  /  PROGRESS  /  daily memory | [[project-dashboard]]  /  [[PLAN]]  /  [[PROGRESS]]  /  [[2026-04-08]] | DEC-018의 실행 근거 | 주제 확정 이후 제품 태스크도 같은 방식으로 누적 | logged |
+| S-OPS-014 | Workspace Hardening | 공개 저장소 push 전 secret/privacy 점검 절차를 고정한다 | Desktop App | Codex | GPT-5.4 | User + Codex | GitHub 운영 정책  /  `.gitignore` | `pre-push-safety-check.sh`  /  `.gitignore` | 보안 gate 추가를 decision 후보로 검토 가능 | 이후 push 전 표준 루틴으로 사용 | logged |
+| S-RES-013 | Research Ops | 리서치 작업 공간을 구축하고 NotebookLM을 통합한다 | Desktop App | Codex | GPT-5 | User + Codex | `06_LLM위키/sources`  /  전략 문서  /  NotebookLM | `research-hub`  /  `research-plan-eduswarm-v0`  /  NotebookLM notebook | NotebookLM을 리서치 합성 도구로 검증 | scorecard 반영과 최종 문제 압축으로 연결 | logged |
+| S-STRAT-010 | Strategy | Karpathy 스타일 LLM Wiki를 현재 워크스페이스에 삽입한다 | Desktop App | Codex | GPT-5 | User + Codex | 전략 문서  /  wiki 설계 방향 | [[karpathy-llm-wiki-adaptation]]  /  `06_LLM위키/` | LLM 위키 레이어 도입 | 기존 전략 문서 첫 ingest 실행 | logged |
+
+## 2026-04-09
+
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-MTG-019 | Product Alignment | 승보님과 UI 및 핵심 컨셉을 공유하고 개발 착수 가능 여부를 정렬한다 | Offline Meeting | Human Meeting | - | User + 승보님 | UI 시안  /  기획 문서  /  모델링 결과 | UI 시안  /  기획 문서  /  모델링 결과 | 소규모 학원 타깃; 로컬 데이터 자산화; 무거운 SaaS 회피; 오픈소스 극대화 | 다음 단계는 UI 기준으로 실제 개발 착수 | logged |
+| S-OPS-017 | Workspace Sync | 운영 문서와 메모리와 AI 사용 기록을 한 번 더 최신 상태로 동기화한다 | Desktop App | Codex | GPT-5.4 | User + Codex | PLAN  /  PROGRESS  /  daily-memory  /  ai-usage-stats  /  ai-session-intake | [[PLAN]]  /  [[PROGRESS]]  /  [[daily-memory]]  /  [[ai-usage-stats]] | - | nightly dispatch와 stats 재집계를 같은 패턴으로 반복 유지 | logged |
+| S-PROD-018 | Product Learning | `03_제품/hagent-os` 기획 문서를 수정 없이 읽고 현재 제품 방향을 학습한다 | Desktop App | Codex | GPT-5.4 | User + Codex | `03_제품/hagent-os/README.md`  /  core-bet  /  market-and-customer  /  value-and-competition  /  prd  /  mvp-scope | `03_제품/hagent-os/README.md`  /  `00_vision/`  /  `01_strategy/`  /  `02_product/` | HagentOS를 제품명 정본으로 사용; MVP는 학원 원장 민원·예외 처리 OS로 본다 | 향후 구현/비평/리팩터링은 hagent-os 문서군을 기준으로 진행 | logged |
+| S-STRAT-016 | Reference Analysis | `paperclip-master` 실제 코드 기준으로 분석 문서를 보강하고 운영 메모리를 최신화한다 | Desktop App | Codex | GPT-5.4 | User + Codex | `paperclip-master` repo  /  `ui/src/App.tsx`  /  architecture/api/deploy/plugin docs | `02_전략/paperclip-analysis/`  /  [[PLAN]]  /  [[PROGRESS]]  /  [[daily-memory]] | paperclip 해체 분석을 문제 정의 입력으로 승격 | 다음으로 problem-definition-source와 scorecard에 반영 | logged |
+
+## 2026-04-10
+
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-OPS-020 | Workspace Sync | Day 5 기준 운영 문서와 증빙 정본을 다시 동기화하고 구현 전 문서 충돌을 기록한다 | Desktop App | Codex | GPT-5.4 | User + Codex | PLAN  /  PROGRESS  /  project-dashboard  /  daily-memory  /  `04_증빙/03_daily/2026-04-10.md`  /  `03_제품/hagent-os/DESIGN.md`  /  `03_제품/hagent-os/brand/`  /  `03_제품/hagent-os/09_ux/` | [[PLAN]]  /  [[PROGRESS]]  /  [[project-dashboard]]  /  [[daily-memory]]  /  [[2026-04-10]] | 모바일 탭바/앱 셸/폰트/브랜드 claim를 구현 전 잠근다 | dispatch와 usage stats 재생성 | logged |

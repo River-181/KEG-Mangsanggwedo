@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # Core Bet
 
 > HagentOS가 거는 하나의 베팅. 모든 후속 문서의 기준점.

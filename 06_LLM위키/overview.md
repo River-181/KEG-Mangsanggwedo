@@ -57,3 +57,17 @@ aliases:
 - pain priority 축: [[운영자와_교사의_현장_pain_top10]]
 - field quote bank 축: [[현장_발화_샘플_뱅크]]
 - toolchain 축: [[학원_운영_k-skill_및_MCP_후보_맵]]
+
+## 이번 승격 축
+
+- problem selection 축: [[문제_선택_점수표_문법]]
+- problem bank 축: [[문제_후보_뱅크와_탈락_문법]]
+- execution doctrine 축: [[KEG_7일_MVP_플레이북]]
+
+## 오늘 추가 축
+
+- product gap 축: [[Paperclip_vs_HagentOS_설계_갭]]
+- legal/compliance 축: [[학원_운영_법규_체크리스트]]
+- operations loop 축: [[학원_운영_루프_지도]]
+- control plane 축: [[운영_Control_Plane_모델]]
+- domain translation 축: [[한국_교육_도메인_적합성_갭]]

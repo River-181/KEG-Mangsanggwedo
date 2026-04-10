@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # Success Metrics
 
 > HagentOS의 성공을 어떻게 측정할 것인가.

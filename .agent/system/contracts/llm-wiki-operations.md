@@ -68,6 +68,7 @@ raw source 재검증 조건:
 
 새 source를 읽었거나 새 insight가 생기면 아래 순서로 반영한다.
 
+0. 신규 source candidate를 넓게 찾는 단계면 `.agent/skills/wiki-candidate-harvest/SKILL.md`와 `scripts/scan_candidates.py`를 먼저 사용한다.
 1. raw source 위치 확인
 2. `sources/` summary 생성 또는 갱신
 3. 관련 `entities/`, `concepts/`, `problems/`, `theses/`, `comparisons/` page 갱신
@@ -79,6 +80,8 @@ raw source 재검증 조건:
 - 하나의 page는 하나의 topic만 다룬다.
 - raw source 문장 복붙이 아니라 synthesis를 적는다.
 - page 상단에는 항상 "무엇이 확정 사실이고, 무엇이 해석인지"가 드러나야 한다.
+- 이미 위키에 같은 축이 있으면 새 note를 만들기보다 기존 note 보강을 먼저 검토한다.
+- candidate scan 결과는 필요하면 `06_LLM위키/tasks/` 아래 backlog note로 남긴다.
 
 ## Writeback Protocol
 

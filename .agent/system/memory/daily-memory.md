@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - daily-memory
@@ -13,7 +13,15 @@ aliases:
 
 이 파일은 단기 기억과 핸드오프를 위한 요약본이다.
 
-## 오늘 상태 (Day 4 — 2026-04-09)
+## 오늘 상태 (Day 5 — 2026-04-10)
+
+### 운영 문서 및 제출 증빙 정리
+- `02_전략` 구조 재정리 이후 어긋난 안내 문서를 현재 구조 기준으로 업데이트했다.
+- `04_증빙/03_daily/2026-04-10.md`를 생성했다.
+- `탄자니아 영어학원` 로고와 카카오 채널/챗봇 관련 이미지 17건에 날짜 포함 제목을 부여했다.
+- 오늘 작업은 기능 개발보다 제출용 캡션 정리와 운영 문서 정합성 보정에 초점이 있었다.
+- intake-first 증빙 체계를 기준으로 `ai-session-intake.csv`, `master-evidence-ledger.md`, `external-ai-usage.csv`, `ai-usage-log.md`, `session-log.md`를 다시 맞췄다.
+- 2026-04-09 승보님 미팅에서 확정된 제품 베팅을 장기 판단 기준으로 유지한다.
 
 ### 기획 문서 전체 완성 (Day 4 최종)
 
@@ -36,6 +44,7 @@ aliases:
 - **비전**: Korean Education 전체 (사교육 운영자 + 공교육 교사 + 강사)
 - **MVP 타겟**: P-001 학원 운영자, 민원·예외 처리 OS
 - **디렉토리**: `03_제품/hagent-os/` — 57개 파일, 00~10 전체 체계
+- **제품 베팅 원칙**: 소규모 학원용 로컬 우선 데이터 자산화 도구, 무거운 SaaS 회피, 오픈소스 극대화
 
 ### k-skill 생태계 + 실존 MCP 13개+ 연동 확인
 - R-010 조사로 실존 MCP 확인: korean-law-mcp, aligo-sms, kakao-bot, portone, py-mcp-naver, google-calendar 등

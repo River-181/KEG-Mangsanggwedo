@@ -5,6 +5,7 @@ tags:
   - status/active
   - type/moc
 date: 2026-04-06
+up: "[[_MOC_HOME]]"
 aliases:
   - HOME
   - 홈

@@ -31,7 +31,7 @@ up: "[[hagent-os/README]]"
 | [[02_product/mvp-scope]] | Must/Should 우선순위 (D5-D8 스프린트 기준) |
 | [[10_execution/roadmap]] | 일별 목표 + 역할 분담 |
 | [[10_execution/open-questions]] | 개발 전 확인 필요 블로커 |
-| [[design]] | 디자인 시스템 + 색상 토큰 |
+| [[DESIGN]] | 디자인 시스템 + 색상 토큰 |
 
 ---
 
@@ -85,7 +85,7 @@ up: "[[hagent-os/README]]"
 |------|------|
 | [[09_ux/information-architecture]] | 화면 구조 + 내비게이션 계층 |
 | [[09_ux/ux-concepts]] | 핵심 UX 컨셉 + 인터랙션 원칙 |
-| [[design]] | 색상 토큰, 타이포, 컴포넌트 스펙 |
+| [[DESIGN]] | 색상 토큰, 타이포, 컴포넌트 스펙 |
 
 ---
 

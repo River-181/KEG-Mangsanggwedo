@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - long-term-memory
@@ -71,7 +71,7 @@ HagentOS (Hagwon + Agent + OS)
 - 미결 블로커: `10_execution/open-questions.md` ==🚨 반드시 확인==
 
 ### AI 리포트 준비 현황
-- 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (S-001~S-019)
+- 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (현재 `ai-session-intake.csv` 기준 최신 세션까지 반영)
 - 세션 CSV: `04_증빙/01_핵심로그/ai-session-intake.csv`
 - 데일리: `04_증빙/03_daily/2026-04-09.md`
 - 섹션 1 (기획): `prd.md`, `core-bet.md`, `market-and-customer.md`에서 추출
@@ -85,12 +85,35 @@ HagentOS (Hagwon + Agent + OS)
 4. **D8 (4/13)**: 스케줄러 UI + k-skill 레지스트리 UI + 데모 + 제출
 5. 랜딩 페이지 (Vercel 배포 — 라이브 URL 필수)
 
+## 증빙 운영 규칙
+
+- 모든 의미 있는 AI 세션과 사람 미팅은 먼저 `04_증빙/01_핵심로그/ai-session-intake.csv`에 1 row로 기록한다.
+- 재사용 가치가 높은 프롬프트만 `04_증빙/01_핵심로그/ai-prompt-intake.csv`에 별도로 저장한다.
+- 하루 마감 시 `dispatch-session-intake.py`가 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
+- `external-ai-usage.csv`는 AI provider만 집계하며, 사람 미팅은 intake와 ledger에는 남기되 외부 AI 통계에서는 제외한다.
+- exact token source가 없는 Web/App 도구는 `estimated_tokens`로 명시적으로 기록한다.
+- 제품 베팅 관련 사람 합의는 2026-04-09 22:10 승보님 미팅 기준으로 `소규모 학원`, `로컬 우선`, `데이터 자산화`, `쉬운 AI 에이전트 활용`, `무거운 SaaS 회피`를 유지한다.
+
 ## 워크스페이스 구조 / 정본 위치
 
 - 워크스페이스: Obsidian 볼트 + GitHub 저장소 (멀티 AI 협업)
 - 운영 계약: `.agent/system/contracts/workspace-contract.md`
 - 기억/증빙 정책: `.agent/system/contracts/memory-evidence-policy.md`
+- LLM 위키 운영 계약: `.agent/system/contracts/llm-wiki-operations.md`
 - 구조 맵: `.agent/system/maps/workspace-atlas.md`
 - 실행 계획: `.agent/system/ops/PLAN.md`
 - 진행 현황 (SSoT): `.agent/system/ops/PROGRESS.md` ← 작업 전 반드시 확인
 - 제품 코드: `03_제품/app/` / 테스트: `03_제품/tests/`
+
+## LLM 위키 핵심 상태
+
+- `06_LLM위키/`는 raw source 재검색 전에 먼저 확인해야 하는 persistent synthesis layer다.
+- 핵심 진입점: `06_LLM위키/index.md`, `06_LLM위키/overview.md`, `06_LLM위키/log.md`
+- 핵심 축:
+  - 문제 선택 문법: `문제_선택_점수표_문법`
+  - 문제 후보/탈락 문법: `문제_후보_뱅크와_탈락_문법`
+  - 7일 실행 doctrine: `KEG_7일_MVP_플레이북`
+  - 제품 구조 비교: `Paperclip_vs_HagentOS_설계_갭`
+  - compliance/ops: `학원_운영_법규_체크리스트`, `학원_운영_루프_지도`
+  - product interpretation: `운영_Control_Plane_모델`, `한국_교육_도메인_적합성_갭`
+- 위키 후보를 찾을 때는 프로젝트 스킬 `.agent/skills/wiki-candidate-harvest/`를 사용한다.

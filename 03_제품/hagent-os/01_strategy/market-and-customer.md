@@ -1,3 +1,12 @@
+---
+tags:
+  - area/product
+  - type/reference
+  - status/active
+date: 2026-04-09
+up: "[[HagentOS]]"
+---
+
 # Market & Customer
 
 > 타겟 시장, 고객 세그먼트, 핵심 문제 정의

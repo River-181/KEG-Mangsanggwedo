@@ -1,4 +1,13 @@
-\Paperclip이나 opencalw같은 사례도 있을까?
+---
+tags:
+  - area/wiki
+  - type/source
+  - status/archived
+date: 2026-04-09
+up: "[[_06_LLM위키_MOC]]"
+---
+
+# Paperclip이나 opencalw같은 사례도 있을까?
 
 ===
 **✅ 네, Paperclip과 OpenClaw(오픈클로) 같은 사례가 교육 분야에서도 실제로 활발하게 나오고 있습니다!**
