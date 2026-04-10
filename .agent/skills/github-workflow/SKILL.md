@@ -75,6 +75,61 @@ up: "[[.agent/skills/README]]"
 
 ### 3. Pull Request
 
+#### 2인 협업 브랜치 규칙 (이승보 + 김주용)
+
+main 브랜치는 직접 push 불가 (브랜치 보호 활성화). 모든 변경은 PR을 통해 병합한다.
+
+**브랜치 네이밍**
+
+```
+river/<작업명>    ← 이승보
+juyong/<작업명>   ← 김주용
+```
+
+예시:
+```
+river/배포-railway
+river/E2E-검증
+juyong/AI-리포트
+juyong/데모-스크립트
+```
+
+**작업 플로우**
+
+```bash
+# 1. 항상 최신 main에서 시작
+git checkout main && git pull
+git checkout -b river/배포-railway
+
+# 2. 작업 후 커밋
+git add <파일> && git commit -m "feat: ..."
+git push -u origin river/배포-railway
+
+# 3. PR 생성
+gh pr create --title "feat: ..." --assignee "@me"
+
+# 4. 상대방이 리뷰 → Approve → Merge (squash 권장)
+gh pr merge --squash
+```
+
+**PR 본문 최소 항목**
+
+```markdown
+## 변경 내용
+- 
+
+## 검증
+- [ ] 로컬 실행 확인
+
+## 관련 태스크
+- 
+```
+
+**병렬 작업 시 주의**
+
+- 같은 파일을 동시에 수정하면 충돌 발생 → 작업 시작 전 Slack/카톡으로 담당 파일 공유
+- `03_제품/app/` 코드는 가능하면 담당 영역을 나눈다 (서버 ↔ UI)
+
 PR 기본값:
 
 - 가능하면 `draft`로 시작
