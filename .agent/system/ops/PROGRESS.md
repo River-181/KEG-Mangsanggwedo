@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-10
+date: 2026-04-11
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 진행상황
@@ -12,11 +12,11 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-10 (Day 5)
+> 마지막 업데이트: 2026-04-11 (Day 6)
 
 ---
 
-## 현재 단계: Day 5 진행 중 — 기획·지식체계 정리 완료, 앱 구조 구축 완료, 실행 검증/폴리시 정리 진행
+## 현재 단계: Day 6 — E2E 실동작 완성, 독립 레포 구축 완료, 배포 착수 필요
 
 ## 완료된 작업
 
@@ -171,7 +171,7 @@ aliases:
 
 | AI                    | 환경              | 현재 역할             | 마지막 작업       |
 | --------------------- | --------------- | ----------------- | ------------ |
-| Claude Opus 4.6       | Claude Code CLI | 제품 기획, k-skill 설계 | hagent-os/ 기획 문서 10개 + k-skill 생태계 반영 (Day 4) |
+| Claude Opus 4.6 → Sonnet 4.6 | Claude Code CLI | 제품 구현, E2E 재구축 | v1.0 독립 레포 E2E 완성 + mock 오케스트레이터 재작성 (Day 6) |
 | GPT-5.4 (ChatGPT Pro) | Web             | 전략 설계, 플레이북 작성    | 플레이북 v0.1 완료 |
 | GPT-5 (Codex)         | Desktop App     | 리서치 운영, LLM 위키 구축, 증빙 정리 | LLM wiki 확장 + `wiki-candidate-harvest` 스킬 생성/실사용 완료 |
 | Perplexity            | Web             | 리서치 수집            | 운영자/교사 페인포인트 리서치 완료 |
@@ -257,18 +257,73 @@ aliases:
 - [x] RoutinesPage: 실행 이력 아코디언 상세
 - [x] DB 스키마: students classGroup/shuttle, instructors email, student_schedules 테이블
 - [x] 서버: PATCH /students/:id, student-schedules CRUD, instructors email 실제 저장
-- [x] SQL 마이그레이션: 0002_education_schema_v2.sql
+- [x] SQL 마이그레이션: 0002_education_schema_v2.sql + reports_to 직접 SQL 실행
 - [x] 커밋: f32570b (v0.4.0)
 
 ---
 
-## 다음 단계: Day 6 — 실제 작동 에이전트 + 온보딩 + 배포
+### HagentOS v1.0 독립 레포 + Paperclip급 E2E 완전 재구축 ✅
+> 2026-04-11 (Day 6) — 세션 S-DEV-022
 
-1. **Next.js + Supabase 스켈레톤** — 앱 구조, DB 스키마 설정, Mock 데이터 투입
-2. **역할 분담** — 이승보 (Orchestrator+에이전트), 김주용 (UI+인프라)
-3. **설계 기준** — `design.md` (색상 토큰), `INDEX.md` (문서 색인)
-4. **Google Calendar OAuth** — D7 전 credentials 준비
-5. **k-skill 프로토타입** — `refund-calculator`, `k-education-law-lookup` 등 실제 동작 확인
+**독립 레포 구축**
+- [x] `/Users/river/workspace/active/hagent-os/` — 새 레포 초기화 및 전체 코드 이식
+- [x] GitHub: `River-181/hagent-os` (public)
+- [x] DB: `hagent_os` (port 5432), Server: 3200, UI: 5174
+- [x] vite.config.ts port 5174, proxy → 3200 설정
+
+**서버 E2E 엔진**
+- [x] `execution.ts`: AgentRun 완료 → Case.status 자동 변경 + assigneeAgentId + caseComments 자동 삽입 (pending_approval 분기 포함)
+- [x] `approvals.ts`: reject → Case.status="todo" 롤백 + SSE 이벤트 + ActivityEvent + agent_hire 승인 시 에이전트 자동 생성 + SOUL.md
+- [x] `agents.ts`: POST → SOUL.md 자동 생성 (agentId 폴더 격리), reportsTo 필드, error detail
+- [x] `agent-hires.ts`: 신규 — 에이전트 고용 요청 → approval 생성 → 승인 시 에이전트 자동 생성
+- [x] `organizations.ts`: POST (에이전트 자동생성 제거), DELETE cascade (8테이블 역순)
+- [x] `agent-instructions.ts`: PUT 저장 엔드포인트, agentId 격리 경로 우선 (agentType 폴백)
+- [x] `orchestrator.ts`: 케이스 제목 = 실제 지시 내용, 에이전트 0개 400 에러
+- [x] DB schema: `reportsTo` FK 추가 (agents.ts + SQL 직접 실행)
+
+**Mock AI 재구축**
+- [x] `claude.ts`: mockOrchestratorResponse 전면 재작성
+  - 키워드 기반 동적 라우팅: 민원→complaint, 이탈/결석→retention, 일정/강사→scheduler, 기타→orchestrator
+  - 모든 "탄자니아 영어학원" 하드코딩 제거
+  - General fallback: 실제 지시 내용을 draft에 반영
+
+**UI v1.0 재구축**
+- [x] `OnboardingPage.tsx`: 4단계 Paperclip 방식 (학원→CEO→첫실행→완료), agentsApi.create() 직접 호출
+- [x] `AgentDetailPage.tsx`: ChatBubble 컴포넌트 + InstructionsTab 4 서브탭 (SOUL/HEARTBEAT/AGENTS/시스템프롬프트) + SettingsTab 편집 가능
+- [x] `OrgChartPage.tsx`: reportsTo 기반 동적 트리, 하드코딩 제거, 빈 상태 처리
+- [x] `ApprovalsPage.tsx`: POST /approvals/:id/decide 직접 호출, caseTitleMap
+- [x] `ApprovalDetailPage.tsx`: 완전 재작성 — 승인/거절 버튼 + 거절 사유 Dialog
+- [x] `OrganizationRail.tsx`: "+" 버튼 → 새 학원 추가 + 우클릭 삭제 (확인 모달)
+- [x] `App.tsx`: RootRedirect (0개 기관 → /new/onboarding)
+- [x] `NewAgentPage.tsx`: title 필드, 모델 선택, reportsTo 선택, 스킬 체크박스
+- [x] `ProjectsPage.tsx`: NewProjectDialog 추가
+
+**Fallback 데이터 완전 제거 (11파일)**
+- [x] SettingsPage, DocumentsPage, GoalsPage, RoutinesPage, CostsPage
+- [x] CaseNewPage (demo students → studentsApi.list)
+- [x] OrgChartPage (DEFAULT_INSTRUCTORS 제거)
+- [x] AppErrorBoundary, OnboardingPage, InstructorsPage — 탄자니아 완전 제거
+
+**갭 분석 문서**
+- [x] `03_제품/PAPERCLIP-GAP-ANALYSIS.md` — 292줄, 14개 갭 P0/P1/P2 분류
+
+**커밋 이력** (River-181/hagent-os)
+- `09a02e0` — shadcn semantic color variables
+- `6ca036f` — v0.3.0 UI polish + schedule calendar + dispatch pipeline
+- `e6f39ea` — v0.3.1 student CRUD, schedule CRUD, agent instructions, documents
+- `e5f237c` — v0.3.1 agent controls, dashboard scroll fix, sidebar cleanup
+- `28e58a9` — scroll bugs + activity timeline links
+- `3254c76` — mock orchestrator keyword routing + case title fix
+
+---
+
+## 다음 단계: Day 6 나머지 — 배포 + AI 리포트 + 데모
+
+1. **서버 재시작 후 E2E 전체 검증** (포트 3200/5174)
+2. **Railway 배포** → 라이브 URL 확보
+3. **README** 작성 (설치 방법 + 스크린샷 + 라이브 URL)
+4. **AI 리포트 초안** — `04_증빙/01_핵심로그/` raw material 기반
+5. **데모 스크립트 v0.1** — 2분 시연 경로
 
 ## 참고: 현재 위키 핵심 진입점
 

@@ -3,12 +3,12 @@ tags:
   - area/evidence
   - type/report
   - status/active
-date: 2026-04-10
+date: 2026-04-11
 up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-10 06:04 KST
+> 생성 시각: 2026-04-11 02:32 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -19,7 +19,8 @@ up: "[[_04_증빙_MOC]]"
 | 2026-04-06 | 16 | ChatGPT, Claude Code, Codex, Perplexity | 18 | 195,000 |
 | 2026-04-08 | 6 | Codex | 8 | 84,000 |
 | 2026-04-09 | 4 | Codex, Human Meeting | 3 | 33,000 |
-| 2026-04-10 | 1 | Codex | 1 | 6,000 |
+| 2026-04-10 | 2 | Claude, Codex | 5 | 91,000 |
+| 2026-04-11 | 1 | Claude | 1 | 320,000 |
 
 ## Prompt Promotion Candidates
 
@@ -53,6 +54,8 @@ up: "[[_04_증빙_MOC]]"
 - `S-PROD-018` Codex: HagentOS를 제품명 정본으로 사용; MVP는 학원 원장 민원·예외 처리 OS로 본다
 - `S-STRAT-016` Codex: paperclip 해체 분석을 문제 정의 입력으로 승격
 - `S-OPS-020` Codex: 모바일 탭바/앱 셸/폰트/브랜드 claim를 구현 전 잠근다
+- `S-PROD-021` Claude: 운영 갭 = 연결 단절이 핵심임을 재확인
+- `S-DEV-022` Claude: 껍데기 → 실동작 전환에 병렬 에이전트보다 집중 순차 구현이 효과적이었음
 
 ## Daily Note Hints
 
@@ -82,6 +85,8 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-09` / `S-PROD-018`: 제품 정본을 읽은 뒤 그 기준으로만 판단할 것
 - `2026-04-09` / `S-STRAT-016`: 메모리와 대시보드를 현재 상태로 맞춘 이유를 남길 것
 - `2026-04-10` / `S-OPS-020`: Day 5 운영 문서 동기화와 구현 전 블로커 기록
+- `2026-04-10` / `S-PROD-021`: v0.4.0 갭 메우기 세션
+- `2026-04-11` / `S-DEV-022`: Day6 독립 레포 E2E 재구축 세션
 
 ## Memory Sync Hints
 
@@ -94,6 +99,8 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-09` / `S-MTG-019`: 이 합의는 이후 제품 판단 기준으로 계속 유지
 - `2026-04-09` / `S-OPS-017`: 반복 요청에서도 intake-first 규칙을 유지했다는 점을 기억에 남길 것
 - `2026-04-10` / `S-OPS-020`: 다음 세션은 이 4개 충돌을 우선 해소하고 앱 스켈레톤으로 간다
+- `2026-04-10` / `S-PROD-021`: PLAN/PROGRESS 업데이트 완료
+- `2026-04-11` / `S-DEV-022`: 독립 레포에서 시작할 때 daily-memory의 포트/DB 정보 확인 필수
 
 ## Open Notes
 

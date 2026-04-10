@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/dashboard
   - status/active
-date: 2026-04-10
+date: 2026-04-11
 up: "[[00 HOME]]"
 aliases:
   - project-dashboard
@@ -16,18 +16,33 @@ aliases:
 
 ## 현재 상태
 
-- 현재 단계: Day 5, `전략 정본 잠금 + Paperclip clone 분석 심화 + HagentOS 앱 구조 구축 완료`
-- 다음 단계: `Phase 3 polish`, `실행 검증`, `데모 플로우 고정`으로 전환한다.
-- 실제 앱 코드는 이미 [03_제품/app/README.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/03_%EC%A0%9C%ED%92%88/app/README.md) 기준으로 `ui/`, `server/`, `packages/`를 갖춘 상태다. 다만 이 세션에서 확인한 현재 시점에는 `http://localhost:5173/`가 리스닝 중이지 않았다.
-- 지금 대시보드는 `PLAN`, `PROGRESS`, `daily`, `master-evidence-ledger`, `type/task` note를 한 화면에서 잇는 제출용 진행판 역할을 맡는다.
+- **현재 단계**: Day 6 (2026-04-11) — E2E 실동작 완성, 독립 레포 구축 완료
+- **제품 상태**: HagentOS v1.0 — `River-181/hagent-os` (public), 포트 3200/5174
+- **다음 액션**: E2E 검증 → Railway 배포 → 라이브 URL → AI 리포트 초안
+- **마감**: 2026-04-13 24:00 **(D-2)**
+
+## 핵심 지표
+
+| 항목           | 상태                    |
+| ------------ | --------------------- |
+| 독립 레포        | ✅ River-181/hagent-os |
+| E2E 재구축      | ✅ 서버+UI+Mock 완료       |
+| DB 마이그레이션    | ✅ 직접 SQL 실행 완료        |
+| 온보딩 플로우      | ✅ 4단계 Paperclip 방식    |
+| 승인/거절 동작     | ✅ reject rollback 포함  |
+| 멀티 학원 지원     | ✅ OrganizationRail    |
+| E2E 브라우저 검증  | ⬜ 서버 재시작 후 필요         |
+| 배포 (라이브 URL) | ⬜ Railway 설정 필요       |
+| AI 리포트       | ⬜ 초안 착수 필요            |
+| 데모 스크립트      | ⬜ 2분 시연 경로 미작성        |
 
 ## 현재 집중 산출물
 
-- `Paperclip Clone Spec` — [08_PAPERCLIP-CLONE-SPEC.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md) 기준 복제 우선순위, 빈 상태, 문서 워크스페이스 계약 정리
-- `App Shell + Route Skeleton` — `03_제품/app/ui`, `03_제품/app/server`, `03_제품/app/packages/*` 기반 실제 제품 골격
-- `Demo/User Flow` — 온보딩 → 이슈/민원 흐름 → live run → 승인/후속 처리
-- `Domain Model / ERD` — Institution, Agent, TaskRun, ApprovalItem, Complaint, Student, ScheduleEvent 구조 정의
-- `Knowledge Workspace` — 문서, 정책, FAQ, 작업을 같은 control plane 안에서 다루는 구조
+- **HagentOS v1.0 독립 레포** — `River-181/hagent-os` (E2E 실동작, 온보딩, 멀티학원)
+- **Paperclip 갭 분석** — `03_제품/PAPERCLIP-GAP-ANALYSIS.md`
+- **E2E 검증** — 온보딩 → dispatch → 케이스 → approvals → OrgChart
+- **배포** — Railway + Neon.tech (라이브 URL 필수)
+- **AI 리포트** — `04_증빙/01_핵심로그/` raw material 기반 2섹션
 
 ## 제출용 일정 개요
 
@@ -41,12 +56,12 @@ gantt
     문제 후보 수집 및 평가 :done, a2, 2026-04-07, 2d
     최종 문제 및 스코프 확정 :done, a3, 2026-04-09, 1d
     section 제품
-    개발 전 모델링 및 핵심 다이어그램 :done, a4, 2026-04-09, 2d
-    앱 뼈대 및 데모 플로우 구현 :active, a5, 2026-04-10, 2d
-    기능 동결 및 QA :a6, 2026-04-11, 2d
+    앱 v0.1~v0.4 빌드 :done, a4, 2026-04-10, 1d
+    v1.0 E2E 재구축 + 독립 레포 :done, a5, 2026-04-11, 1d
+    E2E 검증 + 배포 :active, a6, 2026-04-11, 1d
     section 제출
-    README 및 AI 리포트 작성 :a7, 2026-04-11, 2d
-    데모 리허설 및 최종 제출 :a8, 2026-04-12, 2d
+    AI 리포트 + 데모 리허설 :a7, 2026-04-12, 1d
+    최종 제출 :crit, a8, 2026-04-13, 1d
 ```
 
 ## 운영 로그 연결
@@ -56,21 +71,14 @@ gantt
 - [[master-evidence-ledger]] — 세션 단위 증빙 원장
 - [[decision-log]] — 중요한 구조 결정
 - [[prompt-catalog]] — 재사용 프롬프트 자산
-- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] / [[2026-04-09]] / [[2026-04-10]] — 일별 작업 스냅샷
+- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] / [[2026-04-09]] / [[2026-04-10]] / [[2026-04-11]] — 일별 작업 스냅샷
 
-## 새 파일/폴더를 만든 이유
+## 주요 구조 변경 이력
 
-- `02_전략/tasks/` — 전략 후보 축소와 문제 확정 작업을 `type/task`로 추적하기 위해 추가
-- `02_전략/00_foundation/`, `01_problem-framing/`, `02_prompts/`, `03_decisions/` — 전략 루트에 섞여 있던 기준 문서, 프롬프트, 의사결정 문서를 역할별로 분리하기 위해 추가
-- `04_증빙/tasks/` — 제출용 진행 증빙 정리를 task로 관리하기 위해 추가
-- `06_LLM위키/tasks/` — 전략 문서를 wiki layer로 ingest하는 반복 작업을 분리하기 위해 추가
-- `04_증빙/03_daily/2026-04-07.md`, `2026-04-08.md` — 빠진 일일 기록을 복원해 날짜별 증빙 공백을 메우기 위해 추가
-- `02_전략/paperclip-analysis/paperclip-master/` — 실제 reference 프로그램 코드를 로컬에 두고 구조를 해체 분석하기 위해 추가
-- `02_전략/paperclip-analysis/06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` — chat imitation이 아니라 control plane 구조와 확장 구조를 기준으로 모방 포인트를 고정하기 위해 추가
-- `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` 보강 — 스크린샷 기준 복제 우선순위와 clone scope contract를 다른 에이전트가 바로 쓸 수 있게 고정하기 위해 보강
-- `02_전략/archive/web-captures/` — 전략 정본이 아닌 웹 저장본과 캡처를 분리 보관하기 위해 추가
-- `탄자니아 영어학원` 로고/카카오 채널 이미지 제목 정리 — 제출용 증빙 삽입 시 장면 설명을 바로 재사용하기 위해 추가
-- `03_제품/app/README.md` 갱신 — 실제 앱 실행 구조와 dev command를 문서로 드러내기 위해 갱신
+- `02_전략/tasks/`, `00_foundation/`, `01_problem-framing/`, `02_prompts/`, `03_decisions/` — 전략 문서 역할별 분리
+- `02_전략/paperclip-analysis/paperclip-master/` — reference 코드 로컬 해체 분석
+- `03_제품/PAPERCLIP-GAP-ANALYSIS.md` — 14개 갭 P0/P1/P2 분류 (2026-04-11 신규)
+- `/Users/river/workspace/active/hagent-os/` — 독립 설치형 레포 분리 (2026-04-11)
 
 ## 태스크 트래커
 

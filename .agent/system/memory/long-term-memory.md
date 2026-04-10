@@ -39,13 +39,13 @@ HagentOS (Hagwon + Agent + OS)
 - 모바일 반응형 (원장이 폰으로 사용)
 
 ### 기술 스택 (확정)
-- Frontend: Next.js 14 + React + Tailwind CSS
-- Backend: Node.js + TypeScript
-- DB: PostgreSQL + Drizzle ORM (Docker 로컬 / Neon.tech 배포)
-- AI: Claude API (Sonnet 4.6)
-- Auth: next-auth (JWT)
-- Scheduler: node-cron
-- 배포: Vercel (프론트) + Neon.tech (DB)
+- Frontend: **React 19 + Vite 6** + Tailwind CSS v4 + shadcn/ui + TanStack Query
+- Backend: **Express v5** + TypeScript ESM
+- DB: PostgreSQL 17 + Drizzle ORM (brew postgres 로컬 / Neon.tech 배포)
+- AI: Claude API (Sonnet 4.6) + Mock fallback (API 키 없어도 동작)
+- Auth: local_trusted 모드 (단일 원장, no next-auth)
+- Real-time: SSE via EventEmitter
+- 배포: **Railway** (서버+UI) + Neon.tech 또는 Railway PostgreSQL (DB)
 
 ### 디자인 시스템
 - 북극성: 토스 앱 UI (색상 토큰 직접 추출)
@@ -69,6 +69,13 @@ HagentOS (Hagwon + Agent + OS)
 - Paperclip UI 참고: `_research/paperclip-ui-reference.md`
 - 로드맵: `10_execution/roadmap.md`
 - 미결 블로커: `10_execution/open-questions.md` ==🚨 반드시 확인==
+- **갭 분석**: `03_제품/PAPERCLIP-GAP-ANALYSIS.md`
+
+### 제품 코드 위치 (독립 레포)
+- **독립 레포**: `/Users/river/workspace/active/hagent-os/`
+- **GitHub**: `https://github.com/River-181/hagent-os`
+- **콘테스트 워크스페이스 앱**: `03_제품/app/` (참조용)
+- 포트: Server 3200, UI 5174, DB hagent_os:5432
 
 ### AI 리포트 준비 현황
 - 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (현재 `ai-session-intake.csv` 기준 최신 세션까지 반영)
@@ -77,13 +84,12 @@ HagentOS (Hagwon + Agent + OS)
 - 섹션 1 (기획): `prd.md`, `core-bet.md`, `market-and-customer.md`에서 추출
 - 섹션 2 (AI 활용): intake CSV + evidence ledger에서 추출
 
-## 현재 우선순위
+## 현재 우선순위 (D6 기준 — 2026-04-11 업데이트)
 
-1. **D5 (4/10)**: 앱 스켈레톤 — Next.js + PostgreSQL + Drizzle + Mock 데이터
-2. **D6 (4/11)**: Orchestrator + Complaint + Retention Agent (Claude API 연결)
-3. **D7 (4/12)**: Approval Dashboard + Heartbeat cron + GCal 단방향 sync
-4. **D8 (4/13)**: 스케줄러 UI + k-skill 레지스트리 UI + 데모 + 제출
-5. 랜딩 페이지 (Vercel 배포 — 라이브 URL 필수)
+1. ~~**D5 (4/10)**: 앱 스켈레톤~~ ✅ — v0.4.0 + 독립 레포 v1.0
+2. **D6 (4/11)**: E2E 검증 + Railway 배포 + README + AI 리포트 초안
+3. **D7 (4/12)**: 데모 리허설 + 제출 패키징
+4. **D8 (4/13)**: ==마감 24:00 제출==
 
 ## 증빙 운영 규칙
 

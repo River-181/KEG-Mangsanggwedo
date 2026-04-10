@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-10
+date: 2026-04-11
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 계획
@@ -12,7 +12,7 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 자신의 역할에 해당하는 작업을 찾아 실행한다.
-> 마지막 업데이트: 2026-04-10 (Day 5)
+> 마지막 업데이트: 2026-04-11 (Day 6)
 
 ---
 
@@ -25,44 +25,58 @@ aliases:
 | 2 | 04-08 | 의사결정 스프린트 → 1개 확정 | decision-sprint, scope-board 확정 |
 | 3 | 04-09 | 뼈대 앱 + 핵심 플로우 | 첫 배포, 데모 크리티컬 작동 |
 | 4 | 04-10 | 구현 전 정본 잠금 + 앱 스켈레톤 착수 | UI/IA 정본 잠금, 앱 시작 가능 |
-| 5 | 04-11 | 핵심 기능 + QA + README/AI 리포트 | 제출물 초안 완성 |
-| 6 | 04-12 | 시연 리허설, 안정화 | 데모 2분 통과 |
+| 5 | 04-11 | ==E2E 실동작 + 독립 레포 + 온보딩== | E2E 통과, 독립 레포 배포 가능 상태 |
+| 6 | 04-12 | 배포 + AI 리포트 + 시연 리허설 | 라이브 URL 확보, 데모 2분 통과 |
 | 7 | 04-13 | ==제출== | 마감 24:00 전 제출 완료 |
 
 ---
 
-## 현재 우선순위 (Day 5 → Day 6 전환)
-> 마지막 업데이트: 2026-04-10 (v0.4.0 커밋 후)
+## 현재 우선순위 (Day 6 — 2026-04-11)
+> 마지막 업데이트: 2026-04-11
 
-### ✅ 완료 (Day 5)
-- 앱 v0.4.0: 강사관리·일정편집·반배정·일괄승인·스킬추가·목표링크·루틴이력 완성
-- DB 스키마: classGroup/shuttle/email/student_schedules 마이그레이션 작성
-- 운영 갭 감사: 11개 페이지 전수 점검 완료
+### ✅ 완료 (Day 5~6 초반)
+- v0.4.0: 강사관리·일정편집·반배정·일괄승인·스킬추가·목표링크·루틴이력
+- DB 마이그레이션: reports_to, classGroup, shuttle, email, student_schedules 직접 SQL 실행
+- **독립 레포 생성**: `/Users/river/workspace/active/hagent-os/` → GitHub `River-181/hagent-os`
+- **v1.0 E2E 완전 재구축** (Paperclip 방식):
+  - execution.ts: Case status 자동 변경 + caseComments 자동 삽입 + assigneeAgentId 설정
+  - approvals.ts: reject → Case.status="todo" 롤백 + agent_hire 승인 시 자동 에이전트 생성
+  - agents.ts: POST → SOUL.md 자동 생성, agentId 기반 Instructions 격리
+  - agent-hires.ts: 에이전트 고용 요청 플로우 (신규)
+  - organizations.ts: POST(에이전트 없음) + DELETE cascade
+  - claude.ts: Mock 오케스트레이터 → 키워드 기반 동적 라우팅
+  - orchestrator.ts: 실제 지시 내용으로 케이스 제목, 에이전트 0개 400 에러
+- **UI v1.0 재구축**:
+  - OnboardingPage: 4단계 Paperclip 방식 (학원→CEO→첫실행→완료)
+  - AgentDetailPage: ChatBubble + InstructionsTab 4 서브탭 + SettingsTab 편집
+  - OrgChartPage: reportsTo 기반 동적 트리
+  - ApprovalsPage + ApprovalDetailPage: 승인/거절 실동작
+  - OrganizationRail: 멀티 학원 추가/삭제
+  - App.tsx: RootRedirect (0개 기관 → 온보딩)
+- fallback 데이터 제거: 11개 파일 탄자니아/목업 데이터 완전 제거
+- 최종 커밋: `3254c76` (River-181/hagent-os)
 
-### P0 — 다음 마일스톤: 실제 작동 에이전트 + 온보딩 (Day 6)
-1. **에이전트 실제 실행 E2E 검증**
-   - Dispatch → 오케스트레이터 → Complaint/Retention 에이전트 → AgentRun 생성 → Approval 생성
-   - 모든 단계가 UI에서 실시간으로 표시되는지 확인
-   - 담당: Builder Agent
-2. **온보딩 플로우 완성**
-   - OnboardingPage: 학원명 입력 → 에이전트팀 자동 배치 → 대시보드 리디렉션
-   - 첫 실행 시 자동 감지 → 온보딩 강제 진입
-   - 담당: Builder Agent
-3. **DB 마이그레이션 실행**
-   - 0002_education_schema_v2.sql 적용 (pnpm db:migrate)
-   - seed 데이터 재실행하여 classGroup/shuttle/email 시드값 추가
-4. **배포 준비**
-   - Railway/Render 배포 설정
-   - GitHub README 작성 (라이브 URL 포함)
+### P0 — Day 6 현재 (즉시)
+1. **서버 재시작 및 E2E 전체 검증** (`hagent-os/` 포트 3200/5174)
+   - 온보딩 → 학원 생성 → CEO 에이전트 → 첫 dispatch → 대시보드
+   - 케이스 생성 확인 (제목 = 실제 지시 내용)
+   - 승인/거절 실동작 확인
+   - OrgChart reportsTo 트리 렌더링
+2. **배포 설정** (Railway 또는 Render)
+   - `hagent-os/` 레포 Railway 배포
+   - 외부 PG URL 연결 (Neon.tech 또는 Railway PostgreSQL)
+   - 라이브 URL 확보 → README에 삽입
+3. **GitHub README** (`River-181/hagent-os`)
+   - 설치 방법, 스크린샷, 라이브 URL
 
 ### P1 — Day 6 보조
-5. **데모 스크립트 v0.1** 작성 (2분 시연 경로)
-6. **AI 리포트 초안** (제출 필수)
-7. **k-skill 실제 동작 확인** (refund-calculator, k-education-law-lookup)
+4. **데모 스크립트 v0.1** (2분 시연 경로)
+5. **AI 리포트 초안** (제출 필수 — `04_증빙` raw material 기반)
+6. **k-skill 실제 동작** (refund-calculator, k-education-law-lookup)
 
-### P2 — Day 7 제출
-8. 데모 리허설 2회
-9. 제출 패키징 (README + AI 리포트 + 라이브 URL)
+### P2 — Day 7 제출 준비
+7. 데모 리허설 2회
+8. 제출 패키징 (README + AI 리포트 + 라이브 URL + 개인정보동의서 + 참가각서)
 
 ---
 

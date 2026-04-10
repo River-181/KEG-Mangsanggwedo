@@ -75,10 +75,13 @@ def clean(value: str) -> str:
 
 
 def to_int(value: str) -> int:
-    value = clean(value)
+    value = clean(value).lstrip("~").replace(",", "")
     if not value:
         return 0
-    return int(float(value))
+    try:
+        return int(float(value))
+    except ValueError:
+        return 0
 
 
 def to_float(value: str) -> float:

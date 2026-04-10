@@ -3,21 +3,36 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-06
+date: 2026-04-11
 up: "[[_MOC_HOME]]"
 aliases:
   - 제출
-status: draft
+status: in-progress
 ---
 # 제출
 
-> 최종 제출물 준비. 마감: 2026-04-13 24:00
+> 최종 제출물 준비. **마감: 2026-04-13 24:00 (D-2)**
+
+## 제출 체크리스트
+
+- [x] GitHub public URL — `https://github.com/River-181/hagent-os`
+- [ ] 라이브 URL — Railway 배포 후 확보
+- [ ] AI 리포트 (.docx) — 공식 양식에 맞춰 작성
+- [ ] 개인정보 동의서
+- [ ] 참가 각서
 
 ## 제출물
 
 - [[ai-report-draft]] — AI 리포트 초안 (→ 공식 docx 양식으로 변환)
 - [[submission-checklist]] — 제출 체크리스트
 - [[retrospective]] — 회고 (대회 후)
+
+## AI 리포트 재료
+
+- 섹션 1 (기획): `03_제품/hagent-os/02_product/prd.md`, `core-bet.md`, `market-and-customer.md`
+- 섹션 2 (AI 활용): `04_증빙/01_핵심로그/ai-session-intake.csv` + `master-evidence-ledger.md`
+- 총 세션 수: S-DEV-001 ~ S-DEV-022 (22+ 세션)
+- 총 추정 토큰: ~1.3M+ (Claude Opus/Sonnet + GPT-5.4 + Codex)
 
 ## 제출 방법
 

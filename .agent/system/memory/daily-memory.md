@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-10
+date: 2026-04-11
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - daily-memory
@@ -13,55 +13,58 @@ aliases:
 
 이 파일은 단기 기억과 핸드오프를 위한 요약본이다.
 
-## 현재 상태 (Day 5 — 2026-04-10, 저녁)
+## 현재 상태 (Day 6 — 2026-04-11)
 
 ### 앱 개발 현황
-- **마지막 커밋 기준 문맥**: v0.3.0 진행 중으로 기록되어 있음
-- **현재 코드 상태**: `03_제품/app/`에 `ui/`, `server/`, `packages/`가 존재하고 `pnpm dev:ui` 진입점이 확인됨
-- **실행 상태 확인**: 이 세션에서 `http://localhost:5173/`는 리스닝 중이 아니었음
-- **다음 확인 명령**: `cd 03_제품/app && pnpm dev:ui`
+- **레포 분리 완료**: 독립 설치형 레포 `/Users/river/workspace/active/hagent-os/`
+- **GitHub**: `River-181/hagent-os` (public)
+- **포트**: Server 3200, UI 5174
+- **DB**: `hagent_os` (brew postgres@17 port 5432)
+- **마지막 커밋**: `3254c76` — mock orchestrator keyword routing + case title fix
+- **실행 명령**: `cd /Users/river/workspace/active/hagent-os && pnpm dev`
 
-### 오늘 완료한 개발/운영 정합화 (S-DEV-021 ~ S-OPS-034)
-- 기술 스택 교정 (Next.js → React 19 + Vite + Express v5 + brew postgres@17)
-- Codex 다이어그램 6종 리뷰 + 모델링 정합화
-- **v0.1.0**: Sonnet ×3 병렬 빌드 → Codex 리뷰(20건) → Sonnet ×4 수정 → Sonnet ×4 마무리 → 커밋 (179파일, 22,765줄)
-- **v0.2.0**: Sonnet ×4 병렬 — 21페이지, 40+ 컴포넌트, 15 API, ~7,000 LOC
-- **v0.3.0 Round 1**: Sonnet ×4 병렬 — 칸반 DnD, OrgChart 클릭, Switch, 인박스 실데이터, 프로젝트 페이지, 에이전트 메모리
-- **v0.3.0 Round 2**: 지식베이스 검색, FilterBar, 학생관리 nav, EmptyState
-- Paperclip 스크린샷 기반 `08_PAPERCLIP-CLONE-SPEC` 보강
-- 대시보드/PLAN/PROGRESS/README를 현재 앱 존재 상태 기준으로 재정렬
+### Day 6 완료 작업 (S-DEV-022)
+- **독립 레포 구축**: hagent-os 신규 초기화, DB hagent_os, 포트 3200/5174
+- **E2E 재구축 핵심 파일**:
+  - `server/src/services/execution.ts` — Case 상태 자동 변경, 댓글 자동 삽입
+  - `server/src/routes/approvals.ts` — reject rollback, agent_hire 승인 자동화
+  - `server/src/routes/agents.ts` — SOUL.md 자동 생성, agentId 격리
+  - `server/src/routes/agent-hires.ts` — 신규 고용 플로우
+  - `server/src/routes/organizations.ts` — POST/DELETE cascade
+  - `server/src/lib/claude.ts` — 키워드 기반 mock 라우팅 (민원/이탈/일정/기타)
+  - `server/src/routes/orchestrator.ts` — 실제 지시문으로 케이스 제목
+- **UI 전면 재구축**: OnboardingPage(4단계), AgentDetailPage(ChatBubble+Tabs), OrgChart(reportsTo 트리), Approvals(실동작), OrganizationRail(멀티 학원)
+- **Fallback 데이터 완전 제거**: 탄자니아 참조 11파일 모두 실제 API로 교체
+- **DB SQL 직접 실행**: reports_to, student_schedules, classGroup, shuttle, email 컬럼
 
-### 핵심 기술 결정 (정본)
-- **기술 스택**: React 19 + Vite 6 + Express v5 + Drizzle ORM + brew postgres@17
-- **인증**: local_trusted 모드 (단일 원장, no next-auth)
-- **Mock 모드**: Claude API 키 없어도 1.5초 딜레이 mock 응답 동작
-- **배포**: GitHub 설치형 오픈소스 + 외부 PG URL 옵션
-- **SPEC 정본**: `03_제품/SPEC.md`
+### 현재 남은 사항 (서버 재시작 후 확인 필요)
+- [ ] `pnpm dev` 실행 후 http://localhost:5174/ 접속 → 온보딩 진입 확인
+- [ ] 학원 생성 → CEO 에이전트 → 첫 dispatch → 케이스 생성 확인
+- [ ] 승인/거절 실동작 확인
+- [ ] OrgChart reportsTo 트리 렌더링 확인
 
-### v0.3.0 남은 항목
-- [ ] 학생/학부모 관리 페이지 강화 + 개인정보 마스킹
-- [ ] 일정 캘린더 강화 (DB 데이터, 월간/주간, 수업→학생)
-- Phase 3: 키보드 단축키, 토스트 알림, 모바일 반응형, 에러 바운더리
-- Phase 4: GitHub public repo + 라이브 URL + 랜딩 페이지 + AI 리포트
-
-## 다음 세션 체크리스트 (D6)
+## 다음 세션 체크리스트 (D6 나머지 / D7)
 
 ### 필독 (2분)
-1. `03_제품/PROGRESS.md` — 현재 상태 (Phase 2.5 진행 중)
-2. `03_제품/app/docs/superpowers/plans/2026-04-10-hagent-os-v0.3.0.md` — v0.3.0 플랜
+1. `.agent/system/ops/PLAN.md` — P0 항목 확인
+2. `.agent/system/ops/PROGRESS.md` — v1.0 완료 섹션 확인
 
-### D6 목표
-- UI dev server 실제 기동 확인 후 핵심 진입 경로 1회 점검
-- v0.3.0 Round 2 나머지 완료 (학생관리 페이지, 캘린더 DB 연결)
-- Phase 3 폴리시 시작 (토스트, 키보드, 모바일)
+### 남은 목표 (D6)
+1. E2E 검증 (서버 재시작 → 온보딩 → dispatch → approvals)
+2. Railway 배포 → 라이브 URL 확보
+3. `River-181/hagent-os` README 작성
+
+### D7 목표
+- AI 리포트 초안 (`04_증빙` raw material 기반)
+- 데모 스크립트 v0.1 (2분 시연 경로)
+- 데모 리허설
 
 ### 마감
-- 2026-04-13 (D-3)
-- **⚠️ Plan B 판단**: D7 종료 시 E2E 안 돌면 Paperclip 포크 전환
+- **2026-04-13 24:00** (D-2)
 
-### 대회 필수 제출물 (아직 미완)
-- [ ] GitHub public URL
-- [ ] 라이브 URL
+### 대회 필수 제출물
+- [ ] GitHub public URL (`River-181/hagent-os`) ← 이미 있음
+- [ ] 라이브 URL ← Railway 배포 후 확보
 - [ ] AI 리포트 (.docx) — `04_증빙` raw material 사용
 - [ ] 개인정보 동의서
 - [ ] 참가 각서

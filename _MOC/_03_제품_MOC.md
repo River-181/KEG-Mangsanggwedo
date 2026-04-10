@@ -3,7 +3,7 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-09
+date: 2026-04-11
 up: "[[_MOC_HOME]]"
 aliases:
   - 제품
@@ -14,6 +14,14 @@ aliases:
 
 - [[k-edu-zero-human]] — 전체 개요, 아키텍처, 기술스택 (단일 진입점)
 - [[hagent-os/INDEX]] — 개발자용 빠른 문서 찾기 인덱스
+- [[PAPERCLIP-GAP-ANALYSIS]] — Paperclip vs HagentOS 갭 분석 (14개 P0/P1/P2)
+
+## 제품 코드 (실제 제출물)
+
+- **독립 레포**: `/Users/river/workspace/active/hagent-os/` → `River-181/hagent-os`
+- **포트**: Server 3200 · UI 5174 · DB hagent_os:5432
+- **실행**: `cd /Users/river/workspace/active/hagent-os && pnpm dev`
+- `03_제품/app/` — 콘테스트 워크스페이스 앱 (참조용)
 
 ## 비전·전략
 
@@ -78,7 +86,7 @@ aliases:
 - [[04_approval-state]]
 - [[05_ia-screen-map]]
 
-## 코드
+## 갭 분석 및 참고
 
-- `03_제품/app/` — 실제 제출 제품
-- `03_제품/tests/` — 테스트 파일
+- [[PAPERCLIP-GAP-ANALYSIS]] — Paperclip 대비 HagentOS 갭 14개 (P0/P1/P2)
+- `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` — 스크린샷 기반 복제 계약

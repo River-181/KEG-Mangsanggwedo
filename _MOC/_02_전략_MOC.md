@@ -3,7 +3,7 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-06
+date: 2026-04-11
 up: "[[_MOC_HOME]]"
 aliases:
   - 전략
