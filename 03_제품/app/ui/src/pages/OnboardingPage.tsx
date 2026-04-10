@@ -6,6 +6,7 @@ import { useOrganization } from "@/context/OrganizationContext"
 import { agentsApi } from "@/api/agents"
 import { orchestratorApi } from "@/api/orchestrator"
 import { api } from "@/api/client"
+import { skillsApi } from "@/api/skills"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import {
   CheckCircle,
@@ -27,6 +28,17 @@ const MODEL_OPTIONS = [
   { value: "claude-sonnet-4-6", label: "Claude Sonnet 4.6", desc: "빠르고 정확 — 일반 업무 권장" },
   { value: "claude-haiku-4-5", label: "Claude Haiku 4.5", desc: "초고속 — 경량 작업 최적화" },
 ]
+
+const STARTER_AGENT_SKILLS: Record<string, string[]> = {
+  orchestrator: ["complaint-classifier", "schedule-manager", "student-data-import"],
+  complaint: ["complaint-classifier", "korean-tone-guide"],
+  retention: ["churn-risk-calculator", "korean-tone-guide"],
+  scheduler: ["google-calendar-mcp", "schedule-manager"],
+}
+
+const STARTER_SKILL_COUNT = Array.from(
+  new Set(Object.values(STARTER_AGENT_SKILLS).flat()),
+).length
 
 type LaunchPhase = "idle" | "dispatching" | "agents-running" | "complete" | "error"
 
@@ -117,21 +129,50 @@ export function OnboardingPage() {
     },
   })
 
-  // Step 2: Create CEO agent
+  // Step 2: Create starter team (CEO + 3 agents)
   const createAgentMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (!createdOrg) throw new Error("No org")
-      return agentsApi.create(createdOrg.id, {
+
+      const starterAgents = [
+        { name: agentName.trim() || "원장", agentType: "orchestrator", slug: "orchestrator", icon: "brain",
+          systemPrompt: `${createdOrg.name}의 원장(CEO)으로서 학원 운영 전반을 조율하는 AI 매니저입니다. 운영 목표: ${orgMission || orgDesc}` },
+        { name: "민원담당", agentType: "complaint", slug: "complaint", icon: "shield",
+          systemPrompt: `${createdOrg.name}의 학부모 민원을 접수하고 분석하여 응대 초안을 작성합니다.` },
+        { name: "이탈방어", agentType: "retention", slug: "retention", icon: "heart",
+          systemPrompt: `${createdOrg.name}의 수강생 이탈 위험을 감지하고 상담 권고를 생성합니다.` },
+        { name: "스케줄러", agentType: "scheduler", slug: "scheduler", icon: "calendar",
+          systemPrompt: `${createdOrg.name}의 수업 일정을 관리하고 강사 대타를 조율합니다.` },
+      ]
+
+      let ceoAgent: any = null
+      let ceoId: string | null = null
+
+      // 에이전트 4종 순차 생성 (CEO 먼저, 나머지는 reportsTo CEO)
+      for (const agentDef of starterAgents) {
+        const created = await agentsApi.create(createdOrg.id, {
+          ...agentDef,
+          adapterConfig: { model: agentModel },
+          reportsTo: agentDef.agentType === "orchestrator" ? undefined : ceoId,
+          status: "idle",
+          skills: [],
+        })
+        if (agentDef.agentType === "orchestrator") {
+          ceoAgent = created
+          ceoId = created.id
+        }
+      }
+
+      // 스킬 설치 (실패해도 무시)
+      const uniqueSkills = Array.from(new Set(Object.values(STARTER_AGENT_SKILLS).flat()))
+      for (const skillSlug of uniqueSkills) {
+        await skillsApi.install(createdOrg.id, skillSlug).catch(() => undefined)
+      }
+
+      return {
+        id: ceoAgent?.id ?? "",
         name: agentName.trim() || "원장",
-        agentType: "orchestrator",
-        slug: "orchestrator",
-        icon: "crown",
-        model: agentModel,
-        systemPrompt: `${createdOrg.name}의 원장(CEO)으로서 학원 운영 전반을 조율하는 AI 매니저입니다. 운영 목표: ${orgMission || orgDesc}`,
-        adapterType: "claude_local",
-        status: "idle",
-        skills: [],
-      })
+      }
     },
     onSuccess: (agent: CreatedAgent) => {
       setCreatedAgent(agent)
@@ -188,7 +229,7 @@ export function OnboardingPage() {
         학원 AI 팀 설정
       </h1>
       <p className="text-sm mb-8" style={{ color: "var(--text-secondary)" }}>
-        학원 정보를 입력하고 원장 에이전트를 만들어 운영을 시작하세요.
+        학원 정보를 입력하고 기본 에이전트 팀과 starter skill package를 준비하세요.
       </p>
 
       <Tabs value={activeStep} onValueChange={() => {}}>
@@ -325,15 +366,35 @@ export function OnboardingPage() {
             <div className="flex items-center gap-2 mb-1">
               <span className="text-2xl">👑</span>
               <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-                원장 에이전트를 설정합니다
+                원장 에이전트와 starter skills를 설정합니다
               </h2>
             </div>
             <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-              이 에이전트가 <strong>{createdOrg?.name ?? orgName}</strong>의 원장(CEO)이 됩니다.
+              기본으로 생성된 오케스트레이터를 <strong>{createdOrg?.name ?? orgName}</strong>의 원장(CEO) 역할로 구성합니다.
             </p>
             <p className="text-xs mb-6 px-3 py-2 rounded-lg" style={{ backgroundColor: "rgba(20,184,166,0.06)", color: "var(--text-secondary)" }}>
-              원장 에이전트는 학원 운영 전반을 총괄하고, 필요한 직원(에이전트)을 채용하여 팀을 구성합니다.
+              Paperclip의 내장 스킬처럼, 기본 팀에 필요한 starter skill package를 먼저 설치하고 각 에이전트에 장착합니다.
             </p>
+
+            <div
+              className="rounded-xl p-4 mb-5"
+              style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+            >
+              <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-primary)" }}>
+                Starter skill packages
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {Array.from(new Set(Object.values(STARTER_AGENT_SKILLS).flat())).map((skillSlug) => (
+                  <span
+                    key={skillSlug}
+                    className="text-[10px] px-2 py-1 rounded-full"
+                    style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}
+                  >
+                    {skillSlug}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <div className="flex flex-col gap-4">
               <div>
@@ -399,7 +460,7 @@ export function OnboardingPage() {
 
             {createAgentMutation.isError && (
               <p className="text-xs mt-3" style={{ color: "var(--color-danger)" }}>
-                에이전트 생성에 실패했습니다. 다시 시도해 주세요.
+                starter team 설정에 실패했습니다. 다시 시도해 주세요.
               </p>
             )}
 
@@ -420,7 +481,7 @@ export function OnboardingPage() {
                 {createAgentMutation.isPending ? (
                   <Loader2 size={14} className="animate-spin" />
                 ) : null}
-                원장 생성하기 →
+                starter team 준비 →
               </button>
             </div>
           </div>
@@ -441,11 +502,11 @@ export function OnboardingPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-2xl">🚀</span>
                   <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-                    원장 에이전트가 학원 운영을 시작합니다
+                    원장 에이전트와 starter team이 학원 운영을 시작합니다
                   </h2>
                 </div>
                 <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-                  아래 버튼을 누르면 <strong>{createdAgent?.name ?? agentName}</strong> 에이전트가 첫 번째 지시를 받고 팀을 구성합니다.
+                  아래 버튼을 누르면 <strong>{createdAgent?.name ?? agentName}</strong> 에이전트가 첫 번째 지시를 받고 기본 팀과 스킬이 함께 동작합니다.
                 </p>
 
                 <div
@@ -461,7 +522,13 @@ export function OnboardingPage() {
                   <div className="flex items-center gap-3">
                     <CheckCircle size={16} style={{ color: "var(--color-success)" }} />
                     <span className="text-sm" style={{ color: "var(--text-primary)" }}>
-                      원장 에이전트 <strong>"{createdAgent?.name ?? agentName}"</strong> 생성 완료
+                      원장 에이전트 <strong>"{createdAgent?.name ?? agentName}"</strong> 설정 완료
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle size={16} style={{ color: "var(--color-success)" }} />
+                    <span className="text-sm" style={{ color: "var(--text-primary)" }}>
+                      starter skill package <strong>{STARTER_SKILL_COUNT}개</strong> 설치 및 장착 완료
                     </span>
                   </div>
                   <div
@@ -547,6 +614,9 @@ export function OnboardingPage() {
                   <Loader2 size={10} className="animate-spin" />
                   {createdAgent?.name ?? agentName}
                 </div>
+                <p className="mt-5 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                  기본 팀과 starter skill package가 준비된 상태에서 첫 실행을 진행합니다.
+                </p>
               </div>
             )}
 
