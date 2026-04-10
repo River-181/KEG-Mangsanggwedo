@@ -77,6 +77,45 @@ export function organizationRoutes(db: Db): Router {
     }
   })
 
+  // DELETE /:id — 기관(학원) 삭제 (모든 하위 데이터 cascade)
+  router.delete("/:id", async (req, res) => {
+    try {
+      const oid = req.params.id
+      const [org] = await db.select().from(schema.organizations).where(eq(schema.organizations.id, oid))
+      if (!org) { res.status(404).json({ error: "Organization not found" }); return }
+
+      // FK 역순 삭제
+      await db.delete(schema.activityEvents).where(eq(schema.activityEvents.organizationId, oid))
+      await db.delete(schema.notifications).where(eq(schema.notifications.organizationId, oid))
+      await db.delete(schema.approvals).where(eq(schema.approvals.organizationId, oid))
+      await db.delete(schema.wakeupRequests).where(eq(schema.wakeupRequests.organizationId, oid))
+      await db.delete(schema.agentRuns).where(eq(schema.agentRuns.organizationId, oid))
+      const orgCases = await db.select({ id: schema.cases.id }).from(schema.cases).where(eq(schema.cases.organizationId, oid))
+      for (const c of orgCases) {
+        await db.delete(schema.caseComments).where(eq(schema.caseComments.caseId, c.id))
+      }
+      await db.delete(schema.cases).where(eq(schema.cases.organizationId, oid))
+      await db.delete(schema.attendance).where(eq(schema.attendance.organizationId, oid))
+      if (schema.studentSchedules) {
+        await db.delete(schema.studentSchedules).where(eq(schema.studentSchedules.organizationId, oid))
+      }
+      await db.delete(schema.schedules).where(eq(schema.schedules.organizationId, oid))
+      await db.delete(schema.parents).where(eq(schema.parents.organizationId, oid))
+      await db.delete(schema.students).where(eq(schema.students.organizationId, oid))
+      await db.delete(schema.instructors).where(eq(schema.instructors.organizationId, oid))
+      await db.delete(schema.opsGoals).where(eq(schema.opsGoals.organizationId, oid))
+      await db.delete(schema.opsGroups).where(eq(schema.opsGroups.organizationId, oid))
+      await db.delete(schema.routines).where(eq(schema.routines.organizationId, oid))
+      await db.delete(schema.documents).where(eq(schema.documents.organizationId, oid))
+      await db.delete(schema.agents).where(eq(schema.agents.organizationId, oid))
+      await db.delete(schema.organizations).where(eq(schema.organizations.id, oid))
+
+      res.status(204).send()
+    } catch (err) {
+      res.status(500).json({ error: "Failed to delete organization" })
+    }
+  })
+
   router.get("/:orgId/skills", async (req, res) => {
     try {
       res.json(await listSkills(db, req.params.orgId))

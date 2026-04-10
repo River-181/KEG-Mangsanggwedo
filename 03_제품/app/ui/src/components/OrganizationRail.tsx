@@ -5,7 +5,7 @@ import { useOrganization } from "@/context/OrganizationContext"
 import { api } from "@/api/client"
 import { queryKeys } from "@/lib/queryKeys"
 import { cn } from "@/lib/utils"
-import { Plus, Loader2 } from "lucide-react"
+import { Plus, Loader2, Trash2 } from "lucide-react"
 
 export function OrganizationRail() {
   const { organizations, selectedOrgId, setSelectedOrgId } = useOrganization()
@@ -13,6 +13,23 @@ export function OrganizationRail() {
   const queryClient = useQueryClient()
 
   const [showCreate, setShowCreate] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null)
+
+  const deleteMutation = useMutation({
+    mutationFn: (orgId: string) => api.delete(`/organizations/${orgId}`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.organizations.all })
+      setDeleteTarget(null)
+      // 삭제한 org가 현재 선택이면 다른 org로 전환
+      const remaining = organizations.filter((o) => o.id !== deleteTarget?.id)
+      if (remaining.length > 0) {
+        setSelectedOrgId(remaining[0].id)
+        navigate(`/${remaining[0].prefix}/dashboard`)
+      } else {
+        navigate("/new/onboarding")
+      }
+    },
+  })
   const [newName, setNewName] = useState("")
   const [newDesc, setNewDesc] = useState("")
 
@@ -75,7 +92,11 @@ export function OrganizationRail() {
                   setSelectedOrgId(org.id)
                   navigate(`/${org.prefix}/dashboard`)
                 }}
-                title={org.name}
+                onContextMenu={(e) => {
+                  e.preventDefault()
+                  setDeleteTarget({ id: org.id, name: org.name })
+                }}
+                title={`${org.name} (우클릭: 삭제)`}
                 className={cn(
                   "flex items-center justify-center rounded-xl text-xs font-semibold transition-all",
                   isSelected
@@ -214,6 +235,59 @@ export function OrganizationRail() {
                   <Plus size={14} />
                 )}
                 학원 추가
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 삭제 확인 모달 */}
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={(e) => { if (e.target === e.currentTarget) setDeleteTarget(null) }}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div
+            className="rounded-2xl p-6 w-full max-w-sm"
+            style={{
+              backgroundColor: "var(--bg-base)",
+              border: "1px solid var(--border-default)",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Trash2 size={18} style={{ color: "var(--color-danger)" }} />
+              <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+                학원 삭제
+              </h2>
+            </div>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+              <strong>{deleteTarget.name}</strong>을(를) 삭제하시겠습니까?
+            </p>
+            <p className="text-xs mb-5" style={{ color: "var(--color-danger)" }}>
+              모든 에이전트, 케이스, 학생, 일정, 문서가 영구 삭제됩니다. 되돌릴 수 없습니다.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-4 py-2 rounded-lg text-sm font-medium"
+                style={{ color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}
+              >
+                취소
+              </button>
+              <button
+                onClick={() => deleteMutation.mutate(deleteTarget.id)}
+                disabled={deleteMutation.isPending}
+                className="px-4 py-2 rounded-lg text-sm font-semibold inline-flex items-center gap-1.5 disabled:opacity-40"
+                style={{ backgroundColor: "var(--color-danger)", color: "#fff" }}
+              >
+                {deleteMutation.isPending ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Trash2 size={14} />
+                )}
+                삭제
               </button>
             </div>
           </div>
