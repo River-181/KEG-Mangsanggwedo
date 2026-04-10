@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { readFileSync, existsSync, readdirSync } from "fs"
+import { readFileSync, existsSync, readdirSync, mkdirSync, writeFileSync } from "fs"
 import { join } from "path"
 import type { Db } from "@hagent/db"
 import * as schema from "@hagent/db"
@@ -52,6 +52,24 @@ export function agentInstructionsRoutes(db: Db): Router {
     }
 
     const content = readFileSync(filePath, "utf-8")
+    res.json({ filename, content })
+  })
+
+  // PUT /api/agents/:id/instructions/:filename
+  router.put("/:id/instructions/:filename", async (req, res) => {
+    const { id, filename } = req.params
+    const { content } = req.body as { content: string }
+
+    const [agent] = await db.select().from(schema.agents).where(eq(schema.agents.id, id))
+    if (!agent) { res.status(404).json({ error: "Agent not found" }); return }
+
+    const agentType = agent.agentType ?? "orchestrator"
+    const dir = join(AGENT_DATA_DIR, agentType)
+
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
+
+    const filePath = join(dir, filename)
+    writeFileSync(filePath, content, "utf-8")
     res.json({ filename, content })
   })
 

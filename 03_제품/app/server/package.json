@@ -14,15 +14,16 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
     "@hagent/db": "workspace:*",
     "@hagent/shared": "workspace:*",
-    "@anthropic-ai/sdk": "^0.52.0",
     "cors": "^2.8.5",
     "detect-port": "^2.1.0",
     "dotenv": "^17.0.1",
     "drizzle-orm": "^0.38.4",
     "embedded-postgres": "^18.1.0-beta.16",
     "express": "^5.1.0",
+    "mammoth": "^1.12.0",
     "pino": "^9.6.0",
     "pino-http": "^10.4.0",
     "pino-pretty": "^13.1.3",

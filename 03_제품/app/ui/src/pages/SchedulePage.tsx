@@ -141,6 +141,17 @@ interface InstructorOption {
   subject: string
 }
 
+interface StudentScheduleRow {
+  id: string
+  studentId: string
+  scheduleId: string
+}
+
+interface StudentOption {
+  id: string
+  name: string
+}
+
 function ScheduleDetailDialog({
   schedule,
   open,
@@ -169,10 +180,17 @@ function ScheduleDetailDialog({
     enabled: !!selectedOrgId && isEditing,
   })
 
-  // Students for this schedule
-  const { data: allStudents = [] } = useQuery<{ id: string; name: string; scheduleId?: string | null }[]>({
-    queryKey: ["students", selectedOrgId],
-    queryFn: () => api.get<{ id: string; name: string; scheduleId?: string | null }[]>(`/organizations/${selectedOrgId}/students`),
+  // Students and enrollment rows for this schedule
+  const { data: allStudents = [] } = useQuery<StudentOption[]>({
+    queryKey: ["students", selectedOrgId, "schedule-detail"],
+    queryFn: () => api.get<StudentOption[]>(`/organizations/${selectedOrgId}/students`),
+    enabled: !!selectedOrgId && !!schedule && (schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup"),
+  })
+
+  const { data: studentSchedules = [] } = useQuery<StudentScheduleRow[]>({
+    queryKey: ["student-schedules", selectedOrgId, schedule?.id ?? ""],
+    queryFn: () =>
+      api.get<StudentScheduleRow[]>(`/organizations/${selectedOrgId}/student-schedules`),
     enabled: !!selectedOrgId && !!schedule && (schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup"),
   })
 
@@ -243,8 +261,9 @@ function ScheduleDetailDialog({
   const isLeave = schedule.type === "leave"
   const isClassType = schedule.type === "regular" || schedule.type === "special" || schedule.type === "makeup"
 
-  // Students enrolled in this schedule (filter by scheduleId if available)
-  const enrolledStudents = allStudents.filter(s => s.scheduleId === schedule.id)
+  const enrolledStudents = allStudents.filter((student) =>
+    studentSchedules.some((row) => row.scheduleId === schedule.id && row.studentId === student.id)
+  )
 
   const inputStyle = {
     backgroundColor: "var(--bg-secondary)",

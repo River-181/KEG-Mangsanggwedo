@@ -1,6 +1,7 @@
 // v0.3.1
 import { useContext, useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { api } from "@/api/client"
 import { instructorsApi } from "@/api/students"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -60,6 +61,11 @@ interface Instructor {
   status: InstructorStatus
   classCount: number
   createdAt: string
+}
+
+interface ScheduleSummary {
+  id: string
+  instructorId: string | null
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -202,6 +208,7 @@ function InstructorDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.instructors.list(orgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(orgId ?? "") })
       toast?.success("강사가 등록되었습니다.")
       onOpenChange(false)
     },
@@ -217,6 +224,7 @@ function InstructorDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.instructors.list(orgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(orgId ?? "") })
       toast?.success("강사 정보가 수정되었습니다.")
       onOpenChange(false)
     },
@@ -420,6 +428,7 @@ function DeleteConfirmDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.instructors.list(orgId ?? "") })
+      queryClient.invalidateQueries({ queryKey: queryKeys.schedules.list(orgId ?? "") })
       toast?.success("강사가 삭제되었습니다.")
       onOpenChange(false)
     },
@@ -698,7 +707,37 @@ export function InstructorsPage() {
     },
   })
 
-  const instructors = instructorsQuery.data ?? []
+  const schedulesQuery = useQuery<ScheduleSummary[]>({
+    queryKey: queryKeys.schedules.list(selectedOrgId ?? ""),
+    enabled: !!selectedOrgId,
+    queryFn: async () => {
+      if (!selectedOrgId) return []
+      try {
+        const response = await api.get<ScheduleSummary[]>(`/organizations/${selectedOrgId}/schedules`)
+        return Array.isArray(response) ? response : []
+      } catch {
+        return []
+      }
+    },
+  })
+
+  const scheduleCountByInstructor = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const schedule of schedulesQuery.data ?? []) {
+      if (!schedule.instructorId) continue
+      counts.set(schedule.instructorId, (counts.get(schedule.instructorId) ?? 0) + 1)
+    }
+    return counts
+  }, [schedulesQuery.data])
+
+  const instructors = useMemo(
+    () =>
+      (instructorsQuery.data ?? []).map((instructor) => ({
+        ...instructor,
+        classCount: scheduleCountByInstructor.get(instructor.id) ?? instructor.classCount ?? 0,
+      })),
+    [instructorsQuery.data, scheduleCountByInstructor]
+  )
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()

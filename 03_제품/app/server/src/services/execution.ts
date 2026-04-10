@@ -175,11 +175,53 @@ export async function executeAgentRun(
           .update(schema.cases)
           .set({
             agentDraft: String(agentOutput.suggestedReply),
-            status: "in_review",
             updatedAt: new Date(),
           })
           .where(eq(schema.cases.id, caseId))
       }
+
+      // Update case status and assignee
+      const newStatus =
+        agentType === "complaint"
+          ? "in_review"
+          : agentType === "retention"
+            ? "in_progress"
+            : "in_progress"
+
+      await db
+        .update(schema.cases)
+        .set({
+          status: newStatus,
+          assigneeAgentId: agentId,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.cases.id, caseId))
+
+      // Insert agent comment on the case
+      let commentContent: string
+      if (agentType === "complaint") {
+        const output = agentOutput as {
+          category?: string
+          severity?: string
+          draft?: string
+        }
+        commentContent = `[민원분석] 카테고리: ${output.category ?? "-"}, 심각도: ${output.severity ?? "-"}\n\n${output.draft ?? ""}`
+      } else if (agentType === "retention") {
+        const output = agentOutput as {
+          riskLevel?: string
+          reasoning?: string
+        }
+        commentContent = `[이탈분석] 위험도: ${output.riskLevel ?? "-"}\n\n${output.reasoning ?? ""}`
+      } else {
+        commentContent = JSON.stringify(agentOutput, null, 2)
+      }
+
+      await db.insert(schema.caseComments).values({
+        caseId,
+        authorType: "agent",
+        authorId: agentId,
+        content: commentContent,
+      })
 
       // 7. Publish completed event
       publishEvent(organizationId, "agent.run.completed", {

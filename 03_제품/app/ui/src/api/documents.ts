@@ -7,4 +7,5 @@ export const documentsApi = {
   create: (orgId: string, data: any) => api.post<any>(`/organizations/${orgId}/documents`, data),
   update: (id: string, data: any) => api.patch<any>(`/documents/${id}`, data),
   delete: (id: string) => api.delete(`/documents/${id}`),
+  importPreview: (files: any[]) => api.post<{ documents: any[] }>(`/documents/import-preview`, { files }),
 }

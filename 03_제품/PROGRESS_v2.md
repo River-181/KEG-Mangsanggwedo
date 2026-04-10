@@ -89,23 +89,29 @@ aliases: [dev-progress, 개발진행]
 
 ---
 
-## Phase 4: 배포 + 제출 🔵 진행 중 (D6~D8)
+## Phase 4: 실제 작동 에이전트 + 배포 + 제출 🔵 진행 중 (D6~D8)
 
-### 배포
-- [ ] **DB 마이그레이션 0002 실행** (`pnpm db:migrate`) — 용
-- [ ] **OnboardingPage 완성**: 완료 후 대시보드 자동 리디렉션, 첫 접속 감지 — 용
-- [ ] **에이전트 E2E 재검증**: dispatch → run → SSE → approval 실시간 확인 — 승
-- [ ] Railway/Render 배포 + 환경변수 설정 — 용
-- [ ] GitHub public README (라이브 URL 포함) — 용
-- [ ] 데모 리허설 3회 이상 — 승+용
+> 갭 분석: `03_제품/PAPERCLIP-GAP-ANALYSIS.md`
 
-### 제출물
-- [ ] 데모 스크립트 v0.1 (2분 시연 경로) — 승+용
-- [ ] AI 리포트 (.docx) — 승
-- [ ] GitHub public URL
-- [ ] 라이브 URL
-- [ ] 개인정보 동의서
-- [ ] 참가 각서
+### Phase 4a: 에이전트 실행 품질 (D6)
+- [ ] STEP 0: DB 마이그레이션 0002 실행 — 용
+- [ ] STEP 1: 에이전트 실행 루프 완성 (G1) — execution.ts: Case 상태 자동 변경 + 댓글 자동 삽입 — 승
+- [ ] STEP 2: Run Transcript 채팅 UI (G5) — AgentDetailPage RunRow: 채팅 버블 렌더링 — 용
+- [ ] STEP 3: Instructions 탭 SOUL/HEARTBEAT/AGENTS 분리 (G3) — 서버 PUT + UI 4탭 — 승+용
+- [ ] STEP 4: Configuration 탭 실제 편집 (G7) — SettingsTab: 모델 선택 + 저장 — 용
+
+### Phase 4b: 배포 + 온보딩 (D7)
+- [ ] STEP 5: 온보딩 완성 — Launch 시 dispatch 실행 — 용
+- [ ] STEP 6: Railway 배포 — Dockerfile + PG addon + 환경변수 — 용
+- [ ] STEP 6: 라이브 URL 동작 확인 — 승+용
+
+### Phase 4c: 제출물 (D7~D8)
+- [ ] STEP 7: GitHub README (라이브 URL 포함) — 용
+- [ ] STEP 7: AI 리포트 (.docx) — 승
+- [ ] STEP 7: 데모 스크립트 v0.1 (2분) — 승+용
+- [ ] STEP 8: 데모 리허설 3회 이상 — 승+용
+- [ ] STEP 8: 최종 버그 핫픽스 — 승+용
+- [ ] 제출: GitHub URL + 라이브 URL + AI 리포트 + 동의서 + 각서
 
 **목표 완료일**: 2026-04-13
 

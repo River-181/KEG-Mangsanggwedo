@@ -80,6 +80,27 @@ function statusLabel(status: string): string {
   return map[status] ?? status
 }
 
+// ─── chat bubble ─────────────────────────────────────────────────────────────
+
+function ChatBubble({ role, content }: { role: "user" | "agent"; content: string }) {
+  const isAgent = role === "agent"
+  return (
+    <div className={`flex ${isAgent ? "justify-start" : "justify-end"} mb-2`}>
+      <div
+        className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap"
+        style={{
+          backgroundColor: isAgent ? "rgba(20,184,166,0.08)" : "var(--bg-tertiary)",
+          color: "var(--text-primary)",
+          borderBottomLeftRadius: isAgent ? 4 : undefined,
+          borderBottomRightRadius: isAgent ? undefined : 4,
+        }}
+      >
+        {content}
+      </div>
+    </div>
+  )
+}
+
 // ─── run row ─────────────────────────────────────────────────────────────────
 
 function RunRow({ run, expanded, onToggle, showRerun }: { run: any; expanded?: boolean; onToggle?: () => void; showRerun?: boolean }) {
@@ -186,33 +207,71 @@ function RunRow({ run, expanded, onToggle, showRerun }: { run: any; expanded?: b
           {/* Output */}
           {outputData != null && (
             <div>
-              <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>출력</p>
+              <p className="text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>출력</p>
               {typeof outputData === "object" && outputData?.draft ? (
-                <div>
-                  <div
-                    className="text-sm rounded-lg p-3 leading-relaxed whitespace-pre-wrap"
-                    style={{
-                      backgroundColor: "rgba(20,184,166,0.06)",
-                      border: "1px solid rgba(20,184,166,0.2)",
-                      color: "var(--text-primary)",
-                    }}
-                  >
-                    {outputData.draft}
-                  </div>
-                  {Object.keys(outputData).filter(k => k !== "draft").length > 0 && (
-                    <pre
-                      className="text-xs rounded-lg p-3 mt-2 overflow-auto max-h-40 whitespace-pre-wrap break-all"
-                      style={{
-                        backgroundColor: "var(--bg-tertiary)",
-                        color: "var(--text-primary)",
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
+                <div className="space-y-1">
+                  <ChatBubble
+                    role="agent"
+                    content={[
+                      outputData.category ? `분류: ${outputData.category}` : null,
+                      outputData.severity ? `심각도: ${outputData.severity}` : null,
+                    ]
+                      .filter(Boolean)
+                      .join("\n")}
+                  />
+                  {(outputData.category || outputData.severity) && (
+                    <ChatBubble role="agent" content={outputData.draft} />
+                  )}
+                  {!(outputData.category || outputData.severity) && (
+                    <ChatBubble role="agent" content={outputData.draft} />
+                  )}
+                  {outputData.reasoning && (
+                    <p className="text-xs px-1 mt-1" style={{ color: "var(--text-tertiary)" }}>
+                      {outputData.reasoning}
+                    </p>
+                  )}
+                </div>
+              ) : typeof outputData === "object" && (outputData?.riskScore != null || outputData?.riskLevel != null) ? (
+                <div className="space-y-1">
+                  <ChatBubble
+                    role="agent"
+                    content={`이탈 위험도: ${outputData.riskLevel ?? "-"} (${outputData.riskScore ?? "-"})`}
+                  />
+                  {Array.isArray(outputData.signals) && outputData.signals.length > 0 && (
+                    <div
+                      className="rounded-xl px-4 py-3 text-sm"
+                      style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-primary)" }}
                     >
-                      {JSON.stringify(
-                        Object.fromEntries(Object.entries(outputData).filter(([k]) => k !== "draft")),
-                        null, 2
-                      )}
-                    </pre>
+                      <p className="text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                        신호
+                      </p>
+                      <ul className="space-y-0.5">
+                        {(outputData.signals as string[]).map((s, i) => (
+                          <li key={i} className="text-xs flex items-start gap-1.5">
+                            <span style={{ color: "var(--color-teal-500)" }}>•</span>
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {Array.isArray(outputData.recommendedActions) && outputData.recommendedActions.length > 0 && (
+                    <div
+                      className="rounded-xl px-4 py-3 text-sm"
+                      style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-primary)" }}
+                    >
+                      <p className="text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                        권장 조치
+                      </p>
+                      <ul className="space-y-0.5">
+                        {(outputData.recommendedActions as string[]).map((a, i) => (
+                          <li key={i} className="text-xs flex items-start gap-1.5">
+                            <CheckCircle2 size={12} className="shrink-0 mt-0.5" style={{ color: "var(--color-success)" }} />
+                            {a}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               ) : (
@@ -658,116 +717,262 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
 
 // ─── Instructions tab ─────────────────────────────────────────────────────────
 
+const SPECIAL_FILES = ["SOUL.md", "HEARTBEAT.md", "AGENTS.md"] as const
+type SpecialFile = (typeof SPECIAL_FILES)[number]
+
 function InstructionsTab({ agent, instructionFiles }: { agent: any; instructionFiles: any[] }) {
   const queryClient = useQueryClient()
+  const toast = useContext(ToastContext)
   const original = agent.systemPrompt ?? agent.system_prompt ?? agent.instructions ?? ""
-  const [value, setValue] = useState(original)
-  const isDirty = value !== original
+  const [systemPromptValue, setSystemPromptValue] = useState(original)
+  const isSystemDirty = systemPromptValue !== original
 
-  const saveMutation = useMutation({
-    mutationFn: () => agentsApi.update(agent.id, { systemPrompt: value }),
+  type SubTab = SpecialFile | "시스템 프롬프트"
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>("시스템 프롬프트")
+
+  // Per-file editing state
+  const [fileValues, setFileValues] = useState<Record<string, string>>(() => {
+    const map: Record<string, string> = {}
+    for (const f of instructionFiles) {
+      map[f.filename] = f.content ?? ""
+    }
+    return map
+  })
+  const [fileOriginals, setFileOriginals] = useState<Record<string, string>>(() => {
+    const map: Record<string, string> = {}
+    for (const f of instructionFiles) {
+      map[f.filename] = f.content ?? ""
+    }
+    return map
+  })
+
+  useEffect(() => {
+    setSystemPromptValue(original)
+  }, [original])
+
+  useEffect(() => {
+    const map: Record<string, string> = {}
+    for (const f of instructionFiles) {
+      map[f.filename] = f.content ?? ""
+    }
+    setFileValues(map)
+    setFileOriginals(map)
+  }, [instructionFiles])
+
+  const systemSaveMutation = useMutation({
+    mutationFn: () => agentsApi.update(agent.id, { systemPrompt: systemPromptValue }),
     onSuccess: () => {
+      toast?.success("시스템 프롬프트가 저장되었습니다.")
       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
     },
   })
 
-  // Reset when agent changes
-  useEffect(() => {
-    setValue(original)
-  }, [original])
+  const saveFileMutation = useMutation({
+    mutationFn: ({ filename, content }: { filename: string; content: string }) =>
+      fetch(`/api/agents/${agent.id}/instructions/${filename}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      }),
+    onSuccess: (_data, vars) => {
+      toast?.success(`${vars.filename} 저장되었습니다.`)
+      setFileOriginals((prev) => ({ ...prev, [vars.filename]: vars.content }))
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+    onError: (_err, vars) => {
+      toast?.error(`${vars.filename} 저장에 실패했습니다.`)
+    },
+  })
+
+  const createFileMutation = useMutation({
+    mutationFn: ({ filename }: { filename: string }) =>
+      fetch(`/api/agents/${agent.id}/instructions/${filename}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: "" }),
+      }),
+    onSuccess: (_data, vars) => {
+      toast?.success(`${vars.filename} 생성되었습니다.`)
+      setFileValues((prev) => ({ ...prev, [vars.filename]: "" }))
+      setFileOriginals((prev) => ({ ...prev, [vars.filename]: "" }))
+      void queryClient.invalidateQueries({ queryKey: ["agents", agent.id, "instructions"] })
+    },
+  })
+
+  const subTabs: SubTab[] = [...SPECIAL_FILES, "시스템 프롬프트"]
+
+  const getFileForTab = (tab: SpecialFile) => instructionFiles.find((f: any) => f.filename === tab)
 
   return (
-    <div className="space-y-3 relative">
-      {/* Floating save bar */}
-      {isDirty && (
-        <div
-          className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-xl px-4 py-3 mb-2"
-          style={{
-            backgroundColor: "rgba(var(--bg-elevated-rgb, 255,255,255), 0.9)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid var(--border-default)",
-            boxShadow: "var(--shadow-md)",
-          }}
-        >
-          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            변경사항이 있습니다
-          </span>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs h-7"
-              onClick={() => setValue(original)}
-            >
-              취소
-            </Button>
-            <Button
-              size="sm"
-              className="text-xs h-7 gap-1.5"
-              style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
-              disabled={saveMutation.isPending}
-              onClick={() => saveMutation.mutate()}
-            >
-              {saveMutation.isPending ? (
-                <Loader2 size={12} className="animate-spin" />
-              ) : (
-                <CheckCircle2 size={12} />
-              )}
-              저장
-            </Button>
+    <div className="space-y-3">
+      {/* Sub-tab bar */}
+      <div
+        className="flex gap-1 p-1 rounded-xl"
+        style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border-default)" }}
+      >
+        {subTabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveSubTab(tab)}
+            className="flex-1 px-2 py-1.5 text-xs font-medium rounded-lg transition-colors"
+            style={{
+              backgroundColor: activeSubTab === tab ? "var(--bg-elevated)" : "transparent",
+              color: activeSubTab === tab ? "var(--text-primary)" : "var(--text-tertiary)",
+              border: activeSubTab === tab ? "1px solid var(--border-default)" : "1px solid transparent",
+            }}
+          >
+            {tab === "시스템 프롬프트" ? "시스템 프롬프트" : tab.replace(".md", "")}
+          </button>
+        ))}
+      </div>
+
+      {/* Special file tabs: SOUL / HEARTBEAT / AGENTS */}
+      {SPECIAL_FILES.map((fname) => {
+        if (activeSubTab !== fname) return null
+        const existing = getFileForTab(fname)
+        const exists = !!existing
+        const currentValue = fileValues[fname] ?? ""
+        const originalValue = fileOriginals[fname] ?? ""
+        const isDirty = currentValue !== originalValue
+        const isSaving = saveFileMutation.isPending && saveFileMutation.variables?.filename === fname
+        const isCreating = createFileMutation.isPending && createFileMutation.variables?.filename === fname
+
+        return (
+          <div key={fname} className="space-y-3">
+            {!exists ? (
+              <div
+                className="rounded-xl p-6 flex flex-col items-center gap-3 text-center"
+                style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+              >
+                <FileText size={28} style={{ color: "var(--text-tertiary)" }} />
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  {fname} 파일이 아직 없습니다. 생성하시겠습니까?
+                </p>
+                <Button
+                  size="sm"
+                  className="gap-1.5 text-xs"
+                  style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+                  disabled={isCreating}
+                  onClick={() => createFileMutation.mutate({ filename: fname })}
+                >
+                  {isCreating ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />}
+                  생성
+                </Button>
+              </div>
+            ) : (
+              <>
+                {isDirty && (
+                  <div
+                    className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-xl px-4 py-3"
+                    style={{
+                      backgroundColor: "rgba(var(--bg-elevated-rgb, 255,255,255), 0.9)",
+                      backdropFilter: "blur(8px)",
+                      border: "1px solid var(--border-default)",
+                      boxShadow: "var(--shadow-md)",
+                    }}
+                  >
+                    <span className="text-sm" style={{ color: "var(--text-secondary)" }}>변경사항이 있습니다</span>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7"
+                        onClick={() => setFileValues((prev) => ({ ...prev, [fname]: originalValue }))}
+                      >
+                        취소
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="text-xs h-7 gap-1.5"
+                        style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+                        disabled={isSaving}
+                        onClick={() => saveFileMutation.mutate({ filename: fname, content: currentValue })}
+                      >
+                        {isSaving ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+                        저장
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                <textarea
+                  value={currentValue}
+                  onChange={(e) => setFileValues((prev) => ({ ...prev, [fname]: e.target.value }))}
+                  rows={20}
+                  className="w-full rounded-xl p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    border: "1px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    minHeight: "300px",
+                  }}
+                  placeholder={`${fname} 내용을 입력하세요...`}
+                />
+              </>
+            )}
           </div>
-        </div>
-      )}
+        )
+      })}
 
-      {/* Instruction files */}
-      {instructionFiles.length > 0 && (
-        <div className="space-y-2 mb-4">
-          <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
-            지침 파일 ({instructionFiles.length}개)
+      {/* 시스템 프롬프트 tab */}
+      {activeSubTab === "시스템 프롬프트" && (
+        <div className="space-y-3 relative">
+          {isSystemDirty && (
+            <div
+              className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-xl px-4 py-3 mb-2"
+              style={{
+                backgroundColor: "rgba(var(--bg-elevated-rgb, 255,255,255), 0.9)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-md)",
+              }}
+            >
+              <span className="text-sm" style={{ color: "var(--text-secondary)" }}>변경사항이 있습니다</span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7"
+                  onClick={() => setSystemPromptValue(original)}
+                >
+                  취소
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-xs h-7 gap-1.5"
+                  style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+                  disabled={systemSaveMutation.isPending}
+                  onClick={() => systemSaveMutation.mutate()}
+                >
+                  {systemSaveMutation.isPending ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : (
+                    <CheckCircle2 size={12} />
+                  )}
+                  저장
+                </Button>
+              </div>
+            </div>
+          )}
+          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+            에이전트의 시스템 프롬프트를 편집합니다. 변경 후 저장하면 다음 실행부터 반영됩니다.
           </p>
-          {instructionFiles.map((f: any) => (
-            <details key={f.filename} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
-              <summary
-                className="px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2"
-                style={{ color: "var(--text-primary)" }}
-              >
-                <FileText size={14} style={{ color: "var(--color-teal-500)" }} />
-                {f.filename}
-              </summary>
-              <pre
-                className="px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap overflow-auto max-h-[400px]"
-                style={{
-                  backgroundColor: "var(--bg-secondary)",
-                  color: "var(--text-secondary)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                  borderTop: "1px solid var(--border-default)",
-                }}
-              >
-                {f.content}
-              </pre>
-            </details>
-          ))}
+          <textarea
+            value={systemPromptValue}
+            onChange={(e) => setSystemPromptValue(e.target.value)}
+            rows={20}
+            className="w-full rounded-xl p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              border: "1px solid var(--border-default)",
+              color: "var(--text-primary)",
+              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              minHeight: "300px",
+            }}
+            placeholder="에이전트 시스템 프롬프트를 입력하세요..."
+          />
         </div>
       )}
-
-      <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-        에이전트의 시스템 프롬프트를 편집합니다. 변경 후 저장하면 다음 실행부터 반영됩니다.
-      </p>
-
-      <textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        rows={20}
-        className="w-full rounded-xl p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-teal-500/30"
-        style={{
-          backgroundColor: "var(--bg-secondary)",
-          border: "1px solid var(--border-default)",
-          color: "var(--text-primary)",
-          fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-          minHeight: "300px",
-        }}
-        placeholder="에이전트 시스템 프롬프트를 입력하세요..."
-      />
     </div>
   )
 }
@@ -1008,7 +1213,33 @@ function SkillsTab({ agent }: { agent: any }) {
 // ─── Settings tab ─────────────────────────────────────────────────────────────
 
 function SettingsTab({ agent }: { agent: any }) {
+  const queryClient = useQueryClient()
+  const toast = useContext(ToastContext)
   const settings = agent.settings ?? {}
+
+  const [model, setModel] = useState<string>(
+    agent.adapterConfig?.model ?? agent.model ?? settings.model ?? "claude-sonnet-4-6"
+  )
+  const [maxTokens, setMaxTokens] = useState<number>(
+    agent.adapterConfig?.maxTokens ?? agent.maxTokens ?? settings.maxTokens ?? 4096
+  )
+  const [autoRun, setAutoRun] = useState<boolean>(
+    agent.adapterConfig?.autoRun ?? agent.autoRun ?? settings.autoRun ?? false
+  )
+
+  const configMutation = useMutation({
+    mutationFn: () =>
+      agentsApi.update(agent.id, {
+        adapterConfig: { ...agent.adapterConfig, model, maxTokens, autoRun },
+      }),
+    onSuccess: () => {
+      toast?.success("설정이 저장되었습니다.")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+    onError: () => {
+      toast?.error("설정 저장에 실패했습니다.")
+    },
+  })
 
   const agentTypeLabel: Record<string, string> = {
     orchestrator: "오케스트레이터",
@@ -1021,24 +1252,17 @@ function SettingsTab({ agent }: { agent: any }) {
     notification: "알림",
   }
 
-  const rows = [
+  const metaRows = [
     { label: "에이전트 ID", value: agent.id },
     { label: "에이전트 유형", value: agentTypeLabel[agent.agentType] ?? agent.agentType ?? "-" },
-    { label: "모델", value: agent.model ?? settings.model ?? "claude-sonnet-4-6" },
     { label: "어댑터", value: agent.adapterType ?? "-" },
     { label: "슬러그", value: agent.slug ?? "-" },
     { label: "생성일", value: agent.createdAt ? formatDate(agent.createdAt) : "-" },
     { label: "최근 업데이트", value: agent.updatedAt ? formatDate(agent.updatedAt) : "-" },
-    { label: "최대 토큰", value: agent.maxTokens ?? settings.maxTokens ?? "-" },
-    { label: "온도", value: agent.temperature ?? settings.temperature ?? "-" },
-    {
-      label: "자동 실행",
-      value: agent.autoRun ?? settings.autoRun ? "활성화" : "비활성화",
-    },
   ]
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {agent.description && (
         <div
           className="rounded-xl p-4"
@@ -1048,19 +1272,85 @@ function SettingsTab({ agent }: { agent: any }) {
           <p className="text-sm" style={{ color: "var(--text-primary)" }}>{agent.description}</p>
         </div>
       )}
+
+      {/* Editable config */}
+      <div
+        className="rounded-xl p-4 space-y-4"
+        style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+      >
+        <p className="text-xs font-semibold" style={{ color: "var(--text-secondary)" }}>어댑터 설정</p>
+
+        {/* Model */}
+        <div className="space-y-1.5">
+          <label className="text-xs" style={{ color: "var(--text-secondary)" }}>모델</label>
+          <select
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              border: "1px solid var(--border-default)",
+              color: "var(--text-primary)",
+            }}
+          >
+            <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+          </select>
+        </div>
+
+        {/* Max tokens */}
+        <div className="space-y-1.5">
+          <label className="text-xs" style={{ color: "var(--text-secondary)" }}>최대 토큰</label>
+          <input
+            type="number"
+            value={maxTokens}
+            min={256}
+            max={200000}
+            step={256}
+            onChange={(e) => setMaxTokens(Number(e.target.value))}
+            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              border: "1px solid var(--border-default)",
+              color: "var(--text-primary)",
+            }}
+          />
+        </div>
+
+        {/* Auto run */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm" style={{ color: "var(--text-primary)" }}>자동 실행</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+              트리거 발생 시 자동으로 에이전트를 실행합니다
+            </p>
+          </div>
+          <Switch checked={autoRun} onCheckedChange={setAutoRun} />
+        </div>
+
+        <Button
+          className="w-full gap-1.5 text-xs h-9"
+          style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+          disabled={configMutation.isPending}
+          onClick={() => configMutation.mutate()}
+        >
+          {configMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
+          저장
+        </Button>
+      </div>
+
+      {/* Read-only metadata */}
       <div
         className="rounded-xl overflow-hidden"
-        style={{
-          backgroundColor: "var(--bg-elevated)",
-          border: "1px solid var(--border-default)",
-        }}
+        style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
       >
-        {rows.map((row, i) => (
+        <p className="text-xs font-semibold px-4 pt-3 pb-1" style={{ color: "var(--text-secondary)" }}>에이전트 정보</p>
+        {metaRows.map((row, i) => (
           <div
             key={row.label}
             className={cn(
               "flex items-center justify-between px-4 py-3",
-              i < rows.length - 1 && "border-b border-[var(--border-default)]"
+              i < metaRows.length - 1 && "border-b border-[var(--border-default)]"
             )}
           >
             <span className="text-sm" style={{ color: "var(--text-secondary)" }}>

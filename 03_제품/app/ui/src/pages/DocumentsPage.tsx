@@ -292,6 +292,51 @@ function formatDate(iso?: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`
 }
 
+function slugifyFileName(value: string) {
+  return value
+    .trim()
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\s+/g, "-")
+}
+
+function fileNameWithoutExtension(fileName: string) {
+  return fileName.replace(/\.[^.]+$/, "")
+}
+
+function inferTitleFromMarkdown(text: string, fallbackFileName: string) {
+  const heading = text.match(/^#\s+(.+)$/m)?.[1]?.trim()
+  return heading || fileNameWithoutExtension(fallbackFileName) || "제목 없는 문서"
+}
+
+function toMarkdownBundle(docs: Document[]) {
+  return docs.map((doc) => {
+    const frontmatter = [
+      "---",
+      `title: ${doc.title}`,
+      `category: ${doc.category}`,
+      ...(doc.tags?.length ? [`tags: [${doc.tags.join(", ")}]`] : []),
+      "---",
+      "",
+    ]
+
+    const body = doc.body.trim().startsWith("#")
+      ? doc.body.trim()
+      : `# ${doc.title}\n\n${doc.body.trim()}`
+
+    return [...frontmatter, body].join("\n")
+  }).join("\n\n---\n\n")
+}
+
+async function readFileAsBase64(file: File) {
+  const buffer = await file.arrayBuffer()
+  let binary = ""
+  const bytes = new Uint8Array(buffer)
+  for (let index = 0; index < bytes.length; index += 1) {
+    binary += String.fromCharCode(bytes[index])
+  }
+  return window.btoa(binary)
+}
+
 function NewDocDialog({
   open,
   onClose,
@@ -400,6 +445,7 @@ export function DocumentsPage() {
   const [previewImportDocs, setPreviewImportDocs] = useState<Document[]>([])
   const [showImportPreview, setShowImportPreview] = useState(false)
   const [pendingImportName, setPendingImportName] = useState("")
+  const [isImporting, setIsImporting] = useState(false)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "지식베이스" }])
@@ -547,52 +593,132 @@ export function DocumentsPage() {
   }
 
   const handleExport = () => {
-    const payload = JSON.stringify(filtered, null, 2)
-    const blob = new Blob([payload], { type: "application/json" })
+    const docsToExport = displayDoc && filtered.some((doc) => doc.id === displayDoc.id) ? [displayDoc] : filtered
+    const markdown = toMarkdownBundle(docsToExport)
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
-    link.download = "documents-export.json"
+    link.download = docsToExport.length === 1
+      ? `${slugifyFileName(docsToExport[0].title)}.md`
+      : "knowledge-base-export.md"
     link.click()
     URL.revokeObjectURL(url)
-    addToast(`${filtered.length}개 문서를 내보냈습니다.`, "success")
+    addToast(`${docsToExport.length}개 문서를 Markdown으로 내보냈습니다.`, "success")
   }
 
   const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const files = Array.from(event.target.files ?? [])
+    if (files.length === 0) return
 
     try {
-      const text = await file.text()
-      const parsed = JSON.parse(text)
-      const list = Array.isArray(parsed) ? parsed : Array.isArray(parsed.documents) ? parsed.documents : []
-      const docs = list.map(normalizeDocument)
+      setIsImporting(true)
+      const clientSideDocs: Document[] = []
+      const serverSideFiles: Array<{ fileName: string; mimeType: string; contentBase64: string }> = []
+
+      for (const file of files) {
+        const lowerName = file.name.toLowerCase()
+
+        if (lowerName.endsWith(".md") || lowerName.endsWith(".markdown")) {
+          const text = await file.text()
+          clientSideDocs.push(normalizeDocument({
+            id: `import-${file.name}-${Date.now()}`,
+            title: inferTitleFromMarkdown(text, file.name),
+            body: text.trim(),
+            category: "general",
+          }))
+          continue
+        }
+
+        if (lowerName.endsWith(".txt")) {
+          const text = await file.text()
+          const title = fileNameWithoutExtension(file.name) || "제목 없는 문서"
+          clientSideDocs.push(normalizeDocument({
+            id: `import-${file.name}-${Date.now()}`,
+            title,
+            body: `# ${title}\n\n${text.trim()}`,
+            category: "general",
+          }))
+          continue
+        }
+
+        if (lowerName.endsWith(".json")) {
+          const text = await file.text()
+          const parsed = JSON.parse(text)
+          const list = Array.isArray(parsed) ? parsed : Array.isArray(parsed.documents) ? parsed.documents : []
+          clientSideDocs.push(...list.map(normalizeDocument))
+          continue
+        }
+
+        if (lowerName.endsWith(".docx")) {
+          serverSideFiles.push({
+            fileName: file.name,
+            mimeType: file.type || "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            contentBase64: await readFileAsBase64(file),
+          })
+          continue
+        }
+
+        throw new Error(`지원하지 않는 파일 형식: ${file.name}`)
+      }
+
+      let docs = [...clientSideDocs]
+      if (serverSideFiles.length > 0) {
+        const response = await documentsApi.importPreview(serverSideFiles)
+        docs = [...docs, ...response.documents.map(normalizeDocument)]
+      }
+
       setPreviewImportDocs(docs)
-      setPendingImportName(file.name)
+      setPendingImportName(files.map((file) => file.name).join(", "))
       setShowImportPreview(true)
-    } catch {
-      addToast("JSON 문서를 불러오지 못했습니다.", "error")
+    } catch (error) {
+      addToast(error instanceof Error ? error.message : "문서를 불러오지 못했습니다.", "error")
     } finally {
+      setIsImporting(false)
       event.target.value = ""
     }
   }
 
-  const confirmImport = () => {
-    setLocalDocs((prev) => {
-      const map = new Map(prev.map((doc) => [doc.id, doc]))
-      for (const doc of previewImportDocs) {
-        map.set(doc.id, doc)
+  const confirmImport = async () => {
+    if (previewImportDocs.length === 0) return
+
+    setIsImporting(true)
+    try {
+      let importedDocs = previewImportDocs
+
+      if (selectedOrgId) {
+        importedDocs = await Promise.all(
+          previewImportDocs.map((doc) =>
+            documentsApi.create(selectedOrgId, {
+              title: doc.title,
+              body: doc.body,
+              category: doc.category,
+              tags: doc.tags ?? [],
+            }).then(normalizeDocument)
+          )
+        )
       }
-      return Array.from(map.values())
-    })
-    setCategories((prev) => mergeCategories(prev, previewImportDocs))
-    if (previewImportDocs[0]) {
-      setSelectedDocId(previewImportDocs[0].id)
+
+      setLocalDocs((prev) => {
+        const map = new Map(prev.map((doc) => [doc.id, doc]))
+        for (const doc of importedDocs) {
+          map.set(doc.id, doc)
+        }
+        return Array.from(map.values())
+      })
+      setCategories((prev) => mergeCategories(prev, importedDocs))
+      if (importedDocs[0]) {
+        setSelectedDocId(importedDocs[0].id)
+      }
+      addToast(`${importedDocs.length}개 문서를 가져왔습니다.`, "success")
+      setShowImportPreview(false)
+      setPreviewImportDocs([])
+      setPendingImportName("")
+    } catch {
+      addToast("문서 가져오기에 실패했습니다.", "error")
+    } finally {
+      setIsImporting(false)
     }
-    addToast(`${previewImportDocs.length}개 문서를 가져왔습니다.`, "success")
-    setShowImportPreview(false)
-    setPreviewImportDocs([])
-    setPendingImportName("")
   }
 
   const handleDispatch = async (doc: Document) => {
@@ -635,16 +761,17 @@ export function DocumentsPage() {
           )}
           <Button size="sm" variant="outline" className="text-xs gap-1" onClick={handleExport}>
             <Download size={14} />
-            Export
+            Markdown Export
           </Button>
-          <Button size="sm" variant="outline" className="text-xs gap-1" onClick={() => fileInputRef.current?.click()}>
+          <Button size="sm" variant="outline" className="text-xs gap-1" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
             <Upload size={14} />
             Import
           </Button>
           <input
             ref={fileInputRef}
             type="file"
-            accept="application/json"
+            accept=".json,.md,.markdown,.txt,.docx"
+            multiple
             className="hidden"
             onChange={handleImportFile}
           />
@@ -945,7 +1072,7 @@ export function DocumentsPage() {
             <DialogTitle style={{ color: "var(--text-primary)" }}>Import 미리보기</DialogTitle>
           </DialogHeader>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            {pendingImportName || "선택한 파일"}에서 {previewImportDocs.length}개 문서를 읽었습니다.
+            {pendingImportName || "선택한 파일"}에서 {previewImportDocs.length}개 문서를 읽었습니다. `md`, `txt`, `docx`, `json`을 지식베이스 문서로 변환합니다.
           </p>
           <div
             className="rounded-xl p-3 max-h-64 overflow-y-auto"
@@ -975,9 +1102,10 @@ export function DocumentsPage() {
               size="sm"
               className="border-0 text-white"
               style={{ backgroundColor: "var(--color-teal-500)" }}
-              disabled={previewImportDocs.length === 0}
-              onClick={confirmImport}
+              disabled={previewImportDocs.length === 0 || isImporting}
+              onClick={() => void confirmImport()}
             >
+              {isImporting && <Loader2 size={14} className="animate-spin" />}
               가져오기
             </Button>
           </div>

@@ -1,11 +1,105 @@
 // v0.2.0
 import { Router } from "express"
 import { eq } from "drizzle-orm"
+import mammoth from "mammoth"
 import type { Db } from "@hagent/db"
 import * as schema from "@hagent/db"
 
+interface ImportFilePayload {
+  fileName: string
+  mimeType?: string
+  contentBase64: string
+  category?: string
+}
+
+function fileNameWithoutExtension(fileName: string) {
+  return fileName.replace(/\.[^.]+$/, "")
+}
+
+function normalizeMarkdownImport(raw: string, fileName: string, category?: string) {
+  const heading = raw.match(/^#\s+(.+)$/m)?.[1]?.trim()
+  return {
+    title: heading || fileNameWithoutExtension(fileName) || "제목 없는 문서",
+    body: raw.trim(),
+    category: category || "general",
+    tags: [],
+  }
+}
+
+function normalizePlainTextImport(raw: string, fileName: string, category?: string) {
+  const title = fileNameWithoutExtension(fileName) || "제목 없는 문서"
+  return {
+    title,
+    body: `# ${title}\n\n${raw.trim()}`,
+    category: category || "general",
+    tags: [],
+  }
+}
+
+function normalizeJsonImport(raw: string) {
+  const parsed = JSON.parse(raw)
+  const list = Array.isArray(parsed) ? parsed : Array.isArray(parsed.documents) ? parsed.documents : []
+  return list
+    .filter((item: unknown) => item && typeof item === "object")
+    .map((item: any) => ({
+      title: String(item.title ?? "제목 없는 문서"),
+      body: String(item.body ?? ""),
+      category: String(item.category ?? "general"),
+      tags: Array.isArray(item.tags) ? item.tags.filter((tag: unknown): tag is string => typeof tag === "string") : [],
+    }))
+}
+
+async function parseImportFile(file: ImportFilePayload) {
+  const lowerName = file.fileName.toLowerCase()
+  const buffer = Buffer.from(file.contentBase64, "base64")
+
+  if (lowerName.endsWith(".md") || lowerName.endsWith(".markdown")) {
+    return [normalizeMarkdownImport(buffer.toString("utf8"), file.fileName, file.category)]
+  }
+
+  if (lowerName.endsWith(".txt")) {
+    return [normalizePlainTextImport(buffer.toString("utf8"), file.fileName, file.category)]
+  }
+
+  if (lowerName.endsWith(".json")) {
+    return normalizeJsonImport(buffer.toString("utf8"))
+  }
+
+  if (lowerName.endsWith(".docx")) {
+    const result = await mammoth.extractRawText({ buffer })
+    return [normalizeMarkdownImport(result.value.trim(), file.fileName, file.category)]
+  }
+
+  throw new Error(`Unsupported file type: ${file.fileName}`)
+}
+
 export function documentRoutes(db: Db): Router {
   const router = Router()
+
+  router.post("/documents/import-preview", async (req, res) => {
+    try {
+      const files = Array.isArray(req.body?.files) ? (req.body.files as ImportFilePayload[]) : []
+      if (files.length === 0) {
+        res.status(400).json({ error: "files required" })
+        return
+      }
+
+      const documents = []
+      for (const file of files) {
+        const parsed = await parseImportFile(file)
+        documents.push(
+          ...parsed.map((doc: { title: string; body: string; category: string; tags: string[] }, index: number) => ({
+            id: `import-${Date.now()}-${documents.length + index}`,
+            ...doc,
+          }))
+        )
+      }
+
+      res.json({ documents })
+    } catch (err) {
+      res.status(400).json({ error: "Failed to parse import file" })
+    }
+  })
 
   // List documents for org
   router.get("/organizations/:orgId/documents", async (req, res) => {
