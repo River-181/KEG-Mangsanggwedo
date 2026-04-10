@@ -9,6 +9,7 @@ import { queryKeys } from "@/lib/queryKeys"
 import { Button } from "@/components/ui/button"
 import { FolderKanban, Plus } from "lucide-react"
 import { useParams } from "react-router-dom"
+import { EmptyState } from "@/components/EmptyState"
 
 export function ProjectsPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
@@ -65,17 +66,18 @@ export function ProjectsPage() {
 
       {projects.length === 0 ? (
         <div
-          className="rounded-xl p-12 flex flex-col items-center justify-center gap-3"
+          className="rounded-xl"
           style={{
             backgroundColor: "var(--bg-elevated)",
             border: "1px solid var(--border-default)",
             boxShadow: "var(--shadow-sm)",
           }}
         >
-          <FolderKanban size={40} style={{ color: "var(--text-tertiary)" }} />
-          <p className="text-sm text-center max-w-xs" style={{ color: "var(--text-tertiary)" }}>
-            프로젝트가 없습니다. 프로젝트를 생성하면 관련 케이스를 그룹으로 관리할 수 있습니다.
-          </p>
+          <EmptyState
+            icon={<FolderKanban size={22} />}
+            title="프로젝트가 없습니다"
+            description="프로젝트를 생성하면 관련 케이스를 그룹으로 관리할 수 있습니다."
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

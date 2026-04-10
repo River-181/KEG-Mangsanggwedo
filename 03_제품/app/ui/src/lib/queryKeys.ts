@@ -41,4 +41,14 @@ export const queryKeys = {
     list: (orgId: string) => ["projects", "list", orgId] as const,
     detail: (id: string) => ["projects", id] as const,
   },
+  students: {
+    list: (orgId: string) => ["students", "list", orgId] as const,
+    detail: (id: string) => ["students", id] as const,
+  },
+  instructors: {
+    list: (orgId: string) => ["instructors", "list", orgId] as const,
+  },
+  schedules: {
+    list: (orgId: string) => ["schedules", "list", orgId] as const,
+  },
 }

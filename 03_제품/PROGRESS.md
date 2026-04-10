@@ -171,19 +171,22 @@ aliases: [dev-progress, 개발진행]
 ## Phase 2.5: Paperclip 피드백 반영 (v0.3.0) — 🔵 진행 중
 
 ### Round 1 (4 에이전트 병렬)
-- 🔵 칸반 드래그앤드롭 → 상태 변경 + in_progress 시 에이전트 자동 wakeup
-- 🔵 OrgChart 클릭→에이전트 이동 + 인간 직원 노드 + 에이전트 아이콘
-- 🔵 shadcn Switch 설치 + 토글 가시성 수정 (Settings, Routines, AgentDetail)
-- 🔵 에이전트 아이콘 시스템 (brain/shield/heart/calendar → lucide 매핑)
-- 🔵 인박스 실제 데이터 + 인라인 승인/거절 액션
-- 🔵 프로젝트 페이지 (ops_groups 활용, 온보딩 프로젝트)
-- 🔵 에이전트 메모리 시스템 (SOUL + 일별 노트 + 학습 패턴)
-- 🔵 에이전트 상세 강화 (실행 트랜스크립트 펼침, Configuration 강화)
+- ✅ 칸반 드래그앤드롭 → 상태 변경 + in_progress 시 에이전트 자동 wakeup
+- ✅ OrgChart 클릭→에이전트 이동 + 인간 직원 노드 + 에이전트 아이콘
+- ✅ shadcn Switch 설치 + 토글 가시성 수정 (Settings, Routines, AgentDetail)
+- ✅ 에이전트 아이콘 시스템 (brain/shield/heart/calendar → lucide 매핑)
+- ✅ 인박스 실제 데이터 + 인라인 승인/거절 액션
+- ✅ 프로젝트 페이지 (ops_groups 활용, 온보딩 프로젝트)
+- ✅ 에이전트 메모리 시스템 (SOUL + 일별 노트 + 학습 패턴)
+- ✅ 에이전트 상세 강화 (실행 트랜스크립트 펼침, Configuration 강화)
 
-### Round 2 (대기)
-- [ ] 학생/학부모 관리 페이지 + 개인정보 마스킹
+### Round 2 (진행 중)
+- 🔵 지식베이스 검색 + AI 생성 문서 배지 (DocumentsPage 검색 + Badge 추가)
+- 🔵 CasesPage FilterBar 통합 (status/priority/type/assignee 필터)
+- 🔵 Sidebar 학생 관리 nav item (GraduationCap)
+- 🔵 ProjectsPage EmptyState 개선
+- [ ] 학생/학부모 관리 페이지 강화 + 개인정보 마스킹
 - [ ] 일정 캘린더 강화 (DB 데이터, 월간/주간, 수업→학생)
-- [ ] 지식베이스 검색 + AI 생성 문서 배지
 
 ---
 
@@ -278,4 +281,5 @@ aliases: [dev-progress, 개발진행]
 | 2026-04-10 | Claude (Sonnet) ×4 | 리뷰 반영: DB FK + 서버 라우트 + 시드 교체 + UI 연결 | 완료 |
 | 2026-04-10 | Claude (Sonnet) ×4 | Phase 1 병렬 완성: Mock Claude + Kanban + OrgChart + Onboarding + Settings | 완료 |
 | 2026-04-10 | Claude (Opus) | v0.1.0 커밋+푸시 (4f0fa38, 179파일) + 갭 분석 | 완료 |
-| 2026-04-10 | Claude (Sonnet) ×4 | v0.2.0 갭 채우기: Documents+Routines+Goals+CommandPalette+SSE+ChatThread | 진행 중 |
+| 2026-04-10 | Claude (Sonnet) ×4 | v0.2.0 갭 채우기: Documents+Routines+Goals+CommandPalette+SSE+ChatThread | 완료 |
+| 2026-04-10 | Claude (Sonnet) | v0.3.0 Round 2: 지식베이스 검색+AI배지, FilterBar 통합, 학생관리 nav, EmptyState 개선 | 완료 |

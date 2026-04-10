@@ -5,6 +5,7 @@ import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { casesApi } from "@/api/cases"
 import { queryKeys } from "@/lib/queryKeys"
+// v0.3.0
 import { Plus, Inbox, LayoutList, LayoutGrid, Search, ChevronDown, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,7 @@ import { CaseTypeBadge } from "@/components/CaseTypeBadge"
 import { CaseSeverityBadge } from "@/components/CaseSeverityBadge"
 import { KanbanBoard } from "@/components/KanbanBoard"
 import { NewCaseDialog } from "@/components/NewCaseDialog"
+import { FilterBar, Filters } from "@/components/FilterBar"
 
 // ─── status order for grouping ──────────────────────────────────────────────
 
@@ -143,6 +145,7 @@ export function CasesPage() {
   const [viewMode, setViewMode] = useState<"list" | "board">("list")
   const [search, setSearch] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [filters, setFilters] = useState<Filters>({ status: "all", priority: "all", type: "all", assignee: "all" })
 
   useEffect(() => {
     setBreadcrumbs([{ label: "케이스" }])
@@ -155,12 +158,34 @@ export function CasesPage() {
   })
 
   // Filter by search
-  const filtered = search.trim()
+  const searchFiltered = search.trim()
     ? cases.filter((c: any) =>
         c.title?.toLowerCase().includes(search.toLowerCase()) ||
         c.identifier?.toLowerCase().includes(search.toLowerCase())
       )
     : cases
+
+  // Apply FilterBar filters
+  const filtered = searchFiltered.filter((c: any) => {
+    if (filters.status !== "all") {
+      const statusMap: Record<string, string[]> = {
+        active: ["in_progress"],
+        pending: ["todo", "backlog"],
+        review: ["in_review"],
+        blocked: ["blocked"],
+        closed: ["done"],
+      }
+      const mapped = statusMap[filters.status]
+      if (mapped && !mapped.includes(c.status ?? "backlog")) return false
+    }
+    if (filters.priority !== "all" && (c.severity ?? c.urgency ?? c.priority) !== filters.priority) return false
+    if (filters.type !== "all" && c.type !== filters.type) return false
+    if (filters.assignee !== "all") {
+      const assigneeId = c.assigneeId ?? c.agent?.id ?? c.assignee?.id
+      if (assigneeId !== filters.assignee) return false
+    }
+    return true
+  })
 
   // Group by status for list view
   const grouped = STATUS_ORDER.reduce<Record<string, any[]>>((acc, s) => {
@@ -248,6 +273,19 @@ export function CasesPage() {
           <Plus size={13} />
           새 케이스
         </button>
+      </div>
+
+      {/* Filter bar */}
+      <div className="mb-4">
+        <FilterBar
+          filters={filters}
+          onFilterChange={setFilters}
+          agents={(cases as any[]).reduce<any[]>((acc, c) => {
+            const a = c.agent
+            if (a && !acc.find((x) => x.id === a.id)) acc.push(a)
+            return acc
+          }, [])}
+        />
       </div>
 
       {/* Content */}

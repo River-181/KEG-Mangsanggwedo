@@ -28,6 +28,7 @@ import {
   Cog,
   Lightbulb,
   FolderKanban,
+  GraduationCap,
 } from "lucide-react"
 import { useTheme } from "@/context/ThemeContext"
 import { useOrganization } from "@/context/OrganizationContext"
@@ -267,6 +268,7 @@ export function Sidebar() {
         )}
 
         <SectionLabel label="기관 관리" />
+        <NavItem to={`${base}/students`} icon={<GraduationCap size={16} />} label="학생 관리" />
         <NavItem to={`${base}/documents`} icon={<BookOpen size={16} />} label="문서" />
         <NavItem to={`${base}/skills`} icon={<Puzzle size={16} />} label="k-skill 레지스트리" />
         <NavItem to={`${base}/costs`} icon={<Wallet size={16} />} label="비용" />

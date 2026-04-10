@@ -20,6 +20,8 @@ import { goalRoutes } from "./routes/goals.js"
 import { dashboardRoutes } from "./routes/dashboard.js"
 import { notificationRoutes } from "./routes/notifications.js"
 import { projectRoutes } from "./routes/projects.js"
+import { studentRoutes } from "./routes/students.js"
+import { scheduleRoutes } from "./routes/schedules.js"
 
 export function createApp(db: Db, config: Config): Express {
   const app = express()
@@ -50,6 +52,8 @@ export function createApp(db: Db, config: Config): Express {
   app.use("/api", dashboardRoutes(db))
   app.use("/api", notificationRoutes(db))
   app.use("/api", projectRoutes(db))
+  app.use("/api", studentRoutes(db))
+  app.use("/api", scheduleRoutes(db))
 
   return app
 }

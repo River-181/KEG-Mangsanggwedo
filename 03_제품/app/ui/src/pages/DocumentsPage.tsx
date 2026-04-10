@@ -1,7 +1,7 @@
-// v0.2.0
+// v0.3.0
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { documentsApi } from "@/api/documents"
@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { EmptyState } from "@/components/EmptyState"
-import { FileText, Plus, Loader2 } from "lucide-react"
+import { FileText, Plus, Loader2, Search } from "lucide-react"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +27,8 @@ interface Document {
   body: string
   updatedAt?: string
   updated_at?: string
+  tags?: string[]
+  author?: string
 }
 
 // ─── Fallback data ────────────────────────────────────────────────────────────
@@ -202,6 +204,7 @@ export function DocumentsPage() {
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null)
   const [showNewDialog, setShowNewDialog] = useState(false)
   const [localDocs, setLocalDocs] = useState<Document[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     setBreadcrumbs([{ label: "지식베이스" }])
@@ -220,9 +223,16 @@ export function DocumentsPage() {
     ? [...FALLBACK_DOCS, ...localDocs.filter((d) => !FALLBACK_DOCS.find((f) => f.id === d.id))]
     : FALLBACK_DOCS
 
-  const filtered = activeCategory === "all"
+  const categoryFiltered = activeCategory === "all"
     ? allDocs
     : allDocs.filter((d) => d.category === activeCategory)
+
+  // Filter documents by search query
+  const filtered = categoryFiltered.filter((doc) => {
+    if (!searchQuery.trim()) return true
+    const q = searchQuery.toLowerCase()
+    return (doc.title?.toLowerCase().includes(q)) || (doc.body?.toLowerCase().includes(q))
+  })
 
   const displayDoc = selectedDoc ?? (selectedDocId ? allDocs.find((d) => d.id === selectedDocId) ?? null : null)
 
@@ -285,6 +295,21 @@ export function DocumentsPage() {
           className="shrink-0"
           style={{ width: 300, borderRight: "1px solid var(--border-default)" }}
         >
+          {/* Search input */}
+          <div className="px-2 pt-2">
+            <div className="relative mb-3">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-tertiary)" }} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="문서 검색..."
+                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm bg-transparent focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                style={{ border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
+              />
+            </div>
+          </div>
+
           {filtered.length === 0 ? (
             <EmptyState
               icon={<FileText size={22} />}
@@ -314,6 +339,13 @@ export function DocumentsPage() {
                         {doc.title}
                       </p>
                       <CategoryBadge category={doc.category} />
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {(doc.tags?.includes("ai-generated") || !doc.author) && (
+                        <Badge className="text-xs border-0 px-1.5 py-0" style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "var(--color-teal-500)" }}>
+                          AI 생성
+                        </Badge>
+                      )}
                     </div>
                     {updatedAt && (
                       <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>

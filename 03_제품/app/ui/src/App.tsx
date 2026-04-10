@@ -23,6 +23,7 @@ import { GoalsPage } from "@/pages/GoalsPage"
 import { CostsPage } from "@/pages/CostsPage"
 import { ProjectsPage } from "@/pages/ProjectsPage"
 import { ProjectDetailPage } from "@/pages/ProjectDetailPage"
+import { StudentsPage } from "@/pages/StudentsPage"
 
 export function App() {
   return (
@@ -52,6 +53,8 @@ export function App() {
         <Route path="costs" element={<CostsPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="projects/:id" element={<ProjectDetailPage />} />
+        <Route path="students" element={<StudentsPage />} />
+        <Route path="students/:id" element={<StudentsPage />} />
       </Route>
       <Route path="/design-guide" element={<DesignGuidePage />} />
       <Route path="/" element={<Navigate to="/tanzania/dashboard" replace />} />
