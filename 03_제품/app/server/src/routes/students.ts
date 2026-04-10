@@ -82,7 +82,7 @@ export function studentRoutes(db: Db): Router {
   router.post("/organizations/:orgId/students", async (req, res) => {
     try {
       const { orgId } = req.params
-      const { name, grade, parentName, parentPhone, shuttle } = req.body
+      const { name, grade, classGroup, parentName, parentPhone, parentEmail, shuttle } = req.body
 
       if (!name) {
         res.status(400).json({ error: "name required" })
@@ -95,6 +95,8 @@ export function studentRoutes(db: Db): Router {
           organizationId: orgId,
           name,
           grade: grade ?? "",
+          classGroup: classGroup ?? null,
+          shuttle: shuttle === true || shuttle === "true",
           status: "active",
           enrolledAt: new Date().toISOString().split("T")[0],
         })
@@ -107,7 +109,7 @@ export function studentRoutes(db: Db): Router {
           name: parentName,
           relation: "부모",
           phone: parentPhone ?? "",
-          email: "",
+          email: parentEmail ?? "",
         })
       }
 
@@ -125,6 +127,69 @@ export function studentRoutes(db: Db): Router {
       res.json(instructors)
     } catch (err) {
       res.status(500).json({ error: "Failed to fetch instructors" })
+    }
+  })
+
+  // PATCH /students/:id
+  router.patch("/students/:id", async (req, res) => {
+    try {
+      const { classGroup, shuttle, grade, status, name } = req.body
+      const updateData: Record<string, unknown> = {}
+      if (name !== undefined) updateData.name = name
+      if (grade !== undefined) updateData.grade = grade
+      if (status !== undefined) updateData.status = status
+      if (classGroup !== undefined) updateData.classGroup = classGroup
+      if (shuttle !== undefined) updateData.shuttle = shuttle === true || shuttle === "true"
+
+      const [student] = await db
+        .update(schema.students)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(schema.students.id, req.params.id))
+        .returning()
+
+      if (!student) {
+        res.status(404).json({ error: "Student not found" })
+        return
+      }
+      res.json(student)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to update student" })
+    }
+  })
+
+  // GET /organizations/:orgId/schedules?studentId= (enrolled schedules for student)
+  router.get("/organizations/:orgId/student-schedules", async (req, res) => {
+    try {
+      const { orgId } = req.params
+      const { studentId } = req.query as { studentId?: string }
+
+      const rows = await db.select().from(schema.studentSchedules)
+        .where(
+          studentId
+            ? eq(schema.studentSchedules.studentId, studentId)
+            : eq(schema.studentSchedules.organizationId, orgId)
+        )
+      res.json(rows)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to fetch student schedules" })
+    }
+  })
+
+  // POST /organizations/:orgId/student-schedules (enroll student in schedule)
+  router.post("/organizations/:orgId/student-schedules", async (req, res) => {
+    try {
+      const { orgId } = req.params
+      const { studentId, scheduleId } = req.body
+      if (!studentId || !scheduleId) {
+        res.status(400).json({ error: "studentId and scheduleId required" })
+        return
+      }
+      const [row] = await db.insert(schema.studentSchedules)
+        .values({ organizationId: orgId, studentId, scheduleId })
+        .returning()
+      res.status(201).json(row)
+    } catch (err) {
+      res.status(500).json({ error: "Failed to enroll student" })
     }
   })
 
@@ -150,11 +215,12 @@ export function studentRoutes(db: Db): Router {
           name,
           subject,
           phone: phone ?? null,
+          email: email ?? null,
           status: status ?? "active",
         })
         .returning()
 
-      res.status(201).json({ ...instructor, email: email ?? null })
+      res.status(201).json(instructor)
     } catch (err) {
       res.status(500).json({ error: "Failed to create instructor" })
     }
@@ -168,6 +234,7 @@ export function studentRoutes(db: Db): Router {
       if (name !== undefined) updateData.name = name
       if (subject !== undefined) updateData.subject = subject
       if (phone !== undefined) updateData.phone = phone
+      if (email !== undefined) updateData.email = email
       if (status !== undefined) updateData.status = status
 
       const [instructor] = await db
@@ -181,7 +248,7 @@ export function studentRoutes(db: Db): Router {
         return
       }
 
-      res.json({ ...instructor, email: email ?? null })
+      res.json(instructor)
     } catch (err) {
       res.status(500).json({ error: "Failed to update instructor" })
     }

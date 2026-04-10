@@ -31,46 +31,38 @@ aliases:
 
 ---
 
-## 현재 우선순위 (Day 5)
+## 현재 우선순위 (Day 5 → Day 6 전환)
+> 마지막 업데이트: 2026-04-10 (v0.4.0 커밋 후)
 
-### P0 — 지금 당장
-1. **앱 실행 검증 + 스켈레톤 안정화**
-   - 담당: Builder Agent
-   - 산출물: `03_제품/app/` 기준 UI/server 실행 확인, dev command와 진입 경로 정리
-2. **구현 전 정본 충돌 해소**
-   - 담당: PM Agent + Product Agent
-   - 산출물: `DESIGN / brand / 09_ux` 기준선 잠금
-   - 핵심: 모바일 탭바, 앱 셸, 폰트, 브랜드 claim를 하나로 맞춘다
+### ✅ 완료 (Day 5)
+- 앱 v0.4.0: 강사관리·일정편집·반배정·일괄승인·스킬추가·목표링크·루틴이력 완성
+- DB 스키마: classGroup/shuttle/email/student_schedules 마이그레이션 작성
+- 운영 갭 감사: 11개 페이지 전수 점검 완료
 
-### P1 — 오늘 안에 맞출 것
-3. **최소 데모 플로우 1개 실행 가능 상태로 연결**
-   - 담당: Builder Agent + Product Agent
-   - 산출물: 온보딩 또는 민원/FAQ 흐름 중 1개를 실제 상태/화면으로 연결
-4. **Paperclip clone spec을 구현 입력으로 잠금**
-   - 담당: Product Agent
-   - 산출물: `08_PAPERCLIP-CLONE-SPEC` 기준 Phase 1~2 복제 범위 확정
-5. **k-skill 프로토타입 구현**
+### P0 — 다음 마일스톤: 실제 작동 에이전트 + 온보딩 (Day 6)
+1. **에이전트 실제 실행 E2E 검증**
+   - Dispatch → 오케스트레이터 → Complaint/Retention 에이전트 → AgentRun 생성 → Approval 생성
+   - 모든 단계가 UI에서 실시간으로 표시되는지 확인
    - 담당: Builder Agent
-   - 산출물: `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 3~5개
-6. **브랜드/채널 증빙 정리 유지**
-   - 담당: Evidence Agent
-   - 산출물: 로고/카카오 채널 캡처 제목 정리, daily/ledger 동기화
-7. **Evidence Gate 운영 유지**
-   - 담당: Evidence Agent
-   - 산출물: `ai-session-intake.csv`, `master-evidence-ledger.md`
+2. **온보딩 플로우 완성**
+   - OnboardingPage: 학원명 입력 → 에이전트팀 자동 배치 → 대시보드 리디렉션
+   - 첫 실행 시 자동 감지 → 온보딩 강제 진입
+   - 담당: Builder Agent
+3. **DB 마이그레이션 실행**
+   - 0002_education_schema_v2.sql 적용 (pnpm db:migrate)
+   - seed 데이터 재실행하여 classGroup/shuttle/email 시드값 추가
+4. **배포 준비**
+   - Railway/Render 배포 설정
+   - GitHub README 작성 (라이브 URL 포함)
 
-### P2 — Day 5 준비
-7. **오케스트레이터 + Agent 2개 핵심 개발**
-   - 담당: Builder Agent
-   - 산출물: Orchestrator + Complaint Agent + Retention Agent 동작
-8. **승인 대시보드 + k-skill 레지스트리 UI**
-   - 담당: Builder Agent
-   - 산출물: 카드 UI + 스킬 카탈로그 UI
+### P1 — Day 6 보조
+5. **데모 스크립트 v0.1** 작성 (2분 시연 경로)
+6. **AI 리포트 초안** (제출 필수)
+7. **k-skill 실제 동작 확인** (refund-calculator, k-education-law-lookup)
 
-### P3 — Day 6~7
-8. **demo-script-v0.md** 작성
-9. **README/AI report 입력 루틴 고정**
-10. **제출 패키징 리허설**
+### P2 — Day 7 제출
+8. 데모 리허설 2회
+9. 제출 패키징 (README + AI 리포트 + 라이브 URL)
 
 ---
 

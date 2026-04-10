@@ -246,7 +246,23 @@ aliases:
 
 ---
 
-## 다음 단계: Day 5 준비 완료 — 앱 스켈레톤 착수 (D5: Next.js + Supabase)
+### HagentOS v0.4.0 앱 운영 갭 메우기 ✅
+- [x] 전수 갭 감사: 11개 페이지 × Paperclip 기준 비교표 작성
+- [x] InstructorsPage 신규 생성 (CRUD + 상세 Sheet + 검색/필터)
+- [x] SchedulePage: 강사 선택 드롭다운, 수정/삭제 인라인, 학생 목록 API 연결
+- [x] StudentsPage: classGroup(반) 필드 추가 (등록/수정/상세)
+- [x] AgentDetailPage: 스킬 추가 버튼 활성화 — k-skill 카탈로그 모달
+- [x] ApprovalsPage: 전체 선택 + 일괄 승인/거부
+- [x] GoalsPage: linkedCases → /cases/:id 클릭 내비게이션
+- [x] RoutinesPage: 실행 이력 아코디언 상세
+- [x] DB 스키마: students classGroup/shuttle, instructors email, student_schedules 테이블
+- [x] 서버: PATCH /students/:id, student-schedules CRUD, instructors email 실제 저장
+- [x] SQL 마이그레이션: 0002_education_schema_v2.sql
+- [x] 커밋: f32570b (v0.4.0)
+
+---
+
+## 다음 단계: Day 6 — 실제 작동 에이전트 + 온보딩 + 배포
 
 1. **Next.js + Supabase 스켈레톤** — 앱 구조, DB 스키마 설정, Mock 데이터 투입
 2. **역할 분담** — 이승보 (Orchestrator+에이전트), 김주용 (UI+인프라)
