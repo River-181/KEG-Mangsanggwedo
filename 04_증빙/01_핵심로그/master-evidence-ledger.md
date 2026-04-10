@@ -462,3 +462,227 @@ aliases:
 - Report section hint: 워크플로우 | AI 활용 전략 | 의사결정
 - Token note: exact unavailable estimate
 - Follow-up: dispatch와 usage stats 재생성
+
+### S-DEV-021
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Pre-Dev Docs
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: SPEC/PLAN/PROGRESS 기술 스택 전체 교정 (Next.js → React 19 + Vite + Express v5 + embedded-postgres)
+- What changed: 3개 운영 문서의 기술 스택 레퍼런스가 실제 확정 스택으로 전면 교체됐다. SPEC.md가 정본으로 지정됐다.
+- Why it mattered: 57개 기획 문서가 Next.js 기준으로 쓰여 있어 구현 전 정렬이 필수였다. SPEC.md 단일 진실 원본 전략으로 57개 파일 수정 없이 해결했다.
+- Artifacts: `03_제품/SPEC.md` | `03_제품/PLAN.md` | `03_제품/PROGRESS.md`
+- AI usage strategy: Opus를 기술 결정 근거 문서화와 스택 교정에 사용했다
+- Evidence value: 구현 기준선 확정과 스택 변경 근거 기록
+- Report section hint: 기술적합성 | AI 활용 전략 | 의사결정
+- Token note: exact token source exists in Claude JSONL (estimate ~60k)
+- Follow-up: Paperclip 엔진 관계 확립으로 연결
+
+### S-DEV-022
+
+- DateTime: 2026-04-10 / Desktop App
+- Phase: Architecture Review
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 모델링 다이어그램 6종에 리뷰 포인트 6건 반영 (Must 범위 복원, approval level 0-4 정합화, MVP/확장 연동 시각 분리)
+- What changed: ERD, System Context, Orchestrator Sequence, Demo Flow, Approval State, IA Screen Map 6종이 MVP 구현 기준으로 정렬됐다
+- Why it mattered: 다이어그램이 기획 문서와 실제 구현 계획의 시각적 정본이 되어 에이전트 간 공유 기준선이 명확해졌다
+- Artifacts: `03_제품/hagent-os/` 다이어그램 6종
+- AI usage strategy: Codex를 다이어그램 리뷰와 구조 정합화에 사용했다
+- Evidence value: 아키텍처 설계 근거와 MVP 범위 시각화
+- Report section hint: 기술적합성 | 창의성 | AI 활용 전략
+- Token note: exact unavailable estimate (~15k)
+- Follow-up: 구현 시 다이어그램 정본 기준으로 사용
+
+### S-DEV-023
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Pre-Dev Docs
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: SPEC/PLAN에 Paperclip 엔진 관계 확립 — 매핑 테이블, 10 패턴, 5 차별점 문서화
+- What changed: HagentOS가 Paperclip 패턴을 어떻게 흡수하고 어디서 차별화하는지 SPEC.md에 명시됐다
+- Why it mattered: 구현 에이전트들이 Paperclip 코드를 참조할 때 무엇을 복사하고 무엇을 바꿀지 판단 기준이 생겼다
+- Artifacts: `03_제품/SPEC.md` (Paperclip 매핑 섹션) | `03_제품/PLAN.md`
+- AI usage strategy: Opus를 참조 코드와 구현 목표 사이의 관계 명문화에 사용했다
+- Evidence value: 레퍼런스 기반 설계 전략의 근거 기록
+- Report section hint: 창의성 | 기술적합성 | AI 활용 전략
+- Token note: exact token source exists in Claude JSONL (estimate ~70k)
+- Follow-up: Phase 1 병렬 빌드로 연결
+
+### S-DEV-024
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Pre-Dev Docs
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: Paperclip 오픈소스 코드 전체 구조 분석 (45페이지, 108 컴포넌트, 63 테이블, ~79K LOC) + PLAN v2 작성
+- What changed: 분석 결과를 PLAN v2에 반영해 야심찬 버전(15페이지 + 20테이블 + 에이전트 3개 + Plan B)이 완성됐다
+- Why it mattered: 구현 에이전트가 Paperclip 코드를 직접 참조할 수 있는 구체적 파일 인덱스와 우선순위 기준이 생겼다
+- Artifacts: `03_제품/PLAN_v2.md` | `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md`
+- AI usage strategy: Opus를 대형 코드베이스 해체 분석과 구현 계획 역설계에 사용했다
+- Evidence value: 레퍼런스 분석 심화와 구현 청사진 완성
+- Report section hint: 기술적합성 | AI 활용 전략 | 완성도
+- Token note: exact token source exists in Claude JSONL (estimate ~80k)
+- Follow-up: Phase 1 병렬 빌드 3인 팀 착수
+
+### S-DEV-025
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Phase 1 Build
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6 ×3 (병렬)
+- Goal: Phase 1 병렬 빌드 — DB 스키마 20테이블 + Express 서버 8 라우트 + UI 4존 레이아웃 15페이지
+- What changed: pnpm 모노레포 + Drizzle ORM 스키마 + Express v5 서버 + React 19 + Vite + 탄자니아 영어학원 시드가 동시에 생성됐다
+- Why it mattered: 3개 독립 도메인(DB/서버/UI)을 병렬 에이전트로 동시 착수해 단일 에이전트 대비 3배 속도로 스켈레톤을 완성했다
+- Artifacts: `03_제품/app/packages/db/` | `03_제품/app/server/` | `03_제품/app/ui/`
+- AI usage strategy: Sonnet 3개를 DB/서버/UI로 역할 분리해 충돌 없는 병렬 빌드 패턴 검증
+- Evidence value: 멀티 에이전트 병렬 개발 전략 실증
+- Report section hint: AI 활용 | 기술적합성 | 완성도
+- Token note: exact token source exists in Claude JSONL (estimate ~120k total, 3 sessions)
+- Follow-up: Codex 코드 리뷰로 연결
+
+### S-DEV-026
+
+- DateTime: 2026-04-10 / Desktop App
+- Phase: Code Review
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: Phase 1 전체 코드 리뷰 — CRITICAL 1, HIGH 10, MEDIUM 8, TOTAL 20건
+- What changed: DB FK 누락, 서버 라우트 부재, API key 가드 누락, 시드 멱등성 문제 등 20건의 이슈가 식별됐다
+- Why it mattered: 구현 직후 독립 AI 리뷰어가 품질 게이트 역할을 해 Claude 에이전트들이 놓친 구조적 문제를 포착했다
+- Artifacts: Codex 리뷰 리포트 (PROGRESS.md 반영)
+- AI usage strategy: Codex를 Claude 구현 결과의 독립 비평자로 사용 — 동일 모델 편향 방지
+- Evidence value: 멀티 AI 협업에서 역할 분리와 품질 게이트 패턴
+- Report section hint: AI 활용 전략 | 기술적합성 | 팀워크
+- Token note: exact unavailable estimate (~20k)
+- Follow-up: 20건 이슈 수정 세션으로 연결
+
+### S-DEV-027
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Phase 1 Fix
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6 ×4 (병렬)
+- Goal: Codex 리뷰 20건 반영 — DB FK 제약 추가, 서버 POST/PATCH 라우트, 시드 교체, UI API 연결
+- What changed: cases→opsGroups/students FK, agentTypeEnum 확장, approvals/:id/decide 엔드포인트, Claude API key 가드, api/runs.ts 추가
+- Why it mattered: 리뷰에서 발견된 구조적 문제들이 즉각 수정돼 Phase 2로 진입할 수 있는 품질 기준이 확보됐다
+- Artifacts: `packages/db/src/schema.ts` | `server/src/routes/` | `packages/db/src/seed.ts` | `ui/src/api/`
+- AI usage strategy: 리뷰 결과를 역할별로 4개 에이전트에 분배해 병렬 수정
+- Evidence value: 리뷰→수정 사이클의 속도와 완성도 기록
+- Report section hint: AI 활용 전략 | 기술적합성
+- Token note: exact token source exists in Claude JSONL (estimate ~140k total, 4 sessions)
+- Follow-up: v0.1.0 커밋
+
+### S-DEV-028
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Phase 1 Complete
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6 ×4 (병렬)
+- Goal: Phase 1 마무리 — Mock Claude API, 칸반, OrgChart, 온보딩 위자드, 설정 페이지
+- What changed: Mock 에이전트 응답(1.5초 딜레이), 칸반 뷰, OrgChart, 온보딩 4스텝, Settings 다크모드 토글이 완성됐다
+- Why it mattered: Claude API 키 없는 환경에서도 전체 에이전트 플로우 시연이 가능해졌다 — 데모 리스크 대폭 감소
+- Artifacts: `ui/src/pages/` (KanbanBoard, OrgChartPage, OnboardingPage, SettingsPage 등)
+- AI usage strategy: 각 에이전트에 독립적 UI 컴포넌트 할당으로 충돌 없는 병렬 작업
+- Evidence value: Mock 모드 패턴과 병렬 UI 빌드 실증
+- Report section hint: 완성도 | AI 활용 전략
+- Token note: exact token source exists in Claude JSONL (estimate ~160k total, 4 sessions)
+- Follow-up: v0.1.0 커밋 + 갭 분석
+
+### S-DEV-029
+
+- DateTime: 2026-04-10 / CLI
+- Phase: v0.1.0 Release
+- Tool/Client: Claude Code
+- Model: Opus 4.6
+- Goal: v0.1.0 커밋 (4f0fa38, 179파일) + 갭 분석으로 v0.2.0 작업 목록 도출
+- What changed: v0.1.0이 커밋됐고 누락된 21개 화면과 40+ 컴포넌트와 15 API 라우트 목록이 작성됐다
+- Why it mattered: 릴리스 기준점이 생기고 다음 병렬 빌드 배치의 명확한 입력이 만들어졌다
+- Artifacts: 커밋 4f0fa38 (179파일, 22,765줄) | v0.2.0 갭 분석 문서
+- AI usage strategy: Opus를 릴리스 판단과 갭 분석 두 역할로 동시 사용
+- Evidence value: 버전 기준점과 다음 배치 입력 문서
+- Report section hint: 완성도 | AI 활용 전략 | 팀워크
+- Token note: exact token source exists in Claude JSONL (estimate ~50k)
+- Follow-up: v0.2.0 갭 채우기 4인 병렬
+
+### S-DEV-030
+
+- DateTime: 2026-04-10 / CLI
+- Phase: v0.2.0 Build
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6 ×4 (병렬)
+- Goal: v0.2.0 갭 채우기 — Documents 워크스페이스, Routines, Goals, CommandPalette, SSE 클라이언트, 채팅 스레드
+- What changed: 21페이지, 40+ 컴포넌트, 15 API 라우트, ~7,000 LOC 완성. 커밋 f699e0b + 5e91989
+- Why it mattered: 전체 화면이 빈 스텁에서 실제 데이터 표시로 전환됐고 E2E mock 플로우가 돌아가기 시작했다
+- Artifacts: 커밋 f699e0b, 5e91989 | `ui/src/pages/` 전체 | `server/src/routes/` 확장
+- AI usage strategy: 갭 분석 결과를 4개 배치로 나눠 Sonnet 4개 병렬 실행 — 4시간 작업을 1시간으로 단축
+- Evidence value: v0.2.0 완성과 병렬 에이전트 개발 효율 실증
+- Report section hint: AI 활용 | 완성도 | 기술적합성
+- Token note: exact token source exists in Claude JSONL (estimate ~200k total, 4 sessions)
+- Follow-up: Paperclip 라이브 피드백 수집 후 v0.3.0 계획
+
+### S-DEV-031
+
+- DateTime: 2026-04-10 / CLI
+- Phase: v0.3.0 Round 1
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6 ×4 (병렬)
+- Goal: Paperclip 라이브 피드백 12항 중 Round 1 (A1+A2, A3+A4, B1+B2, C1+C2) 동시 구현
+- What changed: 칸반 DnD + 에이전트 자동 wakeup, OrgChart 클릭/인간직원/아이콘, shadcn Switch 설치, 인박스 실데이터+인라인 승인, 프로젝트 페이지, 에이전트 메모리 시스템(SOUL+일별노트), 실행 트랜스크립트 펼침
+- Why it mattered: 실제 Paperclip 운영 경험에서 나온 피드백이 제품에 즉각 반영됐다 — "보이기만 하는" 수준에서 "실제로 작동하는" 수준으로 전환
+- Artifacts: `KanbanBoard.tsx` | `OrgChartPage.tsx` | `ui/switch.tsx` | `InboxPage.tsx` | `ProjectsPage.tsx` | `AgentDetailPage.tsx`
+- AI usage strategy: 피드백 12항을 4개 배치(A1+A2/A3+A4/B1+B2/C1+C2)로 묶어 충돌 없이 4 Sonnet 병렬 실행
+- Evidence value: 라이브 운영 피드백→구현 사이클 속도와 멀티에이전트 패턴
+- Report section hint: AI 활용 | 창의성 | 완성도
+- Token note: exact token source exists in Claude JSONL (estimate ~180k total, 4 sessions)
+- Follow-up: Round 2 나머지 항목
+
+### S-DEV-032
+
+- DateTime: 2026-04-10 / CLI
+- Phase: v0.3.0 Round 2
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6
+- Goal: v0.3.0 Round 2 — 지식베이스 검색+AI 생성 배지, CasesPage FilterBar, Sidebar 학생관리 nav, EmptyState 개선
+- What changed: DocumentsPage에 검색 입력과 AI 생성 배지 추가, 케이스 필터바 통합, GraduationCap nav item, ProjectsPage EmptyState 개선
+- Why it mattered: UI 완성도와 탐색성이 높아졌고 데모에서 "검색이 안 된다"는 약점이 제거됐다
+- Artifacts: `DocumentsPage.tsx` | `CasesPage.tsx` | `Sidebar.tsx` | `ProjectsPage.tsx`
+- AI usage strategy: 단일 Sonnet으로 UI 폴리시 4항을 한 세션에 묶어 처리
+- Evidence value: UI 완성도 향상과 단일 에이전트 폴리시 배치 패턴
+- Report section hint: 완성도 | AI 활용
+- Token note: exact token source exists in Claude JSONL (estimate ~40k)
+- Follow-up: Phase 3 폴리시 또는 Phase 4 배포 결정
+
+### S-OPS-033
+
+- DateTime: 2026-04-10 / CLI
+- Phase: Ops Sync
+- Tool/Client: Claude Code
+- Model: Sonnet 4.6
+- Goal: v0.3.0 플랜 워크스페이스 배치, PROGRESS.md 현재 상태 업데이트, 개발 서버 실행 확인
+- What changed: `~/.claude/plans/polished-honking-hinton.md`가 `03_제품/app/docs/superpowers/plans/2026-04-10-hagent-os-v0.3.0.md`로 복사됐다. PROGRESS.md 현재 상태가 v0.2.0 완료/v0.3.0 착수로 업데이트됐다. Express 3100 + Vite 5173 서버 모두 동작 확인.
+- Why it mattered: 다른 세션의 플랜이 워크스페이스에 정착해 멀티에이전트 협업의 단일 진실 원본이 됐다
+- Artifacts: `03_제품/app/docs/superpowers/plans/2026-04-10-hagent-os-v0.3.0.md` | `03_제품/PROGRESS.md`
+- AI usage strategy: Sonnet을 세션 간 플랜 이식과 운영 동기화에 사용
+- Evidence value: 멀티 세션/멀티 에이전트 협업 플로우 기록
+- Report section hint: AI 활용 전략 | 팀워크 | 워크플로우
+- Token note: exact token source exists in Claude JSONL (estimate ~15k)
+- Follow-up: Phase 3 폴리시 또는 Phase 4 배포 착수
+
+### S-OPS-034
+
+- DateTime: 2026-04-10 / Desktop App
+- Phase: Ops Sync
+- Tool/Client: Codex
+- Model: GPT-5
+- Goal: 프로젝트 대시보드와 운영 문서를 실제 앱 상태 기준으로 다시 맞춘다
+- What changed: `project-dashboard`, `PLAN`, `PROGRESS`, `daily-memory`, `2026-04-10` daily note, `03_제품/app/README.md`가 현재 기준으로 갱신되었고 `localhost:5173` 비리스닝 상태가 명시되었다
+- Why it mattered: “앱 없음”과 “앱 실행 중”처럼 상충하는 서술을 제거해 제출용 진행판의 신뢰도를 높였다
+- Artifacts: [[project-dashboard]] | [[.agent/system/ops/PLAN]] | [[.agent/system/ops/PROGRESS]] | [[2026-04-10]] | `03_제품/app/README.md`
+- AI usage strategy: 로컬 포트 응답과 실제 디렉토리 구조를 먼저 확인한 뒤 문서를 좁게 수정했다
+- Evidence value: 상태 정합성 점검과 운영 문서 갱신 기록
+- Report section hint: 워크플로우 | 증빙 관리 | 유지보수성
+- Token note: exact unavailable estimate
+- Follow-up: 실제 UI dev server 기동 확인 후 URL 기반 데모 점검으로 연결

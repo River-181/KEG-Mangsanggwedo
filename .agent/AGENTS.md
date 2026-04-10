@@ -3,7 +3,8 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-10
+up: "[[.agent/system/README]]"
 aliases:
   - AGENTS
 ---
@@ -42,9 +43,10 @@ aliases:
 
 **작업 완료 시 반드시:**
 - `.agent/system/ops/PROGRESS.md` 업데이트
+- 필요 시 `.agent/system/ops/PLAN.md` 업데이트
 - `04_증빙/01_핵심로그/ai-session-intake.csv` append
 - 필요 시 `04_증빙/01_핵심로그/ai-prompt-intake.csv` append
-- 필요 시 `python3 .agent/system/automation/scripts/dispatch-session-intake.py` 실행
+- 세션 종료 또는 의미 있는 배치 종료 시 `python3 .agent/system/automation/scripts/dispatch-session-intake.py` 실행
 - 필요 시 `decision-log.md` 또는 `prompt-catalog.md` 승격 여부 확인
 - Evidence Gate가 필요한 경우에만 확인
 
@@ -84,11 +86,10 @@ aliases:
 
 ## 현재 우선순위
 
-1. 문제 리서치 및 아이디어 선정
-2. 기술 스택 결정
-3. MVP 스코프 확정
-
-> ⚠️ 이 섹션은 팀이 수동으로 업데이트한다.
+- 현재 우선순위의 정본은 이 파일이 아니라 `.agent/system/ops/PLAN.md`다.
+- 현재 상태의 정본은 `.agent/system/ops/PROGRESS.md`다.
+- 제출용 가시 판은 `_system/dashboard/project-dashboard.md`다.
+- 이 파일에는 변하지 않는 시작 규칙만 남긴다.
 
 ## 디렉토리 맵
 
@@ -104,8 +105,11 @@ aliases:
   ├─ tasks/                — 전략 실행 태스크
   └─ archive/              — 보관 문서와 웹 캡처
 03_제품/      — 문제정의, 페르소나, 아키텍처, 데모
+  ├─ app/                — 실제 앱 코드 (`ui/`, `server/`, `packages/`)
+  └─ tests/              — 제품 테스트
 04_증빙/      — AI 사용 로그, 결정 기록, 프롬프트, 데일리 노트
 05_제출/      — AI 리포트, 체크리스트, 회고
+06_LLM위키/   — 지속 지식 베이스
 assets/       — 원본 파일, 스크린샷, 데모 영상
 .agent/       — 에이전트 공용 설정과 운영 정본
   ├─ agents/  — 역할별 에이전트 정의
@@ -113,20 +117,20 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
   ├─ skills/  — 프로젝트 전용 스킬
   ├─ adapters/claude/ — Claude 전용 어댑터 자산
   └─ system/  — 공용 운영 정본 (계약, 메모리, 레지스트리, 맵, 로그, ops)
-.claude/      — 최소 Claude 어댑터 (`CLAUDE.md`, `settings.json`)
+.claude/      — 최소 Claude 어댑터 (`CLAUDE.md`, `commands/`, `settings.json`)
 ```
 
 ## 에이전트 역할
 
 | 역할 | 미션 | 읽는 파일 | 쓰는 파일 |
 |------|------|-----------|-----------|
-| PM | 우선순위, blocker, 진행 추적 | 00 HOME, 04_증빙/03_daily | 00 HOME, 04_증빙/03_daily |
+| PM | 우선순위, blocker, 진행 추적 | `PLAN`, `PROGRESS`, `project-dashboard` | `PLAN`, `PROGRESS`, `04_증빙/03_daily` |
 | Research | 문제 리서치, 경쟁 분석, LLM 위키 운영 | 01_대회정보, 02_전략, 06_LLM위키 | 02_전략, 06_LLM위키, 04_증빙 |
 | Product | 문제 정의, 페르소나, 스펙 | 02_전략 | 03_제품 |
 | Builder | 구현, 코드 생성 | 03_제품 | 03_제품/app/, 03_제품/tests/ |
-| QA | 테스트, 엣지케이스 | 03_제품/app/, 03_제품/tests/ | 04_증빙/01_핵심로그 |
+| QA | 테스트, 엣지케이스 | 03_제품/app/, 03_제품/tests/ | 04_증빙/01_핵심로그, 04_증빙/03_daily |
 | Judge | 심사위원 시뮬레이션 | 전체 | 04_증빙/02_분석자료 |
-| Evidence | AI 리포트 재료 원장 관리 | 대화 로그 | 04_증빙/01_핵심로그/ai-session-intake.csv |
+| Evidence | AI 리포트 재료 원장 관리 | 대화 로그, `ai-session-intake.csv` | `ai-session-intake.csv`, `ai-prompt-intake.csv`, 필요 시 dispatch 산출물 |
 | Submission | 제출물 패키징 | 04_증빙, 03_제품 | 05_제출, README |
 
 ## 핸드오프 계약
@@ -142,6 +146,15 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
 [Next recommended action] — 다음 추천 행동
 ```
 
+## 제품/앱 상태 읽는 방법
+
+- 제품 기획 정본은 `03_제품/` 아래 note들이 맡는다.
+- 실제 앱 구조는 `03_제품/app/` 기준으로 읽는다.
+- 앱 실행 여부는 문서 문구를 믿지 말고 직접 확인한다.
+  - 예: `curl -I http://localhost:5173/`
+  - 예: `lsof -nP -iTCP:5173 -sTCP:LISTEN`
+- `README`, `daily-memory`, `project-dashboard`는 실행 상태를 설명할 수 있지만, 최종 진실은 현재 프로세스와 코드 구조다.
+
 ## 금지사항
 
 1. **Day 3(04-09) 이후 새 기능 추가 금지** — 안정화와 증빙에 집중
@@ -152,6 +165,7 @@ assets/       — 원본 파일, 스크린샷, 데모 영상
 6. **공용 운영 규칙을 `.claude`에서 먼저 수정 금지**
 7. **증빙 가치가 있는 사실을 메모리에만 두고 세션 종료 금지**
 8. **프로젝트 맥락 질문에 raw source부터 읽기 금지** — 먼저 `06_LLM위키/` 확인
+9. **`master-evidence-ledger.md`를 직접 정본처럼 수동 편집만 하고 끝내기 금지** — intake-first 규칙을 우선한다
 
 ## 의사결정 권한
 

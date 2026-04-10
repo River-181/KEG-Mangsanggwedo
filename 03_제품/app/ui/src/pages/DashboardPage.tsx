@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
@@ -6,9 +6,9 @@ import { useOrganization } from "@/context/OrganizationContext"
 import { casesApi } from "@/api/cases"
 import { agentsApi } from "@/api/agents"
 import { approvalsApi } from "@/api/approvals"
+import { schedulesApi } from "@/api/schedules"
 import { activityApi } from "@/api/activity"
 import { queryKeys } from "@/lib/queryKeys"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -39,6 +39,30 @@ const caseTypeLabel: Record<string, string> = {
   inquiry: "문의",
   churn: "이탈",
   schedule: "일정",
+}
+
+function formatDateKey(value: unknown): string | null {
+  if (typeof value !== "string" && !(value instanceof Date)) return null
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return null
+  return date.toISOString().slice(0, 10)
+}
+
+function matchesToday(schedule: Record<string, unknown>, today: Date, todayKey: string) {
+  const candidates = [
+    schedule.date,
+    schedule.scheduleDate,
+    schedule.scheduledDate,
+    schedule.startsAt,
+    schedule.startAt,
+  ]
+
+  if (candidates.some((value) => formatDateKey(value) === todayKey)) {
+    return true
+  }
+
+  const normalizedDay = today.getDay() === 0 ? 0 : today.getDay()
+  return Number(schedule.dayOfWeek ?? -1) === normalizedDay
 }
 
 // ─── Churn warning card ───────────────────────────────────────────────────────
@@ -185,6 +209,12 @@ export function DashboardPage() {
     enabled: !!selectedOrgId,
   })
 
+  const { data: schedules = [], isLoading: schedulesLoading } = useQuery({
+    queryKey: queryKeys.schedules.list(selectedOrgId ?? ""),
+    queryFn: () => schedulesApi.list(selectedOrgId!),
+    enabled: !!selectedOrgId,
+  })
+
   const { data: activity = [], isLoading: activityLoading } = useQuery({
     queryKey: queryKeys.activity.list(selectedOrgId ?? ""),
     queryFn: () => activityApi.list(selectedOrgId!),
@@ -193,7 +223,7 @@ export function DashboardPage() {
 
   // ── derived ────────────────────────────────────────────────────────────────
   const activeCases = (cases as any[]).filter(
-    (c: any) => c.status === "in_progress" || c.status === "todo"
+    (c: any) => c.status === "open" || c.status === "in_progress"
   )
   const pendingApprovals = (approvals as any[]).filter(
     (a: any) => a.status === "pending"
@@ -201,6 +231,13 @@ export function DashboardPage() {
   const runningAgents = (agents as any[]).filter(
     (a: any) => a.status === "running"
   )
+  const todaySchedules = useMemo(() => {
+    const today = new Date()
+    const todayKey = today.toISOString().slice(0, 10)
+    return (schedules as any[]).filter((schedule) =>
+      matchesToday(schedule as Record<string, unknown>, today, todayKey)
+    )
+  }, [schedules])
   const churnCases = (cases as any[]).filter((c: any) => c.type === "churn")
 
   const thisMonthTokens = (agents as any[]).reduce(
@@ -232,10 +269,10 @@ export function DashboardPage() {
   }))
 
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden">
       {/* Instruction bar */}
       <div
-        className="px-6 py-3"
+        className="px-6 py-3 min-h-0"
         style={{ borderBottom: "1px solid var(--border-default)" }}
       >
         <InstructionBar
@@ -247,8 +284,8 @@ export function DashboardPage() {
         />
       </div>
 
-      <ScrollArea className="flex-1">
-        <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="p-6 max-w-6xl mx-auto space-y-6 min-h-0">
           {/* Dispatch result banner */}
           {lastDispatchResult && (
             <div
@@ -290,9 +327,10 @@ export function DashboardPage() {
             <MetricCard
               icon={<Bot size={18} />}
               value={runningAgents.length}
-              label="활성 에이전트"
+              label="실행 중 에이전트"
               description={`전체 ${agents.length}개`}
               href={`/${orgPrefix}/agents`}
+              loading={agentsLoading}
             />
             <MetricCard
               icon={<FileText size={18} />}
@@ -300,24 +338,24 @@ export function DashboardPage() {
               label="진행 중 케이스"
               description={`전체 ${cases.length}건`}
               href={`/${orgPrefix}/cases`}
+              loading={casesLoading}
             />
             <MetricCard
               icon={<Clock size={18} />}
+              value={todaySchedules.length}
+              label="오늘 일정"
+              description="오늘 기준"
+              href={`/${orgPrefix}/schedule`}
+              loading={schedulesLoading}
+            />
+            <MetricCard
+              icon={<CheckCircle size={18} />}
               value={pendingApprovals.length}
               label="승인 대기"
               description="처리 필요"
               href={`/${orgPrefix}/approvals`}
               trend={pendingApprovals.length > 0 ? "up" : "neutral"}
-            />
-            <MetricCard
-              icon={<CheckCircle size={18} />}
-              value={
-                thisMonthTokens >= 1000
-                  ? `${(thisMonthTokens / 1000).toFixed(1)}k`
-                  : String(thisMonthTokens)
-              }
-              label="이번 달 토큰"
-              description="누적 사용량"
+              loading={approvalsLoading}
             />
           </div>
 
@@ -438,7 +476,7 @@ export function DashboardPage() {
               </h2>
 
               <div
-                className="rounded-xl overflow-hidden"
+                className="rounded-xl"
                 style={{
                   backgroundColor: "var(--bg-elevated)",
                   border: "1px solid var(--border-default)",

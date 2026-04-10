@@ -167,3 +167,15 @@ aliases:
 - next:
 	- `pain-points`를 기존 솔루션 공백 note로 승격
 	- `data-assets`를 데이터 자산 지도 note로 승격
+
+## [2026-04-10] ingest | 솔루션 공백과 데이터 자산 지도 승격
+
+- action: ingest
+- reason: 기존 솔루션 공백과 장기 자산화 포인트를 위키의 전략/데이터 축으로 고정하기 위함
+- touched:
+	- [[기존_교육운영_솔루션의_공백]]
+	- [[학원_운영_데이터_자산_지도]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `research-results_위키_승격_후보`와 `프로젝트_지식화_후보_스캔` backlog 정리

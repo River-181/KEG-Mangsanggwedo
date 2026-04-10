@@ -1,11 +1,12 @@
 ---
 tags:
-  - 제품
-  - app
+  - area/product
+  - type/reference
+  - status/active
 date: 2026-04-09
 aliases:
   - hagentos-app
-status: active
+up: "[[_03_제품_MOC]]"
 ---
 # App
 

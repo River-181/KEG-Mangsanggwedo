@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+import { ArrowRight, CheckCircle2, XCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
@@ -38,14 +40,14 @@ interface ApprovalCardProps {
   approval: ApprovalItem
   onApprove: (id: string) => void
   onReject: (id: string) => void
-  /** Legacy: true when approve is in-flight */
   approving?: boolean
-  /** Legacy: true when reject is in-flight */
   rejecting?: boolean
-  /** New unified pending flag */
   isPending?: boolean
   pendingAction?: "approve" | "reject"
   className?: string
+  selected?: boolean
+  onSelectedChange?: (checked: boolean) => void
+  caseHref?: string
 }
 
 const levelConfig: Record<string, { label: string; bg: string; text: string }> = {
@@ -70,6 +72,9 @@ export function ApprovalCard({
   isPending = false,
   pendingAction,
   className,
+  selected = false,
+  onSelectedChange,
+  caseHref,
 }: ApprovalCardProps) {
   const level = approval.level ?? "medium"
   const levelCfg = levelConfig[level] ?? levelConfig.medium
@@ -79,7 +84,6 @@ export function ApprovalCard({
   const agentName = approval.agent?.name ?? approval.agentName ?? "에이전트"
   const caseTitle = approval.case?.title ?? approval.caseTitle ?? ""
 
-  // Support both old (approving/rejecting) and new (isPending/pendingAction) API
   const isApprovePending = approving || (isPending && pendingAction === "approve")
   const isRejectPending = rejecting || (isPending && pendingAction === "reject")
   const anyPending = isApprovePending || isRejectPending
@@ -93,13 +97,33 @@ export function ApprovalCard({
       }}
     >
       <CardHeader className="px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between gap-2">
-          <Identity
-            name={agentName}
-            avatarUrl={approval.agent?.avatarUrl}
-            type="agent"
-            size="sm"
-          />
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            {onSelectedChange && (
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={(event) => onSelectedChange(event.target.checked)}
+                className="mt-1 h-4 w-4 rounded"
+                aria-label="승인 항목 선택"
+              />
+            )}
+
+            <div className="min-w-0">
+              <Identity
+                name={agentName}
+                avatarUrl={approval.agent?.avatarUrl}
+                type="agent"
+                size="sm"
+              />
+              {caseTitle && (
+                <p className="text-sm font-medium mt-2 truncate" style={{ color: "var(--text-primary)" }}>
+                  {caseTitle}
+                </p>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center gap-2 shrink-0">
             <Badge
               className="text-xs font-medium border-0 px-2 py-0.5"
@@ -117,45 +141,57 @@ export function ApprovalCard({
       </CardHeader>
 
       <CardContent className="px-4 pb-3">
-        {caseTitle && (
-          <p className="text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>
-            {caseTitle}
-          </p>
-        )}
         <ApprovalPayloadRenderer payload={approval.payload} type={approval.level} />
       </CardContent>
 
       <CardFooter className="px-4 pb-4 pt-0">
-        {isDecided ? (
-          <div className="w-full flex justify-end">
-            {runStatus && <StatusBadge status={runStatus} />}
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 w-full justify-end">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onReject(approval.id)}
-              disabled={anyPending}
-              className="text-xs border-0 hover:bg-red-50 hover:text-red-600"
-              style={{
-                backgroundColor: "var(--bg-tertiary)",
-                color: "var(--text-secondary)",
-              }}
+        <div className="flex items-center justify-between gap-3 w-full">
+          {caseHref ? (
+            <Link
+              to={caseHref}
+              className="inline-flex items-center gap-1.5 text-xs font-medium"
+              style={{ color: "var(--color-teal-500)" }}
             >
-              {isRejectPending ? "반려 중..." : "반려"}
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => onApprove(approval.id)}
-              disabled={anyPending}
-              className="text-xs border-0 text-white"
-              style={{ backgroundColor: "var(--color-teal-500)" }}
-            >
-              {isApprovePending ? "승인 중..." : "승인"}
-            </Button>
-          </div>
-        )}
+              케이스 보기
+              <ArrowRight size={12} />
+            </Link>
+          ) : (
+            <span />
+          )}
+
+          {isDecided ? (
+            <div className="flex justify-end">
+              {runStatus && <StatusBadge status={runStatus} />}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={() => onApprove(approval.id)}
+                disabled={anyPending}
+                className="text-xs border-0 text-white gap-1.5"
+                style={{ backgroundColor: "var(--color-success)" }}
+              >
+                <CheckCircle2 size={12} />
+                {isApprovePending ? "승인 중..." : "승인"}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onReject(approval.id)}
+                disabled={anyPending}
+                className="text-xs gap-1.5"
+                style={{
+                  color: "var(--color-danger)",
+                  borderColor: "rgba(239,68,68,0.25)",
+                }}
+              >
+                <XCircle size={12} />
+                {isRejectPending ? "거절 중..." : "거절"}
+              </Button>
+            </div>
+          )}
+        </div>
       </CardFooter>
     </Card>
   )

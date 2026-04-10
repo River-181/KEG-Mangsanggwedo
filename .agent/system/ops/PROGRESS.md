@@ -16,7 +16,7 @@ aliases:
 
 ---
 
-## 현재 단계: Day 5 진행 중 — 기획·지식체계 정리 완료, 앱 스켈레톤 착수 대기
+## 현재 단계: Day 5 진행 중 — 기획·지식체계 정리 완료, 앱 구조 구축 완료, 실행 검증/폴리시 정리 진행
 
 ## 완료된 작업
 
@@ -157,6 +157,13 @@ aliases:
 - [x] `01-ui-entrypoints.md`, `02-data-context-model.md`, `03-agent-skill-structure.md`, `04-k-education-fit-gaps.md`, `05-open-questions.md` 보강
 - [x] `06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` 추가
 - [x] 모방 기준을 `chat UX`가 아니라 `control plane + local-first deployment + plugin/adapter extensibility`로 재정렬
+- [x] `08_PAPERCLIP-CLONE-SPEC.md`를 스크린샷 근거까지 포함한 clone contract 문서로 보강
+
+### 앱 실행/운영 상태 정합화 ✅
+- [x] `03_제품/app/`이 실제 `ui/`, `server/`, `packages/` 구조와 `package.json` 스크립트를 가진 상태임을 다시 확인
+- [x] `http://localhost:5173/` 현재 세션 리스닝 상태 확인 (`not listening`)
+- [x] 대시보드/PLAN/daily-memory 문서에서 “앱 없음” 또는 “현재 실행 중”처럼 어긋난 서술을 실제 상태 기준으로 수정
+- [x] `03_제품/app/README.md`를 `TBD`에서 실제 실행 안내 문서로 갱신
 
 ---
 

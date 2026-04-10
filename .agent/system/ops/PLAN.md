@@ -34,25 +34,28 @@ aliases:
 ## 현재 우선순위 (Day 5)
 
 ### P0 — 지금 당장
-1. **앱 스켈레톤 착수**
+1. **앱 실행 검증 + 스켈레톤 안정화**
    - 담당: Builder Agent
-   - 산출물: `03_제품/app/` 실행 가능한 초기 구조
+   - 산출물: `03_제품/app/` 기준 UI/server 실행 확인, dev command와 진입 경로 정리
 2. **구현 전 정본 충돌 해소**
    - 담당: PM Agent + Product Agent
    - 산출물: `DESIGN / brand / 09_ux` 기준선 잠금
    - 핵심: 모바일 탭바, 앱 셸, 폰트, 브랜드 claim를 하나로 맞춘다
 
 ### P1 — 오늘 안에 맞출 것
-3. **최소 데모 플로우 1개 연결**
+3. **최소 데모 플로우 1개 실행 가능 상태로 연결**
    - 담당: Builder Agent + Product Agent
    - 산출물: 온보딩 또는 민원/FAQ 흐름 중 1개를 실제 상태/화면으로 연결
-4. **k-skill 프로토타입 구현**
+4. **Paperclip clone spec을 구현 입력으로 잠금**
+   - 담당: Product Agent
+   - 산출물: `08_PAPERCLIP-CLONE-SPEC` 기준 Phase 1~2 복제 범위 확정
+5. **k-skill 프로토타입 구현**
    - 담당: Builder Agent
    - 산출물: `refund-calculator`, `k-education-law-lookup` 등 실제 동작 스킬 3~5개
-5. **브랜드/채널 증빙 정리 유지**
+6. **브랜드/채널 증빙 정리 유지**
    - 담당: Evidence Agent
    - 산출물: 로고/카카오 채널 캡처 제목 정리, daily/ledger 동기화
-6. **Evidence Gate 운영 유지**
+7. **Evidence Gate 운영 유지**
    - 담당: Evidence Agent
    - 산출물: `ai-session-intake.csv`, `master-evidence-ledger.md`
 

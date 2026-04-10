@@ -71,3 +71,5 @@ aliases:
 - operations loop 축: [[학원_운영_루프_지도]]
 - control plane 축: [[운영_Control_Plane_모델]]
 - domain translation 축: [[한국_교육_도메인_적합성_갭]]
+- solution gap 축: [[기존_교육운영_솔루션의_공백]]
+- data asset 축: [[학원_운영_데이터_자산_지도]]

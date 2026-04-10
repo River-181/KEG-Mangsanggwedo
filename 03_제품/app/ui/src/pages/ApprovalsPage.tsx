@@ -1,107 +1,66 @@
-import { useEffect, useContext, useState } from "react"
+import { useEffect, useContext, useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { approvalsApi } from "@/api/approvals"
+import { api, ApiError } from "@/api/client"
 import { queryKeys } from "@/lib/queryKeys"
 import { cn } from "@/lib/utils"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ApprovalCard } from "@/components/ApprovalCard"
 import { EmptyState } from "@/components/EmptyState"
 import { ToastContext } from "@/components/ToastContext"
-import { CheckCircle, Loader2, AlertCircle, Clock, CheckCircle2, XCircle } from "lucide-react"
+import { Loader2, AlertCircle, Clock, CheckCircle, XCircle } from "lucide-react"
 
-// ─── Decision note dialog ─────────────────────────────────────────────────────
+type ApprovalStatusTab = "all" | "pending" | "approved" | "rejected"
 
-interface DecisionNoteDialogProps {
-  action: "approve" | "reject"
-  onConfirm: (note: string) => void
-  onCancel: () => void
-  isPending: boolean
+interface ApprovalDecisionDialogState {
+  id: string
+  reason: string
 }
 
-function DecisionNoteDialog({ action, onConfirm, onCancel, isPending }: DecisionNoteDialogProps) {
-  const [note, setNote] = useState("")
-  const isApprove = action === "approve"
-
-  return (
-    <div
-      className="mt-2 rounded-xl p-3 space-y-2"
-      style={{
-        backgroundColor: isApprove ? "rgba(20,184,166,0.06)" : "rgba(239,68,68,0.06)",
-        border: `1px solid ${isApprove ? "rgba(20,184,166,0.2)" : "rgba(239,68,68,0.2)"}`,
-      }}
-    >
-      <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-        {isApprove ? "승인 메모 (선택사항)" : "반려 사유 (선택사항)"}
-      </p>
-      <textarea
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        placeholder={isApprove ? "승인 이유나 메모를 남기세요..." : "반려 사유를 입력하세요..."}
-        rows={2}
-        className="w-full rounded-lg p-2 text-xs resize-none focus:outline-none"
-        style={{
-          backgroundColor: "var(--bg-elevated)",
-          border: "1px solid var(--border-default)",
-          color: "var(--text-primary)",
-        }}
-      />
-      <div className="flex justify-end gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs h-7"
-          onClick={onCancel}
-          disabled={isPending}
-        >
-          취소
-        </Button>
-        <Button
-          size="sm"
-          className="text-xs h-7 gap-1.5"
-          style={{
-            backgroundColor: isApprove ? "var(--color-teal-500)" : "var(--color-danger)",
-            color: "#fff",
-          }}
-          disabled={isPending}
-          onClick={() => onConfirm(note)}
-        >
-          {isPending ? (
-            <Loader2 size={11} className="animate-spin" />
-          ) : isApprove ? (
-            <CheckCircle2 size={11} />
-          ) : (
-            <XCircle size={11} />
-          )}
-          {isApprove ? "승인 확정" : "반려 확정"}
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-type TabValue = "all" | "pending" | "done"
-
-function filterApprovals(approvals: any[], tab: TabValue) {
-  if (tab === "pending") return approvals.filter((a) => a.status === "pending")
-  if (tab === "done")
-    return approvals.filter(
-      (a) => a.status === "approved" || a.status === "rejected"
-    )
+function filterApprovals(approvals: any[], tab: ApprovalStatusTab) {
+  if (tab === "pending") return approvals.filter((approval) => approval.status === "pending")
+  if (tab === "approved") return approvals.filter((approval) => approval.status === "approved")
+  if (tab === "rejected") return approvals.filter((approval) => approval.status === "rejected")
   return approvals
+}
+
+async function patchApproval(id: string, payload: { status: "approved" | "rejected"; reason?: string }) {
+  try {
+    return await api.patch(`/approvals/${id}`, payload)
+  } catch (error) {
+    if (payload.status === "approved") {
+      return approvalsApi.approve(id, payload)
+    }
+    if (error instanceof ApiError && error.status === 404) {
+      return approvalsApi.reject(id, payload)
+    }
+    return approvalsApi.reject(id, payload)
+  }
 }
 
 export function ApprovalsPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
   const { selectedOrgId } = useOrganization()
+  const { orgPrefix } = useParams<{ orgPrefix: string }>()
   const queryClient = useQueryClient()
   const toast = useContext(ToastContext)
-  // Track which approval is in the decision flow: { id, action }
-  const [pendingDecision, setPendingDecision] = useState<{ id: string; action: "approve" | "reject" } | null>(null)
+
+  const [activeTab, setActiveTab] = useState<ApprovalStatusTab>("pending")
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [rejectDialog, setRejectDialog] = useState<ApprovalDecisionDialogState | null>(null)
 
   useEffect(() => {
     setBreadcrumbs([{ label: "승인 큐" }])
@@ -117,92 +76,87 @@ export function ApprovalsPage() {
     enabled: !!selectedOrgId,
   })
 
-  const approve = useMutation({
-    mutationFn: ({ id }: { id: string; note?: string }) => approvalsApi.approve(id),
-    onMutate: async ({ id }) => {
-      await queryClient.cancelQueries({
+  const approvals = allApprovals as any[]
+  const filteredApprovals = useMemo(
+    () => filterApprovals(approvals, activeTab),
+    [approvals, activeTab]
+  )
+
+  const pendingCount = approvals.filter((approval) => approval.status === "pending").length
+  const approvedCount = approvals.filter((approval) => approval.status === "approved").length
+  const rejectedCount = approvals.filter((approval) => approval.status === "rejected").length
+
+  const updateApprovalMutation = useMutation({
+    mutationFn: async ({
+      id,
+      status,
+      reason,
+    }: {
+      id: string
+      status: "approved" | "rejected"
+      reason?: string
+    }) => patchApproval(id, { status, reason }),
+    onSuccess: (_data, variables) => {
+      toast?.[variables.status === "approved" ? "success" : "info"](
+        variables.status === "approved" ? "승인되었습니다." : "거절되었습니다."
+      )
+      setRejectDialog(null)
+      setSelectedIds((current) => current.filter((id) => id !== variables.id))
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
       })
-      const prev = queryClient.getQueryData(queryKeys.approvals.list(selectedOrgId ?? ""))
-      queryClient.setQueryData(
-        queryKeys.approvals.list(selectedOrgId ?? ""),
-        (old: any[]) =>
-          (old ?? []).map((a) => (a.id === id ? { ...a, status: "approved" } : a))
-      )
-      return { prev }
-    },
-    onError: (_err, _vars, ctx) => {
-      queryClient.setQueryData(
-        queryKeys.approvals.list(selectedOrgId ?? ""),
-        ctx?.prev
-      )
-      toast?.error("승인 처리에 실패했습니다.")
-    },
-    onSuccess: () => {
-      setPendingDecision(null)
-      toast?.success("승인되었습니다.")
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
       })
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
+    onError: (_error, variables) => {
+      toast?.error(
+        variables.status === "approved"
+          ? "승인 처리에 실패했습니다."
+          : "거절 처리에 실패했습니다."
+      )
     },
   })
 
-  const reject = useMutation({
-    mutationFn: ({ id }: { id: string; note?: string }) => approvalsApi.reject(id),
-    onMutate: async ({ id }) => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
-      const prev = queryClient.getQueryData(queryKeys.approvals.list(selectedOrgId ?? ""))
-      queryClient.setQueryData(
-        queryKeys.approvals.list(selectedOrgId ?? ""),
-        (old: any[]) =>
-          (old ?? []).map((a) => (a.id === id ? { ...a, status: "rejected" } : a))
-      )
-      return { prev }
-    },
-    onError: (_err, _vars, ctx) => {
-      queryClient.setQueryData(
-        queryKeys.approvals.list(selectedOrgId ?? ""),
-        ctx?.prev
-      )
-      toast?.error("반려 처리에 실패했습니다.")
+  const bulkApproveMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) {
+        await patchApproval(id, { status: "approved" })
+      }
     },
     onSuccess: () => {
-      setPendingDecision(null)
-      toast?.info("반려되었습니다.")
-      queryClient.invalidateQueries({
+      toast?.success("선택한 승인 요청을 모두 승인했습니다.")
+      setSelectedIds([])
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
+      })
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.cases.list(selectedOrgId ?? ""),
       })
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-      })
+    onError: () => {
+      toast?.error("일괄 승인 중 오류가 발생했습니다.")
     },
   })
 
-  const pendingCount = (allApprovals as any[]).filter(
-    (a) => a.status === "pending"
-  ).length
+  const selectedVisibleIds = selectedIds.filter((id) =>
+    filteredApprovals.some((approval) => approval.id === id)
+  )
+
+  const toggleSelected = (approvalId: string, checked: boolean) => {
+    setSelectedIds((current) =>
+      checked ? Array.from(new Set([...current, approvalId])) : current.filter((id) => id !== approvalId)
+    )
+  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
       <div
-        className="flex items-center justify-between px-6 py-4"
+        className="flex items-center justify-between px-6 py-4 gap-3"
         style={{ borderBottom: "1px solid var(--border-default)" }}
       >
         <div className="flex items-center gap-2">
-          <h1
-            className="text-base font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h1 className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
             승인 큐
           </h1>
           {pendingCount > 0 && (
@@ -217,9 +171,25 @@ export function ApprovalsPage() {
             </Badge>
           )}
         </div>
+
+        {selectedVisibleIds.length > 0 && (
+          <Button
+            size="sm"
+            className="gap-1.5"
+            style={{ backgroundColor: "var(--color-success)", color: "#fff" }}
+            disabled={bulkApproveMutation.isPending}
+            onClick={() => bulkApproveMutation.mutate(selectedVisibleIds)}
+          >
+            {bulkApproveMutation.isPending ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <CheckCircle size={14} />
+            )}
+            선택 항목 모두 승인
+          </Button>
+        )}
       </div>
 
-      {/* Body */}
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Loader2
@@ -236,101 +206,175 @@ export function ApprovalsPage() {
           </p>
         </div>
       ) : (
-        <Tabs defaultValue="pending" className="flex flex-col flex-1 overflow-hidden">
-          <div className="px-6 pt-3" style={{ borderBottom: "1px solid var(--border-default)" }}>
-            <TabsList className="h-9 bg-transparent p-0 gap-1">
-              {(
-                [
-                  { value: "all" as TabValue, label: "전체", count: (allApprovals as any[]).length },
-                  { value: "pending" as TabValue, label: "대기 중", count: pendingCount },
-                  {
-                    value: "done" as TabValue,
-                    label: "처리 완료",
-                    count: (allApprovals as any[]).filter(
-                      (a) => a.status === "approved" || a.status === "rejected"
-                    ).length,
-                  },
-                ] satisfies { value: TabValue; label: string; count: number }[]
-              ).map(({ value, label, count }) => (
-                <TabsTrigger
-                  key={value}
-                  value={value}
-                  className={cn(
-                    "h-8 px-3 text-xs font-medium rounded-md border-0 data-[state=active]:bg-[var(--bg-tertiary)] data-[state=active]:text-[var(--text-primary)] data-[state=inactive]:text-[var(--text-tertiary)]"
-                  )}
-                >
-                  {label}
-                  {count > 0 && (
-                    <span
-                      className="ml-1.5 text-xs"
-                      style={{ color: "var(--text-tertiary)" }}
-                    >
-                      {count}
-                    </span>
-                  )}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
+        <>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as ApprovalStatusTab)}
+            className="flex flex-col flex-1 overflow-hidden"
+          >
+            <div className="px-6 pt-3" style={{ borderBottom: "1px solid var(--border-default)" }}>
+              <TabsList className="h-9 bg-transparent p-0 gap-1">
+                {(
+                  [
+                    { value: "all" as ApprovalStatusTab, label: "전체", count: approvals.length },
+                    { value: "pending" as ApprovalStatusTab, label: "대기중", count: pendingCount },
+                    { value: "approved" as ApprovalStatusTab, label: "승인됨", count: approvedCount },
+                    { value: "rejected" as ApprovalStatusTab, label: "거절됨", count: rejectedCount },
+                  ] satisfies { value: ApprovalStatusTab; label: string; count: number }[]
+                ).map(({ value, label, count }) => (
+                  <TabsTrigger
+                    key={value}
+                    value={value}
+                    className={cn(
+                      "h-8 px-3 text-xs font-medium rounded-md border-0 data-[state=active]:bg-[var(--bg-tertiary)] data-[state=active]:text-[var(--text-primary)] data-[state=inactive]:text-[var(--text-tertiary)]"
+                    )}
+                  >
+                    {label}
+                    {count > 0 && (
+                      <span className="ml-1.5 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                        {count}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-          {(["all", "pending", "done"] as TabValue[]).map((tab) => {
-            const filtered = filterApprovals(allApprovals as any[], tab)
-            return (
-              <TabsContent
-                key={tab}
-                value={tab}
-                className="flex-1 overflow-hidden mt-0"
-              >
-                <ScrollArea className="h-full">
-                  <div className="p-6 max-w-2xl mx-auto space-y-3">
-                    {filtered.length === 0 ? (
-                      <EmptyState
-                        icon={tab === "pending" ? <Clock size={32} /> : <CheckCircle size={32} />}
-                        title={
-                          tab === "pending"
-                            ? "대기 중인 승인이 없습니다"
-                            : "처리된 승인이 없습니다"
+            <ScrollArea className="flex-1">
+              <div className="p-6 max-w-3xl mx-auto space-y-3">
+                {filteredApprovals.length === 0 ? (
+                  <EmptyState
+                    icon={
+                      activeTab === "pending" ? (
+                        <Clock size={32} />
+                      ) : activeTab === "approved" ? (
+                        <CheckCircle size={32} />
+                      ) : (
+                        <XCircle size={32} />
+                      )
+                    }
+                    title={
+                      activeTab === "pending"
+                        ? "대기 중인 승인이 없습니다"
+                        : activeTab === "approved"
+                          ? "승인된 항목이 없습니다"
+                          : activeTab === "rejected"
+                            ? "거절된 항목이 없습니다"
+                            : "표시할 승인 항목이 없습니다"
+                    }
+                    description="에이전트의 승인 요청이 들어오면 여기에서 바로 처리할 수 있습니다."
+                  />
+                ) : (
+                  filteredApprovals.map((approval) => {
+                    const isPending =
+                      updateApprovalMutation.isPending &&
+                      updateApprovalMutation.variables?.id === approval.id
+
+                    return (
+                      <ApprovalCard
+                        key={approval.id}
+                        approval={approval}
+                        selected={selectedIds.includes(approval.id)}
+                        onSelectedChange={(checked) => toggleSelected(approval.id, checked)}
+                        caseHref={
+                          approval.case?.id
+                            ? `/${orgPrefix ?? ""}/cases/${approval.case.id}`
+                            : undefined
                         }
-                        description={
-                          tab === "pending"
-                            ? "에이전트의 작업이 완료되면 여기서 승인할 수 있습니다."
-                            : "승인하거나 반려한 항목이 여기에 표시됩니다."
+                        onApprove={() =>
+                          updateApprovalMutation.mutate({
+                            id: approval.id,
+                            status: "approved",
+                          })
+                        }
+                        onReject={() =>
+                          setRejectDialog({
+                            id: approval.id,
+                            reason: approval.reason ?? "",
+                          })
+                        }
+                        isPending={isPending}
+                        pendingAction={
+                          updateApprovalMutation.variables?.status === "rejected"
+                            ? "reject"
+                            : "approve"
                         }
                       />
-                    ) : (
-                      filtered.map((approval: any) => (
-                        <div key={approval.id}>
-                          <ApprovalCard
-                            approval={approval}
-                            onApprove={() => setPendingDecision({ id: approval.id, action: "approve" })}
-                            onReject={() => setPendingDecision({ id: approval.id, action: "reject" })}
-                            approving={approve.isPending && approve.variables?.id === approval.id}
-                            rejecting={reject.isPending && reject.variables?.id === approval.id}
-                          />
-                          {pendingDecision != null && pendingDecision.id === approval.id && (
-                            <DecisionNoteDialog
-                              action={pendingDecision.action}
-                              isPending={approve.isPending || reject.isPending}
-                              onCancel={() => setPendingDecision(null)}
-                              onConfirm={(note) => {
-                                const action = pendingDecision!.action
-                                if (action === "approve") {
-                                  approve.mutate({ id: approval.id, note })
-                                } else {
-                                  reject.mutate({ id: approval.id, note })
-                                }
-                              }}
-                            />
-                          )}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-            )
-          })}
-        </Tabs>
+                    )
+                  })
+                )}
+              </div>
+            </ScrollArea>
+          </Tabs>
+
+          <Dialog
+            open={rejectDialog != null}
+            onOpenChange={(open) => {
+              if (!open) setRejectDialog(null)
+            }}
+          >
+            <DialogContent
+              style={{
+                backgroundColor: "var(--bg-base)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle style={{ color: "var(--text-primary)" }}>
+                  거절 사유 입력
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-2">
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  승인 요청을 거절하는 이유를 남겨 주세요.
+                </p>
+                <textarea
+                  value={rejectDialog?.reason ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value
+                    setRejectDialog((current) => (current ? { ...current, reason: value } : current))
+                  }}
+                  rows={5}
+                  className="w-full rounded-lg p-3 text-sm resize-none focus:outline-none"
+                  style={{
+                    backgroundColor: "var(--bg-elevated)",
+                    border: "1px solid var(--border-default)",
+                    color: "var(--text-primary)",
+                  }}
+                  placeholder="거절 사유를 입력하세요..."
+                />
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setRejectDialog(null)}>
+                  취소
+                </Button>
+                <Button
+                  className="gap-1.5"
+                  style={{ backgroundColor: "var(--color-danger)", color: "#fff" }}
+                  disabled={!rejectDialog || updateApprovalMutation.isPending}
+                  onClick={() => {
+                    if (!rejectDialog) return
+                    updateApprovalMutation.mutate({
+                      id: rejectDialog.id,
+                      status: "rejected",
+                      reason: rejectDialog.reason.trim(),
+                    })
+                  }}
+                >
+                  {updateApprovalMutation.isPending &&
+                  updateApprovalMutation.variables?.status === "rejected" ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <XCircle size={14} />
+                  )}
+                  거절 확정
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   )

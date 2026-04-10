@@ -210,11 +210,6 @@ export function Sidebar() {
 
         <SectionLabel label="에이전트 팀" />
         <NavItem
-          to={`${base}/agents`}
-          icon={<Bot size={16} />}
-          label="에이전트 목록"
-        />
-        <NavItem
           to={`${base}/org`}
           icon={<Network size={16} />}
           label="에이전트 조직도"

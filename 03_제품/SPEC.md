@@ -211,10 +211,10 @@ Mobile: Z0+Z1 → overlay | Z3 → hidden | 하단 탭바 5개
 | Retention | `hagent-os/04_ai-agents/agent-roles/retention.md` | 이탈 감지 + 위험 점수 |
 
 ### 워크플로우 구현 시
-| 문서 | 경로 | 내용 |
-|------|------|------|
-| 민원 처리 | `hagent-os/05_workflows/complaint-handling.md` | 전체 플로우 |
-| 이탈 감지 | `hagent-os/05_workflows/churn-detection.md` | 신호 + 점수 계산 |
+| 문서    | 경로                                             | 내용         |
+| ----- | ---------------------------------------------- | ---------- |
+| 민원 처리 | `hagent-os/05_workflows/complaint-handling.md` | 전체 플로우     |
+| 이탈 감지 | `hagent-os/05_workflows/churn-detection.md`    | 신호 + 점수 계산 |
 
 ### 다이어그램 (빠른 참조)
 | 다이어그램 | 경로 | 내용 |

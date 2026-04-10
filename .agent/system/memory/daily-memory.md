@@ -13,90 +13,55 @@ aliases:
 
 이 파일은 단기 기억과 핸드오프를 위한 요약본이다.
 
-## 오늘 상태 (Day 5 — 2026-04-10)
+## 현재 상태 (Day 5 — 2026-04-10, 저녁)
 
-### 운영 문서 및 제출 증빙 정리
-- `02_전략` 구조 재정리 이후 어긋난 안내 문서를 현재 구조 기준으로 업데이트했다.
-- `04_증빙/03_daily/2026-04-10.md`를 생성했다.
-- `탄자니아 영어학원` 로고와 카카오 채널/챗봇 관련 이미지 17건에 날짜 포함 제목을 부여했다.
-- 오늘 작업은 기능 개발보다 제출용 캡션 정리와 운영 문서 정합성 보정에 초점이 있었다.
-- intake-first 증빙 체계를 기준으로 `ai-session-intake.csv`, `master-evidence-ledger.md`, `external-ai-usage.csv`, `ai-usage-log.md`, `session-log.md`를 다시 맞췄다.
-- 2026-04-09 승보님 미팅에서 확정된 제품 베팅을 장기 판단 기준으로 유지한다.
+### 앱 개발 현황
+- **마지막 커밋 기준 문맥**: v0.3.0 진행 중으로 기록되어 있음
+- **현재 코드 상태**: `03_제품/app/`에 `ui/`, `server/`, `packages/`가 존재하고 `pnpm dev:ui` 진입점이 확인됨
+- **실행 상태 확인**: 이 세션에서 `http://localhost:5173/`는 리스닝 중이 아니었음
+- **다음 확인 명령**: `cd 03_제품/app && pnpm dev:ui`
 
-### 기획 문서 전체 완성 (Day 4 최종)
+### 오늘 완료한 개발/운영 정합화 (S-DEV-021 ~ S-OPS-034)
+- 기술 스택 교정 (Next.js → React 19 + Vite + Express v5 + brew postgres@17)
+- Codex 다이어그램 6종 리뷰 + 모델링 정합화
+- **v0.1.0**: Sonnet ×3 병렬 빌드 → Codex 리뷰(20건) → Sonnet ×4 수정 → Sonnet ×4 마무리 → 커밋 (179파일, 22,765줄)
+- **v0.2.0**: Sonnet ×4 병렬 — 21페이지, 40+ 컴포넌트, 15 API, ~7,000 LOC
+- **v0.3.0 Round 1**: Sonnet ×4 병렬 — 칸반 DnD, OrgChart 클릭, Switch, 인박스 실데이터, 프로젝트 페이지, 에이전트 메모리
+- **v0.3.0 Round 2**: 지식베이스 검색, FilterBar, 학생관리 nav, EmptyState
+- Paperclip 스크린샷 기반 `08_PAPERCLIP-CLONE-SPEC` 보강
+- 대시보드/PLAN/PROGRESS/README를 현재 앱 존재 상태 기준으로 재정렬
 
-### UI/디자인 시스템 확정 (Day 4 후반)
-- 디자인 북극성: 토스 앱 UI (색상 토큰 직접 추출)
-- design.md: Toss 토큰 (#0ea5b0 teal 포인트) + HagentOS 고유 컴포넌트명
-- ux-concepts.md: 복제 언어 제거 → 독자적 UX 패턴 언어
-- information-architecture.md: 4존 레이아웃 + 22개 라우트 확정
-- Paperclip UI 4개 화면 완전 분석 → _research/paperclip-ui-reference.md
-- DB: Supabase → PostgreSQL + Drizzle ORM (오픈소스/로컬 Docker)
-- 대회: 라이브 URL 필수 (Vercel + Neon 방향)
-- AI 리포트: 2섹션 (기획 + AI 활용 전략), 04_증빙이 raw material
-- 총 57개 파일 / 00~10 폴더 모두 채움
-- Codex 3라운드 리뷰 → 총 CRITICAL 6 + HIGH 9 + MEDIUM 7 수정
-- design.md + INDEX.md 추가
-- @solapi MCP 발견 (알림톡 MVP 경로 확보)
+### 핵심 기술 결정 (정본)
+- **기술 스택**: React 19 + Vite 6 + Express v5 + Drizzle ORM + brew postgres@17
+- **인증**: local_trusted 모드 (단일 원장, no next-auth)
+- **Mock 모드**: Claude API 키 없어도 1.5초 딜레이 mock 응답 동작
+- **배포**: GitHub 설치형 오픈소스 + 외부 PG URL 옵션
+- **SPEC 정본**: `03_제품/SPEC.md`
 
-### HagentOS 구조 확정
-- **제품명**: HagentOS (Hagwon + Agent + OS)
-- **비전**: Korean Education 전체 (사교육 운영자 + 공교육 교사 + 강사)
-- **MVP 타겟**: P-001 학원 운영자, 민원·예외 처리 OS
-- **디렉토리**: `03_제품/hagent-os/` — 57개 파일, 00~10 전체 체계
-- **제품 베팅 원칙**: 소규모 학원용 로컬 우선 데이터 자산화 도구, 무거운 SaaS 회피, 오픈소스 극대화
+### v0.3.0 남은 항목
+- [ ] 학생/학부모 관리 페이지 강화 + 개인정보 마스킹
+- [ ] 일정 캘린더 강화 (DB 데이터, 월간/주간, 수업→학생)
+- Phase 3: 키보드 단축키, 토스트 알림, 모바일 반응형, 에러 바운더리
+- Phase 4: GitHub public repo + 라이브 URL + 랜딩 페이지 + AI 리포트
 
-### k-skill 생태계 + 실존 MCP 13개+ 연동 확인
-- R-010 조사로 실존 MCP 확인: korean-law-mcp, aligo-sms, kakao-bot, portone, py-mcp-naver, google-calendar 등
-- prd.md 전체 맵: ★ 12/14개 영역 시연 가능 (★ = 시연 가능, Must = 빌드)
-- 에이전트별 스킬 장착 맵 추가 (Paperclip 방식)
-- 원칙: MVP는 빌드 우선순위이지 인프라의 한계가 아니다
+## 다음 세션 체크리스트 (D6)
 
-## 오늘 바뀐 구조
+### 필독 (2분)
+1. `03_제품/PROGRESS.md` — 현재 상태 (Phase 2.5 진행 중)
+2. `03_제품/app/docs/superpowers/plans/2026-04-10-hagent-os-v0.3.0.md` — v0.3.0 플랜
 
-- 운영 진행 문서: `.agent/system/ops/`
-- 장기 기억: `.agent/system/memory/long-term-memory.md`
-- 구조 맵: `.agent/system/maps/workspace-atlas.md`
-- 핵심 증빙 로그: `04_증빙/01_핵심로그/`
-- visible 진행판: `_system/dashboard/project-dashboard.md`
-- 전략 태스크: `02_전략/tasks/`
-- 증빙 태스크: `04_증빙/tasks/`
-- 위키 ingest 태스크: `06_LLM위키/tasks/`
-- 리서치 작업 공간: `02_전략/research-results/`
-- 심화 도메인 리서치 폴더: `02_전략/research-results/20_domain-analysis/`
-- NotebookLM 리서치 노트북: `KEG EduSwarm Research 2026-04-08`
-- Bottom-Up 전용 노트북: `KEG Bottom-Up Academy Research 2026-04-09`
-- Paperclip 코드 해체 분석 공간: `02_전략/paperclip-analysis/`
-- 단일 세션 intake 정본: `04_증빙/01_핵심로그/ai-session-intake.csv`
-- nightly dispatch 스크립트: `.agent/system/automation/scripts/dispatch-session-intake.py`
+### D6 목표
+- UI dev server 실제 기동 확인 후 핵심 진입 경로 1회 점검
+- v0.3.0 Round 2 나머지 완료 (학생관리 페이지, 캘린더 DB 연결)
+- Phase 3 폴리시 시작 (토스트, 키보드, 모바일)
 
-## 다음 세션 체크리스트 (Day 5 — 앱 착수)
+### 마감
+- 2026-04-13 (D-3)
+- **⚠️ Plan B 판단**: D7 종료 시 E2E 안 돌면 Paperclip 포크 전환
 
-### 필독 (5분)
-1. `.agent/system/ops/PROGRESS.md` — 현재 상태
-2. `03_제품/hagent-os/10_execution/open-questions.md` — 🚨 블로커 4개
-3. `03_제품/hagent-os/INDEX.md` — 파일 색인
-
-### D5 목표
-- Next.js 앱 초기화 (`03_제품/app/`)
-- PostgreSQL Docker Compose 설정
-- Drizzle ORM 스키마 (domain-model.md 기준)
-- Mock 데이터 투입 (mvp-scope.md의 M8)
-- next-auth 설정
-
-### 역할 분담
-- 이승보: Orchestrator + Complaint Agent + Retention Agent (Claude API 연결)
-- 김주용: UI scaffold + 인증 + DB 인프라 + 배포 파이프라인
-
-### 설계 기준 파일
-- `design.md` — 색상 토큰
-- `_research/paperclip-ui-reference.md` — UI 구조
-- `08_data/domain-model.md` — DB 스키마
-- `brand/` — 브랜드 요소
-
-### 대회 필수 제출물 체크
+### 대회 필수 제출물 (아직 미완)
 - [ ] GitHub public URL
-- [ ] 라이브 URL (Vercel 배포)
-- [ ] AI 리포트 작성 시작
+- [ ] 라이브 URL
+- [ ] AI 리포트 (.docx) — `04_증빙` raw material 사용
 - [ ] 개인정보 동의서
 - [ ] 참가 각서

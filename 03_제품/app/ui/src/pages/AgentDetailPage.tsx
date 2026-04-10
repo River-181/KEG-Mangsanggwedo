@@ -32,7 +32,14 @@ import {
   Clock,
   Play,
   Square,
+  ClipboardList,
+  Heart,
+  PauseCircle,
+  PlayCircle,
+  TrendingUp,
 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -283,6 +290,7 @@ function BudgetBar({
 
 function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory: any }) {
   const queryClient = useQueryClient()
+  const { selectedOrgId } = useOrganization()
   const currentRun = runs.find((r) => r.status === "running")
   const sortedRuns = [...runs].sort((a, b) => {
     const aTime = a.startedAt ?? a.started_at ?? a.createdAt ?? ""
@@ -293,7 +301,16 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
   const [expandedRunId, setExpandedRunId] = useState<string | null>(
     recentRuns.length > 0 ? (recentRuns[0].id ?? null) : null
   )
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false)
+  const [assignInstruction, setAssignInstruction] = useState("")
   const isRunning = agent.status === "running" || !!currentRun
+
+  // Stats
+  const totalRuns = runs.length
+  const completedRuns = runs.filter((r) => r.status === "completed").length
+  const successRate = totalRuns > 0 ? Math.round((completedRuns / totalRuns) * 100) : 0
+  const totalTokens = runs.reduce((s: number, r: any) => s + (r.tokensUsed ?? r.tokens_used ?? 0), 0)
+  const lastRun = sortedRuns[0]
 
   const wakeupMutation = useMutation({
     mutationFn: () => agentsApi.wakeup(agent.id),
@@ -306,6 +323,34 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
     mutationFn: () => agentsApi.stop(agent.id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+  })
+
+  const pauseMutation = useMutation({
+    mutationFn: () => agentsApi.update(agent.id, { status: "paused" }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+  })
+
+  const resumeMutation = useMutation({
+    mutationFn: () => agentsApi.update(agent.id, { status: "idle" }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
+    },
+  })
+
+  const dispatchMutation = useMutation({
+    mutationFn: () =>
+      fetch("/api/orchestrator/dispatch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction: assignInstruction, organizationId: selectedOrgId }),
+      }),
+    onSuccess: () => {
+      setAssignDialogOpen(false)
+      setAssignInstruction("")
+      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.list(selectedOrgId ?? "") })
     },
   })
 
@@ -376,43 +421,118 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
 
         {/* Control buttons */}
         <div className="flex flex-col items-end gap-1.5 shrink-0">
+          {/* Assign Task */}
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs h-8 w-full"
+            onClick={() => setAssignDialogOpen(true)}
+          >
+            <ClipboardList size={13} />
+            태스크 지시
+          </Button>
+
+          {/* Run Heartbeat / Stop */}
           {isRunning ? (
             <Button
               size="sm"
               variant="destructive"
-              className="gap-1.5 text-xs h-8"
+              className="gap-1.5 text-xs h-8 w-full"
               disabled={stopMutation.isPending}
               onClick={() => stopMutation.mutate()}
             >
-              {stopMutation.isPending ? (
-                <Loader2 size={13} className="animate-spin" />
-              ) : (
-                <Square size={13} />
-              )}
+              {stopMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : <Square size={13} />}
               중지
             </Button>
           ) : (
             <Button
               size="sm"
-              className="gap-1.5 text-xs h-8"
+              className="gap-1.5 text-xs h-8 w-full"
               style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
               disabled={wakeupMutation.isPending}
               onClick={() => wakeupMutation.mutate()}
             >
-              {wakeupMutation.isPending ? (
-                <Loader2 size={13} className="animate-spin" />
-              ) : (
-                <Play size={13} />
-              )}
-              에이전트 실행
+              {wakeupMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : <Heart size={13} />}
+              하트비트 실행
             </Button>
           )}
-          {/* Quick dispatch hint */}
-          <p className="text-xs mt-2" style={{ color: "var(--text-tertiary)" }}>
-            대시보드에서 오케스트레이터에게 지시하면 이 에이전트가 자동으로 배정됩니다.
-          </p>
+
+          {/* Pause / Resume */}
+          {agent.status === "paused" ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs h-8 w-full"
+              style={{ color: "var(--color-success)" }}
+              disabled={resumeMutation.isPending}
+              onClick={() => resumeMutation.mutate()}
+            >
+              {resumeMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : <PlayCircle size={13} />}
+              재개
+            </Button>
+          ) : !isRunning ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs h-8 w-full"
+              disabled={pauseMutation.isPending}
+              onClick={() => pauseMutation.mutate()}
+            >
+              {pauseMutation.isPending ? <Loader2 size={13} className="animate-spin" /> : <PauseCircle size={13} />}
+              일시정지
+            </Button>
+          ) : null}
         </div>
       </div>
+
+      {/* Assign Task Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{agent.name}에게 태스크 지시</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 mt-2">
+            <Textarea
+              placeholder="이 에이전트에게 처리할 태스크를 지시하세요..."
+              rows={4}
+              value={assignInstruction}
+              onChange={(e) => setAssignInstruction(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>취소</Button>
+              <Button
+                style={{ backgroundColor: "var(--color-teal-500)", color: "#fff" }}
+                disabled={!assignInstruction.trim() || dispatchMutation.isPending}
+                onClick={() => dispatchMutation.mutate()}
+              >
+                {dispatchMutation.isPending ? <Loader2 size={13} className="animate-spin mr-1" /> : null}
+                실행
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Stats cards */}
+      {totalRuns > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { label: "총 실행", value: totalRuns },
+            { label: "성공률", value: `${successRate}%` },
+            { label: "총 토큰", value: totalTokens >= 1000 ? `${(totalTokens / 1000).toFixed(1)}k` : totalTokens },
+            { label: "마지막 실행", value: lastRun ? timeAgo(lastRun.startedAt ?? lastRun.createdAt ?? "") : "-" },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="rounded-xl p-3 flex flex-col gap-0.5"
+              style={{ backgroundColor: "var(--bg-elevated)", border: "1px solid var(--border-default)" }}
+            >
+              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{label}</p>
+              <p className="text-base font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{String(value)}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Current case */}
       {currentRun && (

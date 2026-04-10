@@ -16,18 +16,18 @@ aliases:
 
 ## 현재 상태
 
-- 현재 단계: Day 5, `전략 구조 정리 + 운영 문서 동기화 + 제출용 이미지 증빙 정리 완료`
-- 다음 단계: `앱 스켈레톤 착수`와 `최소 데모 플로우 구현`으로 전환한다.
-- 아직 실제 앱 코드는 초기화되지 않았다. 따라서 `03_제품/`은 기획 정본을 기준으로 앱 구조를 첫 실행 가능한 상태로 옮겨야 하는 단계다.
+- 현재 단계: Day 5, `전략 정본 잠금 + Paperclip clone 분석 심화 + HagentOS 앱 구조 구축 완료`
+- 다음 단계: `Phase 3 polish`, `실행 검증`, `데모 플로우 고정`으로 전환한다.
+- 실제 앱 코드는 이미 [03_제품/app/README.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/03_%EC%A0%9C%ED%92%88/app/README.md) 기준으로 `ui/`, `server/`, `packages/`를 갖춘 상태다. 다만 이 세션에서 확인한 현재 시점에는 `http://localhost:5173/`가 리스닝 중이지 않았다.
 - 지금 대시보드는 `PLAN`, `PROGRESS`, `daily`, `master-evidence-ledger`, `type/task` note를 한 화면에서 잇는 제출용 진행판 역할을 맡는다.
 
 ## 현재 집중 산출물
 
-- `System Context Diagram` — HagentOS, 사용자, 외부 MCP/캘린더/알림 경계 정의
-- `Demo/User Flow` — 온보딩 → 한 줄 지시 → 병렬 실행 → 승인 → 일정 반영
-- `Orchestrator Sequence Diagram` — Frontend, API, Orchestrator, Agent, DB 상호작용 고정
+- `Paperclip Clone Spec` — [08_PAPERCLIP-CLONE-SPEC.md](/Users/river/workspace/active/2026%20제1회%20KEG%20바이브코딩%20콘테스트/02_%EC%A0%84%EB%9E%B5/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md) 기준 복제 우선순위, 빈 상태, 문서 워크스페이스 계약 정리
+- `App Shell + Route Skeleton` — `03_제품/app/ui`, `03_제품/app/server`, `03_제품/app/packages/*` 기반 실제 제품 골격
+- `Demo/User Flow` — 온보딩 → 이슈/민원 흐름 → live run → 승인/후속 처리
 - `Domain Model / ERD` — Institution, Agent, TaskRun, ApprovalItem, Complaint, Student, ScheduleEvent 구조 정의
-- `Approval State Diagram` — 실행, 검토, 승인, 반려, 후속 액션 상태 전이 정리
+- `Knowledge Workspace` — 문서, 정책, FAQ, 작업을 같은 control plane 안에서 다루는 구조
 
 ## 제출용 일정 개요
 
@@ -41,8 +41,8 @@ gantt
     문제 후보 수집 및 평가 :done, a2, 2026-04-07, 2d
     최종 문제 및 스코프 확정 :done, a3, 2026-04-09, 1d
     section 제품
-    개발 전 모델링 및 핵심 다이어그램 :active, a4, 2026-04-09, 2d
-    앱 뼈대 및 데모 플로우 구현 :a5, 2026-04-10, 2d
+    개발 전 모델링 및 핵심 다이어그램 :done, a4, 2026-04-09, 2d
+    앱 뼈대 및 데모 플로우 구현 :active, a5, 2026-04-10, 2d
     기능 동결 및 QA :a6, 2026-04-11, 2d
     section 제출
     README 및 AI 리포트 작성 :a7, 2026-04-11, 2d
@@ -67,8 +67,10 @@ gantt
 - `04_증빙/03_daily/2026-04-07.md`, `2026-04-08.md` — 빠진 일일 기록을 복원해 날짜별 증빙 공백을 메우기 위해 추가
 - `02_전략/paperclip-analysis/paperclip-master/` — 실제 reference 프로그램 코드를 로컬에 두고 구조를 해체 분석하기 위해 추가
 - `02_전략/paperclip-analysis/06-runtime-control-plane-map.md`, `07-plugin-adapter-extensibility.md` — chat imitation이 아니라 control plane 구조와 확장 구조를 기준으로 모방 포인트를 고정하기 위해 추가
+- `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` 보강 — 스크린샷 기준 복제 우선순위와 clone scope contract를 다른 에이전트가 바로 쓸 수 있게 고정하기 위해 보강
 - `02_전략/archive/web-captures/` — 전략 정본이 아닌 웹 저장본과 캡처를 분리 보관하기 위해 추가
 - `탄자니아 영어학원` 로고/카카오 채널 이미지 제목 정리 — 제출용 증빙 삽입 시 장면 설명을 바로 재사용하기 위해 추가
+- `03_제품/app/README.md` 갱신 — 실제 앱 실행 구조와 dev command를 문서로 드러내기 위해 갱신
 
 ## 태스크 트래커
 
@@ -80,6 +82,5 @@ gantt
 - 세 문서는 같은 날짜 기준으로 함께 갱신한다. 셋 중 하나만 바뀌면 진행 상황이 왜곡된다.
 - 태스크 note는 `type/task` 태그와 frontmatter를 맞춰야 여기에 뜬다.
 - day가 바뀌면 `daily`, `PLAN`, `PROGRESS`, `master-evidence-ledger`를 먼저 맞춘 뒤 대시보드를 본다.
-
 - 대시보드 구조를 바꾸면 [[workspace-atlas]]와 관련 운영 문서를 같이 본다.
 - AI 운영 note는 `.agent/system/ops/`에 둘 수 있지만, 사람이 직접 보는 대시보드는 이 note를 기준으로 한다.

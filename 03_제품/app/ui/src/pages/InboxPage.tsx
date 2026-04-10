@@ -1,293 +1,441 @@
-// v0.3.0
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useMemo, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbs } from "@/context/BreadcrumbContext"
 import { useOrganization } from "@/context/OrganizationContext"
 import { notificationsApi } from "@/api/notifications"
-import { approvalsApi } from "@/api/approvals"
+import { api } from "@/api/client"
 import { queryKeys } from "@/lib/queryKeys"
-import { ApprovalCard } from "@/components/ApprovalCard"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, AlertTriangle, Bot, FilePlus, Bell, Clock } from "lucide-react"
 import { cn, timeAgo } from "@/lib/utils"
+import {
+  Bell,
+  Bot,
+  CheckCircle2,
+  Clock,
+  FileText,
+  Loader2,
+} from "lucide-react"
 
-type NotificationType = "approval_needed" | "risk_detected" | "agent_completed" | "case_created" | "reminder"
+type FeedFilter = "all" | "pending_approvals" | "case_updates" | "agent_completed"
 
-interface Notification {
+type NotificationType =
+  | "approval_needed"
+  | "case_update"
+  | "case_created"
+  | "agent_completed"
+  | "reminder"
+  | string
+
+interface NotificationItem {
   id: string
   type: NotificationType
   title: string
   body: string
-  entityType?: string
-  entityId?: string
-  read: boolean
+  entityType?: string | null
+  entityId?: string | null
+  read?: boolean
   createdAt: string
 }
 
-function notificationIcon(type: NotificationType) {
-  switch (type) {
-    case "approval_needed":
-      return <CheckCircle2 size={18} style={{ color: "var(--color-warning, #f59e0b)" }} />
-    case "risk_detected":
-      return <AlertTriangle size={18} style={{ color: "#ef4444" }} />
+interface ApprovalItem {
+  id: string
+  status: "pending" | "approved" | "rejected" | "revision_requested"
+  payload?: Record<string, unknown> | null
+  caseId?: string | null
+  caseTitle?: string | null
+  createdAt?: string
+  created_at?: string
+}
+
+type FeedItem =
+  | {
+      id: string
+      kind: "approval"
+      category: "pending_approvals"
+      title: string
+      body: string
+      createdAt: string
+      read: boolean
+      approvalId: string
+      caseId?: string | null
+    }
+  | {
+      id: string
+      kind: "notification"
+      category: Exclude<FeedFilter, "all" | "pending_approvals">
+      title: string
+      body: string
+      createdAt: string
+      read: boolean
+      entityType?: string | null
+      entityId?: string | null
+    }
+
+const FILTERS: { key: FeedFilter; label: string }[] = [
+  { key: "all", label: "전체" },
+  { key: "pending_approvals", label: "승인대기" },
+  { key: "case_updates", label: "케이스 업데이트" },
+  { key: "agent_completed", label: "에이전트 완료" },
+]
+
+function getNotificationCategory(item: NotificationItem): FeedItem["category"] | null {
+  if (item.type === "agent_completed" || item.entityType === "agent_run") {
+    return "agent_completed"
+  }
+
+  if (
+    item.type === "case_update" ||
+    item.type === "case_created" ||
+    item.entityType === "case"
+  ) {
+    return "case_updates"
+  }
+
+  return null
+}
+
+function feedIcon(item: FeedItem) {
+  if (item.kind === "approval") {
+    return <CheckCircle2 size={18} style={{ color: "#16a34a" }} />
+  }
+
+  switch (item.category) {
     case "agent_completed":
       return <Bot size={18} style={{ color: "var(--color-teal-500)" }} />
-    case "case_created":
-      return <FilePlus size={18} style={{ color: "var(--text-secondary)" }} />
-    case "reminder":
-      return <Clock size={18} style={{ color: "var(--color-teal-500)" }} />
+    case "case_updates":
+      return <FileText size={18} style={{ color: "var(--text-secondary)" }} />
     default:
       return <Bell size={18} style={{ color: "var(--text-secondary)" }} />
   }
 }
 
-const GROUP_ORDER: NotificationType[] = ["approval_needed", "agent_completed", "case_created", "risk_detected", "reminder"]
-const GROUP_LABELS: Record<NotificationType, string> = {
-  approval_needed: "승인 대기",
-  agent_completed: "에이전트 알림",
-  case_created: "케이스 알림",
-  risk_detected: "위험 감지",
-  reminder: "리마인더",
+function buildApprovalBody(approval: ApprovalItem) {
+  const draft = typeof approval.payload?.draft === "string" ? approval.payload.draft : null
+  if (draft) {
+    return draft.length > 80 ? `${draft.slice(0, 80)}...` : draft
+  }
+  return approval.caseTitle ? `${approval.caseTitle} 관련 승인이 필요합니다.` : "검토가 필요한 승인 요청입니다."
 }
 
 export function InboxPage() {
   const { setBreadcrumbs } = useBreadcrumbs()
   const { selectedOrgId } = useOrganization()
+  const { orgPrefix } = useParams<{ orgPrefix: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+
+  const [activeFilter, setActiveFilter] = useState<FeedFilter>("all")
+  const [readIds, setReadIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     setBreadcrumbs([{ label: "알림함" }])
   }, [setBreadcrumbs])
 
-  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
+  const { data: notifications = [], isLoading: notificationsLoading } = useQuery<NotificationItem[]>({
     queryKey: queryKeys.notifications.list(selectedOrgId ?? ""),
     queryFn: () => notificationsApi.list(selectedOrgId!),
     enabled: !!selectedOrgId,
   })
 
-  const { data: approvals = [] } = useQuery<any[]>({
-    queryKey: queryKeys.approvals.list(selectedOrgId ?? ""),
-    queryFn: () => approvalsApi.list(selectedOrgId!),
+  const { data: approvals = [], isLoading: approvalsLoading } = useQuery<ApprovalItem[]>({
+    queryKey: [...queryKeys.approvals.list(selectedOrgId ?? ""), "pending"],
+    queryFn: () => api.get<ApprovalItem[]>(`/organizations/${selectedOrgId}/approvals?status=pending`),
     enabled: !!selectedOrgId,
   })
 
-  const markReadMutation = useMutation({
-    mutationFn: (id: string) => notificationsApi.markRead(id),
+  const decisionMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: "approved" | "rejected" }) =>
+      api.patch(`/approvals/${id}`, { status }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.list(selectedOrgId ?? "") })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
     },
   })
 
-  const approvesMutation = useMutation({
-    mutationFn: (id: string) => approvalsApi.approve(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
-    },
-  })
+  const feedItems = useMemo<FeedItem[]>(() => {
+    const approvalItems: FeedItem[] = approvals.map((approval) => ({
+      id: `approval:${approval.id}`,
+      kind: "approval",
+      category: "pending_approvals",
+      title: approval.caseTitle ?? "승인 요청",
+      body: buildApprovalBody(approval),
+      createdAt: approval.createdAt ?? approval.created_at ?? new Date().toISOString(),
+      read: false,
+      approvalId: approval.id,
+      caseId: approval.caseId,
+    }))
 
-  const rejectMutation = useMutation({
-    mutationFn: (id: string) => approvalsApi.reject(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.approvals.list(selectedOrgId ?? "") })
-    },
-  })
+    const notificationItems: FeedItem[] = notifications
+      .flatMap((notification) => {
+        const category = getNotificationCategory(notification)
+        if (!category || category === "pending_approvals") return []
 
-  const markAllRead = async () => {
-    const unread = notifications.filter((n) => !n.read)
-    await Promise.all(unread.map((n) => notificationsApi.markRead(n.id)))
-    queryClient.invalidateQueries({ queryKey: queryKeys.notifications.list(selectedOrgId ?? "") })
+        const item: FeedItem = {
+          id: `notification:${notification.id}`,
+          kind: "notification",
+          category: category as Exclude<FeedFilter, "all" | "pending_approvals">,
+          title: notification.title,
+          body: notification.body,
+          createdAt: notification.createdAt,
+          read: notification.read ?? false,
+          entityType: notification.entityType,
+          entityId: notification.entityId,
+        }
+        return [item]
+      })
+
+    return [...approvalItems, ...notificationItems].sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt)
+    )
+  }, [approvals, notifications])
+
+  const filteredItems = useMemo(() => {
+    if (activeFilter === "all") return feedItems
+    return feedItems.filter((item) => item.category === activeFilter)
+  }, [activeFilter, feedItems])
+
+  const unreadCount = filteredItems.filter((item) => !item.read && !readIds.has(item.id)).length
+  const totalUnreadCount = feedItems.filter((item) => !item.read && !readIds.has(item.id)).length
+
+  const markAsRead = (itemId: string) => {
+    setReadIds((current) => {
+      const next = new Set(current)
+      next.add(itemId)
+      return next
+    })
   }
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+  const markAllRead = () => {
+    setReadIds(new Set(feedItems.map((item) => item.id)))
+  }
 
-  // Group notifications by type
-  const grouped = GROUP_ORDER.reduce<Record<string, Notification[]>>((acc, type) => {
-    const items = notifications.filter((n) => n.type === type)
-    if (items.length > 0) acc[type] = items
-    return acc
-  }, {})
+  const handleItemClick = (item: FeedItem) => {
+    markAsRead(item.id)
 
-  const handleNotificationClick = (notification: Notification) => {
-    if (!notification.read) {
-      markReadMutation.mutate(notification.id)
+    if (!orgPrefix) return
+
+    if (item.kind === "approval") {
+      if (item.caseId) {
+        navigate(`/${orgPrefix}/cases/${item.caseId}`)
+        return
+      }
+      navigate(`/${orgPrefix}/approvals`)
+      return
     }
-    const orgPrefix = window.location.pathname.split("/")[1]
-    if (notification.entityType === "case" && notification.entityId) {
-      navigate(`/${orgPrefix}/cases/${notification.entityId}`)
-    } else if (notification.entityType === "agent_run" && notification.entityId) {
+
+    if (item.entityType === "case" && item.entityId) {
+      navigate(`/${orgPrefix}/cases/${item.entityId}`)
+      return
+    }
+
+    if (item.entityType === "agent_run" || item.category === "agent_completed") {
       navigate(`/${orgPrefix}/agents`)
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="h-8 w-48 rounded animate-pulse mb-6" style={{ background: "var(--bg-tertiary)" }} />
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "var(--bg-tertiary)" }} />
-          ))}
-        </div>
-      </div>
-    )
-  }
+  const isLoading = notificationsLoading || approvalsLoading
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-            알림함
-          </h1>
-          {unreadCount > 0 && (
-            <Badge
-              className="text-xs font-bold px-2 py-0.5 border-0"
-              style={{ background: "var(--color-teal-500)", color: "#fff" }}
-            >
-              {unreadCount}
-            </Badge>
-          )}
-        </div>
-        {unreadCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={markAllRead}
-            className="text-xs border"
-            style={{ color: "var(--color-teal-500)", borderColor: "var(--border-default)" }}
-          >
-            모두 읽음
-          </Button>
-        )}
-      </div>
-      <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-        {unreadCount > 0 ? `읽지 않은 알림 ${unreadCount}개` : "모든 알림을 읽었습니다"}
-      </p>
-
-      {notifications.length === 0 ? (
-        <div
-          className="rounded-xl p-10 flex flex-col items-center justify-center gap-3"
-          style={{
-            backgroundColor: "var(--bg-elevated)",
-            border: "1px solid var(--border-default)",
-            boxShadow: "var(--shadow-sm)",
-          }}
-        >
-          <Bell size={40} style={{ color: "var(--text-tertiary)" }} />
-          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            새 알림이 없습니다.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {(Object.entries(grouped) as [NotificationType, Notification[]][]).map(([type, items]) => (
-            <div key={type}>
-              <h2 className="text-xs font-semibold uppercase tracking-wider mb-2 px-1" style={{ color: "var(--text-tertiary)" }}>
-                {GROUP_LABELS[type]}
-              </h2>
-              <div
-                className="rounded-xl overflow-hidden"
-                style={{
-                  border: "1px solid var(--border-default)",
-                  boxShadow: "var(--shadow-sm)",
-                }}
+    <div className="h-full min-h-0">
+      <ScrollArea className="h-full">
+        <div className="p-6 max-w-3xl mx-auto space-y-6">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+                  알림함
+                </h1>
+                {totalUnreadCount > 0 && (
+                  <Badge
+                    className="text-xs font-bold px-2 py-0.5 border-0"
+                    style={{ background: "var(--color-teal-500)", color: "#fff" }}
+                  >
+                    {totalUnreadCount}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+                승인 요청과 운영 알림을 한 곳에서 확인합니다.
+              </p>
+            </div>
+            {totalUnreadCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={markAllRead}
+                className="text-xs"
               >
-                {items.map((notification, idx) => {
-                  // For approval_needed, find the matching approval and render ApprovalCard
-                  if (type === "approval_needed" && notification.entityId) {
-                    const approval = approvals.find((a) => a.id === notification.entityId)
-                    if (approval) {
-                      return (
-                        <div
-                          key={notification.id}
-                          className={cn(idx !== 0 && "border-t")}
-                          style={{
-                            borderColor: "var(--border-default)",
-                            backgroundColor: notification.read ? "var(--bg-elevated)" : "var(--bg-secondary)",
-                          }}
-                        >
-                          <ApprovalCard
-                            approval={approval}
-                            onApprove={(id) => approvesMutation.mutate(id)}
-                            onReject={(id) => rejectMutation.mutate(id)}
-                            isPending={approvesMutation.isPending || rejectMutation.isPending}
-                            pendingAction={approvesMutation.isPending ? "approve" : "reject"}
-                          />
-                        </div>
-                      )
-                    }
-                  }
+                모두 읽음
+              </Button>
+            )}
+          </div>
 
-                  return (
-                    <div
-                      key={notification.id}
-                      className={cn(
-                        "flex items-start gap-3 px-4 py-3.5",
-                        idx !== 0 && "border-t",
-                        (notification.entityType === "case" || notification.entityType === "agent_run") &&
-                          "cursor-pointer hover:bg-[var(--bg-secondary)] transition-colors"
-                      )}
-                      style={{
-                        backgroundColor: notification.read ? "var(--bg-elevated)" : "var(--bg-secondary)",
-                        borderColor: "var(--border-default)",
-                      }}
-                      onClick={() => handleNotificationClick(notification)}
-                      role={notification.entityType ? "button" : undefined}
-                    >
-                      <div className="mt-0.5 shrink-0">{notificationIcon(type)}</div>
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.map((filter) => {
+              const count =
+                filter.key === "all"
+                  ? feedItems.length
+                  : feedItems.filter((item) => item.category === filter.key).length
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={cn("text-sm", !notification.read && "font-semibold")}
-                            style={{ color: "var(--text-primary)" }}
-                          >
-                            {notification.title}
-                          </span>
-                          {!notification.read && (
+              return (
+                <button
+                  key={filter.key}
+                  onClick={() => setActiveFilter(filter.key)}
+                  className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor:
+                      activeFilter === filter.key ? "var(--color-teal-500)" : "var(--bg-tertiary)",
+                    color: activeFilter === filter.key ? "#fff" : "var(--text-secondary)",
+                  }}
+                >
+                  {filter.label} {count > 0 ? `(${count})` : ""}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              {unreadCount > 0 ? `선택한 탭에 읽지 않은 항목 ${unreadCount}개` : "읽지 않은 항목이 없습니다"}
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="space-y-3">
+              {[0, 1, 2, 3].map((index) => (
+                <div
+                  key={index}
+                  className="h-24 rounded-xl animate-pulse"
+                  style={{ backgroundColor: "var(--bg-tertiary)" }}
+                />
+              ))}
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <div
+              className="rounded-xl p-10 flex flex-col items-center justify-center gap-3"
+              style={{
+                backgroundColor: "var(--bg-elevated)",
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              <Bell size={40} style={{ color: "var(--text-tertiary)" }} />
+              <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+                선택한 필터에 해당하는 알림이 없습니다.
+              </p>
+            </div>
+          ) : (
+            <div
+              className="rounded-xl overflow-hidden"
+              style={{
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              {filteredItems.map((item, index) => {
+                const isUnread = !item.read && !readIds.has(item.id)
+                const isCurrentApprovalPending =
+                  decisionMutation.isPending &&
+                  decisionMutation.variables?.id === (item.kind === "approval" ? item.approvalId : undefined)
+
+                return (
+                  <div
+                    key={item.id}
+                    className={cn("px-4 py-4", index > 0 && "border-t")}
+                    style={{
+                      borderColor: "var(--border-default)",
+                      backgroundColor: isUnread ? "var(--bg-secondary)" : "var(--bg-elevated)",
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <button
+                        type="button"
+                        onClick={() => handleItemClick(item)}
+                        className="flex flex-1 items-start gap-3 text-left"
+                      >
+                        <div className="mt-0.5 shrink-0">{feedIcon(item)}</div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
                             <span
-                              className="w-2 h-2 rounded-full shrink-0"
-                              style={{ backgroundColor: "var(--color-teal-500)" }}
-                            />
-                          )}
+                              className={cn("text-sm", isUnread && "font-semibold")}
+                              style={{ color: "var(--text-primary)" }}
+                            >
+                              {item.title}
+                            </span>
+                            {isUnread && (
+                              <span
+                                className="w-2 h-2 rounded-full shrink-0"
+                                style={{ backgroundColor: "var(--color-teal-500)" }}
+                              />
+                            )}
+                          </div>
+                          <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+                            {item.body}
+                          </p>
                         </div>
-                        <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
-                          {notification.body}
-                        </p>
-                      </div>
+                      </button>
 
-                      <div className="flex flex-col items-end gap-1 shrink-0">
+                      <div className="flex flex-col items-end gap-2 shrink-0">
                         <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                          {timeAgo(notification.createdAt)}
+                          {timeAgo(item.createdAt)}
                         </span>
-                        {notification.entityType === "case" && (
+
+                        {item.kind === "approval" ? (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs"
+                              style={{ color: "#dc2626", borderColor: "rgba(220,38,38,0.25)" }}
+                              disabled={isCurrentApprovalPending}
+                              onClick={() => {
+                                markAsRead(item.id)
+                                decisionMutation.mutate({ id: item.approvalId, status: "rejected" })
+                              }}
+                            >
+                              {isCurrentApprovalPending && decisionMutation.variables?.status === "rejected" ? (
+                                <Loader2 size={13} className="animate-spin" />
+                              ) : (
+                                "거절"
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="text-xs text-white"
+                              style={{ backgroundColor: "#16a34a" }}
+                              disabled={isCurrentApprovalPending}
+                              onClick={() => {
+                                markAsRead(item.id)
+                                decisionMutation.mutate({ id: item.approvalId, status: "approved" })
+                              }}
+                            >
+                              {isCurrentApprovalPending && decisionMutation.variables?.status === "approved" ? (
+                                <Loader2 size={13} className="animate-spin" />
+                              ) : (
+                                "승인"
+                              )}
+                            </Button>
+                          </div>
+                        ) : (
                           <span
                             className="text-xs px-2 py-0.5 rounded"
-                            style={{ background: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
+                            style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
                           >
-                            케이스 보기
-                          </span>
-                        )}
-                        {notification.entityType === "agent_run" && (
-                          <span
-                            className="text-xs px-2 py-0.5 rounded"
-                            style={{ background: "var(--bg-tertiary)", color: "var(--color-teal-500)" }}
-                          >
-                            상세 보기
+                            보기
                           </span>
                         )}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                  </div>
+                )
+              })}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      </ScrollArea>
     </div>
   )
 }
