@@ -1409,8 +1409,8 @@ export function StudentsPage() {
 
   return (
     <>
-      <ScrollArea className="h-full">
-        <div className="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.10),_transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef6f7_100%)]">
+      <div className="overflow-y-auto flex-1">
+        <div className="bg-[radial-gradient(circle_at_top_left,_rgba(13,148,136,0.10),_transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef6f7_100%)]">
           <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-5 py-6">
             <div className="rounded-3xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-800 shadow-sm">
               학생 개인정보는 마스킹 처리되어 표시됩니다. 상세 패널에서도 최소 정보만 노출합니다.
@@ -1525,7 +1525,7 @@ export function StudentsPage() {
             </section>
           </div>
         </div>
-      </ScrollArea>
+      </div>
 
       <StudentFormDialog open={showNewDialog} onClose={() => setShowNewDialog(false)} />
       <CsvImportDialog open={showImportDialog} onOpenChange={setShowImportDialog} orgId={selectedOrgId} />

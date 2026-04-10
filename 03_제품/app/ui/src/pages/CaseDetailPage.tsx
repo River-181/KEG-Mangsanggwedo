@@ -69,8 +69,9 @@ const caseTypeLabel: Record<string, string> = {
 
 // ─── Activity Timeline ────────────────────────────────────────────────────────
 
-function ActivityTimeline({ caseData }: { caseData: any }) {
-  const events: { time: string; type: string; label: string; detail?: string; icon: React.ReactNode }[] = []
+function ActivityTimeline({ caseData, orgPrefix }: { caseData: any; orgPrefix?: string }) {
+  const navigate = useNavigate()
+  const events: { time: string; type: string; label: string; detail?: string; icon: React.ReactNode; link?: string }[] = []
 
   // Case created
   const createdAt = caseData.createdAt ?? caseData.created_at
@@ -88,12 +89,14 @@ function ActivityTimeline({ caseData }: { caseData: any }) {
   for (const run of (caseData.runs ?? [])) {
     const startedAt = run.startedAt ?? run.started_at ?? run.createdAt
     const agentName = run.agentName ?? run.agent?.name ?? '에이전트'
+    const agentId = run.agentId ?? run.agent_id ?? run.agent?.id
     if (startedAt) {
       events.push({
         time: startedAt,
         type: 'run_start',
         label: `${agentName} 실행 시작`,
         icon: <Play size={14} style={{ color: "var(--color-teal-500)" }} />,
+        link: agentId && orgPrefix ? `/${orgPrefix}/agents/${agentId}` : undefined,
       })
     }
     const completedAt = run.completedAt ?? run.completed_at
@@ -104,6 +107,7 @@ function ActivityTimeline({ caseData }: { caseData: any }) {
         label: `${agentName} 작업 완료`,
         detail: run.tokensUsed ? `${run.tokensUsed.toLocaleString()} 토큰 사용` : undefined,
         icon: <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />,
+        link: agentId && orgPrefix ? `/${orgPrefix}/agents/${agentId}` : undefined,
       })
     }
     if (completedAt && run.status === 'failed') {
@@ -112,18 +116,21 @@ function ActivityTimeline({ caseData }: { caseData: any }) {
         type: 'run_failed',
         label: `${agentName} 실행 실패`,
         icon: <XCircle size={14} style={{ color: "var(--color-danger)" }} />,
+        link: agentId && orgPrefix ? `/${orgPrefix}/agents/${agentId}` : undefined,
       })
     }
   }
 
   // Approvals
   for (const approval of (caseData.approvals ?? [])) {
+    const approvalId = approval.id
     if (approval.status === 'approved') {
       events.push({
         time: approval.updatedAt ?? approval.updated_at ?? '',
         type: 'approved',
         label: '초안 승인됨',
         icon: <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />,
+        link: approvalId && orgPrefix ? `/${orgPrefix}/approvals/${approvalId}` : undefined,
       })
     }
     if (approval.status === 'rejected') {
@@ -132,6 +139,7 @@ function ActivityTimeline({ caseData }: { caseData: any }) {
         type: 'rejected',
         label: '초안 반려됨',
         icon: <XCircle size={14} style={{ color: "var(--color-danger)" }} />,
+        link: approvalId && orgPrefix ? `/${orgPrefix}/approvals/${approvalId}` : undefined,
       })
     }
   }
@@ -155,8 +163,17 @@ function ActivityTimeline({ caseData }: { caseData: any }) {
                 <div className="w-px flex-1 mt-1" style={{ backgroundColor: "var(--border-default)" }} />
               )}
             </div>
-            <div className="pb-1">
-              <p className="text-sm" style={{ color: "var(--text-primary)" }}>{ev.label}</p>
+            <div
+              className={ev.link ? "pb-1 cursor-pointer group" : "pb-1"}
+              onClick={() => ev.link && navigate(ev.link)}
+            >
+              <p
+                className="text-sm"
+                style={{ color: ev.link ? "var(--color-teal-500)" : "var(--text-primary)" }}
+              >
+                {ev.label}
+                {ev.link && <span className="ml-1 opacity-0 group-hover:opacity-100 text-xs">→</span>}
+              </p>
               <div className="flex items-center gap-2">
                 <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>{timeAgo(ev.time)}</span>
                 {ev.detail && (
@@ -652,7 +669,7 @@ export function CaseDetailPage() {
         )}
 
         {/* Activity timeline */}
-        <ActivityTimeline caseData={caseData} />
+        <ActivityTimeline caseData={caseData} orgPrefix={orgPrefix} />
 
         {/* Agent draft */}
         {agentDraft && (
