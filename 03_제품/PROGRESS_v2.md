@@ -17,187 +17,107 @@ aliases: [dev-progress, 개발진행]
 
 | 항목 | 상태 |
 |------|------|
-| 전략 | **Plan A** (자체 빌드, 고충실도 Paperclip 모방) |
-| Phase | **Phase 1 진행 중** (Codex 리뷰 반영 수정 중) |
-| 마지막 릴리스 | v0.1.4-verified (기획 문서 완성) |
-| 현재 목표 | Phase 1 완성: 4존 레이아웃 + 실제 API 데이터 표시 + 탄자니아 영어학원 시드 |
+| 전략 | **Plan A** 유지 — 포크 불필요, E2E 파이프라인 동작 확인 |
+| Phase | **Phase 4 진입** (배포 + 데모 + 제출 단계) |
+| 마지막 릴리스 | **v0.4.0** (커밋 f32570b, 9a4c80c, df3ddc6) |
+| 현재 목표 | DB 마이그레이션 실행 + 온보딩 완성 + 배포 + 데모 스크립트 |
 | 데모 학원 | **탄자니아 영어학원** (대치동, 영어, 초/중/고/성인) |
-| Plan B 판단 | Phase 2 종료 시점 — E2E 흐름 안 돌면 Paperclip 포크 전환 |
-| 블로커 | embedded-postgres arm64 미지원 → brew postgres@17로 대체 |
-| 마감 | 2026-04-13 |
+| Plan B 판단 | **포크 불필요** — E2E 흐름 동작 확인됨 |
+| 블로커 | DB 마이그레이션 0002 미실행, 배포 미완 |
+| 마감 | **2026-04-13 (D-3)** |
 
 ---
 
-## Phase 1: 풀 스켈레톤
+## Phase 1: 풀 스켈레톤 ✅ 완료 (2026-04-10)
 
-### 프로젝트 초기화
-- [x] pnpm monorepo 구조 (`app/`, `server/`, `packages/db/`, `packages/shared/`)
-- [x] Vite + React 19 + TypeScript
-- [x] Tailwind CSS v4 (Toss 토큰)
-- [x] React Router v7 전체 라우트
-- [x] TanStack Query + API 클라이언트
-- [x] `.env` 템플릿 + `.env` (brew postgres@17)
+- [x] pnpm monorepo, Vite + React 19, Tailwind v4, React Router v7, TanStack Query
+- [x] 4존 레이아웃 (Z0 레일 + Z1 사이드바 + Z2 메인 + Z3 속성패널)
+- [x] 사이드바 네비게이션 (Work / 운영영역 / 에이전트팀 / 기관관리)
+- [x] CommandPalette (Cmd+K)
+- [x] 24개 페이지 (dashboard, inbox, cases/칸반, cases/:id, approvals, agents, agents/:id, orgchart, schedule, students, **instructors**, goals, routines, projects, documents, skills, costs, activity, settings, onboarding, design-guide 등)
+- [x] CSS Variables 전체 (Toss 토큰) + shadcn/ui 컴포넌트
+- [x] brew postgres@17 + Drizzle ORM + 22개 테이블 (student_schedules 포함 v2)
+- [x] 탄자니아 영어학원 시드 (학생 15명, 강사 5명, 수업 12개, 케이스 5건, 에이전트 7종)
+- [x] SSE 실시간 이벤트 엔드포인트
+- [x] BreadcrumbBar + 모바일 탭바
 
-### 4존 레이아웃 셸
-- [x] RootLayout (Z0 레일 + Z1 사이드바 + Z2 메인 + Z3 속성패널)
-- [x] 사이드바 네비게이션 (그룹별: Work / 운영영역 / 에이전트팀 / 기관관리)
-- [x] 모바일: 하단 탭바 5개 + Z0+Z1 오버레이
-- [ ] CommandPalette (Cmd+K)
-- [x] BreadcrumbBar
-
-### 15개 페이지 스텁
-- [x] dashboard, inbox, cases, cases/:id, cases/new
-- [x] approvals, approvals/:id
-- [x] agents, agents/:id
-- [x] schedule, activity, skills, settings, onboarding
-- [x] design-guide
-
-### 디자인 시스템
-- [x] CSS Variables (DESIGN.md 토큰 전체)
-- [ ] shadcn/ui 기본 컴포넌트 10종 (Tailwind 직접 사용 중)
-- [ ] HagentOS 복합 컴포넌트 6종
-- [x] Light/Dark 토글
-
-### Express 서버
-- [x] Express v5 + TypeScript ESM
-- [x] CORS + static serve + JSON parser
-- [x] API 라우트 8개 모듈 (health, organizations, cases, agents, approvals, activity, skills, runs)
-- [ ] SSE 실시간 이벤트 엔드포인트
-
-### 데이터베이스 (20개 테이블)
-- [x] brew postgres@17 (embedded-postgres arm64 미지원 → 대체)
-- [x] Drizzle ORM 설정 + drizzle-kit push
-- [x] Must 테이블 9개
-- [x] Should 테이블 5개
-- [x] 교육 도메인 테이블 6개
-- [x] FK 제약 추가 (Codex 리뷰 반영)
-
-### Mock 데이터 시드 — 탄자니아 영어학원
-- [x] Organization 1개 (탄자니아 영어학원, prefix: tanzania)
-- [x] Agent 4개 (Orchestrator, Complaint, Retention, Scheduler)
-- [x] Student 15명 + Parent 10명 + Instructor 4명 (영어 강사)
-- [x] Case 5건 (영어학원 민원) + AgentRun 3건 + Approval 2건
-- [x] Schedule 10건 + ActivityEvent 15건
-- [x] 멱등성 처리 (재실행 가능)
-
-### 에이전트 기반
-- [x] Claude API 유틸리티 (API key 가드 추가)
-- [x] 에이전트 타입 정의
-- [x] Orchestrator / Complaint / Retention 스텁
-- [ ] WakeupRequest dedup 로직
-
-### Codex 리뷰 반영 (D5)
-- [x] DB: FK 제약 추가 (cases→opsGroups, cases→students, opsGoals self-FK)
-- [x] DB: build 스크립트 수정, migrate.ts 생성
-- [x] DB: agentTypeEnum에 compliance/notification 추가
-- [x] Server: POST/PATCH 라우트 추가 (cases, agents, approvals)
-- [x] Server: approvals/:id/decide 엔드포인트
-- [x] Server: Claude API key 가드
-- [x] UI: api/runs.ts 생성, client.ts 204 처리
-- 🔵 UI: 페이지 실제 API 데이터 연결 (진행 중)
-
-### Phase 1 체크포인트
-- [x] `pnpm dev` → 서버 3100 + UI 5173 동시 시작
-- [x] DB 20테이블 + Mock 시드 (탄자니아 영어학원)
-- [x] API 6개+ 동작 (health, orgs, cases, agents, approvals, skills)
-- [ ] CommandPalette + 모바일 탭바 (브라우저 테스트 필요)
-- 🔵 페이지에서 실제 데이터 표시 (진행 중)
-
-**완료일**: —
+**완료일**: 2026-04-10
 
 ---
 
-## Phase 2: 에이전트 코어 — 전체 흐름
+## Phase 2: 에이전트 코어 ✅ 완료 (2026-04-10)
 
-### 에이전트 파이프라인
-- [ ] Orchestrator: 자연어 → 계획 → assigneeAgentId → 병렬 디스패치
-- [ ] Complaint Agent: 분류 + 초안 + k-skill 컨텍스트
-- [ ] AgentRun 상태 머신 (queued → running → completed/pending_approval)
-- [ ] SSE 실시간 스트리밍
-- [ ] 승인 레벨 분기 (Level 0-3)
+- [x] Orchestrator: 자연어 → 계획 → assigneeAgentId → 병렬 디스패치
+- [x] Complaint Agent: 분류 + 초안 + k-skill 컨텍스트 (mock fallback 포함)
+- [x] AgentRun 상태 머신 (queued → running → completed / pending_approval / failed)
+- [x] SSE 실시간 스트리밍 (agent.run.started, completed)
+- [x] 승인 레벨 분기 (Level 0-3)
+- [x] Cases CRUD + Comments + Approvals decide + Activity
+- [x] 케이스 목록 (상태별 그룹 + 칸반 DnD)
+- [x] 케이스 상세 (Zone2 본문 + Zone3 속성 + ActivityTimeline)
+- [x] 케이스 생성 폼 + 대시보드 지시 입력 바
+- [x] 카카오톡/SMS 웹훅 → 케이스 자동 생성 + 에이전트 자동 배정
+- [x] **E2E 파이프라인 동작 확인** — Plan B 포크 불필요
 
-### REST API
-- [ ] Cases CRUD (POST, GET, GET/:id, PATCH)
-- [ ] Comments (POST)
-- [ ] Approvals (GET, POST/:id/decide)
-- [ ] Agents (GET, GET/:id)
-- [ ] Activity (GET)
-- [ ] Orchestrator dispatch (POST)
-
-### 케이스 UI
-- [ ] 케이스 목록 — 상태별 그룹 + 건수
-- [ ] 케이스 상세 — Zone2(본문+라이브 실행) + Zone3(속성)
-- [ ] 케이스 생성 폼
-- [ ] 대시보드 지시 입력 바
-
-### Phase 2 체크포인트
-- [ ] **지시 → Orchestrator → Complaint → 초안 → 승인 → 완결** 전체 E2E
-- [ ] SSE 실시간 상태
-- [ ] Activity 기록
-
-**완료일**: —
-**⚠️ Plan B 판단 시점**: 여기서 E2E 안 돌면 포크 전환
+**완료일**: 2026-04-10
 
 ---
 
-## Phase 3: 완성도 — 데모 임팩트
+## Phase 3: 완성도 ✅ 완료 (2026-04-10)
 
-### Retention Agent + Heartbeat
-- [ ] 이탈 위험 점수 산출 (5개 신호, 가중치)
-- [ ] Level 0: 대시보드 자동 표시 / Level 1: 메시지 초안 → 승인
-- [ ] node-cron 07:00 heartbeat + 수동 트리거
-- [ ] 에이전트 병렬 실행
+- [x] Retention Agent (이탈 위험 점수 + 대시보드 카드)
+- [x] node-cron heartbeat + 수동 트리거 (`POST /api/heartbeat/trigger`)
+- [x] k-skill API + 12종 스킬 (complaint-classifier, korean-tone-guide, refund-calculator 등)
+- [x] 에이전트 스킬 장착/해제 모달 (k-skill 카탈로그)
+- [x] 승인 큐 — 카드 + 원클릭 + **일괄 승인/거부** + 편집 모드
+- [x] 대시보드 — 지표 4개 + 에이전트 패널 + 이탈 위험 + 활동 + 스케줄
+- [x] Activity 감사 로그 — 타임라인 + 필터
+- [x] 에이전트 상세 — 5탭 (Overview/Instructions/Skills/Configuration/Budget)
+- [x] 에이전트 Controls: Assign Task, Run Heartbeat, Pause/Resume
+- [x] k-skill 레지스트리 페이지 (카탈로그 + 상세)
+- [x] 온보딩 위자드 (학원명 → 에이전트팀 → 대시보드)
+- [x] InstructorsPage (강사 CRUD + 상세 Sheet)
+- [x] SchedulePage (강사 선택 + 수정/삭제 인라인 + 학생 목록 API)
+- [x] StudentsPage (반배정 classGroup 필드)
+- [x] GoalsPage (linkedCases → /cases/:id 링크)
+- [x] RoutinesPage (실행 이력 아코디언 상세)
+- [x] OrgChart (에이전트 노드 클릭 → 상세 이동)
+- [x] DB v2: students(classGroup/shuttle), instructors(email), student_schedules
+- [x] 모바일 탭바 반응형
 
-### k-skill
-- [ ] k-skill API (GET /skills, GET /skills/:slug)
-- [ ] 내장 스킬 3개 (complaint-classifier, korean-tone-guide, churn-risk-calculator)
-- [ ] 외부 MCP 포인터 3개
-
-### 핵심 UI 완성
-- [ ] 승인 큐 — 카드 그리드 + 원클릭 + 편집 모드
-- [ ] 대시보드 — 지표 4개 + 에이전트 패널 + 이탈 위험 + 활동 + 스케줄
-- [ ] Activity 감사 로그 — 타임라인 + 필터
-- [ ] 에이전트 상세 — 6탭
-- [ ] k-skill 레지스트리 — 카탈로그 + 상세
-- [ ] 온보딩 위자드 — 4 step
-- [ ] 모바일 반응형 (탭바 + 스와이프 + 바텀시트)
-
-### Phase 3 체크포인트
-- [ ] 2분 데모 시나리오 전체 통과
-- [ ] 모바일 승인 동작
-- [ ] Activity + k-skill UI
-
-**완료일**: —
+**완료일**: 2026-04-10
 
 ---
 
-## Phase 4: 배포 + 제출
+## Phase 4: 배포 + 제출 🔵 진행 중 (D6~D8)
 
 ### 배포
-- [ ] GitHub public repo + README
-- [ ] 라이브 데모 환경 (외부 PG URL)
-- [ ] 랜딩 페이지 배포
-- [ ] 데모 리허설 3회+
+- [ ] **DB 마이그레이션 0002 실행** (`pnpm db:migrate`) — 용
+- [ ] **OnboardingPage 완성**: 완료 후 대시보드 자동 리디렉션, 첫 접속 감지 — 용
+- [ ] **에이전트 E2E 재검증**: dispatch → run → SSE → approval 실시간 확인 — 승
+- [ ] Railway/Render 배포 + 환경변수 설정 — 용
+- [ ] GitHub public README (라이브 URL 포함) — 용
+- [ ] 데모 리허설 3회 이상 — 승+용
 
 ### 제출물
+- [ ] 데모 스크립트 v0.1 (2분 시연 경로) — 승+용
+- [ ] AI 리포트 (.docx) — 승
 - [ ] GitHub public URL
 - [ ] 라이브 URL
-- [ ] AI 리포트 (.docx)
 - [ ] 개인정보 동의서
 - [ ] 참가 각서
 
-**완료일**: —
+**목표 완료일**: 2026-04-13
 
 ---
 
-## Bonus
-- [ ] Scheduler Agent 실제 로직
-- [ ] 에이전트 조직도
-- [ ] 민원 유형별 통계
-- [ ] Google Calendar 읽기 연동
-- [ ] korean-law-mcp 라이브 시연
-- [ ] 다크 모드
-- [ ] 케이스 칸반 뷰
+## Bonus ✅/[ ]
+- [x] 케이스 칸반 뷰 (DnD 상태 변경)
+- [x] 에이전트 조직도 (OrgChart, 클릭 → 상세)
+- [ ] Scheduler Agent 실제 로직 → Phase 1 (post-대회)
+- [ ] Google Calendar 읽기 연동 → Phase 1
+- [ ] korean-law-mcp 라이브 시연 → Phase 1
+- [ ] 다크 모드 → Phase 1
 
 ---
 
@@ -242,4 +162,7 @@ aliases: [dev-progress, 개발진행]
 | 2026-04-10 | Claude (Opus) | Paperclip 코드 구조 분석 + PLAN v2 작성 | 완료 |
 | 2026-04-10 | Claude (Sonnet) ×3 | Phase 1 병렬 빌드: DB스키마 + 서버 + UI | 완료 |
 | 2026-04-10 | Codex | Phase 1 코드 리뷰 (CRITICAL 1, HIGH 10, MEDIUM 8) | 완료 |
-| 2026-04-10 | Claude (Sonnet) ×4 | 리뷰 반영: DB FK + 서버 라우트 + 시드 교체 + UI 연결 | 진행 중 |
+| 2026-04-10 | Claude (Sonnet) ×4 | 리뷰 반영: DB FK + 서버 라우트 + 시드 교체 + UI 연결 | 완료 |
+| 2026-04-10 | Claude (Sonnet) | v0.3.0~v0.3.1: UI 폴리시, 스케줄 캘린더, E2E 파이프라인, 카카오 웹훅, 스크롤 버그, 에이전트 Controls | 완료 |
+| 2026-04-10 | Claude (Sonnet) ×5 | v0.4.0 갭 감사 + P0/P1 병렬 구현 (InstructorsPage, SchedulePage 편집, 반배정, 스킬추가, 일괄승인) | 완료 |
+| 2026-04-10 | Claude (Sonnet) | DB v2 스키마, 서버 PATCH/student-schedules, roadmap/PROGRESS 업데이트 | 완료 |
