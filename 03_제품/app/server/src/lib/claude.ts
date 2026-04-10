@@ -17,14 +17,32 @@ export interface ClaudeResponse {
 
 // ─── Mock responses ───────────────────────────────────────────────────────────
 
-function mockOrchestratorResponse(_userMessage: string): ClaudeResponse {
+function mockOrchestratorResponse(userMessage: string): ClaudeResponse {
+  // Parse agent list from user message to get real agent IDs
+  const agentIdMatches = [...userMessage.matchAll(/id:\s*([0-9a-f-]{36}),\s*유형:\s*(\w+)/g)]
+  const agentMap = new Map<string, string>() // agentType → agentId
+  for (const m of agentIdMatches) {
+    agentMap.set(m[2], m[1])
+  }
+
+  const assignments: Array<{ agentId: string; reason: string }> = []
+
+  // Assign complaint agent if exists
+  const complaintId = agentMap.get("complaint")
+  if (complaintId) {
+    assignments.push({ agentId: complaintId, reason: "접수된 민원 케이스 처리" })
+  }
+
+  // Assign retention agent if instruction mentions 이탈/위험/결석
+  const retentionId = agentMap.get("retention")
+  if (retentionId && (userMessage.includes("이탈") || userMessage.includes("위험") || userMessage.includes("결석") || userMessage.includes("전체"))) {
+    assignments.push({ agentId: retentionId, reason: "이탈 위험 학생 분석" })
+  }
+
   return {
     content: JSON.stringify({
-      plan: "민원 3건 분류 및 응답 초안 작성, 이탈 위험 학생 분석을 병렬로 진행합니다.",
-      assignments: [
-        { agentType: "complaint", reason: "접수된 민원 케이스 처리" },
-        { agentType: "retention", reason: "이탈 위험 학생 분석" },
-      ],
+      plan: "민원 분류 및 응답 초안 작성, 이탈 위험 학생 분석을 병렬로 진행합니다.",
+      assignments,
     }),
     inputTokens: 312,
     outputTokens: 88,
