@@ -22,6 +22,11 @@ async function seed() {
     await db.delete(schema.approvals).where(eq(schema.approvals.organizationId, oid))
     await db.delete(schema.wakeupRequests).where(eq(schema.wakeupRequests.organizationId, oid))
     await db.delete(schema.agentRuns).where(eq(schema.agentRuns.organizationId, oid))
+    // Delete case_comments before cases (FK constraint)
+    const orgCases = await db.select({ id: schema.cases.id }).from(schema.cases).where(eq(schema.cases.organizationId, oid))
+    for (const c of orgCases) {
+      await db.delete(schema.caseComments).where(eq(schema.caseComments.caseId, c.id))
+    }
     await db.delete(schema.cases).where(eq(schema.cases.organizationId, oid))
     await db.delete(schema.attendance).where(eq(schema.attendance.organizationId, oid))
     await db.delete(schema.schedules).where(eq(schema.schedules.organizationId, oid))
