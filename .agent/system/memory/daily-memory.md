@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-11
+date: 2026-04-12
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - daily-memory
@@ -13,7 +13,7 @@ aliases:
 
 이 파일은 단기 기억과 핸드오프를 위한 요약본이다.
 
-## 현재 상태 (Day 6 — 2026-04-11)
+## 현재 상태 (Day 7 — 2026-04-12)
 
 ### 앱 개발 현황
 - **레포 분리 완료**: 독립 설치형 레포 `/Users/river/workspace/active/hagent-os/`
@@ -37,30 +37,34 @@ aliases:
 - **Fallback 데이터 완전 제거**: 탄자니아 참조 11파일 모두 실제 API로 교체
 - **DB SQL 직접 실행**: reports_to, student_schedules, classGroup, shuttle, email 컬럼
 
-### 현재 남은 사항 (서버 재시작 후 확인 필요)
-- [ ] `pnpm dev` 실행 후 http://localhost:5174/ 접속 → 온보딩 진입 확인
-- [ ] 학원 생성 → CEO 에이전트 → 첫 dispatch → 케이스 생성 확인
-- [ ] 승인/거절 실동작 확인
-- [ ] OrgChart reportsTo 트리 렌더링 확인
+### 01:30 미팅 이슈 (2026-04-12)
+- **에이전트 실제 작동 체감 안 됨**: dispatch → 케이스 생성 → 에이전트 실행 → 댓글 흐름이 눈에 보이지 않음
+- **승인 화면 스크롤 버그**: ApprovalsPage / ApprovalDetailPage overflow 레이아웃 버그 의심
+- 관련 회의록: `04_증빙/04_meetings/2026-04-12_4차-배포전-점검-미팅.md`
 
-## 다음 세션 체크리스트 (D6 나머지 / D7)
+### 남은 사항 (D7 — 오늘)
+- [ ] 승인 화면 스크롤 버그 수정 (ApprovalsPage/ApprovalDetailPage overflow)
+- [ ] `pnpm dev` 재시작 → E2E 브라우저 전체 통과 확인
+  - 온보딩 → 학원 생성 → CEO 에이전트 → dispatch → 케이스 생성 확인
+  - 승인/거절 실동작 확인
+  - OrgChart reportsTo 트리 렌더링 확인
+- [ ] Railway 배포 → 라이브 URL 확보
+- [ ] `River-181/hagent-os` README 작성
+
+## 다음 세션 체크리스트 (D7)
 
 ### 필독 (2분)
 1. `.agent/system/ops/PLAN.md` — P0 항목 확인
-2. `.agent/system/ops/PROGRESS.md` — v1.0 완료 섹션 확인
+2. `.agent/system/ops/PROGRESS.md` — 완료 섹션 확인
 
-### 남은 목표 (D6)
-1. E2E 검증 (서버 재시작 → 온보딩 → dispatch → approvals)
+### D7 목표 (오늘)
+1. **승인 화면 스크롤 수정** + E2E 전체 브라우저 통과
 2. Railway 배포 → 라이브 URL 확보
-3. `River-181/hagent-os` README 작성
-
-### D7 목표
-- AI 리포트 초안 (`04_증빙` raw material 기반)
-- 데모 스크립트 v0.1 (2분 시연 경로)
-- 데모 리허설
+3. AI 리포트 초안 (`04_증빙` raw material 기반)
+4. 데모 스크립트 v0.1 (2분 시연 경로)
 
 ### 마감
-- **2026-04-13 24:00** (D-2)
+- **2026-04-13 24:00** (D-1)
 
 ### 대회 필수 제출물
 - [ ] GitHub public URL (`River-181/hagent-os`) ← 이미 있음

@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/active
   - workflow/evidence-source
-date: 2026-04-11
+date: 2026-04-12
 up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
@@ -496,3 +496,21 @@ aliases:
 - Report section hint: 워크플로우 | AI 활용 전략 | 제품
 - Token note: ~320k tokens (Opus+Sonnet 혼합)
 - Follow-up: E2E 검증 + Railway 배포 + README + AI 리포트 초안
+
+## 2026-04-12
+
+### S-OPS-023
+
+- DateTime: 2026-04-12 / Claude Code CLI
+- Phase: Workspace Sync + Meeting Log
+- Tool/Client: Claude
+- Model: claude-sonnet-4-6
+- Goal: Day 7 작업 환경 이동 확인 + 회의록 추가 + 운영 문서 동기화
+- What changed: daily-memory/PLAN/PROGRESS를 Day 7 기준으로 업데이트; 04_meetings에 4차 미팅 회의록 생성; 2026-04-12.md daily note 생성; _04_증빙_MOC 링크 추가
+- Why it mattered: 작업 환경이 hagent-os 독립 레포로 완전 이동됨을 운영 문서에 반영; 배포 전 점검 미팅 이슈(에이전트 실동작 + 승인 스크롤)가 공식 기록됨
+- Artifacts: [[2026-04-12]] | [[2026-04-12_4차-배포전-점검-미팅]] | [[daily-memory]] | [[PLAN]] | [[PROGRESS]]
+- AI usage strategy: Sonnet 4.6으로 운영 문서 동기화 전담; 실행 작업은 hagent-os 레포에서 별도 진행
+- Evidence value: 운영 상태 정합성 유지 및 회의록 증빙 확보
+- Report section hint: 워크플로우 | 운영 동기화
+- Token note: ~15k tokens Sonnet
+- Follow-up: 승인 화면 스크롤 버그 수정 착수
