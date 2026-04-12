@@ -68,6 +68,8 @@ aliases:
 
 - [[09_ux/information-architecture|IA]]
 - [[09_ux/ux-concepts|UX 컨셉]]
+- [[09_ux/sidebar-restructure|사이드바 개선안]] — 네이밍 통일 + 16→12개 항목 + 섹션 4개 구조
+- [[09_ux/domain-ux-paperclip-gap|도메인 UX 개선 계획]] — Paperclip 비교 + Phase별 개선 로드맵
 - [[DESIGN|디자인 시스템]]
 - [[brand/identity|브랜드 아이덴티티]]
 - [[brand/landing-page|랜딩 페이지]]
