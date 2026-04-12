@@ -73,3 +73,11 @@ aliases:
 - domain translation 축: [[한국_교육_도메인_적합성_갭]]
 - solution gap 축: [[기존_교육운영_솔루션의_공백]]
 - data asset 축: [[학원_운영_데이터_자산_지도]]
+
+## 이번 추가 승격 축
+
+- bottom-up research 축: [[바텀업_학원_리서치_원칙]]
+- problem-definition guardrail 축: [[문제정의_출발점과_금지선]]
+- board-first UI 축: [[운영보드_우선_UI_원칙]]
+- case context 축: [[운영_케이스_컨텍스트_모델]]
+- role/skill architecture 축: [[역할기반_agent_skill_구조]]

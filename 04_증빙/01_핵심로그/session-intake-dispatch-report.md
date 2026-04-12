@@ -8,7 +8,7 @@ up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-12 02:28 KST
+> 생성 시각: 2026-04-12 15:58 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -21,7 +21,7 @@ up: "[[_04_증빙_MOC]]"
 | 2026-04-09 | 4 | Codex, Human Meeting | 3 | 33,000 |
 | 2026-04-10 | 2 | Claude, Codex | 5 | 91,000 |
 | 2026-04-11 | 1 | Claude | 1 | 320,000 |
-| 2026-04-12 | 1 | Claude | 1 | 15,000 |
+| 2026-04-12 | 2 | Claude, Codex | 2 | 25,000 |
 
 ## Prompt Promotion Candidates
 
@@ -89,6 +89,7 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-10` / `S-OPS-020`: Day 5 운영 문서 동기화와 구현 전 블로커 기록
 - `2026-04-10` / `S-PROD-021`: v0.4.0 갭 메우기 세션
 - `2026-04-11` / `S-DEV-022`: Day6 독립 레포 E2E 재구축 세션
+- `2026-04-12` / `S-EVID-024`: 오늘 증빙 로그에 Codex 정리 세션 추가
 - `2026-04-12` / `S-OPS-023`: Day 7 운영 동기화 세션
 
 ## Memory Sync Hints
@@ -104,6 +105,7 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-10` / `S-OPS-020`: 다음 세션은 이 4개 충돌을 우선 해소하고 앱 스켈레톤으로 간다
 - `2026-04-10` / `S-PROD-021`: PLAN/PROGRESS 업데이트 완료
 - `2026-04-11` / `S-DEV-022`: 독립 레포에서 시작할 때 daily-memory의 포트/DB 정보 확인 필수
+- `2026-04-12` / `S-EVID-024`: Day 7에도 intake-first 증빙 규칙을 유지
 - `2026-04-12` / `S-OPS-023`: hagent-os 독립 레포가 배포 대상 정본임을 기억
 
 ## Open Notes

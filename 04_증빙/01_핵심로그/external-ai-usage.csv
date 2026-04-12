@@ -22,3 +22,4 @@ date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing
 2026-04-09,Codex,Desktop App,GPT-5.4,Plus,S-PROD-018,1,7000,,flat-subscription,read-only learning session for current product docs
 2026-04-09,Codex,Desktop App,GPT-5.4,Plus,S-STRAT-016,1,18000,,flat-subscription,2026-04-09 reference analysis + workspace sync 세션
 2026-04-10,Codex,Desktop App,GPT-5.4,Plus,S-OPS-020,1,6000,,flat-subscription,2026-04-10 workspace sync + pre-implementation review 세션
+2026-04-12,Codex,Desktop App,GPT-5.4,App,S-EVID-024,1,10000,,flat-subscription,2026-04-12 today AI usage logging session

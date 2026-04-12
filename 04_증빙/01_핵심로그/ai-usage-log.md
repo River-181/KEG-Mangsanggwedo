@@ -3,7 +3,7 @@ tags:
   - area/evidence
   - type/log
   - status/active
-date: 2026-04-10
+date: 2026-04-12
 up: "[[_04_증빙_MOC]]"
 ---
 # AI 사용 기록
@@ -57,3 +57,17 @@ up: "[[_04_증빙_MOC]]"
 | ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
 |---|---|---|---|---|---|---|---:|---:|---|---|
 | U-027 | S-OPS-020 | Workspace Sync | Day 5 기준 운영 문서와 증빙 정본을 다시 동기화하고 구현 전 문서 충돌을 기록한다 | Desktop App | Codex | GPT-5.4 | 1 | 6000 | [[PLAN]]  /  [[PROGRESS]]  /  [[project-dashboard]]  /  [[daily-memory]]  /  [[2026-04-10]] | 2026-04-10 workspace sync + pre-implementation review 세션 |
+| U-028 | S-PROD-021 | App Gap Audit + P0/P1 Fix | 11개 페이지 전수 갭 감사 후 P0(강사관리·일정편집·반배정) P1(스킬추가·일괄승인·목표링크·루틴이력) 즉시 구현 | Claude Code CLI | Claude | claude-sonnet-4-6 | 4 | ~85000 | [[PROGRESS]]  /  [[PLAN]]  /  git commit f32570b | 2026-04-10 운영 갭 감사 + P0/P1 병렬 구현 세션 |
+
+## 2026-04-11
+
+| ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
+|---|---|---|---|---|---|---|---:|---:|---|---|
+| U-029 | S-DEV-022 | Product Build v1.0 | HagentOS 독립 레포 구축 + Paperclip급 E2E 완전 재구축 (서버 엔진 + UI + Mock AI + DB 마이그레이션) | Claude Code CLI | Claude | claude-opus-4-6 → claude-sonnet-4-6 | 1 | ~320000 | [[PROGRESS]]  /  git commits 09a02e0~3254c76 (River-181/hagent-os) | 2026-04-11 HagentOS v1.0 독립 레포 + E2E 완전 재구축 메가 세션 |
+
+## 2026-04-12
+
+| ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
+|---|---|---|---|---|---|---|---:|---:|---|---|
+| U-030 | S-EVID-024 | Evidence Operations | 오늘 AI 사용 기록을 intake와 정본 로그에 반영한다 | Desktop App | Codex | GPT-5.4 | 1 | 10000 | `ai-session-intake.csv`  /  `master-evidence-ledger.md`  /  `external-ai-usage.csv`  /  `ai-usage-log.md`  /  `session-log.md`  /  `2026-04-12.md` | 2026-04-12 today AI usage logging session |
+| U-031 | S-OPS-023 | Workspace Sync + Meeting Log | Day 7 작업 환경 이동 확인 + 회의록 추가 + 운영 문서 동기화 | Claude Code CLI | Claude | claude-sonnet-4-6 | 1 | ~15000 | [[2026-04-12]]  /  [[2026-04-12_4차-배포전-점검-미팅]]  /  [[daily-memory]]  /  [[PLAN]]  /  [[PROGRESS]] | 2026-04-12 Day 7 작업 환경 이동 + 회의록 + 문서 동기화 세션 |

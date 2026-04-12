@@ -499,6 +499,22 @@ aliases:
 
 ## 2026-04-12
 
+### S-EVID-024
+
+- DateTime: 2026-04-12 / Desktop App
+- Phase: Evidence Operations
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 오늘 AI 사용 기록을 intake와 정본 로그에 반영한다
+- What changed: 2026-04-12 기준 Codex 증빙 세션이 intake에 추가되고 ledger와 외부 AI 집계와 archive 로그가 함께 재생성되었다
+- Why it mattered: 오늘 사용량이 빠지지 않고 일자별 증빙과 AI 리포트 raw material이 계속 최신 상태를 유지하게 되었다
+- Artifacts: `ai-session-intake.csv` | `master-evidence-ledger.md` | `external-ai-usage.csv` | `ai-usage-log.md` | `session-log.md` | `2026-04-12.md`
+- AI usage strategy: Codex를 evidence orchestrator로 사용해 원장 append 후 파생 로그를 일괄 재생성했다
+- Evidence value: Day 7 AI 활용 증빙 최신화
+- Report section hint: AI 활용 전략 | 워크플로우 | 증빙
+- Token note: exact unavailable estimate
+- Follow-up: 추가 세션이나 외부 프롬프트가 생기면 같은 intake-first 패턴으로 계속 기록
+
 ### S-OPS-023
 
 - DateTime: 2026-04-12 / Claude Code CLI

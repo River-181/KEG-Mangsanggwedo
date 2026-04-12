@@ -179,3 +179,20 @@ aliases:
 	- [[overview]]
 - next:
 	- `research-results_위키_승격_후보`와 `프로젝트_지식화_후보_스캔` backlog 정리
+
+## [2026-04-12] ingest | 문제정의 원칙, board-first UI, context model, agent/skill 구조 승격
+
+- action: ingest
+- reason: 남아 있던 상위 설계 공백인 `리서치 원칙`, `문제정의 guardrail`, `UI entrypoint`, `case context`, `agent/skill architecture`를 위키의 reusable concept로 고정하기 위함
+- touched:
+	- [[바텀업_학원_리서치_원칙]]
+	- [[문제정의_출발점과_금지선]]
+	- [[운영보드_우선_UI_원칙]]
+	- [[운영_케이스_컨텍스트_모델]]
+	- [[역할기반_agent_skill_구조]]
+	- [[프로젝트_지식화_후보_스캔]]
+	- [[index]]
+	- [[overview]]
+- next:
+	- `paperclip_교육_아이디어_통합정리`를 초기 통합 가설 note로 승격
+	- `R-005`, `R-006`를 evidence/thesis 축으로 승격

@@ -3,7 +3,7 @@ tags:
   - area/evidence
   - type/log
   - status/active
-date: 2026-04-10
+date: 2026-04-12
 up: "[[_04_증빙_MOC]]"
 ---
 # 세션 기록
@@ -57,3 +57,17 @@ up: "[[_04_증빙_MOC]]"
 | Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | S-OPS-020 | Workspace Sync | Day 5 기준 운영 문서와 증빙 정본을 다시 동기화하고 구현 전 문서 충돌을 기록한다 | Desktop App | Codex | GPT-5.4 | User + Codex | PLAN  /  PROGRESS  /  project-dashboard  /  daily-memory  /  `04_증빙/03_daily/2026-04-10.md`  /  `03_제품/hagent-os/DESIGN.md`  /  `03_제품/hagent-os/brand/`  /  `03_제품/hagent-os/09_ux/` | [[PLAN]]  /  [[PROGRESS]]  /  [[project-dashboard]]  /  [[daily-memory]]  /  [[2026-04-10]] | 모바일 탭바/앱 셸/폰트/브랜드 claim를 구현 전 잠근다 | dispatch와 usage stats 재생성 | logged |
+| S-PROD-021 | App Gap Audit + P0/P1 Fix | 11개 페이지 전수 갭 감사 후 P0(강사관리·일정편집·반배정) P1(스킬추가·일괄승인·목표링크·루틴이력) 즉시 구현 | Claude Code CLI | Claude | claude-sonnet-4-6 | User + Claude | 03_제품/app/ui/src/pages/*  /  server/src/routes/*  /  packages/db/src/schema/education.ts | [[PROGRESS]]  /  [[PLAN]]  /  git commit f32570b | 운영 갭 = 연결 단절이 핵심임을 재확인 | 다음: DB 마이그레이션 실행 + 온보딩 + 에이전트 E2E + 배포 | logged |
+
+## 2026-04-11
+
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-DEV-022 | Product Build v1.0 | HagentOS 독립 레포 구축 + Paperclip급 E2E 완전 재구축 (서버 엔진 + UI + Mock AI + DB 마이그레이션) | Claude Code CLI | Claude | claude-opus-4-6 → claude-sonnet-4-6 | User + Claude | hagent-os/server/src/**  /  hagent-os/ui/src/**  /  hagent-os/packages/** | [[PROGRESS]]  /  git commits 09a02e0~3254c76 (River-181/hagent-os) | 껍데기 → 실동작 전환에 병렬 에이전트보다 집중 순차 구현이 효과적이었음 | E2E 검증 + Railway 배포 + README + AI 리포트 초안 | logged |
+
+## 2026-04-12
+
+| Session_ID | Phase | 목표 | 환경 | 클라이언트 | 모델 | 참여자 | 소스 | 산출물 | 의사결정 | 다음행동 | 상태 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| S-EVID-024 | Evidence Operations | 오늘 AI 사용 기록을 intake와 정본 로그에 반영한다 | Desktop App | Codex | GPT-5.4 | User + Codex | `ai-session-intake.csv`  /  `master-evidence-ledger.md`  /  `external-ai-usage.csv`  /  `daily-memory.md`  /  `2026-04-12.md` | `ai-session-intake.csv`  /  `master-evidence-ledger.md`  /  `external-ai-usage.csv`  /  `ai-usage-log.md`  /  `session-log.md`  /  `2026-04-12.md` | - | 추가 세션이나 외부 프롬프트가 생기면 같은 intake-first 패턴으로 계속 기록 | logged |
+| S-OPS-023 | Workspace Sync + Meeting Log | Day 7 작업 환경 이동 확인 + 회의록 추가 + 운영 문서 동기화 | Claude Code CLI | Claude | claude-sonnet-4-6 | User + Claude | daily-memory  /  PLAN  /  PROGRESS  /  _04_증빙_MOC  /  04_meetings/ | [[2026-04-12]]  /  [[2026-04-12_4차-배포전-점검-미팅]]  /  [[daily-memory]]  /  [[PLAN]]  /  [[PROGRESS]] | 미팅 이슈를 회의록으로 즉시 증빙화하는 패턴 확인 | 승인 화면 스크롤 버그 수정 착수 | logged |
