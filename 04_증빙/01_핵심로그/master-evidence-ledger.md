@@ -499,6 +499,22 @@ aliases:
 
 ## 2026-04-12
 
+### S-DEV-025
+
+- DateTime: 2026-04-12 / Claude Code CLI
+- Phase: Product Build UX
+- Tool/Client: Claude
+- Model: claude-sonnet-4-6
+- Goal: 승인 스크롤 수정 + Settings Danger Zone + 지식베이스 실질화 + 온보딩 전체화면 + 탄자니아 루틴/목표 3종 + Goals 재설계(클린 목록+Detail) + Goals↔Projects 양방향 연결
+- What changed: ApprovalsPage overflow fix + Settings export+delete + 문서 실내용화 + 온보딩 full-screen route 분리 + 데모 루틴3/목표3 생성 + GoalsPage 클린리스트 + GoalDetailPage 신규 + 양방향 FK 연결
+- Why it mattered: D-1 최종 UX 정비 세션. 승인 스크롤·온보딩·Goals가 모두 Paperclip 수준으로 정렬됨
+- Artifacts: [[2026-04-12_4차-배포전-점검-미팅]] | commit ab34705 (Goals rewrite) | commit f936cb4 (bidirectional link)
+- AI usage strategy: 긴 컨텍스트 1M 모델로 연속 구현 세션. 스크롤 버그 근본 원인(min-h-0) + route 분리 패턴 + FK 양방향 노출 3가지 다른 패턴 동시 해결
+- Evidence value: UX 정비 + E2E 준비 기록
+- Report section hint: 앱 개발 | UX 개선 | 기능 완성
+- Token note: 1M context sonnet — 긴 세션 가능
+- Follow-up: Railway 배포 + E2E 검증으로 연결
+
 ### S-EVID-024
 
 - DateTime: 2026-04-12 / Desktop App

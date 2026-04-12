@@ -20,7 +20,7 @@ aliases:
 - **GitHub**: `River-181/hagent-os` (public)
 - **포트**: Server 3200, UI 5174
 - **DB**: `hagent_os` (brew postgres@17 port 5432)
-- **마지막 커밋**: `3254c76` — mock orchestrator keyword routing + case title fix
+- **마지막 커밋**: `f936cb4` — Goals ↔ Projects 양방향 연결 (GoalDetailPage + ProjectDetail goals section)
 - **실행 명령**: `cd /Users/river/workspace/active/hagent-os && pnpm dev`
 
 ### Day 6 완료 작업 (S-DEV-022)
@@ -42,14 +42,20 @@ aliases:
 - **승인 화면 스크롤 버그**: ApprovalsPage / ApprovalDetailPage overflow 레이아웃 버그 의심
 - 관련 회의록: `04_증빙/04_meetings/2026-04-12_4차-배포전-점검-미팅.md`
 
-### 남은 사항 (D7 — 오늘)
-- [ ] 승인 화면 스크롤 버그 수정 (ApprovalsPage/ApprovalDetailPage overflow)
-- [ ] `pnpm dev` 재시작 → E2E 브라우저 전체 통과 확인
-  - 온보딩 → 학원 생성 → CEO 에이전트 → dispatch → 케이스 생성 확인
-  - 승인/거절 실동작 확인
-  - OrgChart reportsTo 트리 렌더링 확인
-- [ ] Railway 배포 → 라이브 URL 확보
+### Day 7 이번 세션 완료
+- [x] 승인 화면 스크롤 버그 수정 (ApprovalsPage min-h-0 + ApprovalDetailPage wrapper)
+- [x] Settings Danger Zone (데이터 export JSON + 기관 삭제 CASCADE)
+- [x] 지식베이스 7종 실질화 + "에이전트에게 보완 요청" 버튼 제거
+- [x] 온보딩 전체화면 독립 route 분리
+- [x] 탄자니아 루틴 3종 + 운영 목표 3종 생성
+- [x] Goals 페이지 재설계 (Paperclip 스타일 클린 목록)
+- [x] GoalDetailPage 신규
+- [x] Goals ↔ Projects 양방향 연결
+
+### 남은 사항 (D-1)
+- [ ] Railway 배포 → 라이브 URL 확보 ← **P0**
 - [ ] `River-181/hagent-os` README 작성
+- [ ] E2E 최종 브라우저 검증 (온보딩 → dispatch → approvals)
 
 ## 다음 세션 체크리스트 (D7)
 

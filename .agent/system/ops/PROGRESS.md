@@ -18,6 +18,26 @@ aliases:
 
 ## 현재 단계: Day 7 — 배포 착수, E2E 검증, AI 리포트 초안 (D-1)
 
+### Day 7 제출 안정화 업데이트 ✅
+- [x] `hagent-os` 좌측 내비를 `오늘 운영 / 학원 운영 / AI 운영 / 운영 관리` 기준으로 재정렬
+- [x] `학생 / 직원·강사 / 일정 / 문서 / AI 팀`에 우측 `운영 요약` 패널 연결
+- [x] `에이전트`, `플러그인`, `어댑터`, `k-skill 레지스트리` 같은 개발자 표면 용어를 `AI 팀`, `외부 연동`, `AI 연결`, `업무 스킬`로 치환
+- [x] `문서/지식베이스`에 운영형 액션(`FAQ`, `상담 답변 초안`, `관련 케이스 연결`, `AI 팀 보완 요청`) 추가
+- [x] `ui` 기준 `typecheck`, `build`, 주요 라우트 브라우저 순회 확인 완료 (`dashboard`, `students`, `instructors`, `schedule`, `documents`, `agents`, `settings`)
+- [x] 승인 화면 스크롤 버그 수정 (`ApprovalsPage` min-h-0 + native overflow, `ApprovalDetailPage` outer wrapper)
+- [x] Settings Danger Zone — 데이터 내보내기(JSON export) + 기관 삭제(CASCADE) 다이얼로그
+- [x] 지식베이스 실질화 — 탄자니아 학원 정책 7종 실제 내용; "에이전트에게 보완 요청" 버튼 제거
+- [x] 온보딩 전체화면 분리 — Layout 밖 독립 route + `100dvh` 래퍼
+- [x] 탄자니아 데모 루틴 3종 생성 (07:00 조회·이탈점수 배치·월요일 브리핑)
+- [x] 탄자니아 데모 운영 목표 3종 생성 (이탈률 5%·월평균 민원 3건·강사만족도 4.0)
+- [x] Goals 페이지 재설계 — Paperclip 스타일 클린 목록
+- [x] GoalDetailPage 신규 — 인라인 제목 수정 + 상태 Select + 메모 자동저장 + 삭제
+- [x] Goals ↔ Projects 양방향 연결 — PATCH opsGroupId + GET /projects/:id에 goals 포함
+- [x] 사이드바 리네이밍 문서 (`sidebar-restructure.md`) + Paperclip UX 비교 문서 (`domain-ux-paperclip-gap.md`)
+- [ ] Railway 배포 → 라이브 URL 확보 ← **D-1 P0**
+- [ ] `River-181/hagent-os` README 작성
+- [ ] E2E 최종 브라우저 검증 (온보딩 → dispatch → approvals)
+
 ## 완료된 작업
 
 ### 워크스페이스 구조화 ✅
