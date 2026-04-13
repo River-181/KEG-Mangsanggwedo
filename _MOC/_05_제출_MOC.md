@@ -3,7 +3,7 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-11
+date: 2026-04-13
 up: "[[_MOC_HOME]]"
 aliases:
   - 제출
@@ -16,19 +16,35 @@ status: in-progress
 ## 제출 체크리스트
 
 - [x] GitHub public URL — `https://github.com/River-181/hagent-os`
-- [x] 라이브 URL — Railway 배포 후 확보
-- [ ] AI 리포트 (.docx) — 공식 양식에 맞춰 작성
+- [x] 라이브 URL — `https://hagent-os.up.railway.app`
+- [x] AI 리포트 정본 (md) — [[05_제출/ai-report-final|ai-report-final]]
+- [ ] AI 리포트 (.docx / PDF) — 공식 양식 export 필요
 - [ ] 개인정보 동의서
 - [ ] 참가 각서
 
+## 오늘 바로 제출할 묶음
+
+- [[05_제출/ai-report-final|AI 리포트 최종본]]
+- [[05_제출/submission-checklist|제출 체크리스트]]
+- [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|종합 아키텍처]]
+- [[.agent/system/ops/RALPH-LOOP-2026-04-13|RALPH Loop]]
+
 ## 제출물
 
-- [[ai-report-draft]] — AI 리포트 초안 (→ 공식 docx 양식으로 변환)
+- [[05_제출/ai-report-final|AI 리포트 최종본]] — 제출용 정본 md
+- [[ai-report-draft]] — AI 리포트 초안 (이전 버전)
 - [[master-evidence-ledger]] — AI 활용 증빙 정본
 - [[03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression]] — 제품 회귀 테스트 정본
 - [[team_profiles]] — 팀 소개 및 역할
 - [[submission-checklist]] — 제출 체크리스트
 - [[retrospective]] — 회고 (대회 후)
+
+## 시각 자산
+
+- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] — 민원 처리 플로우
+- [[assets/excaildraw/02_AI-협업-구조.excalidraw|Excalidraw 02]] — AI 협업 구조
+- [[assets/excaildraw/03_시스템-4계층.excalidraw|Excalidraw 03]] — 시스템 4계층
+- `04~06` Excalidraw: 예정
 
 ## AI 리포트 재료
 

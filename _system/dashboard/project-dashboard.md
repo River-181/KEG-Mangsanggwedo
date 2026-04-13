@@ -19,8 +19,17 @@ aliases:
 - **현재 단계**: 2026-04-13 — 실사용 제출 최종 마감 단계
 - **제품 상태**: `HagentOS`는 `Kakao/Telegram inbound -> case -> approval -> document` 루프, `issue/properties UI`, `schedule polish`, `students/settings 안정화`, `telegram approval/outbound`, `운영 요약 패널 확장`, `judge/public deploy split 설계`까지 반영된 상태
 - **현재 제품 위치**: `/Users/river/workspace/active/hagent-os`
-- **다음 액션**: `live env 확인`, `judge_demo Docker 패키지`, `리허설 4개`, `AI 리포트/증빙 정합성`, `deploy URL`
-- **마감 인식**: 새 기능 추가보다 `실연동 + 시연 안정화 + 증빙 수치 정리`가 더 중요
+- **다음 액션**: `ai-report-final -> docx/PDF`, `제출 메일 패키징`, `최종 commit/push`, `심사 시연 링크 최종 확인`
+- **마감 인식**: 새 기능 추가보다 `제출 정본 고정 + 항법 단순화 + 증빙 패키징`이 더 중요
+
+## 제출 내비게이션
+
+- [[00 HOME|HOME]]
+- [[_05_제출_MOC|05 제출 MOC]]
+- [[05_제출/ai-report-final|AI report final]]
+- [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]]
+- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw/03_시스템-4계층.excalidraw|03]]
+- [[.agent/system/ops/RALPH-LOOP-2026-04-13|RALPH Loop]]
 
 ## 핵심 지표
 

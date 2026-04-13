@@ -1,90 +1,60 @@
-filters:
-  and:
-    - file.hasTag("type/task")
-    - file.ext == "md"
+filters: 'file.path == "00 HOME.md" || file.inFolder("_MOC") || file.inFolder("_system/dashboard") || file.inFolder("05_제출") || file.inFolder("assets/excaildraw") || file.path == ".agent/system/ops/RALPH-LOOP-2026-04-13.md" || file.path == "03_제품/hagent-os/diagrams/99_comprehensive-architecture.md"'
 formulas:
-  days_left: if(due, (date(due) - today()).days, "")
-  is_overdue: if(due, date(due) < today() && status != "done", false)
-  priority_icon: if(priority == "P0", "🔴", if(priority == "P1", "🟡", "🟢"))
-  status_icon: if(status == "done", "✅", if(status == "in-progress", "🔄", if(status == "blocked", "🚫", "⏳")))
-  owner_display: if(owner, owner, "미배정")
-  day_label: if(day, "D" + day, "")
+  hub: 'if(file.path == "00 HOME.md", "HOME", if(file.inFolder("_MOC"), "MOC", if(file.inFolder("_system/dashboard"), "Dashboard", if(file.inFolder("05_제출"), "Submission", if(file.inFolder("assets/excaildraw"), "Excalidraw", if(file.path == ".agent/system/ops/RALPH-LOOP-2026-04-13.md", "Ops", "Product"))))))'
+  status_display: 'if(status, status, if(file.inFolder("assets/excaildraw"), "asset", if(file.hasTag("type/moc"), "active", "")))'
+  focus: 'if(file.path == "00 HOME.md" || file.path == "05_제출/ai-report-final.md" || file.path == "03_제품/hagent-os/diagrams/99_comprehensive-architecture.md" || file.path == ".agent/system/ops/RALPH-LOOP-2026-04-13.md", "today", "")'
 properties:
-  formula.priority_icon:
-    displayName: "!"
-  formula.days_left:
-    displayName: D-Day
-  formula.owner_display:
-    displayName: 담당
-  formula.day_label:
-    displayName: Day
-  status:
+  formula.hub:
+    displayName: 허브
+  formula.status_display:
     displayName: 상태
-  track:
-    displayName: 트랙
-  demo_critical:
-    displayName: 데모필수
+  formula.focus:
+    displayName: 오늘
+  date:
+    displayName: 날짜
+  up:
+    displayName: 상위
+  file.path:
+    displayName: 경로
+  file.ext:
+    displayName: 확장자
+  file.mtime:
+    displayName: 수정시각
 views:
   - type: table
-    name: 전체 태스크
-    groupBy:
-      property: status
-      direction: ASC
+    name: 제출 핵심
+    filters: 'file.path == "00 HOME.md" || file.path == "_MOC/_05_제출_MOC.md" || file.path == "05_제출/ai-report-final.md" || file.path == "05_제출/submission-checklist.md" || file.path == "03_제품/hagent-os/diagrams/99_comprehensive-architecture.md" || file.path == ".agent/system/ops/RALPH-LOOP-2026-04-13.md"'
     order:
-      - formula.priority_icon
-      - formula.status_icon
+      - formula.focus
       - file.name
-      - track
-      - formula.owner_display
-      - formula.day_label
-      - due
-      - formula.days_left
-      - demo_critical
-    summaries:
-      formula.days_left: Min
-    columnSize:
-      formula.priority_icon: 67
-      formula.status_icon: 34
-      file.name: 158
-      note.track: 105
-      formula.owner_display: 106
-      formula.day_label: 128
-      note.due: 120
-      formula.days_left: 148
+      - formula.hub
+      - formula.status_display
+      - date
+      - up
+      - file.path
   - type: table
-    name: 오늘 할 일
-    filters:
-      and:
-        - status != "done"
-        - status != "blocked"
-    groupBy:
-      property: track
-      direction: ASC
+    name: 항법 허브
+    filters: 'file.ext == "md" && (file.path == "00 HOME.md" || file.inFolder("_MOC") || file.inFolder("_system/dashboard"))'
     order:
-      - formula.priority_icon
       - file.name
-      - track
-      - formula.owner_display
-      - demo_critical
+      - formula.hub
+      - date
+      - up
+      - file.path
   - type: table
-    name: 데모 크리티컬
-    filters:
-      and:
-        - demo_critical == true
-        - status != "done"
+    name: 제출 문서
+    filters: 'file.inFolder("05_제출") && file.ext == "md"'
     order:
-      - formula.priority_icon
       - file.name
-      - status
-      - formula.owner_display
-      - formula.days_left
+      - formula.status_display
+      - date
+      - up
+      - file.path
   - type: table
-    name: 완료
-    filters:
-      and:
-        - status == "done"
+    name: Excalidraw 자산
+    filters: 'file.inFolder("assets/excaildraw")'
     order:
       - file.name
-      - track
-      - formula.owner_display
-      - due
+      - file.ext
+      - file.mtime
+      - file.path

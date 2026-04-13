@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-08
 up: "[[_06_LLM위키_MOC]]"
+status: active
 aliases:
   - llm-wiki-index
 ---
@@ -18,6 +19,14 @@ aliases:
 - [[overview]] — 현재 위키의 상위 synthesis
 - [[schema]] — wiki 운영 규칙
 - [[log]] — ingest/query/lint chronological log
+
+## Current State Notes
+
+- [[HagentOS_현재_아키텍처_상태]]
+- [[k-skill_생태계_결정_내역]]
+- [[Paperclip_롤모델_흡수_패턴]]
+- [[멀티에이전트_운영_모델]]
+- [[배포_버그_수정_요약_2026-04-13]]
 
 ## Categories
 
@@ -49,6 +58,10 @@ aliases:
 - [[운영보드_우선_UI_원칙]]
 - [[운영_케이스_컨텍스트_모델]]
 - [[역할기반_agent_skill_구조]]
+- [[HagentOS_현재_아키텍처_상태]]
+- [[k-skill_생태계_결정_내역]]
+- [[멀티에이전트_운영_모델]]
+- [[배포_버그_수정_요약_2026-04-13]]
 
 ### Problems
 
@@ -71,6 +84,7 @@ aliases:
 - [[운영자_모드_vs_담임_모드]]
 - [[공교육_vs_사교육_민원과_행정_체계]]
 - [[Paperclip_vs_HagentOS_설계_갭]]
+- [[Paperclip_롤모델_흡수_패턴]]
 
 ### Sources
 
@@ -87,7 +101,8 @@ aliases:
 
 ## Suggested Start
 
-- 대회 성격부터 읽기: [[KEG는_교육실증형_AI_MVP_콘테스트다]]
-- 심사 포인트 확인: [[KEG_심사_문법]]
-- 문제 정의 언어 맞추기: [[교육_도메인_언어_지도]]
+- 현재 제품 상태부터 읽기: [[HagentOS_현재_아키텍처_상태]]
+- 생태계 결정을 읽기: [[k-skill_생태계_결정_내역]]
+- 롤모델 흡수 패턴 읽기: [[Paperclip_롤모델_흡수_패턴]]
+- 운영 협업 프로토콜 읽기: [[멀티에이전트_운영_모델]]
 - 원문 trace 확인: [[기관_분석_및_심사_전략_요약]], [[도메인_지식_조사_02_요약]]

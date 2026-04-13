@@ -3,7 +3,7 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-11
+date: 2026-04-13
 up: "[[00 HOME]]"
 aliases:
   - MOC_HOME
@@ -17,6 +17,12 @@ aliases:
 ## 홈
 
 - [[00 HOME|볼트 홈]]
+
+## 오늘 우선 확인
+
+- [[_05_제출_MOC|05 제출]] — 제출 정본 묶음
+- [[_03_제품_MOC|03 제품]] — 아키텍처/다이어그램
+- [[_system/dashboard/project-dashboard|운영 대시보드]] — 제출 가시 대시보드
 
 ## 섹션 MOC
 

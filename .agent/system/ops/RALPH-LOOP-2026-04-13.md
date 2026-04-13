@@ -40,6 +40,29 @@ deadline: 2026-04-13 19:00 KST
 ## 이터레이션 로그
 (Codex가 append)
 
+## iter-par-D
+
+- 완료 시각: 2026-04-13 18:39:55 KST
+- 수정/생성 파일:
+  - `06_LLM위키/index.md`
+  - `06_LLM위키/overview.md`
+  - `06_LLM위키/log.md`
+  - `06_LLM위키/schema.md`
+  - `06_LLM위키/concepts/HagentOS_현재_아키텍처_상태.md`
+  - `06_LLM위키/concepts/k-skill_생태계_결정_내역.md`
+  - `06_LLM위키/comparisons/Paperclip_롤모델_흡수_패턴.md`
+  - `06_LLM위키/concepts/멀티에이전트_운영_모델.md`
+  - `06_LLM위키/concepts/배포_버그_수정_요약_2026-04-13.md`
+  - `06_LLM위키/concepts/운영_Control_Plane_모델.md`
+  - `06_LLM위키/concepts/역할기반_agent_skill_구조.md`
+  - `06_LLM위키/concepts/학원_운영_k-skill_및_MCP_후보_맵.md`
+  - `06_LLM위키/comparisons/Paperclip_vs_HagentOS_설계_갭.md`
+  - `.agent/system/ops/RALPH-LOOP-2026-04-13.md`
+- 주요 변경 요약:
+  - `06_LLM위키/` 현재 구조를 재점검하고 stale한 `index / overview / log / schema` 진입점을 Day 8 기준으로 갱신
+  - 5개 synthesis 노트 신규 생성: 현재 아키텍처 상태, k-skill 결정, Paperclip 흡수 패턴, 멀티에이전트 운영 모델, 2026-04-13 배포 버그 수정 요약
+  - 기존 핵심 노트 4개에 back-link와 current-state 해석을 추가해 wikilink 네트워크를 강화
+
 ### iter-par-A — 증빙/메모리/로그 동기화 (2026-04-13 18:35 KST)
 - 범위: 허용 경로만 수정. 제품 코드와 `hagent-os` 코드 파일은 건드리지 않음.
 - 확인한 누락:

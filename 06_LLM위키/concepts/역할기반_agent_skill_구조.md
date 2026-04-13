@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-12
 up: "[[index]]"
+status: active
 aliases:
   - role_based_agent_skill_structure
   - agent_skill_architecture
@@ -74,6 +75,11 @@ aliases:
 - 추가로 `adapters/`, `plugins/`, `domain-packs/` 사고틀을 같이 가져간다.
 - 그래야 제품이 prompt collection이 아니라 운영 OS처럼 보인다.
 
+## Current Readback
+
+- 현재 결정 정본은 [[k-skill_생태계_결정_내역]]이다.
+- 실제 shipped snapshot은 [[HagentOS_현재_아키텍처_상태]]에서 확인한다.
+
 ## Linked Sources
 
 - [[03-agent-skill-structure]]
@@ -84,3 +90,4 @@ aliases:
 - [[운영_Control_Plane_모델]]
 - [[한국_교육_도메인_적합성_갭]]
 - [[Paperclip_vs_HagentOS_설계_갭]]
+- [[k-skill_생태계_결정_내역]]

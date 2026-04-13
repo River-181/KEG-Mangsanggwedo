@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-08
 up: "[[_06_LLM위키_MOC]]"
+status: active
 aliases:
   - llm-wiki-schema
 ---
@@ -28,6 +29,9 @@ aliases:
 - `log.md`는 ingest/query/lint 때 append한다.
 - 가치 있는 synthesis만 `[[master-evidence-ledger]]`에 승격한다.
 - 모르는 에이전트는 raw source보다 먼저 `index.md`, `overview.md`, 최근 `log.md`를 읽는다.
+- 모든 note frontmatter에는 최소 `tags`, `date`, `up`, `status`가 있어야 한다.
+- 같은 vault 안의 연결은 가능하면 markdown link보다 `[[wikilink]]`를 우선한다.
+- 시점 의존 note는 제목 또는 첫 문단에 `as of` 날짜를 명시한다.
 
 ## Page Types
 
@@ -86,3 +90,4 @@ aliases:
 - file names can be Korean
 - one topic per page
 - summary first, evidence later
+- current-state note는 “개념”이 아니라 “현재 shipped/verified 기준”을 먼저 쓴다

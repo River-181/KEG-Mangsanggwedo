@@ -3,7 +3,7 @@ tags:
   - area/moc
   - type/moc
   - status/active
-date: 2026-04-11
+date: 2026-04-13
 up: "[[_MOC_HOME]]"
 aliases:
   - 제품
@@ -13,8 +13,15 @@ aliases:
 ## HagentOS 허브
 
 - [[k-edu-zero-human]] — 전체 개요, 아키텍처, 기술스택 (단일 진입점)
-- [[hagent-os/INDEX]] — 개발자용 빠른 문서 찾기 인덱스
-- [[hagent-os/10_execution/runtime-docs/README]] — 제품 저장소에서 동기화한 설계/핸드오프/회귀 문서
+- [[03_제품/hagent-os/INDEX|hagent-os/INDEX]] — 개발자용 빠른 문서 찾기 인덱스
+- [[03_제품/hagent-os/10_execution/runtime-docs/README|runtime-docs/README]] — 제품 저장소에서 동기화한 설계/핸드오프/회귀 문서
+
+## 오늘 기준 제출용 자산
+
+- [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]] — 심사용 종합 구조도
+- [[03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]] — 최신 검증 정본
+- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw/03_시스템-4계층.excalidraw|03]]
+- `04~06` Excalidraw: 예정
 
 ## 제품 코드 (실제 제출물)
 
@@ -88,6 +95,7 @@ aliases:
 - [[03_erd]]
 - [[04_approval-state]]
 - [[05_ia-screen-map]]
+- [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]]
 
 ## 갭 분석 및 참고
 

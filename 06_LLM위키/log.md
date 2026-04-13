@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-08
 up: "[[_06_LLM위키_MOC]]"
+status: active
 aliases:
   - llm-wiki-log
 ---
@@ -196,3 +197,24 @@ aliases:
 - next:
 	- `paperclip_교육_아이디어_통합정리`를 초기 통합 가설 note로 승격
 	- `R-005`, `R-006`를 evidence/thesis 축으로 승격
+
+## [2026-04-13] synthesize | current product state와 운영 계층 정본화
+
+- action: synthesize-refresh
+- reason: `06_LLM위키/`가 초기 개념 모음에 머물지 않고 Day 8 기준 실제 제품 상태와 운영 규칙을 바로 회수할 수 있는 synthesis layer가 되게 하기 위함
+- touched:
+	- [[HagentOS_현재_아키텍처_상태]]
+	- [[k-skill_생태계_결정_내역]]
+	- [[Paperclip_롤모델_흡수_패턴]]
+	- [[멀티에이전트_운영_모델]]
+	- [[배포_버그_수정_요약_2026-04-13]]
+	- [[index]]
+	- [[overview]]
+	- [[schema]]
+	- [[운영_Control_Plane_모델]]
+	- [[역할기반_agent_skill_구조]]
+	- [[학원_운영_k-skill_및_MCP_후보_맵]]
+	- [[Paperclip_vs_HagentOS_설계_갭]]
+- next:
+	- legacy notes frontmatter `status:` 정규화
+	- `plugin_adapter_확장_전략` 등 남은 backlog 후보 승격

@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-09
 up: "[[index]]"
+status: active
 aliases:
   - 학원운영_skill_map
   - kskill_mcp_map
@@ -43,6 +44,10 @@ aliases:
 - `k-skill`류 아이디어는 데모의 부가 재미 포인트일 수 있지만, 본 MVP의 코어는 운영 루틴 자동화다.
 - 실사용 후보는 "메시지 발송 + 상태 조회 + 승인 + 로그 저장" 4단을 묶어서 봐야 한다.
 
+## Current Decision Link
+
+이 문서는 후보 맵이다. 현재 제품 결정은 [[k-skill_생태계_결정_내역]]에서 읽는 편이 정확하다.
+
 ## Implementation Caution
 
 - 공개 MCP가 존재해도 실제 서비스 연동 안정성은 별도 검증이 필요하다.
@@ -60,3 +65,4 @@ aliases:
 - [[운영_케이스_OS가_화이트스페이스다]]
 - [[학원_운영_데이터_자산화_우선순위]]
 - [[재등록과_이탈_방어는_두번째_강한_MVP_후보다]]
+- [[k-skill_생태계_결정_내역]]

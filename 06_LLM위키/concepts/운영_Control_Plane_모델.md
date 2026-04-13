@@ -5,6 +5,7 @@ tags:
   - status/active
 date: 2026-04-10
 up: "[[index]]"
+status: active
 aliases:
   - control_plane_model
   - runtime_control_plane
@@ -14,6 +15,8 @@ aliases:
 ## Summary First
 
 좋은 운영 제품은 채팅 앱이 아니라 `board + state + approval + activity`를 중심으로 돌아가는 control plane이다. Paperclip에서 가져와야 할 핵심은 AI 응답 자체보다 이 운영 껍데기다.
+
+현재 shipped snapshot은 [[HagentOS_현재_아키텍처_상태]]에 따로 정리한다. 이 문서는 그 상위 개념을 설명한다.
 
 ## Layer Model
 
@@ -86,6 +89,8 @@ chat transcript보다 운영 상태가 더 중요한 context다.
 
 ## Related Pages
 
+- [[HagentOS_현재_아키텍처_상태]]
+- [[배포_버그_수정_요약_2026-04-13]]
 - [[한국_교육_도메인_적합성_갭]]
 - [[학원_운영_루프_지도]]
 - [[운영_케이스_OS가_화이트스페이스다]]
