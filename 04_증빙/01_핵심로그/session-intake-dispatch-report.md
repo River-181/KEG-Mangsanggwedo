@@ -8,7 +8,7 @@ up: "[[_04_증빙_MOC]]"
 ---
 # Session Intake Dispatch Report
 
-> 생성 시각: 2026-04-13 23:58 KST
+> 생성 시각: 2026-04-13 18:35 KST
 > 입력 원장: `04_증빙/01_핵심로그/ai-session-intake.csv`
 > 재생성 파일: `04_증빙/01_핵심로그/master-evidence-ledger.md`, `04_증빙/01_핵심로그/external-ai-usage.csv`
 
@@ -22,7 +22,7 @@ up: "[[_04_증빙_MOC]]"
 | 2026-04-10 | 2 | Claude, Codex | 5 | 91,000 |
 | 2026-04-11 | 1 | Claude | 1 | 320,000 |
 | 2026-04-12 | 3 | Claude, Codex | 3 | 405,000 |
-| 2026-04-13 | 6 | Codex | 61 | 510,000 |
+| 2026-04-13 | 8 | Codex | 68 | 571,000 |
 
 ## Prompt Promotion Candidates
 
@@ -32,6 +32,7 @@ up: "[[_04_증빙_MOC]]"
 - `S-EVID-015` Codex: P-009 evidence orchestrator prompt는 재사용 가치 있음
 - `S-OPS-011` Codex: P-007과 P-008은 재사용 프롬프트 자산으로 승격 가치 높음
 - `S-OPS-020` Codex: Day 5 구현 전 정본 잠금을 위한 운영 프롬프트로 재사용 가능
+- `S-RALPH-033` Codex: 증빙 | 워크플로우 | 운영 연속성
 
 ## Decision Promotion Candidates
 
@@ -61,10 +62,12 @@ up: "[[_04_증빙_MOC]]"
 - `S-DEV-025` Claude: Goals 재설계 의사결정 기록
 - `S-OPS-023` Claude: 미팅 이슈를 회의록으로 즉시 증빙화하는 패턴 확인
 - `S-EVID-027` Codex: 오늘 Codex 사용량 추정치를 공식 통계에 반영
+- `S-PLAN-029` Codex: judge_demo와 public_byom을 공식 분기점으로 채택
 - `S-PROD-026` Codex: issue/properties를 paperclip식으로 단순화하고 schedule interaction을 Notion Calendar 방향으로 재정렬
 - `S-PROD-028` Codex: Telegram fallback을 카카오 대체 채널이 아니라 동등한 demo channel로 승격
 - `S-PROD-031` Codex: 전역 rollout 전에 `Skills`를 기준 화면으로 먼저 확정
-- `S-PLAN-029` Codex: `judge_demo`와 `public_byom`을 공식 분기점으로 채택
+- `S-RALPH-033` Codex: exact unavailable estimate
+- `S-SUB-032` Codex: pre-Ralph snapshot을 Day 8 제출 기준선으로 고정
 
 ## Daily Note Hints
 
@@ -105,6 +108,8 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-13` / `S-PROD-026`: Day 8 최종 제품 마감 세션으로 daily/memory/dashboard에 남긴다
 - `2026-04-13` / `S-PROD-028`: 다음 세션은 Telegram outbound 실제 송신과 live env를 다시 본다
 - `2026-04-13` / `S-PROD-031`: Day 8 late pilot session을 day note와 memory에 남길 것
+- `2026-04-13` / `S-RALPH-033`: 후속 Ralph 병렬 세션도 동일 baseline에서 diff만 추가
+- `2026-04-13` / `S-SUB-032`: AI 리포트 final md와 Excalidraw 3종, deploy fix snapshot 완료
 
 ## Memory Sync Hints
 
@@ -128,6 +133,7 @@ up: "[[_04_증빙_MOC]]"
 - `2026-04-13` / `S-PROD-026`: logged
 - `2026-04-13` / `S-PROD-028`: logged
 - `2026-04-13` / `S-PROD-031`: `Skills first`
+- `2026-04-13` / `S-SUB-032`: `05_제출/ai-report-final.md`와 `15902fc`를 Day 8 제출 기준선으로 기억
 
 ## Open Notes
 

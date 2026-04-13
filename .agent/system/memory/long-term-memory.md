@@ -102,6 +102,9 @@ HagentOS (Hagwon + Agent + OS)
 - 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (현재 `ai-session-intake.csv` 기준 최신 세션까지 반영)
 - 세션 CSV: `04_증빙/01_핵심로그/ai-session-intake.csv`
 - 데일리: `04_증빙/03_daily/2026-04-12.md`, `04_증빙/03_daily/2026-04-13.md`
+- 제출 본문 정본: `05_제출/ai-report-final.md` (`git commit 15902fc` pre-Ralph snapshot)
+- 핵심 도식 자산: `assets/excaildraw/01_민원-처리-플로우.excalidraw`, `assets/excaildraw/02_AI-협업-구조.excalidraw`, `assets/excaildraw/03_시스템-4계층.excalidraw`
+- 종합 아키텍처 비주얼: `03_제품/hagent-os/diagrams/99_comprehensive-architecture.md`
 - 섹션 1 (기획): `prd.md`, `core-bet.md`, `market-and-customer.md`에서 추출
 - 섹션 2 (AI 활용): intake CSV + evidence ledger에서 추출
 
@@ -127,7 +130,8 @@ HagentOS (Hagwon + Agent + OS)
 - 하루 마감 시 `dispatch-session-intake.py`가 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
 - `external-ai-usage.csv`는 AI provider만 집계하며, 사람 미팅은 intake와 ledger에는 남기되 외부 AI 통계에서는 제외한다.
 - exact token source가 없는 Web/App 도구는 `estimated_tokens`로 명시적으로 기록한다.
-- 2026-04-13 기준 Day 8 `Codex` 사용량은 `S-PROD-026=280k`, `S-EVID-027=12k` conservative estimate로 반영한다.
+- 2026-04-13 기준 Day 8 `Codex` 사용량은 `S-PROD-026=280k`, `S-EVID-027=12k`, `S-PROD-028=96k`, `S-PLAN-029=18k`, `S-EVID-030=14k`, `S-PROD-031=90k`, `S-SUB-032=45k`, `S-RALPH-033=16k`로 기록하며 총합은 `571k`다.
+- Ralph loop 병렬 작업은 `15902fc` pre-Ralph snapshot 이후 diff만 별도 세션으로 남기고, 코드 수정이 없어도 evidence-only sync 세션을 intake에 기록한다.
 - 제품 베팅 관련 사람 합의는 2026-04-09 22:10 승보님 미팅 기준으로 `소규모 학원`, `로컬 우선`, `데이터 자산화`, `쉬운 AI 에이전트 활용`, `무거운 SaaS 회피`를 유지한다.
 
 ## 워크스페이스 구조 / 정본 위치

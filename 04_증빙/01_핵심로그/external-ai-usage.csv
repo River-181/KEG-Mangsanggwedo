@@ -28,4 +28,6 @@ date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PLAN-029,4,18000,,flat-subscription,
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-026,24,280000,,flat-subscription,
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-028,11,96000,,flat-subscription,
-2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-031,18,90000,,flat-subscription,Skills design pilot + 로딩 복구 + 토큰 시스템 파일럿
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-031,18,90000,,flat-subscription,paperclip structure + Toss token discipline 유지
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH-033,1,16000,,flat-subscription,랄프 병렬 A 증빙/메모리/로그 동기화 완료
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-SUB-032,6,45000,,flat-subscription,commit 15902fc docs: pre-ralph-loop snapshot — AI report + Excalidraw diagrams + deploy fixes

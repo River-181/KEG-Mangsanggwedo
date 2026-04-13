@@ -15,7 +15,7 @@ aliases:
 > **PM/Evidence Agent 매일 밤 루틴**: 이 파일을 스크립트 결과로 업데이트
 > [[master-evidence-ledger]]와 세션 데이터에서 파생되는 집계본.
 > AI 리포트 §통계 섹션의 소스.
-> 마지막 업데이트: 2026-04-13 07:30 (Day 8 current session)
+> 마지막 업데이트: 2026-04-13 18:35 (Day 8 Ralph parallel A sync)
 
 ## 운영 원칙
 
@@ -84,11 +84,11 @@ aliases:
 
 | 항목 | 수치 |
 |------|------|
-| 세션 수 | 28 |
-| 프롬프트 수 | 86 |
-| 주요 산출물 | 워크스페이스 평가, 리서치 운영, 증빙/분석 정리, Telegram fallback, judge/public deploy split, Skills 디자인 pilot |
+| 세션 수 | 30 |
+| 프롬프트 수 | 93 |
+| 주요 산출물 | 워크스페이스 평가, 리서치 운영, 증빙/분석 정리, Telegram fallback, judge/public deploy split, Skills 디자인 pilot, AI 리포트 final markdown, Excalidraw 3종, Ralph 병렬 A sync |
 | 비용 | 정액제 |
-| 추정 토큰 | 770,000 |
+| 추정 토큰 | 831,000 |
 
 ### Perplexity Pro
 
@@ -121,8 +121,8 @@ aliases:
 | AI 도구           | 토큰 (추정)         | 비용            | 세션    | 메시지     | 비중    |
 | --------------- | --------------- | ------------- | ----- | ------- | ----- |
 | Claude Opus 4.6 | 1,238,026,420   | $2892.86      | 4     | 6352    | 99.9% |
-| 외부 AI 합계      | 838,000          | 정액            | 30    | 92      | 0.5%  |
-| **합계**          | **1,238,864,420** | **$2892.86+정액** | **34** | **6444** | 100%  |
+| 외부 AI 합계      | 899,000          | 정액            | 32    | 99      | 0.1%  |
+| **합계**          | **1,238,925,420** | **$2892.86+정액** | **36** | **6451** | 100%  |
 
 ---
 
@@ -137,7 +137,7 @@ aliases:
 | 04-10 |            |           | 1       | 1     | 운영 문서 재동기화, 제출용 이미지 증빙 정리, 구현 전 블로커 기록 |
 | 04-11 |            |           | 0       | 0     | 독립 레포 E2E 재구축은 Claude 중심으로 진행 |
 | 04-12 |            |           | 1       | 1     | Codex 증빙 세션 추가, Day 7 운영 동기화 및 UX 마감 |
-| 04-13 |            |           | 6       | 61    | HagentOS 제출 직전 polish + Telegram fallback + judge/public split + evidence sync + Skills 디자인 pilot |
+| 04-13 |            |           | 8       | 68    | HagentOS 제출 직전 polish + Telegram fallback + judge/public split + evidence sync + Skills 디자인 pilot + AI report final/Excalidraw 3종 + Ralph 병렬 A |
 
 ---
 

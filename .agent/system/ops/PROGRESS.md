@@ -19,11 +19,13 @@ aliases:
 ## 현재 단계: Day 8 — 제출 직전 마감, 증빙 정합화, 심사용 배포 분리 설계
 
 ### Day 8 추가 진행 업데이트 ✅
+- [x] `05_제출/ai-report-final.md`와 Excalidraw 3종, `99_comprehensive-architecture`를 묶은 pre-Ralph snapshot(`15902fc`) 확보
 - [x] `Telegram outbound` approval delivery 경로와 adapter readiness를 실제 앱 표면에 연결
 - [x] `students -> cases`, `schedule -> cases` drill-down 추가
 - [x] 우측 `운영 요약` 패널을 `cases / approvals / projects`까지 확장
 - [x] `judge_demo`와 `public_byom`을 분리하는 배포 전략 정리
 - [x] 증빙/메모리/대시보드/usage stats를 현재 세션 기준으로 최신화
+- [x] Ralph 병렬 A에서 허용 경로 한정 증빙/메모리/로그 동기화 완료
 - [x] 현재 세션 재검증
   - `corepack pnpm --filter @hagent/ui typecheck`
   - `corepack pnpm --filter @hagent/ui build`

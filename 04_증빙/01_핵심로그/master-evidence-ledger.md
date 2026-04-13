@@ -34,7 +34,7 @@ aliases:
 - Goal: 대회 개요 정리와 워크스페이스 구조화를 시작한다
 - What changed: 대회 개요서와 초기 워크스페이스 구조 및 MOC와 에이전트 뼈대가 만들어졌다
 - Why it mattered: 프로젝트 전체를 증빙 중심 워크스페이스로 운영하는 출발점이 되었다
-- Artifacts: [[바이브코딩공모전_개요]] | `_MOC/` | `.agent/agents/`
+- Artifacts: [[바이브코딩공모전_공지]] | `_MOC/` | `.agent/agents/`
 - AI usage strategy: Claude Code는 로컬 파일 생성과 구조화에 집중했다
 - Evidence value: 워크스페이스 초기 생성 기록
 - Report section hint: 워크플로우 | AI 활용 과정
@@ -114,7 +114,7 @@ aliases:
 - Goal: 대회 개요와 준비 로드맵의 큰 그림을 잡는다
 - What changed: 대회 개요서 초안과 플레이북 방향 및 프롬프트 트래커 초기 구조가 만들어졌다
 - Why it mattered: 이후 모든 운영 설계와 워크스페이스 구축의 출발점이 되었다
-- Artifacts: [[바이브코딩공모전_개요]] | [[vibe_contest_master_playbook_v0_1]] | KEG_AI_Prompt_Tracker.xlsx
+- Artifacts: [[바이브코딩공모전_공지]] | [[vibe_contest_master_playbook_v0_1]] | KEG_AI_Prompt_Tracker.xlsx
 - AI usage strategy: 설계와 방향 설정을 Web AI에 먼저 맡기고 로컬 구현은 후속 에이전트로 넘겼다
 - Evidence value: 대회 해석과 초기 전략의 기원 기록
 - Report section hint: 기획 | AI 활용 전략 | 도구 선택 이유
@@ -644,3 +644,35 @@ aliases:
 - Report section hint: 제품 | UX 개선 | AI 활용 전략 | 증빙
 - Token note: exact unavailable estimate; conservative 90k based on multi-turn design audit, code edits, route smoke, Playwright verification
 - Follow-up: pilot 승인 후 `Settings`, `Case`, `Project`, `Agent`로 좁게 확산. 승인 전 전역 rollout 금지
+
+### S-RALPH-033
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Parallel A
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 허용 경로만 수정해 Day 8 증빙/메모리/로그를 전수 동기화한다
+- What changed: pre-Ralph snapshot 누락 세션이 intake에 보강되고 dispatch가 재실행되었으며 usage log/session log/stats와 Day 8 daily note
+- Why it mattered: memory
+- Artifacts: progress
+- AI usage strategy: Ralph loop 결과가 허용 경로 안에서 다시 맞춰졌다
+- Evidence value: 코드 변경 없이도 Ralph 병렬 작업의 감사 추적선이 완성되고 심사 대응용 증빙 정합성이 유지되었다
+- Report section hint: ai-session-intake.csv | ai-usage-log.md | ai-usage-stats.md | session-log.md | session-intake-dispatch-report.md | 2026-04-13.md | daily-memory.md | long-term-memory.md | PROGRESS.md | RALPH-LOOP-2026-04-13.md
+- Token note: intake-first 후 dispatch와 memory/progress sync를 연결하는 evidence-only 세션으로 분리했다
+- Follow-up: 랄프 병렬 A 증빙/메모리 동기화 기록
+
+### S-SUB-032
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Submission Package
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: AI 리포트 final markdown, Excalidraw 3종, 배포 수정 스냅샷을 Ralph loop 직전 제출 기준선으로 정리한다
+- What changed: 공식 6문항 형식의 `ai-report-final.md`가 완성되고 Excalidraw 3종(민원 플로우/AI 협업 구조/시스템 4계층)과 종합 아키텍처 다이어그램, 배포 수정 요약, 스크린샷 연결이 pre-Ralph snapshot 커밋으로 고정되었다
+- Why it mattered: 심사위원용 제출 본문과 핵심 비주얼, 배포 수정 근거가 하나의 기준선으로 묶여 이후 Ralph loop 변경을 비교 가능한 상태로 만들었다
+- Artifacts: 05_제출/ai-report-final.md | assets/excaildraw/01_민원-처리-플로우.excalidraw | assets/excaildraw/02_AI-협업-구조.excalidraw | assets/excaildraw/03_시스템-4계층.excalidraw | 03_제품/hagent-os/diagrams/99_comprehensive-architecture.md | git commit 15902fc
+- AI usage strategy: Codex로 제출 문안/도식 구조/배포 수정 요약을 한 세션에 정리하고 Ralph loop 직전 기준 snapshot을 커밋으로 고정했다
+- Evidence value: AI 리포트 본문 + 핵심 다이어그램 3종 + 배포 수정 기준선
+- Report section hint: 제출물 | 제품 | AI 활용 전략 | 증빙
+- Token note: exact unavailable estimate; docs-heavy desktop session
+- Follow-up: Ralph loop에서는 이 snapshot 이후 diff만 추적

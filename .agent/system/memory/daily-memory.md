@@ -89,6 +89,8 @@ aliases:
 - `issue/properties UI`, `schedule interaction`, `students/settings 안정화`, `telegram approval/outbound`, `skills/capabilities pack`가 Day 8 범위에 포함됐다.
 
 ### Day 8 완료 작업
+- [x] `05_제출/ai-report-final.md`를 공식 6문항 제출 형식으로 정리하고 pre-Ralph snapshot(`15902fc`) 기준선을 확보
+- [x] Excalidraw 3종(`01_민원-처리-플로우`, `02_AI-협업-구조`, `03_시스템-4계층`) + `99_comprehensive-architecture` 제출 비주얼 자산 정리
 - [x] `Case/Issue`를 paperclip 방향으로 단순화
   - `done` 컬럼 복구
   - `Comments / Sub-issues / Activity`
@@ -101,6 +103,7 @@ aliases:
 - [x] `students -> cases`, `schedule -> cases` drill-down 추가
 - [x] 우측 `운영 요약` 패널을 `cases / approvals / projects`까지 확장
 - [x] `judge_demo`와 `public_byom` 분리 배포 전략 문서화
+- [x] Ralph 병렬 A에서 허용 경로 한정 증빙/메모리/로그 전수 동기화 완료
 - [x] 현재 세션 재검증
   - `corepack pnpm --filter @hagent/ui typecheck`
   - `corepack pnpm --filter @hagent/ui build`
@@ -108,6 +111,11 @@ aliases:
   - `corepack pnpm --filter @hagent/server typecheck`
   - `curl http://127.0.0.1:3200/api/health` → `200`
   - `curl http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard` → `200`
+
+### 오늘 핵심 결정 (2026-04-13)
+- `05_제출/ai-report-final.md`와 Excalidraw 3종은 `15902fc` pre-Ralph snapshot을 Day 8 제출 기준선으로 본다.
+- Ralph 병렬 작업은 코드 수정 없이 허용 경로 evidence-only sync로 분리해 감사 추적선을 유지한다.
+- 후속 Ralph 병렬 세션은 `15902fc` 이후 diff만 누적하고 동일 intake-first 규칙을 계속 적용한다.
 
 ### Day 8 남은 블로커
 - [ ] `OPENAI_API_KEY` live 검증
@@ -134,7 +142,9 @@ aliases:
 - `S-PLAN-029`: `18,000` tokens
 - `S-EVID-030`: `14,000` tokens
 - `S-PROD-031`: `90,000` tokens
-- Day 8 Codex 총 추정: **510,000 tokens**
+- `S-SUB-032`: `45,000` tokens
+- `S-RALPH-033`: `16,000` tokens
+- Day 8 Codex 총 추정: **571,000 tokens**
 
 ### 현재 세션에서 다음 에이전트가 바로 알아야 할 것
 - `Telegram Bot`은 실제 bot metadata가 구성된 상태이고 앱에는 `telegram inbound/outbound/approval delivery` 경로가 있다.
@@ -142,6 +152,7 @@ aliases:
 - 심사용 기본 경험은 `심사위원 개인 키 입력`이 아니라 `사전 연결된 모델 + seed data`를 바로 체험하는 형태다.
 - 디자인 rollout은 아직 금지다. `Skills` 화면이 현재 유일한 디자인 pilot이며 `paperclip 구조 + Toss 토큰 discipline`을 기준 샘플로 먼저 확정해야 한다.
 - `version bump`는 아직 하지 않는다. `Skills` pilot 승인과 좁은 확산(`Settings / Case / Project / Agent`) 전에는 태그나 릴리즈를 올리지 않는다.
+- 제출용 본문과 도식 자산은 `05_제출/ai-report-final.md`, `assets/excaildraw/*.excalidraw`, `03_제품/hagent-os/diagrams/99_comprehensive-architecture.md` 조합이 canonical이다.
 - 증빙/핸드오프 핵심 경로:
   - `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-42-48-976Z.png`
   - `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-d1-verification.md`
