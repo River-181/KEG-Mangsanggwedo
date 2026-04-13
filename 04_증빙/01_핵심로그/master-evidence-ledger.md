@@ -549,6 +549,22 @@ aliases:
 
 ## 2026-04-13
 
+### S-DEP-034
+
+- DateTime: 2026-04-13 / Railway + Web
+- Phase: Deployment Completion
+- Tool/Client: Human Deployment
+- Model: 
+- Goal: Railway 라이브 URL, GitHub, DB, Telegram, Kakao 공개 링크를 확정하고 제출 직전 남은 일을 재정렬한다
+- What changed: HagentOS Railway 라이브 URL, GitHub 저장소, Railway 프로젝트, Neon DB, Telegram bot, Kakao 채널 공개 링크가 모두 확정되었고 배포 완료 상태가 공유되었다. 탄자니아 영어학원 데모 데이터 자동 시딩, Telegram bot 연동, Kakao 웹훅, 한국 법령 fallback, 에이전트 메모리 갱신, 온보딩 재체험, 설정/일정 잡버그 수정 완료 사실도 함께 정리되었다
+- Why it mattered: 이제 심사위원에게 실제 접근 가능한 URL을 줄 수 있고 제출 상태를 배포 이후 단계로 전환할 수 있다. 남은 일은 AI 리포트 PDF, 서명 문서, 제출 이메일로 좁혀졌다.
+- Artifacts: https://hagent-os.up.railway.app | https://github.com/River-181/hagent-os | https://t.me/TANZANIA_ENGLISH_ACADEMY_bot | https://pf.kakao.com/_raDdX
+- AI usage strategy: 사람이 배포 완료 상태와 인프라 링크를 정리한 운영 세션이다. AI 사용량 통계에는 포함하지 않고 intake/ledger 증빙에만 남긴다.
+- Evidence value: 라이브 배포 완료와 제출 직전 상태 전환의 공식 기록
+- Report section hint: 배포 | 제출 상태 | 운영 연속성
+- Token note: no AI token usage in this session
+- Follow-up: AI 리포트 docx→PDF, 개인정보동의서/참가각서 서명, 제출 이메일 발송
+
 ### S-EVID-027
 
 - DateTime: 2026-04-13 / Desktop App
@@ -660,6 +676,310 @@ aliases:
 - Report section hint: ai-session-intake.csv | ai-usage-log.md | ai-usage-stats.md | session-log.md | session-intake-dispatch-report.md | 2026-04-13.md | daily-memory.md | long-term-memory.md | PROGRESS.md | RALPH-LOOP-2026-04-13.md
 - Token note: intake-first 후 dispatch와 memory/progress sync를 연결하는 evidence-only 세션으로 분리했다
 - Follow-up: 랄프 병렬 A 증빙/메모리 동기화 기록
+
+### S-RALPH1-A
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 1차 par A
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 1차 iter 1 실행 — smoke + basic flow 검증
+- What changed: 랄프 루프 1차 병렬 A 세션으로 기본 smoke 흐름과 증빙 정합성을 확인했다
+- Why it mattered: 랄프 루프 1차 병렬 실행의 기준 세션으로 B~E 세션과 비교 기준이 된다
+- Artifacts: RALPH-LOOP-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: 랄프 루프 1차 iter 1을 병렬 A 기준으로 실행하고 결과를 intake에 기록했다
+- Evidence value: 랄프 1차 병렬 A 기록
+- Report section hint: 증빙 | 워크플로우
+- Token note: exact unavailable estimate
+- Follow-up: B~E 병렬 세션과 합산해 Day 8 증빙 총계에 반영
+
+### S-RALPH1-B
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 1차 par B
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 1차 iter 1 병렬 B — 증빙 경로와 daily-memory 정합성 확인
+- What changed: daily-memory의 Day 8 섹션이 par B 기준으로 재검토되었다
+- Why it mattered: 병렬 세션 간 중복 없이 각 세션이 독립적인 경로를 처리할 수 있음을 확인했다
+- Artifacts: RALPH-LOOP-2026-04-13.md | daily-memory.md
+- AI usage strategy: par A와 분기해 daily-memory와 증빙 경로 처리만 담당했다
+- Evidence value: 랄프 1차 병렬 B 기록
+- Report section hint: 증빙 | 운영 연속성
+- Token note: exact unavailable estimate
+- Follow-up: C~E 병렬 결과와 합산
+
+### S-RALPH1-C
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 1차 par C
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 1차 iter 1 병렬 C — long-term-memory와 PROGRESS 동기화
+- What changed: long-term-memory와 PROGRESS의 Day 8 항목이 par C 기준으로 재동기화되었다
+- Why it mattered: 병렬 세션이 메모리와 진행 현황을 독립적으로 검토할 수 있음을 확인했다
+- Artifacts: RALPH-LOOP-2026-04-13.md | long-term-memory.md | PROGRESS.md
+- AI usage strategy: par B와 분기해 long-term-memory와 PROGRESS만 담당했다
+- Evidence value: 랄프 1차 병렬 C 기록
+- Report section hint: 증빙 | 메모리 관리
+- Token note: exact unavailable estimate
+- Follow-up: D~E 병렬 결과와 합산
+
+### S-RALPH1-D
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 1차 par D
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 1차 iter 1 병렬 D — ai-usage-stats와 master-evidence-ledger 갱신
+- What changed: ai-usage-stats의 Day 8 행과 master-evidence-ledger의 오늘 항목이 par D 기준으로 갱신되었다
+- Why it mattered: 통계 파일과 원장이 병렬로 처리되어 전체 동기화 속도가 높아졌다
+- Artifacts: RALPH-LOOP-2026-04-13.md | ai-usage-stats.md | master-evidence-ledger.md
+- AI usage strategy: par C와 분기해 통계와 원장만 담당했다
+- Evidence value: 랄프 1차 병렬 D 기록
+- Report section hint: 증빙 | 통계
+- Token note: exact unavailable estimate
+- Follow-up: E 병렬 결과와 합산
+
+### S-RALPH1-E
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 1차 par E
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 1차 iter 1 병렬 E — session-log와 session-intake-dispatch-report 갱신
+- What changed: session-log의 Day 8 섹션과 dispatch report가 par E 기준으로 갱신되었다
+- Why it mattered: session-log와 dispatch report를 별도 세션에서 독립 처리함으로써 충돌 없이 완성했다
+- Artifacts: RALPH-LOOP-2026-04-13.md | session-log.md | session-intake-dispatch-report.md
+- AI usage strategy: par D와 분기해 session-log와 dispatch report만 담당했다
+- Evidence value: 랄프 1차 병렬 E 기록
+- Report section hint: 증빙 | 워크플로우
+- Token note: exact unavailable estimate
+- Follow-up: 1차 병렬 A~E 합산 후 2차 루프 시작
+
+### S-RALPH2-CASE
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-case
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-case — 민원 케이스 흐름 전수 검증 및 증빙 기록
+- What changed: 민원 생성-승인-완료 전체 흐름이 재검증되었고 결과가 증빙에 기록되었다
+- Why it mattered: 핵심 시나리오인 민원 처리 루프가 Day 8 증빙에 포함되어 심사 대응 가능 상태가 되었다
+- Artifacts: 04_증빙/02_분석자료/live-smoke-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: T-smoke 이후 케이스 흐름을 별도 세션으로 검증했다
+- Evidence value: 케이스 흐름 검증 기록
+- Report section hint: 증빙 | 제품 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-settings-api 결과와 연결
+
+### S-RALPH2-CASE-LEAN
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-case-lean-retry
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-case-lean-retry — 케이스 흐름 간소화 경로 재시도
+- What changed: T-case에서 발견된 경계 케이스를 lean path로 재시도하여 처리 가능 여부를 확인했다
+- Why it mattered: 예외 케이스 처리가 증빙에 추가되어 심사 시나리오 커버리지가 높아졌다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: T-case lean path를 별도 재시도 세션으로 분리했다
+- Evidence value: 케이스 린 재시도 기록
+- Report section hint: 증빙 | 제품 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-settings-api 결과와 통합
+
+### S-RALPH2-SECURITY
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-security
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-security — 보안 감사 및 주요 취약점 점검 결과 기록
+- What changed: 보안 감사 결과가 `04_증빙/02_분석자료/security-audit-2026-04-13.md`에 기록되었다
+- Why it mattered: 배포된 앱의 보안 취약점 점검 결과가 심사 증빙에 포함되어 신뢰성이 높아졌다
+- Artifacts: 04_증빙/02_분석자료/security-audit-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: 보안 감사를 별도 세션으로 분리해 독립 증빙으로 생성했다
+- Evidence value: 보안 감사 기록
+- Report section hint: 증빙 | 보안 | 제출물
+- Token note: exact unavailable estimate
+- Follow-up: T-security-recover와 연결
+
+### S-RALPH2-SEEDLOG
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-seed-log
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-seed-log — 탄자니아 영어학원 seed 데이터 로그 검증
+- What changed: 탄자니아 영어학원 데모 조직의 seed 데이터 삽입 로그가 검증되고 결과가 기록되었다
+- Why it mattered: 심사용 데모 데이터가 안정적으로 시딩되는지 증빙할 수 있게 되었다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: seed 로그를 별도 검증 세션으로 분리했다
+- Evidence value: 시드 데이터 로그 검증 기록
+- Report section hint: 증빙 | 배포 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-seed-log-retry와 연결
+
+### S-RALPH2-SEEDLOG-RETRY
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-seed-log-retry
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-seed-log-retry — seed 로그 재시도 및 최종 확인
+- What changed: seed 로그 재시도 후 최종 성공 결과가 확인되었다
+- Why it mattered: 데모 seed 데이터의 멱등성이 검증되어 여러 번 재실행해도 안전함을 확인했다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: T-seed-log 실패 경로를 재시도 세션으로 분리했다
+- Evidence value: 시드 데이터 재시도 기록
+- Report section hint: 증빙 | 배포 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-ui-polish와 연결
+
+### S-RALPH2-SETTINGS
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-settings-api
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-settings-api — Settings API 엔드포인트 검증 및 증빙 기록
+- What changed: Settings API의 주요 엔드포인트 응답이 검증되고 결과가 증빙에 기록되었다
+- Why it mattered: Settings 기능의 API 레이어 신뢰성이 Day 8 증빙에 포함되었다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: Settings API 검증을 별도 세션으로 분리해 제품 증빙을 모듈화했다
+- Evidence value: Settings API 검증 기록
+- Report section hint: 증빙 | 제품 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-settings v2와 연결
+
+### S-RALPH2-SETTINGS-V2
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-settings v2
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-settings v2 — Settings 화면 v2 개선 반영 확인
+- What changed: Settings 화면의 v2 개선 항목이 올바르게 반영되었는지 확인되었다
+- Why it mattered: Settings 화면 품질이 제출 기준에 맞게 유지되고 있음을 증빙할 수 있게 되었다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: T-settings-api 이후 UI 확인 세션으로 분리했다
+- Evidence value: Settings v2 확인 기록
+- Report section hint: 증빙 | UX
+- Token note: exact unavailable estimate
+- Follow-up: T-seed-log와 연결
+
+### S-RALPH2-SMOKE
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-smoke
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-smoke — 라이브 앱 smoke test 결과를 증빙에 기록
+- What changed: Railway 라이브 앱의 smoke test 결과가 증빙 파일에 기록되었다
+- Why it mattered: 배포된 앱의 기본 가용성이 Day 8 증빙에 포함되었다
+- Artifacts: 04_증빙/02_분석자료/live-smoke-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: smoke test 결과를 별도 세션으로 기록해 배포 검증을 독립 증빙으로 분리했다
+- Evidence value: 라이브 스모크 테스트 결과 기록
+- Report section hint: 증빙 | 배포 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-case 결과와 연결
+
+### S-RALPH2-UIPOLISH
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 2차 T-ui-polish
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 2차 T-ui-polish — UI 마감 polish 및 증빙 스크린샷 확보
+- What changed: 주요 화면의 마감 polish 결과가 적용되고 스크린샷이 증빙에 추가되었다
+- Why it mattered: 제출 전 UI 품질이 기준 이상임을 증빙 스크린샷으로 확인할 수 있게 되었다
+- Artifacts: output/playwright/skills-pilot/ | ai-session-intake.csv
+- AI usage strategy: UI polish를 별도 세션으로 분리해 스크린샷 증빙을 집중적으로 확보했다
+- Evidence value: UI polish 기록
+- Report section hint: 증빙 | UX | 제출물
+- Token note: exact unavailable estimate
+- Follow-up: T-security와 연결
+
+### S-RALPH3-ASSISTANT
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 3차 T-assistant-fix
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 3차 T-assistant-fix — AI 어시스턴트 라우팅 버그 수정 및 검증
+- What changed: AI 어시스턴트 라우팅 버그가 수정되고 응답 체인이 재검증되었다
+- Why it mattered: 어시스턴트 기능의 신뢰성이 회복되어 심사 시나리오 실행 시 일관된 응답을 보장할 수 있게 되었다
+- Artifacts: ai-session-intake.csv
+- AI usage strategy: 어시스턴트 버그 수정을 별도 세션으로 분리해 제품 수정 증빙을 모듈화했다
+- Evidence value: 어시스턴트 수정 기록
+- Report section hint: 증빙 | 제품 검증
+- Token note: exact unavailable estimate
+- Follow-up: 최종 어시스턴트 상태 확인 완료
+
+### S-RALPH3-DOCX
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 3차 T-docx
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 3차 T-docx — AI 리포트 최종 docx 조립 및 27개 이미지 삽입
+- What changed: AI 리포트 docx 파일이 Q1~Q6 전체 내용과 27개 이미지를 포함해 최종 조립되었다
+- Why it mattered: 심사 제출용 Word 문서가 완성되어 PDF 변환만 남은 상태가 되었다
+- Artifacts: 05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx | ai-session-intake.csv
+- AI usage strategy: docx 조립을 별도 세션으로 분리해 제출 패키지 생성을 독립 증빙으로 기록했다
+- Evidence value: AI 리포트 docx 조립 기록
+- Report section hint: 증빙 | 제출물
+- Token note: exact unavailable estimate
+- Follow-up: T-png-export와 연결
+
+### S-RALPH3-PNG
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 3차 T-png-export
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 3차 T-png-export — Excalidraw 6종 PNG 내보내기 및 증빙 저장
+- What changed: Excalidraw 6종이 PNG로 내보내져 `assets/screenshots/` 또는 `assets/excalidraw/` 경로에 저장되었다
+- Why it mattered: AI 리포트 삽입용 도식 이미지가 확보되어 docx 조립이 가능해졌다
+- Artifacts: assets/excalidraw/*.png | ai-session-intake.csv
+- AI usage strategy: PNG 내보내기를 별도 세션으로 분리해 시각 자산 생성을 독립 증빙으로 기록했다
+- Evidence value: PNG 내보내기 기록
+- Report section hint: 증빙 | 제출물
+- Token note: exact unavailable estimate
+- Follow-up: T-docx에서 사용됨
+
+### S-RALPH3-ROUTINE
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 3차 T-routine-fix
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 3차 T-routine-fix — 루틴 일관성 수정 및 검증 결과 기록
+- What changed: 루틴 일관성 분석 결과가 `04_증빙/02_분석자료/routine-consistency-2026-04-13.md`에 기록되었다
+- Why it mattered: 루틴 기능의 일관성 문제가 증빙에 포함되어 제품 검증 근거가 추가되었다
+- Artifacts: 04_증빙/02_분석자료/routine-consistency-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: 루틴 수정을 별도 세션으로 분리해 독립 증빙으로 생성했다
+- Evidence value: 루틴 일관성 수정 기록
+- Report section hint: 증빙 | 제품 검증
+- Token note: exact unavailable estimate
+- Follow-up: T-case-lean 결과와 통합
+
+### S-RALPH3-SECURITY
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Ralph Loop 3차 T-security-recover
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 랄프 3차 T-security-recover — 보안 감사 후속 복구 작업 및 재검증
+- What changed: 보안 감사에서 발견된 주요 항목의 복구 작업이 완료되고 재검증 결과가 기록되었다
+- Why it mattered: 보안 취약점 복구 사실이 증빙에 포함되어 심사 대응력이 강화되었다
+- Artifacts: 04_증빙/02_분석자료/security-audit-2026-04-13.md | ai-session-intake.csv
+- AI usage strategy: T-security 후속으로 복구 작업을 별도 세션에서 처리했다
+- Evidence value: 보안 복구 기록
+- Report section hint: 증빙 | 보안
+- Token note: exact unavailable estimate
+- Follow-up: 최종 보안 상태 확인 완료
 
 ### S-SUB-032
 

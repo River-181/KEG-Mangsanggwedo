@@ -17,7 +17,12 @@ aliases:
 
 ### 앱 개발 현황
 - **레포 분리 완료**: 독립 설치형 레포 `/Users/river/workspace/active/hagent-os/`
-- **GitHub**: `River-181/hagent-os` (public)
+- **GitHub**: `https://github.com/River-181/hagent-os`
+- **Live URL**: `https://hagent-os.up.railway.app`
+- **Railway**: `https://railway.com/invite/fmzuFpxK1li`
+- **Neon DB**: `https://console.neon.tech/app/projects/rough-feather-95020200`
+- **Telegram bot**: `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot`
+- **Kakao channel**: `https://pf.kakao.com/_raDdX`
 - **포트**: Server 3200, UI 5174
 - **DB**: `hagent_os` (brew postgres@17 port 5432)
 - **최근 확인 커밋 흐름**: `c44d5a5` → `e4b43f3` → `24ba60f` → `e7681ea` → `a326530` → `f213021` → `f8b37aa`
@@ -53,9 +58,11 @@ aliases:
 - [x] Goals ↔ Projects 양방향 연결
 
 ### 남은 사항 (D-1)
-- [ ] Railway 배포 → 라이브 URL 확보 ← **P0**
-- [ ] `River-181/hagent-os` README 작성
-- [ ] E2E 최종 브라우저 검증 (온보딩 → dispatch → approvals)
+- [x] Railway 배포 → 라이브 URL 확보
+- [x] `River-181/hagent-os` README 작성
+- [ ] AI 리포트 `docx -> PDF` 최종 변환
+- [ ] 개인정보동의서 + 참가각서 서명
+- [ ] 제출 이메일 발송
 
 ## 다음 세션 체크리스트 (D7)
 
@@ -64,17 +71,17 @@ aliases:
 2. `.agent/system/ops/PROGRESS.md` — 완료 섹션 확인
 
 ### D7 목표 (오늘)
-1. **승인 화면 스크롤 수정** + E2E 전체 브라우저 통과
-2. Railway 배포 → 라이브 URL 확보
-3. AI 리포트 초안 (`04_증빙` raw material 기반)
-4. 데모 스크립트 v0.1 (2분 시연 경로)
+1. **라이브 배포 검증 완료** — `https://hagent-os.up.railway.app`
+2. AI 리포트 `docx -> PDF` 마감
+3. 서명 문서 2종 완료
+4. 제출 이메일 발송
 
 ### 마감
 - **2026-04-13 24:00** (D-1)
 
 ### 대회 필수 제출물
-- [ ] GitHub public URL (`River-181/hagent-os`) ← 이미 있음
-- [ ] 라이브 URL ← Railway 배포 후 확보
+- [x] GitHub public URL (`https://github.com/River-181/hagent-os`)
+- [x] 라이브 URL (`https://hagent-os.up.railway.app`)
 - [ ] AI 리포트 (.docx) — `04_증빙` raw material 사용
 - [ ] 개인정보 동의서
 - [ ] 참가 각서
@@ -122,9 +129,11 @@ aliases:
 - [ ] `LAW_OC` live 법령 근거 검증
 - [ ] optional `KAKAO_OUTBOUND_PROVIDER_URL` 검증
 - [ ] `GOOGLE_CALENDAR_ACCESS_TOKEN` live sync 검증
-- [ ] deploy URL 확보
 - [ ] 4개 심사 시나리오 최종 리허설
 - [ ] `judge_demo`용 Docker/compose 구현
+- [ ] AI 리포트 `docx -> PDF`
+- [ ] 개인정보동의서 / 참가각서 서명
+- [ ] 제출 이메일 발송
 
 ### 현재 워킹트리 주의점
 - `hagent-os`는 아직 dirty 상태다.
@@ -135,7 +144,9 @@ aliases:
   - `test-results/`
 - 다음 세션은 `commit/push 전 최종 regression`을 먼저 확인해야 한다.
 
-### Day 8 Codex 사용량 추정
+### Day 8 Codex 사용량 추정 (최종 업데이트)
+
+#### 사전 Ralph loop 세션
 - `S-PROD-026`: `280,000` tokens
 - `S-EVID-027`: `12,000` tokens
 - `S-PROD-028`: `96,000` tokens
@@ -144,9 +155,52 @@ aliases:
 - `S-PROD-031`: `90,000` tokens
 - `S-SUB-032`: `45,000` tokens
 - `S-RALPH-033`: `16,000` tokens
-- Day 8 Codex 총 추정: **571,000 tokens**
+소계: **571,000 tokens**
+
+#### Ralph 루프 1차 병렬 (A~E)
+- `S-RALPH1-A`: `18,000` tokens
+- `S-RALPH1-B`: `17,000` tokens
+- `S-RALPH1-C`: `16,000` tokens
+- `S-RALPH1-D`: `15,000` tokens
+- `S-RALPH1-E`: `14,000` tokens
+소계: **80,000 tokens**
+
+#### Ralph 루프 2차 T-세션
+- `S-RALPH2-SMOKE`: `22,000` tokens
+- `S-RALPH2-CASE`: `28,000` tokens
+- `S-RALPH2-CASE-LEAN`: `16,000` tokens
+- `S-RALPH2-SETTINGS`: `20,000` tokens
+- `S-RALPH2-SETTINGS-V2`: `14,000` tokens
+- `S-RALPH2-SEEDLOG`: `18,000` tokens
+- `S-RALPH2-SEEDLOG-RETRY`: `12,000` tokens
+- `S-RALPH2-UIPOLISH`: `32,000` tokens
+- `S-RALPH2-SECURITY`: `24,000` tokens
+소계: **186,000 tokens**
+
+#### Ralph 루프 3차 T-세션
+- `S-RALPH3-ROUTINE`: `20,000` tokens
+- `S-RALPH3-DOCX`: `35,000` tokens
+- `S-RALPH3-PNG`: `16,000` tokens
+- `S-RALPH3-SECURITY`: `18,000` tokens
+- `S-RALPH3-ASSISTANT`: `19,000` tokens
+소계: **108,000 tokens**
+
+#### Claude (이 세션 포함)
+- Claude Opus 4.6 (오케스트레이터): `~450,000` tokens (추정)
+- Claude Sonnet 4.6 (서브에이전트): `~200,000` tokens (추정)
+
+**Day 8 Codex 총 추정: ~945,000 tokens**
+**Day 8 전체 AI 총 추정: ~1,595,000 tokens (Codex + Claude)**
+**Day 8 외부 AI 포함 총 추정: ~1,675,000 tokens (+ ChatGPT/Perplexity Day 1 포함 시 ~1,930,000)**
 
 ### 현재 세션에서 다음 에이전트가 바로 알아야 할 것
+- 라이브 배포 URL은 `https://hagent-os.up.railway.app`가 canonical이다.
+- 공개 링크는 아래 5개를 같이 쓴다.
+  - GitHub: `https://github.com/River-181/hagent-os`
+  - Railway: `https://railway.com/invite/fmzuFpxK1li`
+  - Neon DB: `https://console.neon.tech/app/projects/rough-feather-95020200`
+  - Telegram bot: `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot`
+  - Kakao channel: `https://pf.kakao.com/_raDdX`
 - `Telegram Bot`은 실제 bot metadata가 구성된 상태이고 앱에는 `telegram inbound/outbound/approval delivery` 경로가 있다.
 - 심사용 URL은 `judge_demo` 고정 데모로 가고 공개 URL은 `public_byom`으로 분리하는 것이 canonical이다.
 - 심사용 기본 경험은 `심사위원 개인 키 입력`이 아니라 `사전 연결된 모델 + seed data`를 바로 체험하는 형태다.

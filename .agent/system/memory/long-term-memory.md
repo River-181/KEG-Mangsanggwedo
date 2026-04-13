@@ -16,7 +16,7 @@ aliases:
 - 대회명: 2026 제1회 KEG 바이브코딩 콘테스트
 - 주제: AI활용 차세대 교육 솔루션
 - 기간: 2026-04-06 ~ 2026-04-13 / 마감: 2026-04-13 24:00
-- 제출물 5개: GitHub(public) + **라이브 URL(필수, Vercel)** + AI 리포트(.docx→PDF, 2섹션) + 개인정보동의서 + 참가각서
+- 제출물 5개: GitHub(public) + **라이브 URL(필수)** + AI 리포트(.docx→PDF, 2섹션) + 개인정보동의서 + 참가각서
 - 심사 4개: 기술 완성도, AI 활용 능력/효율성, 기획력/실무접합성, 창의성
 - 정본: `01_대회정보/바이브코딩공모전_공지.md`
 
@@ -87,6 +87,9 @@ HagentOS (Hagwon + Agent + OS)
 ### 제품 코드 위치 (독립 레포)
 - **독립 레포**: `/Users/river/workspace/active/hagent-os/`
 - **GitHub**: `https://github.com/River-181/hagent-os`
+- **Live URL**: `https://hagent-os.up.railway.app`
+- **Railway**: `https://railway.com/invite/fmzuFpxK1li`
+- **Neon DB**: `https://console.neon.tech/app/projects/rough-feather-95020200`
 - **콘테스트 워크스페이스 앱**: `03_제품/app/` (참조용)
 - 포트: Server 3200, UI 5174, DB hagent_os:5432
 - 현재 demo org canonical:
@@ -94,8 +97,8 @@ HagentOS (Hagwon + Agent + OS)
   - prefix: `탄자니아-영어학원-데모-7`
   - orgId: `be70ebc8-3b55-4ff3-827a-264f06c4d2ee`
 - 현재 채널 canonical:
-  - `Kakao inbound`
-  - `Telegram inbound/outbound`
+  - `Kakao inbound` / `https://pf.kakao.com/_raDdX`
+  - `Telegram inbound/outbound` / `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot`
   - Kakao auto send와 Google Calendar live sync는 env 의존
 
 ### AI 리포트 준비 현황
@@ -121,7 +124,10 @@ HagentOS (Hagwon + Agent + OS)
 - `KAKAO_OUTBOUND_PROVIDER_URL` 없을 때는 bridge 기준 시연
 - `GOOGLE_CALENDAR_ACCESS_TOKEN` live sync
 - `judge_demo` 배포 패키지 구현
-- 배포 URL 확정과 최종 reset 가능한 demo bootstrap
+- 최종 reset 가능한 demo bootstrap
+- AI 리포트 `docx -> PDF` 최종 변환
+- 개인정보동의서 / 참가각서 서명
+- 제출 이메일 발송
 
 ## 증빙 운영 규칙
 
@@ -130,8 +136,14 @@ HagentOS (Hagwon + Agent + OS)
 - 하루 마감 시 `dispatch-session-intake.py`가 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
 - `external-ai-usage.csv`는 AI provider만 집계하며, 사람 미팅은 intake와 ledger에는 남기되 외부 AI 통계에서는 제외한다.
 - exact token source가 없는 Web/App 도구는 `estimated_tokens`로 명시적으로 기록한다.
-- 2026-04-13 기준 Day 8 `Codex` 사용량은 `S-PROD-026=280k`, `S-EVID-027=12k`, `S-PROD-028=96k`, `S-PLAN-029=18k`, `S-EVID-030=14k`, `S-PROD-031=90k`, `S-SUB-032=45k`, `S-RALPH-033=16k`로 기록하며 총합은 `571k`다.
+- 2026-04-13 기준 Day 8 `Codex` 사용량: 사전 Ralph 세션 `571k` + Ralph 1차 A~E `80k` + 2차 T-세션 `186k` + 3차 T-세션 `108k` = **총 ~945k tokens**. Claude(Opus+Sonnet) ~650k 추정 포함 Day 8 전체 ~1,595k tokens. 외부 AI 전체(Day 1~8) ~1,930k tokens.
 - Ralph loop 병렬 작업은 `15902fc` pre-Ralph snapshot 이후 diff만 별도 세션으로 남기고, 코드 수정이 없어도 evidence-only sync 세션을 intake에 기록한다.
+- Day 8 Ralph 루프 구조: 1차(iter 1 + par A/B/C/D/E 병렬 5개) → 2차(T-smoke/T-case/T-case-lean-retry/T-settings-api/T-settings v2/T-seed-log/T-seed-log-retry/T-ui-polish/T-security, 9개) → 3차(T-routine-fix/T-docx/T-png-export/T-security-recover/T-assistant-fix, 5개). 총 19+ Codex 세션이 이날 병렬 실행되었다.
+- AI 리포트 최종 docx: `05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx` — Q1~Q6 전체, 27개 이미지 삽입. PDF 변환만 남은 상태.
+- Excalidraw 6종 PNG 내보내기 완료: `assets/excalidraw/01~06` + PNG 6개.
+- 보안 감사 완료: `04_증빙/02_분석자료/security-audit-2026-04-13.md`.
+- 루틴 일관성 분석 완료: `04_증빙/02_분석자료/routine-consistency-2026-04-13.md`.
+- 라이브 스모크 결과: `04_증빙/02_분석자료/live-smoke-*.md`.
 - 제품 베팅 관련 사람 합의는 2026-04-09 22:10 승보님 미팅 기준으로 `소규모 학원`, `로컬 우선`, `데이터 자산화`, `쉬운 AI 에이전트 활용`, `무거운 SaaS 회피`를 유지한다.
 
 ## 워크스페이스 구조 / 정본 위치

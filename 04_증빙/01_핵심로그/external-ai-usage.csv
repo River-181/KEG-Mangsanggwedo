@@ -30,4 +30,23 @@ date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-028,11,96000,,flat-subscription,
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-031,18,90000,,flat-subscription,paperclip structure + Toss token discipline 유지
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH-033,1,16000,,flat-subscription,랄프 병렬 A 증빙/메모리/로그 동기화 완료
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH1-A,1,18000,,flat-subscription,Ralph loop 1차 iter 1 parallel A session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH1-B,1,17000,,flat-subscription,Ralph loop 1차 iter 1 parallel B session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH1-C,1,16000,,flat-subscription,Ralph loop 1차 iter 1 parallel C session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH1-D,1,15000,,flat-subscription,Ralph loop 1차 iter 1 parallel D session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH1-E,1,14000,,flat-subscription,Ralph loop 1차 iter 1 parallel E session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-CASE,2,28000,,flat-subscription,Ralph loop 2차 T-case session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-CASE-LEAN,1,16000,,flat-subscription,Ralph loop 2차 T-case-lean-retry session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SECURITY,2,24000,,flat-subscription,Ralph loop 2차 T-security session; security-audit-2026-04-13.md generated
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SEEDLOG,2,18000,,flat-subscription,Ralph loop 2차 T-seed-log session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SEEDLOG-RETRY,1,12000,,flat-subscription,Ralph loop 2차 T-seed-log-retry session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SETTINGS,2,20000,,flat-subscription,Ralph loop 2차 T-settings-api session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SETTINGS-V2,1,14000,,flat-subscription,Ralph loop 2차 T-settings v2 session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-SMOKE,1,22000,,flat-subscription,Ralph loop 2차 T-smoke session; live app verification
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH2-UIPOLISH,3,32000,,flat-subscription,Ralph loop 2차 T-ui-polish session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH3-ASSISTANT,2,19000,,flat-subscription,Ralph loop 3차 T-assistant-fix session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH3-DOCX,3,35000,,flat-subscription,Ralph loop 3차 T-docx session; 05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx created
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH3-PNG,2,16000,,flat-subscription,Ralph loop 3차 T-png-export session; 6 Excalidraw PNGs exported
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH3-ROUTINE,2,20000,,flat-subscription,Ralph loop 3차 T-routine-fix session; routine-consistency-2026-04-13.md generated
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-RALPH3-SECURITY,2,18000,,flat-subscription,Ralph loop 3차 T-security-recover session
 2026-04-13,Codex,Desktop App,GPT-5.4,App,S-SUB-032,6,45000,,flat-subscription,commit 15902fc docs: pre-ralph-loop snapshot — AI report + Excalidraw diagrams + deploy fixes
