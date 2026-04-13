@@ -15,7 +15,8 @@ aliases:
 > **PM/Evidence Agent 매일 밤 루틴**: 이 파일을 스크립트 결과로 업데이트
 > [[master-evidence-ledger]]와 세션 데이터에서 파생되는 집계본.
 > AI 리포트 §통계 섹션의 소스.
-> 마지막 업데이트: 2026-04-13 21:45 (Day 8 deployment completion sync)
+> 마지막 업데이트: 2026-04-13 23:50 (OpenUsage 실측치 반영 — 2026-04-13 스크린샷 기준)
+> **⚠ 주의**: Claude 토큰은 OpenUsage 스크린샷 실측값. Day 1~7 은 자체 추정, Day 8 은 OpenUsage 실측.
 
 ## 운영 원칙
 
@@ -120,12 +121,11 @@ aliases:
 
 | AI 도구           | 토큰 (추정)         | 비용            | 세션    | 메시지     | 비중    |
 | --------------- | --------------- | ------------- | ----- | ------- | ----- |
-| Claude Opus 4.6 (오케스트레이터) | 1,840,914,835 (캐시 포함) | $4144.53 | 4 | 9537 | 캐시 포함 누적 |
-| Claude Sonnet 4.6 (서브에이전트) | ~200,000 (추정) | exact-in-jsonl | 별도 집계 | - | Day 7~8 포함 |
+| Claude Max 5x (오케스트레이터+서브에이전트) | **331,000,000 (Day 8 실측)** / **1,300,000,000 (30일 누적 실측)** | **$168.46 Extra usage (Day 8)** / **$688.98 (30일)** | - | - | OpenUsage 2026-04-13 실측 |
 | Codex GPT-5.4 | ~1,200,000 (Day 8 추정) | 정액 | 49 | 144 | Day 8 기준 |
 | ChatGPT Pro GPT-5.4 | ~50,000 | 정액 | 1 | 4 | Day 1 초기 기획 |
 | Perplexity Pro | ~18,000 | 정액 | 1 | 2 | Day 1 리서치 |
-| **합계 (Day 8 기준)** | **~1,930,000 (외부 AI)** | **$4144.53+정액** | **55** | **150+** | **Day 8 일일 추정** |
+| **합계 (Day 8 기준)** | **Claude 331M (실측) + Codex ~1,200,000 (추정)** | **$168.46 Extra+정액** | **55+** | **150+** | **Day 8 기준 / Claude는 OpenUsage 실측** |
 
 ---
 
@@ -139,9 +139,9 @@ aliases:
 | 04-09 | 0 | - | ~33,000 | 3 | 3 | paperclip 코드 해체 분석, 운영 문서/메모리/통계 재동기화, hagent-os 제품 정본 학습 |
 | 04-10 | ~85,000 | exact-in-jsonl | ~6,000 | 1 | 2 | 운영 갭 감사 + P0/P1 병렬 구현, 운영 문서 재동기화 |
 | 04-11 | ~320,000 | exact-in-jsonl | 0 | 0 | 1 | HagentOS 독립 레포 E2E 완전 재구축 메가 세션 |
-| 04-12 | ~395,000 | exact-in-jsonl | ~10,000 | 2 | 3 | Goals 재설계, UX polish, Day 7 동기화, Codex 증빙 세션 |
-| 04-13 | ~450,000 (Opus+Sonnet) | exact-in-jsonl | ~1,200,000 | 28 | 100 | Ralph 3차(1차 A~E par + 2차 T-smoke/case/settings/seed/polish/security + 3차 routine/docx/png/security-recover/assistant), AI 리포트 docx 완성, 배포 완료 |
-| **합계** | **~1,570,000** | **exact-in-jsonl** | **~1,494,000** | **53** | **164** | **Day 1~8 전체** |
+| 04-12 | **49,000,000** (OpenUsage 실측) | $25.92 | ~10,000 | 2 | 3 | Goals 재설계, UX polish, Day 7 동기화, Codex 증빙 세션 |
+| 04-13 | **331,000,000** (OpenUsage 실측) | **$168.46 Extra** | ~1,200,000 | 28 | 100 | Ralph 3차(1차 A~E par + 2차 T-smoke/case/settings/seed/polish/security + 3차 routine/docx/png/security-recover/assistant), AI 리포트 docx 완성, 배포 완료 |
+| **합계** | **~1,300,000,000 (30일 누적 실측)** / Day 1~7 자체 추정 포함 | **$688.98 (30일)** | **~1,494,000** | **53** | **164** | **Day 1~7 은 자체 추정, Day 8 은 OpenUsage 실측** |
 
 ---
 

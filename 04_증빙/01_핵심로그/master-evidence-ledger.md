@@ -996,3 +996,19 @@ aliases:
 - Report section hint: 제출물 | 제품 | AI 활용 전략 | 증빙
 - Token note: exact unavailable estimate; docs-heavy desktop session
 - Follow-up: Ralph loop에서는 이 snapshot 이후 diff만 추적
+
+### S-STATS-035
+
+- DateTime: 2026-04-13 / Claude Code CLI
+- Phase: Evidence Stats Correction
+- Tool/Client: Claude Code
+- Model: claude-sonnet-4-6
+- Goal: OpenUsage 스크린샷 실측치(Day 8: 331M tokens / $168.46 Extra, 30일: 1.3B / $688.98)를 증빙 문서 6종에 반영한다
+- What changed: ai-usage-stats.md 일별 추이·전체 통합 요약 교정; daily-memory.md Claude 토큰 블록 정정; long-term-memory.md 증빙 운영 규칙 실측값 교체; 2026-04-13.md AI 사용 요약 테이블 정정; master-evidence-ledger.md 본 항목 추가
+- Why it mattered: 기존 추정치(~450K)가 실측치(331M)와 ~700배 차이가 있어 AI 리포트 Q5~Q6 근거 수치가 틀렸다. OpenUsage 실측값으로 교정해 제출 증빙의 정합성을 확보했다.
+- Artifacts: 04_증빙/01_핵심로그/ai-usage-stats.md | .agent/system/memory/daily-memory.md | .agent/system/memory/long-term-memory.md | 04_증빙/03_daily/2026-04-13.md | 04_증빙/01_핵심로그/master-evidence-ledger.md
+- AI usage strategy: Claude Code Sonnet 4.6으로 문서 6종을 일괄 교정. OpenUsage 스크린샷 수치를 canonical 소스로 사용.
+- Evidence value: Claude 토큰 실측값 공식화 — AI 리포트 Q5~Q6 근거 수치 교정
+- Report section hint: AI 활용 통계 | 증빙 정합성
+- Token note: **Day 8 Claude Max 5x 실측: 331,000,000 tokens / $168.46 Extra (OpenUsage 2026-04-13 스크린샷)**. 30일 누적: 1,300,000,000 tokens / $688.98. Day 1~7 은 자체 추정, Day 8 은 OpenUsage 실측.
+- Follow-up: ai-report-final.md Q5~Q6 Claude 사용량 언급 확인 및 필요 시 교정

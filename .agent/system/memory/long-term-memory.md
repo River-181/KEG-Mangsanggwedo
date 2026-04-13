@@ -144,7 +144,7 @@ HagentOS (Hagwon + Agent + OS)
 - 하루 마감 시 `dispatch-session-intake.py`가 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
 - `external-ai-usage.csv`는 AI provider만 집계하며, 사람 미팅은 intake와 ledger에는 남기되 외부 AI 통계에서는 제외한다.
 - exact token source가 없는 Web/App 도구는 `estimated_tokens`로 명시적으로 기록한다.
-- 2026-04-13 기준 Day 8 `Codex` 사용량: 사전 Ralph 세션 `571k` + Ralph 1차 A~E `80k` + 2차 T-세션 `186k` + 3차 T-세션 `108k` = **총 ~945k tokens**. Claude(Opus+Sonnet) ~650k 추정 포함 Day 8 전체 ~1,595k tokens. 외부 AI 전체(Day 1~8) ~1,930k tokens.
+- 2026-04-13 기준 Day 8 `Codex` 사용량: 사전 Ralph 세션 `571k` + Ralph 1차 A~E `80k` + 2차 T-세션 `186k` + 3차 T-세션 `108k` = **총 ~1,200k tokens** (별도 ChatGPT Pro 플랜). `Claude Max 5x` (오케스트레이터+병렬 서브에이전트) Day 8 실측: **331,000,000 tokens / $168.46 Extra usage** (OpenUsage 2026-04-13 스크린샷). 30일 누적: **1,300,000,000 tokens / $688.98** (OpenUsage 실측). Day 1~7 은 자체 추정, Day 8 은 OpenUsage 실측.
 - Ralph loop 병렬 작업은 `15902fc` pre-Ralph snapshot 이후 diff만 별도 세션으로 남기고, 코드 수정이 없어도 evidence-only sync 세션을 intake에 기록한다.
 - Day 8 Ralph 루프 구조: 1차(iter 1 + par A/B/C/D/E 병렬 5개) → 2차(T-smoke/T-case/T-case-lean-retry/T-settings-api/T-settings v2/T-seed-log/T-seed-log-retry/T-ui-polish/T-security, 9개) → 3차(T-routine-fix/T-docx/T-png-export/T-security-recover/T-assistant-fix, 5개). 총 19+ Codex 세션이 이날 병렬 실행되었다.
 - AI 리포트 최종 docx: `05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx` — Q1~Q6 전체, 27개 이미지 삽입. PDF 변환만 남은 상태.

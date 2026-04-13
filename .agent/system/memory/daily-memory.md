@@ -185,13 +185,14 @@ aliases:
 - `S-RALPH3-ASSISTANT`: `19,000` tokens
 소계: **108,000 tokens**
 
-#### Claude (이 세션 포함)
-- Claude Opus 4.6 (오케스트레이터): `~450,000` tokens (추정)
-- Claude Sonnet 4.6 (서브에이전트): `~200,000` tokens (추정)
+#### Claude (OpenUsage 실측 — 2026-04-13 스크린샷)
+- Claude Max 5x 플랜 (오케스트레이터 + 병렬 서브에이전트 포함): **331,000,000 tokens** (Day 8 실측)
+- Extra usage: **$168.46**
+- 30일 누적: **1,300,000,000 tokens / $688.98**
 
-**Day 8 Codex 총 추정: ~945,000 tokens**
-**Day 8 전체 AI 총 추정: ~1,595,000 tokens (Codex + Claude)**
-**Day 8 외부 AI 포함 총 추정: ~1,675,000 tokens (+ ChatGPT/Perplexity Day 1 포함 시 ~1,930,000)**
+**Day 8 Codex 총 추정: ~1,200,000 tokens** (별도 ChatGPT Pro 플랜)
+**Day 8 Claude 실측: 331,000,000 tokens (OpenUsage)**
+**Day 8 전체 AI 총: Claude 331M (실측) + Codex ~1.2M (추정)**
 
 ### 현재 세션에서 다음 에이전트가 바로 알아야 할 것
 - 라이브 배포 URL은 `https://hagent-os.up.railway.app`가 canonical이다.
