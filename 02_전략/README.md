@@ -18,7 +18,8 @@ aliases:
 - `01_problem-framing/` — 문제 정의 전 기준 문서와 후보 비교
 - `02_prompts/` — Claude, NotebookLM, Paperclip 분석용 프롬프트
 - `03_decisions/` — 베팅, 범위, 데모, 리스크, 의사결정
-- `paperclip-analysis/` — paperclip 해체 분석 공간
+- `paperclip-analysis/` — paperclip 비교 분석 작업 공간
+- `archive/paperclip-reference/` — raw mirror 및 초기 복제 메모 보관
 - `research-results/` — 세부 리서치 정본
 - `tasks/` — 전략 실행 태스크
 - `archive/` — 보관용 문서와 캡처

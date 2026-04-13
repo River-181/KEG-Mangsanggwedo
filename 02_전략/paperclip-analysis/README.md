@@ -14,6 +14,10 @@ aliases:
 > `EduPaperclip`를 만들기 위해 `paperclip`을 분해 분석하는 작업 공간.
 > 목적은 clone이 아니라 `UI`, `entrypoint`, `data/context`, `agent orchestration`, `skill/package` 구조를 한국형 학원 운영에 맞게 재해석하는 것이다.
 
+> [!note]
+> 상위에서 직접 읽을 정본은 `03_제품/hagent-os/_research/` 아래의 비교·적용 문서다.
+> raw mirror와 초기 복제 메모는 [[02_전략/archive/paperclip-reference/README|archive]]로 내렸다.
+
 ## 이 폴더의 역할
 
 - `paperclip`에서 가져올 것과 버릴 것을 구분한다.
@@ -30,7 +34,7 @@ aliases:
 
 ## 파일 가이드
 
-- [[00]] — Paperclip 소개 영상 원문 트랜스크립트 (1차 출처)
+- [[00-Paperclip AI]] — Paperclip 소개 영상 원문 트랜스크립트 (1차 출처)
 - [[01-ui-entrypoints]] — UI 구조, 진입점, 첫 화면 흐름
 - [[02-data-context-model]] — 데이터 구조, 컨텍스트, 원본 데이터 접근 방식
 - [[03-agent-skill-structure]] — 에이전트 역할, skill/package, orchestration 구조
@@ -38,7 +42,9 @@ aliases:
 - [[05-open-questions]] — 분석 후에도 남는 질문과 로컬 디렉토리 확정 전 체크리스트
 - [[06-runtime-control-plane-map]] — 실제 monorepo, runtime layer, deployment mode, control-plane surface
 - [[07-plugin-adapter-extensibility]] — plugin SDK, adapter model, skill 배포/확장 포인트
-- [[08_PAPERCLIP-CLONE-SPEC]] — 소스코드 직접 분석 기반 완전 복제 명세서 (에이전트 4개 병렬 투입)
+- [[03_제품/hagent-os/_research/paperclip-ui-reference]] — 상위 노출용 UI 참고 정리
+- [[03_제품/hagent-os/_research/gap-analysis-paperclip-vs-hagent]] — 제품 비교/갭 분석 정본
+- [[03_제품/hagent-os/_research/paperclip-readme-agents-application]] — 제출용 README/AGENTS 적용 정리
 
 ## 분석 원칙
 
@@ -47,7 +53,8 @@ aliases:
 - 구현보다 먼저 `왜 필요한가`, `어디에 쓰는가`, `무엇을 대체하는가`를 적는다.
 - 학원 운영자가 실제로 쓸 핵심 skill 후보와 데이터 자산화 포인트를 놓치지 않는다.
 - 코드에서 확인된 사실과 해석을 구분한다.
-- `paperclip-master/` 실제 파일 근거 없이 “그럴 것 같다” 수준의 구조 가정은 줄인다.
+- raw mirror는 `02_전략/archive/paperclip-reference/paperclip-master/`에 보관한다.
+- 실제 파일 근거 없이 “그럴 것 같다” 수준의 구조 가정은 줄인다.
 
 ## 이번 코드 분석에서 추가로 확인된 것
 

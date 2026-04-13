@@ -19,6 +19,7 @@ aliases:
 - [[decision-log]] — 중요한 의사결정만 승격
 - [[prompt-catalog]] — 재사용 가치가 검증된 프롬프트만 승격
 - [[tool-log]] — 도구 설명서와 사용 원칙
+- [[03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression]] — 최신 회귀 테스트 정본
 - [[session-intake-dispatch-report]] — dispatch 재생성 보고서
 - [[ai-usage-log]] — archive/reference
 - [[session-log]] — archive/reference
@@ -52,3 +53,4 @@ aliases:
 ## 연결
 
 - [[_05_제출_MOC|05 제출]] — 증빙 → AI 리포트로 변환
+- [[team_profiles]] — 제출용 팀 프로필

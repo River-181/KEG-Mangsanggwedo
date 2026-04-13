@@ -14,7 +14,7 @@ aliases:
 
 - [[k-edu-zero-human]] — 전체 개요, 아키텍처, 기술스택 (단일 진입점)
 - [[hagent-os/INDEX]] — 개발자용 빠른 문서 찾기 인덱스
-- [[PAPERCLIP-GAP-ANALYSIS]] — Paperclip vs HagentOS 갭 분석 (14개 P0/P1/P2)
+- [[hagent-os/10_execution/runtime-docs/README]] — 제품 저장소에서 동기화한 설계/핸드오프/회귀 문서
 
 ## 제품 코드 (실제 제출물)
 
@@ -78,6 +78,7 @@ aliases:
 
 - [[10_execution/roadmap|로드맵]] — 일별 목표 + 역할
 - [[10_execution/open-questions|미해결 질문]]
+- [[10_execution/runtime-docs/README|실행 동기화 문서]] — 회귀 테스트, handoff, 디자인 정리
 
 ## 다이어그램
 
@@ -90,5 +91,7 @@ aliases:
 
 ## 갭 분석 및 참고
 
-- [[PAPERCLIP-GAP-ANALYSIS]] — Paperclip 대비 HagentOS 갭 14개 (P0/P1/P2)
-- `02_전략/paperclip-analysis/08_PAPERCLIP-CLONE-SPEC.md` — 스크린샷 기반 복제 계약
+- [[_research/gap-analysis-paperclip-vs-hagent]] — Paperclip 대비 HagentOS 비교 정본
+- [[_research/paperclip-ui-reference]] — Paperclip UI 참고 정리
+- [[_research/paperclip-readme-agents-application]] — 제출용 README/AGENTS 적용 전략
+- [[02_전략/archive/paperclip-reference/README]] — raw mirror 및 초기 복제 메모 보관

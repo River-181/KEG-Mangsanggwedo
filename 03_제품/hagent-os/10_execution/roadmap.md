@@ -1,11 +1,11 @@
 ---
 tags: [area/product, type/reference, status/active, workflow/execution]
-date: 2026-04-10
+date: 2026-04-13
 up: "[[hagent-os/README]]"
 ---
 # Roadmap
 
-> 마지막 업데이트: 2026-04-10 (v0.4.0 커밋 후)
+> 마지막 업데이트: 2026-04-13 (runtime docs, full regression, 제출 정리 반영)
 
 ## 역할 분담
 - **이승보(승)**: AI 에이전트/오케스트레이터 설계 및 구현, Claude API 연결, 대회 전략
@@ -38,33 +38,33 @@ Must-have 기능만 구현. 평가 기준 점수 최대화.
 - [x] DB 스키마 v2: students(classGroup/shuttle), instructors(email), student_schedules 테이블
 - [x] 커밋: f32570b, 9a4c80c
 
-**D6 (4/11 금): 에이전트 E2E 검증 + 온보딩 + 배포** ← 현재 여기
-- [ ] DB 마이그레이션 실행 (0002_education_schema_v2.sql) — 용
-- [ ] OnboardingPage 완성: 학원명 입력 → 에이전트팀 자동 배치 → 대시보드 리디렉션 — 용
-- [ ] 에이전트 E2E 재검증: dispatch → run → approval 실시간 SSE 확인 — 승
-- [ ] Heartbeat cron 동작 확인 (node-cron 07:00) — 승
-- [ ] Railway/Render 배포 + 환경변수 설정 — 용
-- [ ] GitHub README 작성 (라이브 URL 포함) — 용
-- [ ] 데모 스크립트 v0.1 작성 (2분 시연 경로) — 승+용
+**D6 (4/11 금): 에이전트 E2E 검증 + 온보딩 + 배포** ✅ 완료
+- [x] DB 마이그레이션 실행 (0002_education_schema_v2.sql) — 용
+- [x] OnboardingPage 완성: 학원명 입력 → 에이전트팀 자동 배치 → 대시보드 리디렉션 — 용
+- [x] 에이전트 E2E 재검증: dispatch → run → approval 실시간 SSE 확인 — 승
+- [x] Heartbeat cron 동작 확인 (node-cron 07:00) — 승
+- [x] Railway/Render 배포 + 환경변수 설정 — 용
+- [x] GitHub README 작성 (라이브 URL 포함) — 용
+- [x] 데모 스크립트 v0.1 작성 (2분 시연 경로) — 승+용
 
-**D7 (4/12 토): 안정화 + 데모 리허설**
-- [ ] 데모 시나리오 실제 실행 2회 (민원 접수 → 에이전트 처리 → 승인) — 승+용
-- [ ] AI 리포트 초안 완성 (제출 필수) — 승
-- [ ] 버그 수정 및 UI 폴리싱 — 용
+**D7 (4/12 토): 안정화 + 데모 리허설** ✅ 대부분 완료
+- [x] 데모 시나리오 실제 실행 2회 (민원 접수 → 에이전트 처리 → 승인) — 승+용
+- [x] AI 리포트 초안 완성 (제출 필수) — 승
+- [x] 버그 수정 및 UI 폴리싱 — 용
 - [ ] k-skill 실제 동작 확인 (refund-calculator, k-education-law-lookup) — 승
 
 **D8 (4/13 일): 제출**
-- [ ] 최종 데모 테스트 — 승+용
-- [ ] 제출 패키징 (README + AI 리포트 + 라이브 URL + GitHub) — 용
+- [x] 최종 데모 테스트 — 승+용
+- [x] 제출 패키징 (README + AI 리포트 + 라이브 URL + GitHub) — 용
 - [ ] 제출 마감 24:00 전 완료
 
 **절대 하지 않는 것 (D6-D8):**
-- [ ] Google Calendar sync → Phase 1
-- [ ] 카카오 i 오픈빌더 실제 연결 → Phase 1 (웹훅 엔드포인트만 준비됨)
-- [ ] Scheduler Agent 실제 에이전트 로직 → UI+루틴 완성으로 대체
-- [ ] 복잡한 인증 → local_trusted 모드로 제출
+- [x] Google Calendar sync → Phase 1
+- [x] 카카오 i 오픈빌더 실제 연결 → Phase 1 (웹훅 엔드포인트만 준비됨)
+- [x] Scheduler Agent 실제 에이전트 로직 → UI+루틴 완성으로 대체
+- [x] 복잡한 인증 → local_trusted 모드로 제출
 
-> **현재 상태**: D5 예상 범위를 크게 초과 달성. D6는 배포·온보딩·E2E 검증에 집중.
+> **현재 상태**: D5-D7은 실질적으로 닫혔고, D8은 제출 마감 시점만 남았다. 최신 실행 근거는 `runtime-docs/handoff/2026-04-13-full-regression.md`.
 
 ---
 

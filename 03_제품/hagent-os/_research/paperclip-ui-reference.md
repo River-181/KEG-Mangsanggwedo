@@ -10,6 +10,7 @@ up: "[[hagent-os/README]]"
 
 > HagentOS UI 구현 시 참고할 Paperclip 화면 구조 분석.
 > **주의**: 컴포넌트 복제 아님 — 패턴·레이아웃·UX 흐름 참고용.
+> 제출용 README / AGENTS / 데모 narrative 적용 관점은 `paperclip-readme-agents-application.md` 참고.
 
 ---
 
@@ -239,4 +240,3 @@ live 상태 = 초록 pulse dot
 4. **Status grouping**: 케이스 목록의 상태별 그룹 헤더
 5. **Properties panel**: 케이스/에이전트 상세에서 오른쪽 320px 패널
 6. **Mobile overlay**: 사이드바 → z-50 fixed overlay, 스와이프로 열기/닫기
-

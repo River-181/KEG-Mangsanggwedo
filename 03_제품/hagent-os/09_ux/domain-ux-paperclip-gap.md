@@ -12,7 +12,7 @@ aliases:
 # 도메인 UX — Paperclip 비교 및 개선 계획
 
 > 작성일: 2026-04-12 (D-1)
-> 참조: [[PAPERCLIP-GAP-ANALYSIS]], [[2026-04-11-handoff]]
+> 참조: [[_research/gap-analysis-paperclip-vs-hagent]], [[2026-04-11-handoff]]
 > Paperclip 라이브: `http://127.0.0.1:3101/CMP/dashboard`
 
 ---
@@ -223,6 +223,6 @@ AI팀 섹션의 live agent list
 ## 관련 문서
 
 - [[sidebar-restructure]] — 사이드바 네이밍/구조 상세
-- [[PAPERCLIP-GAP-ANALYSIS]] — 기능 갭 분석 원본
+- [[_research/gap-analysis-paperclip-vs-hagent]] — 기능 갭 분석 정본
 - [[information-architecture]] — 전체 라우트 맵
 - [[2026-04-11-handoff]] — 현재 제품 상태 인수인계

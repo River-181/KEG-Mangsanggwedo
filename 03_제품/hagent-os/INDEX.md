@@ -31,6 +31,7 @@ up: "[[hagent-os/README]]"
 | [[02_product/mvp-scope]] | Must/Should 우선순위 (D5-D8 스프린트 기준) |
 | [[10_execution/roadmap]] | 일별 목표 + 역할 분담 |
 | [[10_execution/open-questions]] | 개발 전 확인 필요 블로커 |
+| [[10_execution/runtime-docs/README]] | 제품 저장소 동기화 실행 문서 묶음 (`docs/design`, `docs/handoff`, `docs/plans`) |
 | [[DESIGN]] | 디자인 시스템 + 색상 토큰 |
 
 ---

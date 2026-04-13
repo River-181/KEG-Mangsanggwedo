@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/dashboard
   - status/active
-date: 2026-04-11
+date: 2026-04-13
 up: "[[00 HOME]]"
 aliases:
   - project-dashboard
@@ -11,84 +11,153 @@ aliases:
 ---
 # 프로젝트 대시보드
 
-> 사용자와 AI가 함께 보는 가시 대시보드 정본.
-> 숨김 `.agent/` 내부가 아니라 Obsidian에서 바로 보이는 위치에 둔다.
+> 제출 직전 기준 가시 대시보드 정본
+> 기준 제품: `/Users/river/workspace/active/hagent-os`
 
 ## 현재 상태
 
-- **현재 단계**: Day 6 (2026-04-11) — E2E 실동작 완성, 독립 레포 구축 완료
-- **제품 상태**: HagentOS v1.0 — `River-181/hagent-os` (public), 포트 3200/5174
-- **다음 액션**: E2E 검증 → Railway 배포 → 라이브 URL → AI 리포트 초안
-- **마감**: 2026-04-13 24:00 **(D-2)**
+- **현재 단계**: 2026-04-13 — 실사용 제출 최종 마감 단계
+- **제품 상태**: `HagentOS`는 `Kakao/Telegram inbound -> case -> approval -> document` 루프, `issue/properties UI`, `schedule polish`, `students/settings 안정화`, `telegram approval/outbound`, `운영 요약 패널 확장`, `judge/public deploy split 설계`까지 반영된 상태
+- **현재 제품 위치**: `/Users/river/workspace/active/hagent-os`
+- **다음 액션**: `live env 확인`, `judge_demo Docker 패키지`, `리허설 4개`, `AI 리포트/증빙 정합성`, `deploy URL`
+- **마감 인식**: 새 기능 추가보다 `실연동 + 시연 안정화 + 증빙 수치 정리`가 더 중요
 
 ## 핵심 지표
 
-| 항목           | 상태                    |
-| ------------ | --------------------- |
-| 독립 레포        | ✅ River-181/hagent-os |
-| E2E 재구축      | ✅ 서버+UI+Mock 완료       |
-| DB 마이그레이션    | ✅ 직접 SQL 실행 완료        |
-| 온보딩 플로우      | ✅ 4단계 Paperclip 방식    |
-| 승인/거절 동작     | ✅ reject rollback 포함  |
-| 멀티 학원 지원     | ✅ OrganizationRail    |
-| E2E 브라우저 검증  | ⬜ 서버 재시작 후 필요         |
-| 배포 (라이브 URL) | ⬜ Railway 설정 필요       |
-| AI 리포트       | ⬜ 초안 착수 필요            |
-| 데모 스크립트      | ⬜ 2분 시연 경로 미작성        |
+| 항목 | 상태 |
+|---|---|
+| Scratch onboarding | ✅ |
+| Demo academy preset | ✅ Tanzania English Academy |
+| Kakao inbound | ✅ |
+| Telegram inbound | ✅ |
+| Case / Approval / Document loop | ✅ |
+| Project from instruction | ✅ |
+| Mounted skill runtime injection | ✅ |
+| Kakao operator bridge | ✅ |
+| 제품 위계 재정렬 1차 | ✅ |
+| 우측 운영 요약 패널 | ✅ 핵심 페이지 반영 |
+| issue/properties UI 정리 | ✅ |
+| schedule interaction polish | ✅ 1차 |
+| students/settings stabilization | ✅ 1차 |
+| telegram approval/outbound | ✅ |
+| telegram fallback demo channel | ✅ |
+| judge/public deploy split plan | ✅ |
+| Codex live | ⬜ `OPENAI_API_KEY` 필요 |
+| Korean law live | ⬜ `LAW_OC` 필요 |
+| Kakao auto send | ⬜ provider env 필요 |
+| Google Calendar live | ⬜ token 필요 |
+
+## 실연동 readiness
+
+### 준비 완료
+- `codex_local` adapter test UI/API
+- `korean-law-mcp` 연결 경로
+- `kakao inbound`
+- `kakao outbound operator bridge`
+- `skill runtime injection`
+
+### 아직 env 필요
+- `OPENAI_API_KEY`
+- `LAW_OC`
+- optional `KAKAO_OUTBOUND_PROVIDER_URL`
+- optional `GOOGLE_CALENDAR_ACCESS_TOKEN`
+
+## 현재 재검증 상태
+
+- `corepack pnpm --filter @hagent/ui typecheck` ✅
+- `corepack pnpm --filter @hagent/ui build` ✅
+- `corepack pnpm --filter @hagent/db build` ✅
+- `corepack pnpm --filter @hagent/server typecheck` ✅
+- `curl http://127.0.0.1:3200/api/health` ✅ `200`
+- `curl http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard` ✅ `200`
+
+## 현재 증빙/로그 위치
+
+- `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-42-48-976Z.png`
+- `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-47-05-413Z.yml`
+- `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-d1-verification.md`
+- `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-full-regression.md`
+- `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-master-evidence.md`
+
+## 미검증 / 회귀 위험
+
+- `Telegram outbound` 실제 외부 사용자 기기 수신은 현재 세션에서 재검증하지 않았다.
+- `LAW_OC`, `OPENAI_API_KEY`, `KAKAO_OUTBOUND_PROVIDER_URL`, `GOOGLE_CALENDAR_ACCESS_TOKEN` live env는 여전히 미검증이다.
+- `hagent-os` working tree가 dirty라서 commit 전 최종 regression이 필요하다.
+
+## 심사 시나리오 4개
+
+### 1. 카카오 민원 접수
+- inbound
+- complaint run
+- approval
+- document
+- outbound send 또는 operator bridge
+
+### 2. 보강/결석 문의
+- inbound
+- scheduler run
+- approval
+- 일정 제안
+- calendar sync 또는 pending status
+
+### 3. 상반기 프로모션 준비
+- project from instruction
+- child cases
+- outputs
+- 추천 역할/agent hire
+
+### 4. 법률/운영 정책 질문
+- assistant 질문 입력
+- inquiry case 생성
+- 브리프 문서 생성
+- `LAW_OC` 유무에 따라 live 또는 degraded 설명
+
+## 남은 마일스톤
+
+1. `Codex live` 검증
+2. `LAW_OC` 넣고 법령 요약 검증
+3. `Kakao outbound`를 auto 또는 bridge 기준으로 시연 확정
+4. `Google Calendar` live token이 가능하면 추가
+5. 심사 리허설 4개 기준 최종 점검
+6. README / 제출 설명 / 증빙 정리
 
 ## 현재 집중 산출물
 
-- **HagentOS v1.0 독립 레포** — `River-181/hagent-os` (E2E 실동작, 온보딩, 멀티학원)
-- **Paperclip 갭 분석** — `03_제품/PAPERCLIP-GAP-ANALYSIS.md`
-- **E2E 검증** — 온보딩 → dispatch → 케이스 → approvals → OrgChart
-- **배포** — Railway + Neon.tech (라이브 URL 필수)
-- **AI 리포트** — `04_증빙/01_핵심로그/` raw material 기반 2섹션
+- `/Users/river/workspace/active/hagent-os`
+- `03_제품/hagent-os/_research/gap-analysis-paperclip-vs-hagent.md`
+- `03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression.md`
+- `Tanzania English Academy` demo preset
+- `Kakao/Telegram replay shortcut`
+- `학생 / 직원·강사 / 일정 / 문서 / AI 팀` 우측 운영 요약 패널
+- `오늘 운영 / 학원 운영 / AI 운영 / 운영 관리` 좌측 내비 구조
 
 ## 제출용 일정 개요
 
 ```mermaid
 gantt
-    title KEG 프로젝트 진행 흐름
+    title HagentOS 제출 직전 마감 흐름
     dateFormat  YYYY-MM-DD
     axisFormat  %m/%d
-    section 운영/전략
-    워크스페이스 정비 및 증빙 체계 :done, a1, 2026-04-06, 2d
-    문제 후보 수집 및 평가 :done, a2, 2026-04-07, 2d
-    최종 문제 및 스코프 확정 :done, a3, 2026-04-09, 1d
     section 제품
-    앱 v0.1~v0.4 빌드 :done, a4, 2026-04-10, 1d
-    v1.0 E2E 재구축 + 독립 레포 :done, a5, 2026-04-11, 1d
-    E2E 검증 + 배포 :active, a6, 2026-04-11, 1d
+    Control plane + preset academy :done, a1, 2026-04-10, 2d
+    Inbound ops + project outputs :done, a2, 2026-04-11, 1d
+    Outbound bridge + skill injection :done, a3, 2026-04-12, 1d
+    section 실연동
+    Codex/Law/Kakao live env 검증 :active, a4, 2026-04-12, 1d
     section 제출
-    AI 리포트 + 데모 리허설 :a7, 2026-04-12, 1d
-    최종 제출 :crit, a8, 2026-04-13, 1d
+    심사 시나리오 리허설 + 문서 정리 :a5, 2026-04-12, 1d
+    최종 제출 :crit, a6, 2026-04-13, 1d
 ```
 
 ## 운영 로그 연결
 
-- [[.agent/system/ops/PLAN|PLAN]] — 오늘 기준 우선순위와 마일스톤
-- [[.agent/system/ops/PROGRESS|PROGRESS]] — 실제 완료/진행 상태
-- [[master-evidence-ledger]] — 세션 단위 증빙 원장
-- [[decision-log]] — 중요한 구조 결정
-- [[prompt-catalog]] — 재사용 프롬프트 자산
-- [[2026-04-06]] / [[2026-04-07]] / [[2026-04-08]] / [[2026-04-09]] / [[2026-04-10]] / [[2026-04-11]] — 일별 작업 스냅샷
-
-## 주요 구조 변경 이력
-
-- `02_전략/tasks/`, `00_foundation/`, `01_problem-framing/`, `02_prompts/`, `03_decisions/` — 전략 문서 역할별 분리
-- `02_전략/paperclip-analysis/paperclip-master/` — reference 코드 로컬 해체 분석
-- `03_제품/PAPERCLIP-GAP-ANALYSIS.md` — 14개 갭 P0/P1/P2 분류 (2026-04-11 신규)
-- `/Users/river/workspace/active/hagent-os/` — 독립 설치형 레포 분리 (2026-04-11)
-
-## 태스크 트래커
-
-![[project-dashboard.base]]
+- `03_제품/hagent-os/10_execution/roadmap.md`
+- `03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression.md`
+- `03_제품/hagent-os/_research/gap-analysis-paperclip-vs-hagent.md`
 
 ## 규칙
 
-- `PLAN`은 앞으로 할 일을, `PROGRESS`는 실제 상태를, 이 대시보드는 제출용 가시화 판을 맡는다.
-- 세 문서는 같은 날짜 기준으로 함께 갱신한다. 셋 중 하나만 바뀌면 진행 상황이 왜곡된다.
-- 태스크 note는 `type/task` 태그와 frontmatter를 맞춰야 여기에 뜬다.
-- day가 바뀌면 `daily`, `PLAN`, `PROGRESS`, `master-evidence-ledger`를 먼저 맞춘 뒤 대시보드를 본다.
-- 대시보드 구조를 바꾸면 [[workspace-atlas]]와 관련 운영 문서를 같이 본다.
-- AI 운영 note는 `.agent/system/ops/`에 둘 수 있지만, 사람이 직접 보는 대시보드는 이 note를 기준으로 한다.
+- 이 대시보드는 `현재 실제 동작`만 기록한다.
+- `env 없음`과 `미구현`을 섞어 쓰지 않는다.
+- 제출 전에는 `live env`, `outbound`, `심사 시나리오` 3축만 본다.

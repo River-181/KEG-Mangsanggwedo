@@ -5,8 +5,9 @@ up: "[[hagent-os/README]]"
 ---
 # Gap Analysis: Paperclip Spec vs HagentOS 설계
 
-> Paperclip `08_PAPERCLIP-CLONE-SPEC.md` 기준으로 HagentOS 설계 문서의 누락/불일치 파악.
+> Paperclip 비교 분석 메모와 raw reference를 기준으로 HagentOS 설계 문서의 누락/불일치 파악.
 > 대상 문서: `domain-model.md`, `information-architecture.md`, `prd.md`
+> 제출용 README / AGENTS 적용 관점은 `paperclip-readme-agents-application.md` 참고.
 
 ---
 

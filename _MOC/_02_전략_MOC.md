@@ -34,12 +34,16 @@ aliases:
 
 ## 리서치 작업 공간
 
-- [[02_전략/paperclip-analysis/README]] — paperclip 해체 분석 작업 공간
+- [[02_전략/paperclip-analysis/README]] — paperclip 비교 분석 작업 공간
 - [[research-hub]] — 리서치 단일 진입점
 - [[research-plan-eduswarm-v0]] — 개발 전 리서치 범위와 우선순위
 - [[research-prompts-by-tool]] — 도구별 질문 세트
 - [[research-log]] — 수집 로그와 다음 액션
 - [[리서치-공간-구축-및-초기-계획]] — 현재 태스크
+
+## 참고 구조
+
+- [[02_전략/archive/paperclip-reference/README]] — raw mirror와 초기 복제 메모 보관소
 
 ## 연결
 

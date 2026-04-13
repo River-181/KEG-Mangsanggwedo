@@ -344,6 +344,6 @@ Complaint Agent ──(법적 민원 감지)──→ Compliance Agent
 
 ## 참고
 
-- [[_research/paperclip-analysis|Paperclip 소스 분석]] — 원본 메커니즘 상세
+- [[_research/gap-analysis-paperclip-vs-hagent|Paperclip 비교 분석]] — 제품 구조 차이와 가져올 요소 정리
 - [[00_vision/core-bet|Core Bet]] — HagentOS 핵심 차별점
 - `agent-roles/` — 개별 에이전트 역할 상세 문서
