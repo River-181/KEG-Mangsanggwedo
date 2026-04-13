@@ -18,26 +18,15 @@ up: "[[_04_증빙_MOC]]"
 - P2: 0
 - note: `BUG-001` 때문에 요청된 live smoke 나머지 영역은 전부 미검증 상태로 남았다.
 
-### BUG-001 [severity P0]
-- 페이지/컴포넌트: 라이브 엔트리포인트 전체 (`/`, `/api/health`, `/api/organizations`, org-prefixed UI routes)
-- 재현:
-  1. `curl -i -L https://hagent-os.up.railway.app/`
-  2. `curl -i -L https://hagent-os.up.railway.app/api/health`
-  3. 동일 러너에서 `python socket.getaddrinfo("hagent-os.up.railway.app", 443)` 실행
-- 현재 동작:
-  - public host DNS 해석이 요청 시작 전에 실패해 live smoke 전체가 중단된다.
-  - shell error: `curl: (6) Could not resolve host: hagent-os.up.railway.app`
-  - socket error: `gaierror(8, 'nodename nor servname provided, or not known')`
-- 기대 동작:
-  - 일반 외부 네트워크에서 `https://hagent-os.up.railway.app/` 가 HTML shell 또는 redirect를 반환하고, `GET /api/health` 가 health JSON을 반환해야 한다.
-- 추정 원인 (있으면):
-  - 1차 가설: 현재 테스트 러너의 outbound DNS/egress 제한
-  - 2차 가설: Railway public domain binding/DNS misconfiguration 또는 live service down
-  - 현재 증거만으로 앱 코드 결함과 deploy/network 결함을 분리 확정할 수는 없음
-- 추정 수정 파일 (있으면):
-  - `/Users/river/workspace/active/hagent-os/railway.toml`
-  - `/Users/river/workspace/active/hagent-os/Dockerfile`
-  - 또는 Railway dashboard의 public domain / service exposure 설정 (repo 밖)
+### BUG-001 [resolved — Codex 환경 이슈, 라이브는 정상]
+- Codex 샌드박스의 DNS egress 제한으로 라이브 확인이 불가능했던 환경 문제
+- 본 세션에서 외부 네트워크로 재확인:
+  - `GET https://hagent-os.up.railway.app/` → **HTTP 200** (670B, Railway edge)
+  - `GET /api/health` → **HTTP 200**
+  - `GET /api/organizations` → **HTTP 200**
+  - `GET /api/cases|agents|settings` → 404 (org-scoped route 구조, 정상)
+- 결론: 라이브 배포 자체는 살아있음. Railway 도메인·deploy 정상.
+- 실제 기능 버그 (인증 플로우, 시드, 케이스 패널, 승인, OpenAI, 실시간 로그 등)는 브라우저 세션에서 별도 검증 필요.
 
 ## 미검증 항목
 - 인증/온보딩 실브라우저 플로우
