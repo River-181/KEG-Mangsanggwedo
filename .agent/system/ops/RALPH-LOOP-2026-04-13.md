@@ -203,4 +203,24 @@ deadline: 2026-04-13 19:00 KST
   - 다른 T-* 에이전트는 먼저 live domain reachability를 외부 네트워크에서 재확인
   - deploy 쪽이면 `/Users/river/workspace/active/hagent-os/railway.toml`, `/Users/river/workspace/active/hagent-os/Dockerfile`, Railway domain binding 설정부터 확인
 
+## iter-excalidraw-export — 2026-04-13 21:16:12 KST
+
+- 범위: `assets/excalidraw/**`, `05_제출/ai-report-final.md`
+- PNG 생성 수: `6/6`
+- 생성 파일:
+  - `assets/excalidraw/png/01_민원-처리-플로우.png`
+  - `assets/excalidraw/png/02_AI-협업-구조.png`
+  - `assets/excalidraw/png/03_시스템-4계층.png`
+  - `assets/excalidraw/png/04_BeforeAfter_원장하루.png`
+  - `assets/excalidraw/png/05_kskill_생태계_분류도.png`
+  - `assets/excalidraw/png/06_7일_개발_타임라인.png`
+- 사용 방법:
+  - `a) npx @excalidraw/cli` 불가 (`@excalidraw/cli` 미설치)
+  - `b) excalidraw-to-image` 불가 (CLI 미설치)
+  - `c) puppeteer` 불가 (`puppeteer` 미설치)
+  - 최종: **fallback d** — `.excalidraw` JSON을 직접 생성/정규화하고 Python으로 SVG 렌더 후 `rsvg-convert`로 `3200x2000` PNG 변환
+- 실패/이슈:
+  - export 자체 실패 없음
+  - 기존 저장소에는 `assets/excalidraw/` 대신 오타 경로 `assets/excaildraw/`에 01~03이 있었고, 이번 배치에서 정식 경로 `assets/excalidraw/`로 01~06 세트를 새로 정리
+
 PDF 변환 실패 — 수동 변환 필요: 05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx
