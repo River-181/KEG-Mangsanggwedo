@@ -129,3 +129,21 @@ deadline: 2026-04-13 19:00 KST
 
 ### 상태
 운영 가능한 기준선 확보. 제출 마감(24:00)까지 후속 개선 여지.
+
+## iter-T-smoke
+
+- 완료 시각: 2026-04-13 KST
+- 범위:
+  - 라이브 URL `https://hagent-os.up.railway.app` 총체 스모크 시도
+  - 구현 정본 `/Users/river/workspace/active/hagent-os` 기준 기대 엔드포인트/라우트 대조
+- 생성/수정 파일:
+  - `.agent/system/ops/RALPH-LOOP-2026-04-13.md`
+  - `04_증빙/02_분석자료/live-smoke-test-2026-04-13.md`
+  - `04_증빙/02_분석자료/live-smoke-bugs-2026-04-13.md`
+- 결과 요약:
+  - `curl`, `socket.getaddrinfo`, `dig`, `nslookup` 기준 현재 러너는 외부 DNS egress가 막혀 있어 라이브 요청을 transport 단계에서 수행하지 못함
+  - 따라서 live probe는 `PASS 0 / FAIL 10 / INFO 1`
+  - 버그 리포트는 `BUG-001 [P0]` 1건으로 정리
+- 후속 우선순위:
+  - 다른 T-* 에이전트는 먼저 live domain reachability를 외부 네트워크에서 재확인
+  - deploy 쪽이면 `/Users/river/workspace/active/hagent-os/railway.toml`, `/Users/river/workspace/active/hagent-os/Dockerfile`, Railway domain binding 설정부터 확인
