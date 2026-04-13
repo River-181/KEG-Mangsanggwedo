@@ -16,7 +16,7 @@ aliases:
 
 ---
 
-## 현재 단계: Day 8 — 제출 직전 마감, 증빙 정합화, 심사용 배포 분리 설계
+## 현재 단계: Day 8 — 제출 직전 마감, 라이브 배포 완료, 제출 패키지 마무리
 
 ### Day 8 추가 진행 업데이트 ✅
 - [x] `05_제출/ai-report-final.md`와 Excalidraw 3종, `99_comprehensive-architecture`를 묶은 pre-Ralph snapshot(`15902fc`) 확보
@@ -26,6 +26,13 @@ aliases:
 - [x] `judge_demo`와 `public_byom`을 분리하는 배포 전략 정리
 - [x] 증빙/메모리/대시보드/usage stats를 현재 세션 기준으로 최신화
 - [x] Ralph 병렬 A에서 허용 경로 한정 증빙/메모리/로그 동기화 완료
+- [x] Railway 라이브 URL, GitHub, Railway, Neon, Telegram, Kakao 공개 링크 확정
+  - Live: `https://hagent-os.up.railway.app`
+  - GitHub: `https://github.com/River-181/hagent-os`
+  - Railway: `https://railway.com/invite/fmzuFpxK1li`
+  - Neon: `https://console.neon.tech/app/projects/rough-feather-95020200`
+  - Telegram: `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot`
+  - Kakao: `https://pf.kakao.com/_raDdX`
 - [x] 현재 세션 재검증
   - `corepack pnpm --filter @hagent/ui typecheck`
   - `corepack pnpm --filter @hagent/ui build`
@@ -36,6 +43,9 @@ aliases:
 - [ ] `OPENAI_API_KEY`, `LAW_OC`, `KAKAO_OUTBOUND_PROVIDER_URL`, `GOOGLE_CALENDAR_ACCESS_TOKEN` live env 재검증
 - [ ] `judge_demo`용 Docker/compose 구현
 - [ ] dirty worktree 최종 regression 후 commit/push
+- [ ] AI 리포트 `docx -> PDF`
+- [ ] 개인정보동의서 / 참가각서 서명
+- [ ] 제출 이메일 발송
 
 ### Day 7 제출 안정화 업데이트 ✅
 - [x] `hagent-os` 좌측 내비를 `오늘 운영 / 학원 운영 / AI 운영 / 운영 관리` 기준으로 재정렬
@@ -53,9 +63,9 @@ aliases:
 - [x] GoalDetailPage 신규 — 인라인 제목 수정 + 상태 Select + 메모 자동저장 + 삭제
 - [x] Goals ↔ Projects 양방향 연결 — PATCH opsGroupId + GET /projects/:id에 goals 포함
 - [x] 사이드바 리네이밍 문서 (`sidebar-restructure.md`) + Paperclip UX 비교 문서 (`domain-ux-paperclip-gap.md`)
-- [ ] Railway 배포 → 라이브 URL 확보 ← **D-1 P0**
-- [ ] `River-181/hagent-os` README 작성
-- [ ] E2E 최종 브라우저 검증 (온보딩 → dispatch → approvals)
+- [x] Railway 배포 → 라이브 URL 확보
+- [x] `River-181/hagent-os` README 작성
+- [x] E2E 최종 브라우저 검증 (온보딩 → dispatch → approvals) — 로컬 기준 통과
 
 ## 완료된 작업
 
@@ -371,7 +381,7 @@ aliases:
 
 1. **승인 화면 스크롤 버그 수정** (P0) — ✅ 완료
 2. **E2E 전체 검증** (포트 3200/5174) — 브라우저에서 직접 통과 — ⏳ 라이브 확인 대기
-3. **Railway 배포** → 라이브 URL 확보 — ✅ 완료: `https://divine-simplicity-production.up.railway.app`
+3. **Railway 배포** → 라이브 URL 확보 — ✅ 완료: `https://hagent-os.up.railway.app`
 4. **README** 작성 (설치 방법 + 스크린샷 + 라이브 URL) — ✅ 완료
 5. **AI 리포트 초안** — `04_증빙/01_핵심로그/` raw material 기반 — 🔲 남음
 6. **데모 스크립트 v0.1** — 2분 시연 경로 — ✅ JUDGE_DEMO.md에 포함됨
@@ -401,16 +411,17 @@ aliases:
   - Dockerfile + railway.toml 신규
   - Neon PostgreSQL 연결 + 마이그레이션
   - UI static 서빙 + SPA catch-all
-  - URL: `https://divine-simplicity-production.up.railway.app`
+  - URL: `https://hagent-os.up.railway.app`
 - Telegram 봇 생성: `@TANZANIA_ENGLISH_ACADEMY_bot` (토큰 Railway 환경변수 설정됨)
 - 세션 핸드오프 문서: [`hagent-os/docs/handoff/2026-04-13-claude-session-summary.md`](/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-claude-session-summary.md)
 
 ### 남은 작업 (사람 직접)
-- [ ] 라이브 URL 접속 → 탄자니아 영어학원 온보딩 (mode=demo)
-- [ ] Telegram 봇 토큰 연결 (Settings → 연결 → 웹훅 등록)
+- [x] 라이브 URL 접속 및 배포 상태 공유
+- [x] Telegram bot 공개 링크 확보
 - [ ] AI 리포트 docx 작성 + PDF 변환 (공식 양식)
 - [ ] 데모 리허설 2분 시나리오 검증
 - [ ] 개인정보 동의서 + 참가 각서 서명 (팀원 각자)
+- [ ] 제출 이메일 발송
 
 ## 참고: 현재 위키 핵심 진입점
 

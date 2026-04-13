@@ -16,10 +16,11 @@ aliases:
 
 ## 현재 상태
 
-- **현재 단계**: 2026-04-13 — 실사용 제출 최종 마감 단계
-- **제품 상태**: `HagentOS`는 `Kakao/Telegram inbound -> case -> approval -> document` 루프, `issue/properties UI`, `schedule polish`, `students/settings 안정화`, `telegram approval/outbound`, `운영 요약 패널 확장`, `judge/public deploy split 설계`까지 반영된 상태
+- **현재 단계**: 2026-04-13 — 라이브 배포 완료, 제출 패키지 마감 단계
+- **제품 상태**: `HagentOS`는 `Kakao/Telegram inbound -> case -> approval -> document` 루프, `issue/properties UI`, `schedule polish`, `students/settings 안정화`, `telegram approval/outbound`, `운영 요약 패널 확장`, `judge/public deploy split 설계`, `Railway live deploy`까지 반영된 상태
 - **현재 제품 위치**: `/Users/river/workspace/active/hagent-os`
-- **다음 액션**: `ai-report-final -> docx/PDF`, `제출 메일 패키징`, `최종 commit/push`, `심사 시연 링크 최종 확인`
+- **라이브 URL**: `https://hagent-os.up.railway.app`
+- **다음 액션**: `ai-report-final -> docx/PDF`, `개인정보동의서/참가각서 서명`, `제출 이메일 발송`
 - **마감 인식**: 새 기능 추가보다 `제출 정본 고정 + 항법 단순화 + 증빙 패키징`이 더 중요
 
 ## 제출 내비게이션
@@ -51,6 +52,9 @@ aliases:
 | telegram approval/outbound | ✅ |
 | telegram fallback demo channel | ✅ |
 | judge/public deploy split plan | ✅ |
+| Railway live deploy | ✅ `https://hagent-os.up.railway.app` |
+| Telegram public bot | ✅ `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot` |
+| Kakao public channel | ✅ `https://pf.kakao.com/_raDdX` |
 | Codex live | ⬜ `OPENAI_API_KEY` 필요 |
 | Korean law live | ⬜ `LAW_OC` 필요 |
 | Kakao auto send | ⬜ provider env 필요 |
@@ -82,6 +86,12 @@ aliases:
 
 ## 현재 증빙/로그 위치
 
+- Live app: `https://hagent-os.up.railway.app`
+- GitHub: `https://github.com/River-181/hagent-os`
+- Railway: `https://railway.com/invite/fmzuFpxK1li`
+- Neon DB: `https://console.neon.tech/app/projects/rough-feather-95020200`
+- Telegram bot: `https://t.me/TANZANIA_ENGLISH_ACADEMY_bot`
+- Kakao channel: `https://pf.kakao.com/_raDdX`
 - `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-42-48-976Z.png`
 - `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-47-05-413Z.yml`
 - `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-d1-verification.md`
@@ -124,12 +134,12 @@ aliases:
 
 ## 남은 마일스톤
 
-1. `Codex live` 검증
-2. `LAW_OC` 넣고 법령 요약 검증
-3. `Kakao outbound`를 auto 또는 bridge 기준으로 시연 확정
-4. `Google Calendar` live token이 가능하면 추가
-5. 심사 리허설 4개 기준 최종 점검
-6. README / 제출 설명 / 증빙 정리
+1. `AI 리포트 docx -> PDF` 완료
+2. `개인정보동의서 / 참가각서` 서명 완료
+3. 제출 이메일 발송
+4. `Codex live` 검증
+5. `LAW_OC` 넣고 법령 요약 검증
+6. `Kakao outbound`를 auto 또는 bridge 기준으로 시연 확정
 
 ## 현재 집중 산출물
 

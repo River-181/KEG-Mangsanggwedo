@@ -1,0 +1,1304 @@
+diff --git a/Users/river/workspace/active/hagent-os/server/src/services/auto-seed-demo.ts b/tmp/hagent-os-work.Pn99yR/server/src/services/auto-seed-demo.ts
+index 4654e9e..8b18ec2 100644
+--- a/Users/river/workspace/active/hagent-os/server/src/services/auto-seed-demo.ts
++++ b/tmp/hagent-os-work.Pn99yR/server/src/services/auto-seed-demo.ts
+@@ -3,27 +3,10 @@ import type { Db } from "@hagent/db"
+ import * as schema from "@hagent/db"
+ import pino from "pino"
+ import { bootstrapOrganization } from "./bootstrap.js"
+-import { installSkillForOrganization, updateAgentSkillMounts } from "./skills.js"
++import { ensureAcademySeedBaseline, CORE_AGENT_SEEDS } from "./seed-academy.js"
+ 
+ const logger = pino({ level: "info" })
+ 
+-// 심사위원이 "자동화"·"스킬" 탭에서 바로 볼 수 있는 기본 루틴
+-const DEMO_ROUTINES: Array<{ agentRole: string | null; name: string; schedule: string }> = [
+-  { agentRole: "orchestrator", name: "매일 오전 9시 브리핑", schedule: "0 9 * * *" },
+-  { agentRole: "complaint", name: "민원 답변 초안 자동 생성", schedule: "*/15 * * * *" },
+-  { agentRole: "retention", name: "주 1회 이탈 위험 학생 리포트", schedule: "0 10 * * MON" },
+-  { agentRole: "scheduler", name: "내일 수업 리마인더 발송", schedule: "0 20 * * *" },
+-  { agentRole: null, name: "월 1회 수강료 미납 알림", schedule: "0 9 1 * *" },
+-]
+-
+-// 시드 후 설치할 k-skill 팩 (파일시스템의 skills/hagent/... 을 DB 레지스트리로)
+-const DEMO_SKILL_SLUGS_BY_ROLE: Record<string, string[]> = {
+-  orchestrator: ["complaint-classifier", "schedule-manager", "student-data-import", "academy-bootstrap-pack"],
+-  complaint: ["complaint-classifier", "korean-tone-guide", "message-template-pack", "compliance-refund-pack"],
+-  retention: ["churn-risk-calculator", "student-360-view", "re-enrollment-playbook"],
+-  scheduler: ["schedule-manager", "schedule-optimizer", "substitute-matcher"],
+-}
+-
+ /**
+  * 심사위원/첫 방문자용 "완성된 학원 OS" 자동 시드.
+  *
+@@ -64,10 +47,10 @@ const DEMO_PAYLOAD = {
+     schedules: { mode: "preset" as const },
+   },
+   selectedAgents: [
+-    { role: "orchestrator", name: "원장", mountedSkills: ["complaint-classifier", "schedule-manager"], allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
+-    { role: "complaint", name: "민원담당", mountedSkills: ["complaint-classifier", "korean-tone-guide"], allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
+-    { role: "retention", name: "이탈방어", mountedSkills: ["churn-risk-calculator", "student-360-view"], allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
+-    { role: "scheduler", name: "스케줄러", mountedSkills: ["schedule-manager", "schedule-optimizer"], allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
++    { role: "orchestrator", name: "원장", mountedSkills: CORE_AGENT_SEEDS.orchestrator.skillSlugs, allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
++    { role: "complaint", name: "민원담당", mountedSkills: CORE_AGENT_SEEDS.complaint.skillSlugs, allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
++    { role: "retention", name: "이탈방어", mountedSkills: CORE_AGENT_SEEDS.retention.skillSlugs, allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
++    { role: "scheduler", name: "스케줄러", mountedSkills: CORE_AGENT_SEEDS.scheduler.skillSlugs, allowedChannels: ["kakao"], adapterType: "codex_local", model: "gpt-4o-mini", autoRun: true },
+   ],
+ }
+ 
+@@ -87,91 +70,16 @@ export async function autoSeedDemoOrganization(db: Db): Promise<void> {
+       .where(eq(schema.organizations.prefix, DEMO_PREFIX))
+ 
+     if (existing) {
+-      const agents = await db.select().from(schema.agents).where(eq(schema.agents.organizationId, existing.id))
+-
+-      // 스킬 백필 — 없을 때만
+-      const [skillCount] = await db
+-        .select({ n: schema.organizationSkills.organizationId })
+-        .from(schema.organizationSkills)
+-        .where(eq(schema.organizationSkills.organizationId, existing.id))
+-        .limit(1)
+-      if (!skillCount) {
+-        logger.info({ orgId: existing.id }, "Backfilling skills for existing demo org")
+-        const allSlugs = Array.from(new Set(Object.values(DEMO_SKILL_SLUGS_BY_ROLE).flat()))
+-        for (const slug of allSlugs) {
+-          await installSkillForOrganization(db, existing.id, slug).catch(() => null)
+-        }
+-        for (const agent of agents) {
+-          const slugs = DEMO_SKILL_SLUGS_BY_ROLE[agent.agentType] ?? []
+-          if (slugs.length > 0) {
+-            await updateAgentSkillMounts(
+-              db,
+-              agent.id,
+-              slugs.map((slug, i) => ({ slug, enabled: true, mountOrder: i })),
+-            ).catch(() => null)
+-          }
+-        }
+-      }
+-
+-      // 루틴 백필 — 없을 때만 (스킬 유무와 무관하게 독립 체크)
+-      const [routineCount] = await db
+-        .select({ n: schema.routines.organizationId })
+-        .from(schema.routines)
+-        .where(eq(schema.routines.organizationId, existing.id))
+-        .limit(1)
+-      if (!routineCount) {
+-        logger.info({ orgId: existing.id }, "Backfilling routines for existing demo org")
+-        for (const routine of DEMO_ROUTINES) {
+-          const agent = routine.agentRole ? agents.find((a) => a.agentType === routine.agentRole) : null
+-          await db.insert(schema.routines).values({
+-            organizationId: existing.id,
+-            agentId: agent?.id ?? null,
+-            name: routine.name,
+-            schedule: routine.schedule,
+-            enabled: true,
+-          }).catch(() => null)
+-        }
+-      }
+-
+-      logger.info({ orgId: existing.id }, "Demo organization backfill check complete")
++      const baseline = await ensureAcademySeedBaseline(db, existing.id)
++      logger.info({ orgId: existing.id, baseline }, "Demo organization backfill check complete")
+       return
+     }
+ 
+     logger.info("Auto-seeding demo organization (탄자니아 영어학원)")
+     const result = await bootstrapOrganization(db, DEMO_PAYLOAD)
+     const orgId = result.organization.id
+-    logger.info({ orgId }, "Demo organization seeded — now seeding skills + routines")
+-
+-    // 1) k-skill 팩 설치 + 에이전트 마운트
+-    const agents = await db.select().from(schema.agents).where(eq(schema.agents.organizationId, orgId))
+-    const allSlugs = Array.from(new Set(Object.values(DEMO_SKILL_SLUGS_BY_ROLE).flat()))
+-    for (const slug of allSlugs) {
+-      await installSkillForOrganization(db, orgId, slug).catch(() => null)
+-    }
+-    for (const agent of agents) {
+-      const slugs = DEMO_SKILL_SLUGS_BY_ROLE[agent.agentType] ?? []
+-      if (slugs.length > 0) {
+-        await updateAgentSkillMounts(
+-          db,
+-          agent.id,
+-          slugs.map((slug, i) => ({ slug, enabled: true, mountOrder: i })),
+-        ).catch(() => null)
+-      }
+-    }
+-
+-    // 2) 자동화(루틴) 시드
+-    for (const routine of DEMO_ROUTINES) {
+-      const agent = routine.agentRole ? agents.find((a) => a.agentType === routine.agentRole) : null
+-      await db.insert(schema.routines).values({
+-        organizationId: orgId,
+-        agentId: agent?.id ?? null,
+-        name: routine.name,
+-        schedule: routine.schedule,
+-        enabled: true,
+-      }).catch((err) => logger.warn({ err: String(err), name: routine.name }, "routine insert failed"))
+-    }
+-
+-    logger.info({ orgId, skills: allSlugs.length, routines: DEMO_ROUTINES.length }, "Demo skills + routines seeded")
++    const baseline = await ensureAcademySeedBaseline(db, orgId)
++    logger.info({ orgId, baseline }, "Demo baseline seed completed")
+   } catch (error) {
+     logger.warn(
+       { err: error instanceof Error ? { message: error.message, stack: error.stack?.split("\n").slice(0, 3).join(" | ") } : String(error) },
+diff --git a/Users/river/workspace/active/hagent-os/server/src/services/startup-migrations.ts b/tmp/hagent-os-work.Pn99yR/server/src/services/startup-migrations.ts
+index a42e462..1960839 100644
+--- a/Users/river/workspace/active/hagent-os/server/src/services/startup-migrations.ts
++++ b/tmp/hagent-os-work.Pn99yR/server/src/services/startup-migrations.ts
+@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm"
+ import pino from "pino"
+ import type { Db } from "@hagent/db"
+ import * as schema from "@hagent/db"
++import { ensureAcademySeedBaseline } from "./seed-academy.js"
+ 
+ const logger = pino({ level: "info" })
+ 
+@@ -17,6 +18,7 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
+ export async function runStartupMigrations(db: Db): Promise<void> {
+   try {
+     const agents = await db.select().from(schema.agents)
++    const organizations = await db.select({ id: schema.organizations.id }).from(schema.organizations)
+     let patched = 0
+ 
+     for (const agent of agents) {
+@@ -42,6 +44,16 @@ export async function runStartupMigrations(db: Db): Promise<void> {
+     if (patched > 0) {
+       logger.info({ patched }, "Startup migration: patched agent adapterConfig records")
+     }
++
++    const seeded = []
++    for (const organization of organizations) {
++      const baseline = await ensureAcademySeedBaseline(db, organization.id).catch(() => null)
++      if (baseline) seeded.push(baseline)
++    }
++
++    if (seeded.length > 0) {
++      logger.info({ organizations: seeded.length, seeded }, "Startup migration: academy baseline backfill complete")
++    }
+   } catch (err) {
+     logger.warn({ err: String(err) }, "Startup migration failed (non-fatal)")
+   }
+diff --git a/Users/river/workspace/active/hagent-os/server/src/services/bootstrap.ts b/tmp/hagent-os-work.Pn99yR/server/src/services/bootstrap.ts
+index 42720c1..6b0ce87 100644
+--- a/Users/river/workspace/active/hagent-os/server/src/services/bootstrap.ts
++++ b/tmp/hagent-os-work.Pn99yR/server/src/services/bootstrap.ts
+@@ -11,6 +11,7 @@ import { hashTelegramOwnerControlPassword } from "./telegram-owner-control.js"
+ import { inferInstructorRoleFromSubject } from "../lib/instructor-roles.js"
+ import { TANZANIA_PRESET } from "../data/tanzania-preset.js"
+ import { RICH_CASES, CEO_MEMORY, DEMO_DOCUMENTS } from "../data/rich-demo-seed.js"
++import { ensureAcademySeedBaseline } from "./seed-academy.js"
+ 
+ const AGENT_DATA_DIR = path.join(import.meta.dirname, "../../data/agents")
+ 
+@@ -1435,6 +1436,8 @@ export async function bootstrapOrganization(db: Db, payload: unknown) {
+       }
+     }
+ 
++    await ensureAcademySeedBaseline(db, organization.id).catch(() => null)
++
+     return {
+       organization: updatedOrganization,
+       agents: createdAgents,
+diff --git a/Users/river/workspace/active/hagent-os/server/src/routes/agents.ts b/tmp/hagent-os-work.Pn99yR/server/src/routes/agents.ts
+index e57d87a..081cb8b 100644
+--- a/Users/river/workspace/active/hagent-os/server/src/routes/agents.ts
++++ b/tmp/hagent-os-work.Pn99yR/server/src/routes/agents.ts
+@@ -10,6 +10,7 @@ import { publishEvent } from "../services/live-events.js"
+ import { getAgentMountedSkills, updateAgentSkillMounts } from "../services/skills.js"
+ import { getApprovalLevelForAgentType, inferCaseType } from "../services/orchestration.js"
+ import { recoverStaleRuns } from "../services/run-recovery.js"
++import { getLatestAgentRunLog, listAgentRunHistory } from "../services/agent-run-log.js"
+ 
+ const AGENT_DATA_DIR = join(import.meta.dirname, "../../data/agents")
+ 
+@@ -188,6 +189,18 @@ ${agentType} 에이전트로서 학원 운영을 지원합니다.
+   return souls[agentType] ?? defaultSoul
+ }
+ 
++function getRunDurationMs(run: typeof schema.agentRuns.$inferSelect) {
++  const startedAt = new Date(run.startedAt ?? run.createdAt).getTime()
++  const finishedAt =
++    run.completedAt
++      ? new Date(run.completedAt).getTime()
++      : run.status === "completed" || run.status === "pending_approval" || run.status === "failed"
++        ? new Date(run.updatedAt).getTime()
++        : Date.now()
++
++  return Math.max(0, finishedAt - startedAt)
++}
++
+ export function agentRoutes(db: Db): Router {
+   const router = Router()
+ 
+@@ -237,6 +250,7 @@ export function agentRoutes(db: Db): Router {
+         const lastCompletedRun = recentRuns.find((run) => run.status === "completed" || run.status === "pending_approval") ?? null
+         return {
+           ...agent,
++          status: activeRun ? "running" : agent.status,
+           activeRun,
+           lastRunAt: recentRuns[0]?.completedAt ?? recentRuns[0]?.startedAt ?? recentRuns[0]?.createdAt ?? null,
+           recentRuns: recentRuns.map((run) => ({
+@@ -247,6 +261,7 @@ export function agentRoutes(db: Db): Router {
+             createdAt: run.createdAt,
+             startedAt: run.startedAt,
+             completedAt: run.completedAt,
++            durationMs: getRunDurationMs(run),
+             tokensUsed: run.tokensUsed,
+             excerpt: summarizeRunOutput(run.output) ?? summarizeRunOutput(run.input) ?? run.error ?? null,
+           })),
+@@ -319,12 +334,36 @@ export function agentRoutes(db: Db): Router {
+         return
+       }
+ 
+-      res.json(agent)
++      const runs = await listAgentRunHistory(db, agent.id, 20)
++      res.json({
++        ...agent,
++        status: runs[0]?.status === "running" || runs[0]?.status === "queued" ? "running" : agent.status,
++        latestRun: runs[0] ?? null,
++        runs,
++      })
+     } catch (err) {
+       res.status(500).json({ error: "Failed to fetch agent" })
+     }
+   })
+ 
++  router.get("/agents/:id/runs/latest", async (req, res) => {
++    try {
++      const [agent] = await db
++        .select({ id: schema.agents.id })
++        .from(schema.agents)
++        .where(eq(schema.agents.id, req.params.id))
++
++      if (!agent) {
++        res.status(404).json({ error: "Agent not found" })
++        return
++      }
++
++      res.json(await getLatestAgentRunLog(db, agent.id))
++    } catch (err) {
++      res.status(500).json({ error: "Failed to fetch latest run log" })
++    }
++  })
++
+   router.patch("/agents/:id", async (req, res) => {
+     try {
+       const [existing] = await db
+diff --git a/Users/river/workspace/active/hagent-os/ui/src/api/agents.ts b/tmp/hagent-os-work.Pn99yR/ui/src/api/agents.ts
+index 80deb72..6f3b66f 100644
+--- a/Users/river/workspace/active/hagent-os/ui/src/api/agents.ts
++++ b/tmp/hagent-os-work.Pn99yR/ui/src/api/agents.ts
+@@ -10,6 +10,7 @@ export const agentsApi = {
+     api.post<any>(`/organizations/${orgId}/agent-hires`, data),
+   update: (id: string, data: unknown) => api.patch<any>(`/agents/${id}`, data),
+   delete: (id: string) => api.delete<void>(`/agents/${id}`),
++  getLatestRun: (id: string) => api.get<any>(`/agents/${id}/runs/latest`),
+   wakeup: (id: string, body?: { reason?: string; caseId?: string }) =>
+     api.post<any>(`/agents/${id}/wakeup`, body ?? {}),
+   stop: (id: string) => api.post<any>(`/agents/${id}/stop`, {}),
+diff --git a/Users/river/workspace/active/hagent-os/ui/src/lib/queryKeys.ts b/tmp/hagent-os-work.Pn99yR/ui/src/lib/queryKeys.ts
+index b62883b..3e80454 100644
+--- a/Users/river/workspace/active/hagent-os/ui/src/lib/queryKeys.ts
++++ b/tmp/hagent-os-work.Pn99yR/ui/src/lib/queryKeys.ts
+@@ -10,6 +10,7 @@ export const queryKeys = {
+   agents: {
+     list: (orgId: string) => ["agents", "list", orgId] as const,
+     detail: (id: string) => ["agents", id] as const,
++    latestRun: (id: string) => ["agents", id, "latest-run"] as const,
+   },
+   approvals: {
+     list: (orgId: string) => ["approvals", "list", orgId] as const,
+diff --git a/Users/river/workspace/active/hagent-os/ui/src/pages/AgentDetailPage.tsx b/tmp/hagent-os-work.Pn99yR/ui/src/pages/AgentDetailPage.tsx
+index ef74708..3b3e7b8 100644
+--- a/Users/river/workspace/active/hagent-os/ui/src/pages/AgentDetailPage.tsx
++++ b/tmp/hagent-os-work.Pn99yR/ui/src/pages/AgentDetailPage.tsx
+@@ -16,6 +16,8 @@ import { Separator } from "@/components/ui/separator"
+ import { Button } from "@/components/ui/button"
+ import { Switch } from "@/components/ui/switch"
+ import { CapabilityWorkspacePanel } from "@/components/capabilities/CapabilityWorkspacePanel"
++import { AgentRun } from "@/components/AgentRun"
++import { RunLog } from "@/components/RunLog"
+ import {
+   WorkspaceHeader,
+   WorkspacePanel,
+@@ -410,10 +412,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+     const bTime = b.startedAt ?? b.started_at ?? b.createdAt ?? ""
+     return bTime.localeCompare(aTime)
+   })
+-  const recentRuns = sortedRuns.slice(0, 5)
+-  const [expandedRunId, setExpandedRunId] = useState<string | null>(
+-    recentRuns.length > 0 ? (recentRuns[0].id ?? null) : null,
+-  )
++  const recentRuns = sortedRuns.slice(0, 10)
+   const [assignDialogOpen, setAssignDialogOpen] = useState(false)
+   const [assignInstruction, setAssignInstruction] = useState("")
+   const isRunning = agent.status === "running" || !!currentRun
+@@ -443,6 +442,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+     mutationFn: () => agentsApi.wakeup(agent.id),
+     onSuccess: () => {
+       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
++      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.latestRun(agent.id) })
+     },
+   })
+ 
+@@ -450,6 +450,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+     mutationFn: () => agentsApi.stop(agent.id),
+     onSuccess: () => {
+       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
++      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.latestRun(agent.id) })
+     },
+   })
+ 
+@@ -457,6 +458,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+     mutationFn: () => agentsApi.update(agent.id, { status: "paused" }),
+     onSuccess: () => {
+       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
++      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.latestRun(agent.id) })
+     },
+   })
+ 
+@@ -464,6 +466,7 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+     mutationFn: () => agentsApi.update(agent.id, { status: "idle" }),
+     onSuccess: () => {
+       void queryClient.invalidateQueries({ queryKey: queryKeys.agents.detail(agent.id) })
++      void queryClient.invalidateQueries({ queryKey: queryKeys.agents.latestRun(agent.id) })
+     },
+   })
+ 
+@@ -510,50 +513,13 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+           <section className="space-y-3">
+             <div className="flex items-end justify-between gap-3">
+               <div className="space-y-1">
+-                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+-                  현재 실행
+-                </h3>
++                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>최신 실행</h3>
+                 <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+-                  최근 활성 run을 바로 확인합니다.
++                  최신 run 단계와 소요 시간을 1-2초 간격으로 갱신합니다.
+                 </p>
+               </div>
+             </div>
+-            {currentRun ? (
+-              <WorkspaceSubtle className="p-4">
+-                <div className="flex items-start gap-3">
+-                  <Loader2 size={15} className="mt-0.5 shrink-0 animate-spin" style={{ color: "var(--accent-primary)" }} />
+-                  <div className="min-w-0 flex-1 space-y-2">
+-                    <div className="flex flex-wrap items-center gap-2">
+-                      <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+-                        {currentRun.case?.title ?? currentRun.caseTitle ?? "케이스 처리 중"}
+-                      </p>
+-                      <Badge
+-                        className="border-0 text-xs"
+-                        style={{ backgroundColor: "var(--accent-primary-soft)", color: "var(--accent-primary)" }}
+-                      >
+-                        실행 중
+-                      </Badge>
+-                    </div>
+-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs" style={{ color: "var(--text-tertiary)" }}>
+-                      {currentRun.startedAt ?? currentRun.createdAt ? (
+-                        <span>시작: {new Date(currentRun.startedAt ?? currentRun.createdAt).toLocaleString("ko-KR")}</span>
+-                      ) : null}
+-                      {currentRun.tokensUsed ?? currentRun.tokens_used ? (
+-                        <span>토큰: {(currentRun.tokensUsed ?? currentRun.tokens_used).toLocaleString()}</span>
+-                      ) : null}
+-                      {currentRun.durationMs ?? currentRun.duration_ms ? (
+-                        <span>소요: {(((currentRun.durationMs ?? currentRun.duration_ms) as number) / 1000).toFixed(1)}초</span>
+-                      ) : null}
+-                    </div>
+-                  </div>
+-                </div>
+-              </WorkspaceSubtle>
+-            ) : (
+-              <WorkspaceEmptyState
+-                title="현재 실행 중인 run이 없습니다."
+-                description="에이전트를 깨우거나 태스크를 지시하면 여기서 상태를 바로 추적할 수 있습니다."
+-              />
+-            )}
++            <AgentRun agentId={agent.id} />
+           </section>
+ 
+           <section className="space-y-3">
+@@ -563,34 +529,11 @@ function OverviewTab({ agent, runs, memory }: { agent: any; runs: any[]; memory:
+                   최근 실행
+                 </h3>
+                 <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+-                  최근 5개 run만 보여줍니다.
++                  최근 run의 시각, 상태, elapsed time을 함께 보여줍니다.
+                 </p>
+               </div>
+             </div>
+-            {recentRuns.length === 0 ? (
+-              <WorkspaceEmptyState
+-                title="실행 이력이 없습니다."
+-                description="에이전트가 동작하면 이 영역에 요약과 상세 로그가 쌓입니다."
+-              />
+-            ) : (
+-              <WorkspaceSubtle className="overflow-hidden p-0">
+-                <div className="divide-y divide-[var(--border-default)]">
+-                  {recentRuns.map((run: any, i: number) => {
+-                    const runId = run.id ?? String(i)
+-                    const isExpanded = expandedRunId === runId
+-                    return (
+-                      <RunRow
+-                        key={runId}
+-                        run={run}
+-                        expanded={isExpanded}
+-                        onToggle={() => setExpandedRunId(isExpanded ? null : runId)}
+-                        showRerun
+-                      />
+-                    )
+-                  })}
+-                </div>
+-              </WorkspaceSubtle>
+-            )}
++            <RunLog runs={recentRuns} />
+           </section>
+ 
+           <section className="space-y-3">
+@@ -1919,6 +1862,10 @@ export function AgentDetailPage() {
+     queryKey: queryKeys.agents.detail(id!),
+     queryFn: () => agentsApi.get(id!),
+     enabled: !!id,
++    refetchInterval: (query) => {
++      const latestStatus = (query.state.data as any)?.latestRun?.status
++      return latestStatus === "running" || latestStatus === "queued" ? 2000 : false
++    },
+   })
+ 
+   // ── fetch instruction files ────────────────────────────────────────────────
+--- /dev/null	2026-04-13 21:26:54
++++ /tmp/hagent-os-work.Pn99yR/server/src/services/seed-academy.ts	2026-04-13 21:19:25
+@@ -0,0 +1,351 @@
++import { eq } from "drizzle-orm"
++import type { Db } from "@hagent/db"
++import * as schema from "@hagent/db"
++import { createCaseWithRetry } from "../lib/case-create.js"
++import { installSkillForOrganization, updateAgentSkillMounts } from "./skills.js"
++
++type CoreAgentRole = "orchestrator" | "complaint" | "retention" | "scheduler"
++
++type CoreAgentSeed = {
++  slug: string
++  icon: string
++  name: string
++  systemPrompt: (organizationName: string, topGoal: string) => string
++  skillSlugs: string[]
++}
++
++type RoutineSeed = {
++  role: CoreAgentRole | null
++  name: string
++  schedule: string
++}
++
++type CaseSeed = {
++  title: string
++  description: string
++  type: "complaint" | "churn" | "schedule"
++  severity: "same_day" | "normal"
++  status: "todo" | "in_progress"
++  role: CoreAgentRole
++}
++
++type NotificationSeed = {
++  type: string
++  title: string
++  body: string
++}
++
++export const CORE_AGENT_SEEDS: Record<CoreAgentRole, CoreAgentSeed> = {
++  orchestrator: {
++    slug: "orchestrator",
++    icon: "brain",
++    name: "원장 오케스트레이터",
++    systemPrompt: (organizationName, topGoal) =>
++      `${organizationName}의 운영 전반을 조율하고 "${topGoal}"를 우선순위로 실행합니다. 케이스를 분류하고 전문 에이전트에 위임한 뒤 승인과 후속 조치가 끊기지 않도록 관리합니다.`,
++    skillSlugs: ["academy-bootstrap-pack", "complaint-classifier", "approval-flow-designer", "agent-runtime-checker"],
++  },
++  complaint: {
++    slug: "complaint",
++    icon: "shield",
++    name: "민원담당",
++    systemPrompt: (organizationName) =>
++      `${organizationName}의 민원, 환불, 민감한 보호자 응대를 담당합니다. 공감 기반 초안 작성, 규정 안내, 승인 요청 생성까지 책임집니다.`,
++    skillSlugs: ["complaint-classifier", "message-template-pack", "korean-tone-guide", "parent-sentiment-tracker"],
++  },
++  retention: {
++    slug: "retention",
++    icon: "heart",
++    name: "이탈방어",
++    systemPrompt: (organizationName) =>
++      `${organizationName}의 이탈 위험 학생을 조기 탐지하고 재등록 개입안을 제안합니다. 출결, 상담, 결제 신호를 함께 보고 보호자 접촉 우선순위를 정합니다.`,
++    skillSlugs: ["churn-risk-calculator", "student-360-view", "re-enrollment-playbook", "attendance-followup"],
++  },
++  scheduler: {
++    slug: "scheduler",
++    icon: "calendar",
++    name: "스케줄러",
++    systemPrompt: (organizationName) =>
++      `${organizationName}의 보강, 상담, 대체수업, 캘린더 후속 작업을 담당합니다. 일정 충돌을 줄이고 실행 가능한 다음 액션을 제안합니다.`,
++    skillSlugs: ["schedule-manager", "schedule-optimizer", "substitute-matcher", "google-calendar-mcp"],
++  },
++}
++
++export const CORE_ROUTINE_SEEDS: RoutineSeed[] = [
++  { role: "orchestrator", name: "매일 오전 9시 브리핑", schedule: "0 9 * * *" },
++  { role: "complaint", name: "민원 답변 초안 자동 생성", schedule: "*/15 * * * *" },
++  { role: "retention", name: "주 1회 이탈 위험 학생 리포트", schedule: "0 10 * * MON" },
++  { role: "scheduler", name: "내일 수업 리마인더 발송", schedule: "0 20 * * *" },
++]
++
++const SAMPLE_CASE_SEEDS: CaseSeed[] = [
++  {
++    title: "학부모 환불 문의 초안 검토",
++    description: "이번 주 접수된 환불 문의에 대해 규정 기반 답변 초안과 승인 포인트를 정리합니다.",
++    type: "complaint",
++    severity: "same_day",
++    status: "todo",
++    role: "complaint",
++  },
++  {
++    title: "결석 누적 학생 재등록 위험 점검",
++    description: "최근 2주 출결이 흔들린 학생을 골라 이탈 위험 신호와 보호자 팔로업 액션을 제안합니다.",
++    type: "churn",
++    severity: "normal",
++    status: "in_progress",
++    role: "retention",
++  },
++  {
++    title: "보강 및 상담 일정 정리",
++    description: "이번 주 보강 요청과 상담 일정을 묶어 시간표 충돌 없이 정리합니다.",
++    type: "schedule",
++    severity: "normal",
++    status: "todo",
++    role: "scheduler",
++  },
++]
++
++const SAMPLE_NOTIFICATION_SEEDS: NotificationSeed[] = [
++  {
++    type: "approval_needed",
++    title: "승인 대기: 환불 문의 초안",
++    body: "민원담당이 환불 안내 초안을 작성했습니다. 원장 확인이 필요합니다.",
++  },
++  {
++    type: "case_update",
++    title: "케이스 업데이트: 이탈 위험 학생 점검",
++    body: "이탈방어 에이전트가 최근 결석 누적 학생 1명을 고위험으로 분류했습니다.",
++  },
++  {
++    type: "agent_completed",
++    title: "에이전트 완료: 일정 정리",
++    body: "스케줄러가 보강·상담 일정 초안을 정리했습니다.",
++  },
++]
++
++function isRecord(value: unknown): value is Record<string, unknown> {
++  return Boolean(value) && typeof value === "object" && !Array.isArray(value)
++}
++
++function readBootstrapConfig(organization: typeof schema.organizations.$inferSelect) {
++  const teamConfig = isRecord(organization.agentTeamConfig) ? organization.agentTeamConfig : {}
++  const bootstrap = isRecord(teamConfig.bootstrap) ? teamConfig.bootstrap : {}
++  const aiPolicy = isRecord(teamConfig.aiPolicy) ? teamConfig.aiPolicy : {}
++
++  return {
++    topGoal:
++      typeof bootstrap.topGoal === "string" && bootstrap.topGoal.trim().length > 0
++        ? bootstrap.topGoal
++        : "민원 대응과 재등록 운영 안정화",
++    adapterType:
++      typeof aiPolicy.primaryAdapterType === "string" && aiPolicy.primaryAdapterType.trim().length > 0
++        ? aiPolicy.primaryAdapterType
++        : typeof bootstrap.selectedAdapterType === "string" && bootstrap.selectedAdapterType.trim().length > 0
++          ? bootstrap.selectedAdapterType
++          : "codex_local",
++  }
++}
++
++function readSkillSlugs(agent: typeof schema.agents.$inferSelect) {
++  const items = Array.isArray(agent.skills) ? agent.skills : []
++  const slugs = items.flatMap((item) => {
++    if (typeof item === "string") return [item]
++    if (isRecord(item) && typeof item.slug === "string") return [item.slug]
++    return []
++  })
++  return Array.from(new Set(slugs))
++}
++
++function mergeSeedSkills(current: string[], seeded: string[]) {
++  return Array.from(new Set([...seeded, ...current])).slice(0, 5)
++}
++
++export async function ensureAcademySeedBaseline(db: Db, organizationId: string) {
++  const [organization] = await db
++    .select()
++    .from(schema.organizations)
++    .where(eq(schema.organizations.id, organizationId))
++
++  if (!organization) return null
++
++  const bootstrapConfig = readBootstrapConfig(organization)
++  const agents = await db
++    .select()
++    .from(schema.agents)
++    .where(eq(schema.agents.organizationId, organizationId))
++
++  let orchestratorId = agents.find((agent) => agent.agentType === "orchestrator")?.id ?? null
++  const ensuredAgents = new Map<CoreAgentRole, typeof schema.agents.$inferSelect>()
++  let createdAgents = 0
++  let patchedAgents = 0
++
++  for (const role of Object.keys(CORE_AGENT_SEEDS) as CoreAgentRole[]) {
++    const preset = CORE_AGENT_SEEDS[role]
++    const existing = agents.find((agent) => agent.agentType === role) ?? null
++
++    if (!existing) {
++      const [inserted] = await db
++        .insert(schema.agents)
++        .values({
++          organizationId,
++          name: preset.name,
++          slug: preset.slug,
++          agentType: role,
++          status: "idle",
++          systemPrompt: preset.systemPrompt(organization.name, bootstrapConfig.topGoal),
++          icon: preset.icon,
++          adapterType: bootstrapConfig.adapterType,
++          adapterConfig: {
++            model: "gpt-4o-mini",
++            autoRun: true,
++          } as Record<string, unknown>,
++          reportsTo: role === "orchestrator" ? null : orchestratorId,
++        })
++        .returning()
++
++      if (role === "orchestrator") orchestratorId = inserted.id
++      ensuredAgents.set(role, inserted)
++      createdAgents += 1
++      continue
++    }
++
++    const currentConfig = isRecord(existing.adapterConfig) ? existing.adapterConfig : {}
++    const nextConfig: Record<string, unknown> = {
++      ...currentConfig,
++      model: "gpt-4o-mini",
++      autoRun: true,
++    }
++    const currentSkills = readSkillSlugs(existing)
++    const nextSkills = mergeSeedSkills(currentSkills, preset.skillSlugs)
++    const needsPatch =
++      existing.systemPrompt !== preset.systemPrompt(organization.name, bootstrapConfig.topGoal)
++      || !existing.adapterType
++      || JSON.stringify(currentConfig) !== JSON.stringify(nextConfig)
++      || JSON.stringify(currentSkills) !== JSON.stringify(nextSkills)
++
++    const [updated] = await db
++      .update(schema.agents)
++      .set({
++        systemPrompt: preset.systemPrompt(organization.name, bootstrapConfig.topGoal),
++        adapterType: existing.adapterType || bootstrapConfig.adapterType,
++        adapterConfig: nextConfig,
++        icon: existing.icon ?? preset.icon,
++        reportsTo: role === "orchestrator" ? null : existing.reportsTo ?? orchestratorId,
++        updatedAt: new Date(),
++      })
++      .where(eq(schema.agents.id, existing.id))
++      .returning()
++
++    ensuredAgents.set(role, updated)
++    if (role === "orchestrator" && !orchestratorId) orchestratorId = updated.id
++    if (needsPatch) patchedAgents += 1
++  }
++
++  const agentsByRole = Object.fromEntries(
++    Array.from(ensuredAgents.entries()).map(([role, agent]) => [role, agent]),
++  ) as Record<CoreAgentRole, typeof schema.agents.$inferSelect>
++
++  const seedSkillSlugs = Array.from(new Set(Object.values(CORE_AGENT_SEEDS).flatMap((preset) => preset.skillSlugs)))
++  for (const slug of seedSkillSlugs) {
++    await installSkillForOrganization(db, organizationId, slug).catch(() => null)
++  }
++
++  for (const role of Object.keys(CORE_AGENT_SEEDS) as CoreAgentRole[]) {
++    const agent = agentsByRole[role]
++    const nextSkills = mergeSeedSkills(readSkillSlugs(agent), CORE_AGENT_SEEDS[role].skillSlugs)
++    await updateAgentSkillMounts(
++      db,
++      agent.id,
++      nextSkills.map((slug, index) => ({ slug, enabled: true, mountOrder: index })),
++    ).catch(() => null)
++  }
++
++  const routines = await db
++    .select()
++    .from(schema.routines)
++    .where(eq(schema.routines.organizationId, organizationId))
++  let createdRoutines = 0
++
++  for (const routine of CORE_ROUTINE_SEEDS) {
++    const exists = routines.some((item) => item.name === routine.name)
++    if (exists) continue
++
++    await db.insert(schema.routines).values({
++      organizationId,
++      agentId: routine.role ? agentsByRole[routine.role]?.id ?? null : null,
++      name: routine.name,
++      schedule: routine.schedule,
++      enabled: true,
++    })
++    createdRoutines += 1
++  }
++
++  const students = await db
++    .select()
++    .from(schema.students)
++    .where(eq(schema.students.organizationId, organizationId))
++  const cases = await db
++    .select()
++    .from(schema.cases)
++    .where(eq(schema.cases.organizationId, organizationId))
++  let createdCases = 0
++
++  if (cases.length < 3) {
++    const primaryStudentId = students[0]?.id ?? null
++    for (const seed of SAMPLE_CASE_SEEDS.slice(0, 3 - cases.length)) {
++      const created = await createCaseWithRetry(db, {
++        organizationId,
++        title: seed.title,
++        description: seed.description,
++        type: seed.type,
++        severity: seed.severity,
++        status: seed.status,
++        priority: seed.severity === "same_day" ? 1 : 2,
++        reporterId: "system:academy-seed",
++        studentId: primaryStudentId,
++        assigneeAgentId: agentsByRole[seed.role]?.id ?? null,
++        source: "manual",
++        metadata: {
++          caseKind: seed.type,
++          seeded: true,
++          seedOrigin: "academy-baseline",
++        } as Record<string, unknown>,
++      }).catch(() => null)
++
++      if (created) createdCases += 1
++    }
++  }
++
++  const refreshedCases = createdCases > 0
++    ? await db.select().from(schema.cases).where(eq(schema.cases.organizationId, organizationId))
++    : cases
++
++  const notifications = await db
++    .select()
++    .from(schema.notifications)
++    .where(eq(schema.notifications.organizationId, organizationId))
++  let createdNotifications = 0
++
++  if (notifications.length < 3) {
++    const caseTargets = refreshedCases.slice(0, 3)
++    for (const [index, seed] of SAMPLE_NOTIFICATION_SEEDS.slice(0, 3 - notifications.length).entries()) {
++      await db.insert(schema.notifications).values({
++        organizationId,
++        type: seed.type,
++        title: seed.title,
++        body: seed.body,
++        entityType: caseTargets[index]?.id ? "case" : null,
++        entityId: caseTargets[index]?.id ?? null,
++      })
++      createdNotifications += 1
++    }
++  }
++
++  return {
++    organizationId,
++    createdAgents,
++    patchedAgents,
++    createdRoutines,
++    createdCases,
++    createdNotifications,
++  }
++}
+--- /dev/null	2026-04-13 21:26:54
++++ /tmp/hagent-os-work.Pn99yR/server/src/services/agent-run-log.ts	2026-04-13 21:16:24
+@@ -0,0 +1,202 @@
++import { desc, eq, inArray } from "drizzle-orm"
++import type { Db } from "@hagent/db"
++import * as schema from "@hagent/db"
++
++const STEP_LABELS: Record<string, string> = {
++  "run.queued": "대기열 등록",
++  "run.started": "실행 시작",
++  "approval.created": "승인 요청 생성",
++  "run.completed": "실행 완료",
++  "run.failed": "실행 실패",
++  "run.cancelled": "실행 중지",
++}
++
++type AgentRunRecord = typeof schema.agentRuns.$inferSelect
++type ActivityEventRecord = typeof schema.activityEvents.$inferSelect
++
++function toIso(value: Date | string | null | undefined) {
++  if (!value) return null
++  return value instanceof Date ? value.toISOString() : new Date(value).toISOString()
++}
++
++function toMs(value: Date | string | null | undefined) {
++  if (!value) return null
++  return new Date(value).getTime()
++}
++
++function getFinishedAt(run: AgentRunRecord) {
++  if (run.completedAt) return run.completedAt
++  if (run.status === "completed" || run.status === "pending_approval" || run.status === "failed") {
++    return run.updatedAt
++  }
++  return null
++}
++
++function getDurationMs(run: AgentRunRecord) {
++  const startedAt = toMs(run.startedAt ?? run.createdAt)
++  if (!startedAt) return null
++  const finishedAt = toMs(getFinishedAt(run))
++  return (finishedAt ?? Date.now()) - startedAt
++}
++
++function summarizeRunOutput(run: AgentRunRecord) {
++  if (typeof run.output === "string" && run.output.trim()) return run.output.slice(0, 280)
++  if (run.output && typeof run.output === "object" && !Array.isArray(run.output)) {
++    const output = run.output as Record<string, unknown>
++    for (const key of ["draft", "summary", "reasoning", "message", "suggestedReply"]) {
++      const value = output[key]
++      if (typeof value === "string" && value.trim()) return value.slice(0, 280)
++    }
++  }
++  if (typeof run.input === "string" && run.input.trim()) return run.input.slice(0, 280)
++  if (run.error) return run.error
++  return null
++}
++
++function buildBaseHistoryItem(
++  run: AgentRunRecord,
++  caseTitleById: Map<string, string>,
++) {
++  return {
++    id: run.id,
++    caseId: run.caseId,
++    caseTitle: run.caseId ? caseTitleById.get(run.caseId) ?? "케이스 없음" : "케이스 없음",
++    status: run.status,
++    createdAt: toIso(run.createdAt),
++    startedAt: toIso(run.startedAt),
++    completedAt: toIso(run.completedAt),
++    updatedAt: toIso(run.updatedAt),
++    durationMs: getDurationMs(run),
++    tokensUsed: run.tokensUsed,
++    excerpt: summarizeRunOutput(run),
++    error: run.error,
++  }
++}
++
++function pushStep(
++  steps: Array<{ action: string; label: string; timestamp: string; metadata?: Record<string, unknown> | null }>,
++  action: string,
++  timestamp: Date | string | null | undefined,
++  metadata?: Record<string, unknown> | null,
++) {
++  const iso = toIso(timestamp)
++  if (!iso) return
++  const exists = steps.some((step) => step.action === action && step.timestamp === iso)
++  if (exists) return
++  steps.push({
++    action,
++    label: STEP_LABELS[action] ?? action,
++    timestamp: iso,
++    metadata: metadata ?? null,
++  })
++}
++
++function buildRunSteps(run: AgentRunRecord, events: ActivityEventRecord[]) {
++  const steps: Array<{ action: string; label: string; timestamp: string; metadata?: Record<string, unknown> | null }> = []
++  pushStep(steps, "run.queued", run.createdAt, (run.input as Record<string, unknown> | null) ?? null)
++  pushStep(steps, "run.started", run.startedAt)
++
++  for (const event of events) {
++    if (!STEP_LABELS[event.action]) continue
++    pushStep(
++      steps,
++      event.action,
++      event.createdAt,
++      event.metadata && typeof event.metadata === "object" && !Array.isArray(event.metadata)
++        ? (event.metadata as Record<string, unknown>)
++        : null,
++    )
++  }
++
++  if (run.status === "pending_approval") {
++    pushStep(steps, "approval.created", run.completedAt ?? run.updatedAt)
++  } else if (run.status === "completed") {
++    pushStep(steps, "run.completed", run.completedAt ?? run.updatedAt)
++  } else if (run.status === "failed") {
++    pushStep(steps, "run.failed", run.updatedAt, run.error ? { error: run.error } : null)
++  }
++
++  steps.sort((a, b) => a.timestamp.localeCompare(b.timestamp))
++
++  return steps.map((step, index) => {
++    const nextTimestamp = steps[index + 1]?.timestamp ?? null
++    const runEnded = run.status === "completed" || run.status === "pending_approval" || run.status === "failed"
++    const stepEndMs = nextTimestamp
++      ? new Date(nextTimestamp).getTime()
++      : runEnded
++        ? (toMs(getFinishedAt(run)) ?? Date.now())
++        : Date.now()
++
++    return {
++      key: `${run.id}:${step.action}:${step.timestamp}`,
++      action: step.action,
++      label: step.label,
++      timestamp: step.timestamp,
++      status:
++        index < steps.length - 1
++          ? "completed"
++          : run.status === "failed"
++            ? "failed"
++            : run.status === "running" || run.status === "queued"
++              ? "in_progress"
++              : "completed",
++      durationMs: Math.max(0, stepEndMs - new Date(step.timestamp).getTime()),
++      metadata: step.metadata ?? null,
++    }
++  })
++}
++
++export async function listAgentRunHistory(db: Db, agentId: string, limit = 20) {
++  const runs = await db
++    .select()
++    .from(schema.agentRuns)
++    .where(eq(schema.agentRuns.agentId, agentId))
++    .orderBy(desc(schema.agentRuns.createdAt))
++    .limit(limit)
++
++  const caseIds = Array.from(new Set(runs.map((run) => run.caseId).filter((value): value is string => Boolean(value))))
++  const cases = caseIds.length > 0
++    ? await db.select({ id: schema.cases.id, title: schema.cases.title }).from(schema.cases).where(inArray(schema.cases.id, caseIds))
++    : []
++  const caseTitleById = new Map(cases.map((item) => [item.id, item.title]))
++
++  return runs.map((run) => buildBaseHistoryItem(run, caseTitleById))
++}
++
++export async function getLatestAgentRunLog(db: Db, agentId: string) {
++  const history = await listAgentRunHistory(db, agentId, 20)
++  const latest = history[0] ?? null
++
++  if (!latest) {
++    return {
++      run: null,
++      steps: [],
++      history,
++    }
++  }
++
++  const [run] = await db
++    .select()
++    .from(schema.agentRuns)
++    .where(eq(schema.agentRuns.id, latest.id))
++
++  if (!run) {
++    return {
++      run: null,
++      steps: [],
++      history,
++    }
++  }
++
++  const events = await db
++    .select()
++    .from(schema.activityEvents)
++    .where(eq(schema.activityEvents.entityId, run.id))
++    .orderBy(desc(schema.activityEvents.createdAt))
++
++  return {
++    run: latest,
++    steps: buildRunSteps(run, [...events].reverse()),
++    history,
++  }
++}
+--- /dev/null	2026-04-13 21:26:54
++++ /tmp/hagent-os-work.Pn99yR/ui/src/components/AgentRun.tsx	2026-04-13 21:17:26
+@@ -0,0 +1,188 @@
++import { useEffect, useState } from "react"
++import { useQuery } from "@tanstack/react-query"
++import { Clock3, Loader2 } from "lucide-react"
++import { agentsApi } from "@/api/agents"
++import { queryKeys } from "@/lib/queryKeys"
++import { Badge } from "@/components/ui/badge"
++import { WorkspaceEmptyState, WorkspaceSubtle } from "@/components/ui/workspace-surface"
++import { StatusBadge, type RunStatus } from "@/components/StatusBadge"
++
++type RunStep = {
++  key: string
++  label: string
++  action: string
++  timestamp: string
++  status: "completed" | "in_progress" | "failed"
++  durationMs: number | null
++}
++
++type LatestRunResponse = {
++  run: {
++    id: string
++    caseTitle: string
++    status: RunStatus
++    startedAt?: string | null
++    createdAt?: string | null
++    durationMs?: number | null
++    tokensUsed?: number | null
++    excerpt?: string | null
++  } | null
++  steps: RunStep[]
++}
++
++function formatTimestamp(value: string | null | undefined) {
++  if (!value) return "-"
++  return new Date(value).toLocaleString("ko-KR", {
++    month: "short",
++    day: "numeric",
++    hour: "2-digit",
++    minute: "2-digit",
++    second: "2-digit",
++  })
++}
++
++function formatDuration(durationMs: number | null | undefined) {
++  if (durationMs == null) return "-"
++  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000))
++  const minutes = Math.floor(totalSeconds / 60)
++  const seconds = totalSeconds % 60
++  return `${minutes}:${seconds.toString().padStart(2, "0")}`
++}
++
++function useLiveDuration(startedAt: string | null | undefined, fallbackDurationMs: number | null | undefined) {
++  const [durationMs, setDurationMs] = useState(fallbackDurationMs ?? 0)
++
++  useEffect(() => {
++    if (!startedAt) {
++      setDurationMs(fallbackDurationMs ?? 0)
++      return
++    }
++
++    const startMs = new Date(startedAt).getTime()
++    const tick = () => setDurationMs(Date.now() - startMs)
++    tick()
++    const timer = window.setInterval(tick, 1000)
++    return () => window.clearInterval(timer)
++  }, [startedAt, fallbackDurationMs])
++
++  return durationMs
++}
++
++function StepStatusBadge({ status }: { status: RunStep["status"] }) {
++  const styles =
++    status === "failed"
++      ? { backgroundColor: "var(--status-danger-soft)", color: "var(--color-danger)", label: "실패" }
++      : status === "in_progress"
++        ? { backgroundColor: "var(--accent-primary-soft)", color: "var(--accent-primary)", label: "진행 중" }
++        : { backgroundColor: "var(--status-success-soft)", color: "var(--color-success)", label: "완료" }
++
++  return (
++    <Badge className="border-0 text-[11px]" style={{ backgroundColor: styles.backgroundColor, color: styles.color }}>
++      {styles.label}
++    </Badge>
++  )
++}
++
++export function AgentRun({ agentId }: { agentId: string }) {
++  const { data, isLoading, isError } = useQuery<LatestRunResponse>({
++    queryKey: queryKeys.agents.latestRun(agentId),
++    queryFn: () => agentsApi.getLatestRun(agentId),
++    enabled: Boolean(agentId),
++    refetchInterval: (query) => {
++      const status = (query.state.data as LatestRunResponse | undefined)?.run?.status
++      return status === "running" || status === "queued" ? 1500 : false
++    },
++  })
++
++  if (isLoading) {
++    return (
++      <WorkspaceSubtle className="flex items-center gap-2 p-4 text-sm" style={{ color: "var(--text-tertiary)" }}>
++        <Loader2 size={14} className="animate-spin" />
++        최신 run 로그를 불러오는 중입니다.
++      </WorkspaceSubtle>
++    )
++  }
++
++  if (isError) {
++    return (
++      <WorkspaceSubtle className="p-4 text-sm" style={{ color: "var(--color-danger)" }}>
++        최신 run 로그를 불러오지 못했습니다.
++      </WorkspaceSubtle>
++    )
++  }
++
++  const run = data?.run ?? null
++  if (!run) {
++    return (
++      <WorkspaceEmptyState
++        title="현재 run이 없습니다."
++        description="하트비트 실행이나 태스크 지시 후 최신 단계 로그가 여기에 표시됩니다."
++      />
++    )
++  }
++
++  const liveDurationMs = useLiveDuration(
++    run.status === "running" || run.status === "queued" ? (run.startedAt ?? run.createdAt ?? null) : null,
++    run.durationMs ?? null,
++  )
++
++  return (
++    <WorkspaceSubtle className="space-y-4 p-4">
++      <div className="flex flex-wrap items-start justify-between gap-3">
++        <div className="space-y-1">
++          <div className="flex flex-wrap items-center gap-2">
++            <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
++              {run.caseTitle}
++            </p>
++            <StatusBadge status={run.status} />
++          </div>
++          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
++            시작 {formatTimestamp(run.startedAt ?? run.createdAt ?? null)}
++          </p>
++        </div>
++        <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
++          <span className="inline-flex items-center gap-1">
++            <Clock3 size={12} />
++            {formatDuration(liveDurationMs)}
++          </span>
++          {typeof run.tokensUsed === "number" ? <span>{run.tokensUsed.toLocaleString()} tokens</span> : null}
++        </div>
++      </div>
++
++      {run.excerpt ? (
++        <div className="rounded-xl px-3 py-2 text-sm leading-6" style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}>
++          {run.excerpt}
++        </div>
++      ) : null}
++
++      <div className="space-y-2">
++        {data?.steps?.length ? data.steps.map((step) => (
++          <div
++            key={step.key}
++            className="flex flex-col gap-2 rounded-xl border px-3 py-3 md:flex-row md:items-center md:justify-between"
++            style={{ borderColor: "var(--border-default)", backgroundColor: "var(--bg-base)" }}
++          >
++            <div className="space-y-1">
++              <div className="flex flex-wrap items-center gap-2">
++                <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
++                  {step.label}
++                </p>
++                <StepStatusBadge status={step.status} />
++              </div>
++              <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
++                {formatTimestamp(step.timestamp)}
++              </p>
++            </div>
++            <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>
++              단계 소요 {formatDuration(step.durationMs)}
++            </div>
++          </div>
++        )) : (
++          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
++            단계 로그가 아직 없습니다.
++          </p>
++        )}
++      </div>
++    </WorkspaceSubtle>
++  )
++}
+--- /dev/null	2026-04-13 21:26:54
++++ /tmp/hagent-os-work.Pn99yR/ui/src/components/RunLog.tsx	2026-04-13 21:17:39
+@@ -0,0 +1,81 @@
++import { History } from "lucide-react"
++import { StatusBadge, type RunStatus } from "@/components/StatusBadge"
++import { WorkspaceEmptyState, WorkspaceSubtle } from "@/components/ui/workspace-surface"
++
++type RunLogItem = {
++  id: string
++  caseTitle: string
++  status: RunStatus
++  startedAt?: string | null
++  createdAt?: string | null
++  completedAt?: string | null
++  durationMs?: number | null
++  excerpt?: string | null
++}
++
++function formatTimestamp(value: string | null | undefined) {
++  if (!value) return "-"
++  return new Date(value).toLocaleString("ko-KR", {
++    month: "short",
++    day: "numeric",
++    hour: "2-digit",
++    minute: "2-digit",
++  })
++}
++
++function formatDuration(durationMs: number | null | undefined) {
++  if (durationMs == null) return "-"
++  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000))
++  const minutes = Math.floor(totalSeconds / 60)
++  const seconds = totalSeconds % 60
++  return `${minutes}:${seconds.toString().padStart(2, "0")}`
++}
++
++export function RunLog({ runs }: { runs: RunLogItem[] }) {
++  if (!runs.length) {
++    return (
++      <WorkspaceEmptyState
++        title="실행 이력이 없습니다."
++        description="에이전트가 작업을 시작하면 최근 run 기록이 여기에 쌓입니다."
++      />
++    )
++  }
++
++  return (
++    <WorkspaceSubtle className="overflow-hidden p-0">
++      <div className="divide-y divide-[var(--border-default)]">
++        {runs.map((run) => (
++          <div key={run.id} className="space-y-3 px-4 py-4">
++            <div className="flex flex-wrap items-start justify-between gap-3">
++              <div className="space-y-1">
++                <div className="flex flex-wrap items-center gap-2">
++                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
++                    {run.caseTitle}
++                  </p>
++                  <StatusBadge status={run.status} />
++                </div>
++                <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
++                  <span className="inline-flex items-center gap-1">
++                    <History size={12} />
++                    {formatTimestamp(run.startedAt ?? run.createdAt ?? null)}
++                  </span>
++                  <span>소요 {formatDuration(run.durationMs)}</span>
++                </div>
++              </div>
++              {run.completedAt ? (
++                <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
++                  종료 {formatTimestamp(run.completedAt)}
++                </p>
++              ) : null}
++            </div>
++            {run.excerpt ? (
++              <p className="text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
++                {run.excerpt}
++              </p>
++            ) : null}
++          </div>
++        ))}
++      </div>
++    </WorkspaceSubtle>
++  )
++}
