@@ -118,6 +118,14 @@ HagentOS (Hagwon + Agent + OS)
 3. ~~**D7 (4/12)**: UX/Goals/온보딩/운영 문서 정리~~ ✅
 4. **D8 (4/13)**: ==실사용 제출 마감 + 증빙/리포트/리허설 완료==
 
+### Day 8 핵심 결정 — Control Plane 확장 패턴
+
+**텔레그램 원장 컨트롤** (`a9641e6`): 이동 중 케이스 승인 병목 제거.
+- 봇이 케이스 요약 + Confirm/Cancel 버튼 2개만 제공 → 원장 탭 한 번으로 결정 완료
+- 결정은 HagentOS 케이스 이력에 자동 기록 (audit trail 유지)
+- 어댑터 설계가 채널-독립적 → 카카오·LINE·슬랙으로 동일 구조 확장 가능
+- 구현: `telegram.ts` / `telegram-inbound-sync.ts` / `telegram-owner-control.ts` / `approval-decisions.ts`
+
 ### 현재 제출 직전 블로커
 - `OPENAI_API_KEY` live Codex route
 - `LAW_OC` live 법령 조회

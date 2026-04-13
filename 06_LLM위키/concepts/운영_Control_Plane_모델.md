@@ -56,6 +56,7 @@ chat transcript보다 운영 상태가 더 중요한 context다.
 
 - runtime은 control plane 뒤에 분리된다.
 - adapter-separated execution이 기본 철학이다.
+- **텔레그램 어댑터 (Day 8, `a9641e6`)**: 원장이 이동 중에도 케이스를 Confirm/Cancel. 승인 결과는 HagentOS 이력에 자동 기록. 채널-독립 설계로 카카오·LINE 등으로 확장 가능.
 
 ## Deployment Reading
 
