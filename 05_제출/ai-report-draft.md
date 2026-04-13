@@ -2,12 +2,17 @@
 tags:
   - area/submission
   - type/report
-  - status/final-draft
+  - status/archive
 date: 2026-04-13
 up: "[[_05_제출_MOC]]"
-status: final-draft
+status: archived
+aliases:
+  - AI리포트초안
 ---
 # AI 리포트 — HagentOS
+
+> 이 문서는 이전 초안이다.
+> 제출 정본은 [[05_제출/ai-report-final|ai-report-final]] 이다.
 
 > 공식 양식: `05_제출/20260406_③_2026_KIT_바이브코딩_공모전_팀명_개인은_이름_AI리포트.docx`
 > 팀명: 이승보, 김주용 (2인 팀)

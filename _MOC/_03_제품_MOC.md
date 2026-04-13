@@ -19,8 +19,9 @@ aliases:
 ## 오늘 기준 제출용 자산
 
 - [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]] — 심사용 종합 구조도
-- [[03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]] — 최신 검증 정본
-- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw/03_시스템-4계층.excalidraw|03]]
+- [[05_제출/live-final-verification|live-final-verification]] — 제출 직전 실동작 정본
+- [[03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]] — 로컬 회귀 테스트 기록
+- [[assets/excaildraw-/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw-/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw-/03_시스템-4계층.excalidraw|03]]
 - `04~06` Excalidraw: 예정
 
 ## 제품 코드 (실제 제출물)

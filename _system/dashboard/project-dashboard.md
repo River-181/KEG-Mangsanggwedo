@@ -29,7 +29,7 @@ aliases:
 - [[_05_제출_MOC|05 제출 MOC]]
 - [[05_제출/ai-report-final|AI report final]]
 - [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]]
-- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw/03_시스템-4계층.excalidraw|03]]
+- [[assets/excaildraw-/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw-/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw-/03_시스템-4계층.excalidraw|03]]
 - [[.agent/system/ops/RALPH-LOOP-2026-04-13|RALPH Loop]]
 
 ## 핵심 지표

@@ -14,7 +14,7 @@ up: "[[HagentOS]]"
 > **원칙**: MVP는 빌드 우선순위이지, 인프라의 한계가 아니다. 아키텍처는 모든 영역으로 확장 가능하게 설계한다.
 > Must = 반드시 빌드 · Should = 있으면 점수 상승 · Could = 시간 남으면 · Not Now = k-skill/MCP로 확장
 
-> 현재 구현/검증 정본은 [[../10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]]이다. 이 문서는 그 결과를 반영한 범위 정리다.
+> 구현 검증은 두 층으로 본다. 로컬 회귀 기록은 [[../10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]], 제출 직전 라이브 실동작 정본은 [[../../../05_제출/live-final-verification|live-final-verification]] 이다. 이 문서는 그 결과를 반영한 범위 정리다.
 
 ---
 

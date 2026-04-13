@@ -1,6 +1,7 @@
 # HagentOS
 
 > **AI agent orchestration platform for Korean education operations**
+> **Current release:** `v0.5.0`
 
 심사위원이 보게 될 이 저장소의 핵심은 하나입니다.  
 HagentOS는 챗봇이 아니라, **민원·예외·상담·일정·후속조치를 승인 기반으로 운영하는 AI 팀의 control plane**입니다.
@@ -60,23 +61,18 @@ HagentOS는 질문응답용 assistant가 아니라, **교육 운영 후속처리
 
 심사 가이드는 아래 문서를 바로 보면 됩니다.
 
-- [JUDGE_DEMO.md](/Users/river/workspace/active/hagent-os/JUDGE_DEMO.md)
-- [2026-04-13-full-regression.md](/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-full-regression.md)
+- [제품 README](03_제품/hagent-os/README.md)
+- [제출 직전 라이브 최종 검증](05_제출/live-final-verification.md)
+- [제출 체크리스트](05_제출/submission-checklist.md)
 
 ---
 
 ## Live Demo
 
 - Live URL: `https://hagent-os.up.railway.app`
-- Local API: `http://127.0.0.1:3200`
-- Local UI: `http://127.0.0.1:5174`
-- Demo org: `탄자니아 영어학원 데모 7`
-
-로컬 deep link 예시:
-
-```text
-http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard
-```
+- 고객 상담 bot: `@TANZANIA_ENGLISH_ACADEMY_bot`
+- 운영 승인 bot: `@hagent_os_ops_bot`
+- 제출 직전 검증 기록: [05_제출/live-final-verification.md](05_제출/live-final-verification.md)
 
 ---
 
@@ -85,8 +81,9 @@ http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard
 ### Judge Mode
 
 1. 라이브 URL 접속
-2. `Dashboard -> Cases -> Approval -> Schedule / Activity` 순서로 확인
-3. 필요 시 Telegram/Kakao inbound 시나리오 확인
+2. 고객 bot에서 문의 1건 생성
+3. 운영 bot에서 승인 1건 처리
+4. 웹에서 `Case / Approval / Document` 반영 확인
 
 ### Local Mode
 
@@ -129,7 +126,7 @@ curl http://127.0.0.1:3200/api/health
 
 제품 문서 루트:
 
-- [03_제품/hagent-os/README.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/README.md>)
+- [03_제품/hagent-os/README.md](03_제품/hagent-os/README.md)
 
 ---
 
@@ -138,17 +135,18 @@ curl http://127.0.0.1:3200/api/health
 심사/작업 기준으로는 아래 순서가 가장 좋습니다.
 
 1. [03_제품/hagent-os/README.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/README.md>)
-2. [03_제품/hagent-os/02_product/prd.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/02_product/prd.md>)
-3. [03_제품/hagent-os/02_product/mvp-scope.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/02_product/mvp-scope.md>)
-4. [03_제품/hagent-os/09_ux/domain-ux-paperclip-gap.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/09_ux/domain-ux-paperclip-gap.md>)
-5. [03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/03_제품/hagent-os/10_execution/runtime-docs/handoff/2026-04-13-full-regression.md>)
+2. [03_제품/hagent-os/02_product/prd.md](03_제품/hagent-os/02_product/prd.md)
+3. [03_제품/hagent-os/02_product/mvp-scope.md](03_제품/hagent-os/02_product/mvp-scope.md)
+4. [03_제품/hagent-os/09_ux/domain-ux-paperclip-gap.md](03_제품/hagent-os/09_ux/domain-ux-paperclip-gap.md)
+5. [05_제출/live-final-verification.md](05_제출/live-final-verification.md)
 
 ---
 
 ## Evidence And Submission
 
-- [master-evidence-ledger.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/04_증빙/01_핵심로그/master-evidence-ledger.md>)
-- [ai-report-draft.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/05_제출/ai-report-draft.md>)
+- [master-evidence-ledger.md](04_증빙/01_핵심로그/master-evidence-ledger.md)
+- [ai-report-final.md](05_제출/ai-report-final.md)
+- [live-final-verification.md](05_제출/live-final-verification.md)
 
 이 저장소는 제품만이 아니라, **왜 이 제품을 만들었고 어떻게 검증했는지**까지 함께 제출하는 구조입니다.
 
@@ -164,15 +162,15 @@ curl http://127.0.0.1:3200/api/health
 
 툴 정본:
 
-- [_system/tools/README.md](</Users/river/workspace/active/2026 제1회 KEG 바이브코딩 콘테스트/_system/tools/README.md>)
+- [_system/tools/README.md](_system/tools/README.md)
 
 ---
 
 ## Current Status
 
-- 제품 구현은 `/Users/river/workspace/active/hagent-os` 기준
+- 제품 구현 정본은 별도 `hagent-os` source repo에서 유지되며, 이 vault는 제출/증빙 정본을 담는다
 - 대회 워크스페이스는 기획, 증빙, 제출 정본을 포함
-- 최근 회귀 검증 결과와 남은 리스크는 `full-regression` 문서에 계속 반영 중
+- 로컬 회귀 기록은 `full-regression`, 제출 직전 실동작 기준은 `live-final-verification` 문서가 정본
 
 한 줄 요약:
 

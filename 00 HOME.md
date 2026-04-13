@@ -25,7 +25,7 @@ aliases:
 
 - [[05_제출/ai-report-final|AI report final]] — 제출용 AI 리포트 정본
 - [[03_제품/hagent-os/diagrams/99_comprehensive-architecture|99 comprehensive architecture]] — 심사용 종합 구조도
-- [[assets/excaildraw/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw/03_시스템-4계층.excalidraw|03]]
+- [[assets/excaildraw-/01_민원-처리-플로우.excalidraw|Excalidraw 01]] / [[assets/excaildraw-/02_AI-협업-구조.excalidraw|02]] / [[assets/excaildraw-/03_시스템-4계층.excalidraw|03]]
 - `04~06` Excalidraw: 예정
 - [[_05_제출_MOC|05 제출 MOC]] / [[_03_제품_MOC|03 제품 MOC]]
 
