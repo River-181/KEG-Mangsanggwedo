@@ -3,7 +3,7 @@ tags:
   - area/product
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-13
 up: "[[HagentOS]]"
 ---
 
@@ -14,6 +14,8 @@ up: "[[HagentOS]]"
 > **원칙**: MVP는 빌드 우선순위이지, 인프라의 한계가 아니다. 아키텍처는 모든 영역으로 확장 가능하게 설계한다.
 > Must = 반드시 빌드 · Should = 있으면 점수 상승 · Could = 시간 남으면 · Not Now = k-skill/MCP로 확장
 
+> 현재 구현/검증 정본은 [[../10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]]이다. 이 문서는 그 결과를 반영한 범위 정리다.
+
 ---
 
 ## Must (이것 없으면 MVP 아님)
@@ -21,13 +23,22 @@ up: "[[HagentOS]]"
 | # | 기능 | 에이전트 | 레벨 | 근거 |
 |---|------|---------|:----:|------|
 | M1 | **기관 온보딩** | — | — | 진입점. Paperclip Company 생성에 대응 |
-| M2 | **오케스트레이터** | Orchestrator | — | 한 줄 지시 → 에이전트 병렬 분배. 핵심 차별점 |
+| M2 | **오케스트레이터** | Orchestrator | — | 한 줄 지시/이벤트를 case-run-approval 흐름으로 묶는 중심 축 |
 | M3 | **Complaint Agent** | Complaint | 1 | 민원 분류+응답 초안. TALIS 56.9%, 28점 1순위 |
 | M4 | **Retention Agent** | Retention | 0~1 | 이탈 징후 감지. bati.ai 월 300만원 |
 | M5 | **승인 대시보드** | — | — | 결과물 카드+원클릭 승인. "챗봇 아님" 증명. 모바일 반응형 |
-| M6 | **통합 스케줄러** | Scheduler | — | 강사/상담/차량/법정기한 캘린더. 에이전트가 스케줄 맥락 참조. 구글 캘린더 연동 |
-| M7 | **알림 시스템** | — | — | 민원 승인 대기, 스케줄 변경, 기한 알림. 모바일 push |
+| M6 | **통합 스케줄러** | Scheduler | — | 강사/상담/법정기한 캘린더. 승인 결과로 일정 생성, Google Calendar sync path 포함 |
+| M7 | **알림 시스템** | Notification | — | 민원 승인 대기, 스케줄 변경, 채널 발송 준비. 앱 내 알림 + Telegram/Kakao 경로 |
 | M8 | **Mock 데이터 세트** | — | — | 민원 3~5건+학생 20명+강사 3명+스케줄 데이터 |
+
+### 현재 shipped baseline
+
+- **활성 팀**: `orchestrator`, `complaint`, `retention`, `scheduler`, `notification`
+- **검증된 루프**: onboarding, quick-ask → case/run, approval → schedule side effect, documents/knowledge base, notifications dedupe, Telegram inbound/outbound
+- **env 의존**:
+  - Google Calendar 실제 sync는 `GOOGLE_CALENDAR_ACCESS_TOKEN` 필요
+  - Kakao auto send는 `KAKAO_OUTBOUND_PROVIDER_URL` 필요
+  - 법령 조회는 `LAW_OC` 없으면 degraded
 
 ### M1 기관 온보딩 MVP 범위
 
@@ -53,7 +64,7 @@ up: "[[HagentOS]]"
 | S3 | **감사 로그 뷰** | 모든 AI 처리 내역 타임라인 |
 | S4 | **민원 유형별 통계** | 데이터 자산화 가시화 |
 | S5 | **k-skill 레지스트리 UI** | 스킬 카탈로그 탐색 + 에이전트에 장착. "왜 플랫폼인가" 답 |
-| S6 | **실제 동작 스킬 5~8개** | 자체 빌드(`refund-calculator`, `complaint-classifier`) + 외부 MCP 연동(✅ `korean-law-mcp`, ✅ Google Calendar MCP, ✅ `aligo-sms-mcp`) |
+| S6 | **실제 동작 스킬 5~8개** | 자체 빌드(`refund-calculator`, `complaint-classifier`) + 외부 MCP 연동 경로(✅ `korean-law-mcp`, ✅ Google Calendar MCP, ✅ `aligo-sms-mcp`) |
 | S7 | **엑셀 import/export** | 기존 수강생·강사 데이터 즉시 활용 + 운영 데이터 내보내기 |
 | S8 | **외부 MCP 라이브 연동** | `korean-law-mcp`로 학원법 실시간 조회 시연 — "생태계가 이미 있다" 증명 |
 
@@ -81,7 +92,7 @@ up: "[[HagentOS]]"
 | 생기부 | LGU+/왓퀴즈 존재 | `school-record-draft` 스킬 | |
 | 차량 관리 | IoT 필요 | `shuttle-bus-compliance` | ✅ `korean-law-mcp` |
 | NEIS 연동 | 개인정보 규제 | `neis-data-bridge` (v2) | |
-| 카카오톡 발송 | 7일 내 구현 난이도 | `kakao-channel-adapter` | ✅ `kakao-bot-mcp-server` |
+| 카카오 i / 공식 채널 직접 연동 | 대회 범위 초과 | `kakao-channel-adapter` | ✅ `kakao-bot-mcp-server` |
 | SMS/알림톡 | 7일 내 구현 난이도 | `sms-notification` | ✅ `aligo-sms-mcp-server` |
 | 결제·수납 | PG 연동 복잡도 | `payment-adapter` | ✅ `@portone/mcp-server` |
 | 세무·환불 | 도메인 깊이 | `refund-calculator`, `tax-filing-prep` | |
@@ -95,7 +106,7 @@ up: "[[HagentOS]]"
 | 다지점 관리 | v2 | 멀티 org 확장 | |
 | 강사·교사 모드 | v2 | 모드 전환 + 전용 에이전트 팩 | |
 
-> **✅ 표시 = 이미 GitHub/NPM에 존재하는 MCP/도구**. 연동만 하면 바로 사용 가능. HagentOS의 k-skill 생태계는 빈 약속이 아니라 **이미 존재하는 인프라** 위에 세워진다.
+> **✅ 표시 = 이미 GitHub/NPM에 존재하는 MCP/도구**. 단, 대회 정본은 "연동 가능"과 "실제 env가 채워져 완전 동작"을 구분해 본다.
 
 ---
 
@@ -107,8 +118,8 @@ up: "[[HagentOS]]"
 | 4/8(화) | D3 | 문제 정의 + 전략 문서 | decision-sprint, bet-memo |
 | **4/9(수)** | **D4** | **기획 문서 완성 + spec** | **hagent-os/ 문서 세트** |
 | **4/10(목)** | **D5** | **boilerplate + 핵심 개발 시작** | React+Vite+Express+embedded-postgres |
-| **4/11(금)** | **D6** | **핵심 개발** | 오케스트레이터 + Agent 2개 |
-| **4/12(토)** | **D7** | **핵심 개발 2 + 테스트** | 승인 대시보드 + 통합 |
+| **4/11(금)** | **D6** | **핵심 개발** | 오케스트레이터 + 4~5개 운영 에이전트 팀 |
+| **4/12(토)** | **D7** | **핵심 개발 2 + 테스트** | 승인 대시보드 + 통합 + runtime docs |
 | 4/13(일) | D8 | 테스트 + 배포 + 제출 | 최종 제출물 |
 
 ---
@@ -121,7 +132,7 @@ up: "[[HagentOS]]"
 
 | # | Blocker | 설명 |
 |---|---------|------|
-| B1 | **오케스트레이터 병렬 분배** | 한 줄 지시 → 2~3개 에이전트 동시 실행 |
+| B1 | **오케스트레이터 분배** | 한 줄 지시/이벤트가 case-run-approval 흐름으로 이어져야 함 |
 | B2 | **Complaint Agent 출력** | 민원 분류+초안이 카드로 나와야 함 |
 | B3 | **Retention Agent 출력** | 이탈 위험 학생 카드가 나와야 함 |
 | B4 | **카드 UI + 승인 버튼** | 원클릭 승인이 동작해야 함 |
@@ -133,15 +144,16 @@ Step 0: 기관 온보딩 (30초)
   → 기관명: "탄자니아 영어학원"
   → 유형: 영어, 규모: 소규모
   → 목표: 민원 자동화 + 이탈 방지
-  → 추천 팀: Complaint + Retention + Intake
+  → 추천 팀: Orchestrator + Complaint + Retention + Scheduler + Notification
   → [이 추천으로 시작하기] 클릭
 
 Step 1: 원장 한 줄 지시 (10초)
   "오늘 민원 처리하고 이번 주 이탈 위험 학생 알려줘"
 
-Step 2: 에이전트 병렬 실행 (20초)
+Step 2: 에이전트 실행/위임 (20초)
   → Complaint Agent: 처리 중...
   → Retention Agent: 처리 중...
+  → Scheduler/Notification 후속 준비
   → 실시간 상태 표시
 
 Step 3: 결과 카드 표시 (30초)
@@ -153,9 +165,9 @@ Step 4: 원장 승인 (20초)
   → 이탈 위험 → [상담 일정 생성] 클릭
 
 Step 5: 스케줄러 (15초)
-  → 통합 캘린더 뷰: 강사 시간표 + 상담 일정 + 차량 운행 + 법정 기한
-  → "강사 A 내일 공결" → Staff Agent가 대체 강사 추천 + 학부모 안내 초안
-  → 상담 일정 [자동 생성] → 구글 캘린더 동기화
+  → 통합 캘린더 뷰: 강사 시간표 + 상담 일정 + 법정 기한
+  → 승인 후 상담 일정 [자동 생성]
+  → Google Calendar 연동 경로 또는 pending_credentials 표시
 
 Step 6: k-skill 레지스트리 (15초)
   → "이 에이전트들이 사용하는 스킬은 이런 것들입니다"

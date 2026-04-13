@@ -3,13 +3,15 @@ tags:
   - area/product
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-13
 up: "[[hagent-os/README]]"
 ---
 # Agent Design (에이전트 설계)
 
 > HagentOS 에이전트 아키텍처 정본. 에이전트가 어떻게 정의되고, 실행되고, 협력하는지 설명한다.
 > 개별 에이전트 역할 상세는 `agent-roles/` 하위 문서에서 이 문서를 참조한다.
+>
+> 현재 shipped/verified 기준 기본 팀은 `orchestrator`, `complaint`, `retention`, `scheduler`, `notification` 5개다.
 
 ---
 
@@ -144,7 +146,8 @@ Routine {
                        ▼
 ┌─────────────────────────────────────────────────────────┐
 │  5. LLM CALL                                            │
-│     Claude API (에이전트 역할 + 스킬 + 조직 맥락)              │
+│     Adapter Runtime (`codex_local` default,             │
+│     OpenAI/Anthropic interchangeable)                   │
 └──────────────────────┬──────────────────────────────────┘
                        ▼
 ┌─────────────────────────────────────────────────────────┐
@@ -176,7 +179,7 @@ Routine {
 | 트리거 | 메커니즘 | HagentOS 예시 |
 |--------|---------|--------------|
 | **Timer / Heartbeat** | 주기적 간격으로 에이전트 깨움 | 매일 오전 8시 브리핑 생성, 이탈 징후 일일 스캔 |
-| **Assignment** | 이벤트 발생 → 특정 에이전트에 할당 | 카카오톡 민원 접수 → Complaint Agent 할당 |
+| **Assignment** | 이벤트 발생 → 특정 에이전트에 할당 | Telegram/Kakao inbound → Complaint 또는 Scheduler 할당 |
 | **On-demand** | 사람이 직접 지시 | 원장: "이번 달 환불 현황 정리해줘" → Orchestrator |
 | **Cron / Routine** | `cronExpression`으로 정기 실행 | 월말 정산 리포트 (`0 9 L * *`), 주간 강사 성과 요약 |
 
@@ -224,6 +227,21 @@ Routine {
 
 ---
 
+## 현재 실행 모드 (대회 기준)
+
+현재 프로그램은 복잡한 account/auth 모델보다 `기관 컨텍스트 + board UI + agent runtime`을 우선 검증한다.
+
+| 축 | 현재 기준 |
+|----|-----------|
+| board 접근 | `local_trusted` 중심 |
+| agent 실행 | organization adapter + mounted skills + instruction files |
+| channel | webhook / outbound provider 경로 |
+| degraded 처리 | env 미설정 시 crash 대신 `degraded` 또는 `pending_credentials` |
+
+즉, 이 문서는 최종 플랫폼 설계를 설명하지만, 실제 shipped baseline은 `runtime-docs/handoff/2026-04-13-full-regression.md`의 실행 결과를 함께 봐야 정확하다.
+
+---
+
 ## k-skill 주입 메커니즘
 
 스킬은 에이전트에 하드코딩되지 않는다. 런타임에 조직이 설치한 k-skill이 에이전트 컨텍스트에 주입된다.
@@ -265,7 +283,7 @@ k-skill package {
 Orchestrator → Complaint Agent → Notification Agent
 ```
 
-민원 접수 → 분류·응답 초안 → 승인 후 카카오톡 발송. 각 단계의 출력이 다음 단계의 입력이 된다.
+민원 접수 → 분류·응답 초안 → 승인 후 채널 발송. 각 단계의 출력이 다음 단계의 입력이 된다.
 
 ### 2. Parallel (병렬)
 
@@ -318,14 +336,14 @@ Complaint Agent ──(법적 민원 감지)──→ Compliance Agent
 | 에이전트 | 역할 | MVP 티어 | 기본 레벨 | 주요 k-skill | 트리거 |
 |---------|------|:--------:|:---------:|-------------|--------|
 | Orchestrator | 지시 해석, 라우팅 | **Must** | 0 | — | on_demand |
-| Complaint Agent | 민원 분류 + 응답 | **Must** | 1-2 | `complaint-clf`, `kakao-bot-mcp` | assignment |
+| Complaint Agent | 민원 분류 + 응답 | **Must** | 1-2 | `complaint-clf`, `message-template-pack` | assignment |
 | Retention Agent | 이탈 감지 | **Must** | 3 | `churn-detection` | timer (daily) |
-| Scheduler Agent | 스케줄 관리 | **Must** | 0-1 | `gcal-mcp` | cron, on_demand |
+| Scheduler Agent | 스케줄 관리 | **Must** | 0-1 | `schedule-manager`, `schedule-optimizer` | cron, on_demand |
 | Intake Agent | 신규 상담 | Should | 1 | `intake-form` | assignment |
 | Staff Agent | 강사 관리 | Should | 3 | `performance-eval` | cron (weekly) |
 | Finance Agent | 환불·수납 | Should | 2 | `refund-calc`, `@portone/mcp` | assignment, cron |
 | Compliance Agent | 규제·공문 | Could | 4 | `korean-law-mcp` | assignment |
-| Notification Agent | 알림 발송 | Should | 0 | `kakao-bot-mcp`, `aligo-sms` | assignment |
+| Notification Agent | 알림 발송 | **Must** | 0 | `message-template-pack`, `sms-notification`, channel adapters | assignment |
 | Analytics Agent | 데이터·리포트 | Could | 0 | — | cron, on_demand |
 
 ---

@@ -23,3 +23,9 @@ date,tool,client,model,plan,session_id,prompts,estimated_tokens,cost_usd,pricing
 2026-04-09,Codex,Desktop App,GPT-5.4,Plus,S-STRAT-016,1,18000,,flat-subscription,2026-04-09 reference analysis + workspace sync 세션
 2026-04-10,Codex,Desktop App,GPT-5.4,Plus,S-OPS-020,1,6000,,flat-subscription,2026-04-10 workspace sync + pre-implementation review 세션
 2026-04-12,Codex,Desktop App,GPT-5.4,App,S-EVID-024,1,10000,,flat-subscription,2026-04-12 today AI usage logging session
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-EVID-027,1,12000,,flat-subscription,
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-EVID-030,3,14000,,flat-subscription,
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PLAN-029,4,18000,,flat-subscription,
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-026,24,280000,,flat-subscription,
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-028,11,96000,,flat-subscription,
+2026-04-13,Codex,Desktop App,GPT-5.4,App,S-PROD-031,18,90000,,flat-subscription,Skills design pilot + 로딩 복구 + 토큰 시스템 파일럿

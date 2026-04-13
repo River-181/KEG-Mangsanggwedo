@@ -3,13 +3,15 @@ tags:
   - area/product
   - type/reference
   - status/active
-date: 2026-04-09
+date: 2026-04-13
 up: "[[HagentOS]]"
 ---
 
 # Product Requirements Document (PRD)
 
-> HagentOS — 제품 전체 설명서 (단일 진실 원본)
+> HagentOS — 제품 전체 설명서 (비전 + 설계 정본)
+>
+> 현재 구현/검증 기준은 [[10_execution/runtime-docs/handoff/2026-04-13-full-regression|2026-04-13 Full Regression]]과 [[README]]를 함께 본다.
 
 ---
 
@@ -18,23 +20,38 @@ up: "[[HagentOS]]"
 | 항목 | 내용 |
 |------|------|
 | **제품명** | HagentOS |
-| **한 줄 설명** | Open-source AI agent orchestration platform for Korean education |
+| **한 줄 설명** | Open-source AI case operations control plane for Korean education |
 | **핵심 개념** | Paperclip의 "company as AI"를 한국 교육에 이식 — 챗봇이 아니라 AI 팀 |
 | **MVP 사용자** | 학원 원장 (보습/IT 학원, 10~100명 규모) |
 | **비전 사용자** | 사교육 운영자 + 공교육 교사 + 강사/교수자 |
-| **핵심 가치** | 비교육 업무 시간 83% 감소 (하루 3시간 → 30분) |
+| **핵심 가치** | 비교육 운영 업무를 케이스·승인 중심으로 줄이고, 운영 판단을 데이터 자산으로 남긴다 |
+
+---
+
+## 현재 구현 기준 (2026-04-13)
+
+현재 프로그램은 아래를 기준으로 읽는 것이 맞다.
+
+- **활성 데모 팀**: `orchestrator`, `complaint`, `retention`, `scheduler`, `notification`
+- **검증된 핵심 루프**: onboarding, quick-ask → case/run, approval, document/knowledge base, schedule 생성, notifications dedupe, Telegram inbound/outbound
+- **운영 화면**: dashboard, inbox, cases, approvals, students, schedules, documents, agents, settings, skills
+- **외부 연동 상태**:
+  - Google Calendar: schedule side effect는 생성되나 실제 sync는 `GOOGLE_CALENDAR_ACCESS_TOKEN` 필요
+  - 법령 조회: `LAW_OC` 없으면 degraded
+  - Kakao outbound auto send: `KAKAO_OUTBOUND_PROVIDER_URL` 필요
+  - Telegram outbound: 조직 설정 또는 process env 기준으로 동작
 
 ---
 
 ## 제품 목표
 
 ### 이번 대회 (7일)
-1. **에이전트 오케스트레이션** — 한 줄 지시 → 에이전트 3개 병렬 실행 → 결과 승인
-2. **민원 처리 자동화** — 학부모 민원 분류 + 응답 초안 생성
-3. **이탈 감지** — 출결/상담 데이터 기반 재원생 이탈 위험 감지
-4. **승인 대시보드** — 에이전트 결과물 카드 + 원클릭 승인 (모바일 반응형)
-5. **통합 스케줄러** — 강사/상담/차량/법정기한 통합 캘린더 (구글 캘린더 연동)
-6. **k-skill 레지스트리** — 한국형 스킬 카탈로그 + 에이전트에 장착
+1. **오케스트레이션 + 케이스 운영** — 한 줄 지시 또는 inbound 이벤트 → case/run/approval로 추적
+2. **민원·운영 문의 처리** — 학부모 민원/운영 질문 분류 + 응답 초안 + 문서 브리프 생성
+3. **이탈·학생 운영 신호** — 출결/상담 기반 위험 신호를 케이스와 액션으로 연결
+4. **승인 대시보드** — 결과물 카드 + 원클릭 승인 + activity/audit 기록
+5. **스케줄·알림 후속 처리** — 승인 결과를 일정 생성과 채널 발송 경로로 연결
+6. **k-skill 레지스트리** — 한국형 스킬 카탈로그 + agent mounted skills 시각화
 
 ### 비목표 (MVP에서 직접 빌드하지 않는 것)
 
@@ -110,9 +127,11 @@ Paperclip:                     HagentOS:
   현재 문제: 상담은 많은데 등록이 안 됨
 
   🤖 추천 에이전트 팀:
-  1. 상담실장 (Consulting Agent) — 신규 문의 응대 + 등록 전환
+  1. 원장 에이전트 (Orchestrator) — 지시 해석 + 다른 에이전트에 위임
   2. 민원 담당 (Complaint Agent) — 학부모/수강생 민원 처리
-  3. 운영 매니저 (Operations Agent) — 행정 자동화
+  3. 이탈 방어 (Retention Agent) — 출결/상담 기반 위험 신호 감지
+  4. 스케줄러 (Scheduler Agent) — 일정 생성/변경 후속 처리
+  5. 알림 담당 (Notification Agent) — 발송 준비/채널 전달
 
   ℹ️ 이 추천 이유:
   → 현재 병목이 상담 전환과 운영 분산에 있기 때문
@@ -148,7 +167,7 @@ Paperclip:                     HagentOS:
 | **외부 연동** | 구글 캘린더, 카카오톡, 네이버, 법률 MCP, 결제, 공공데이터 | Integration | ★ | ✅ Google Calendar MCP, ✅ `korean-law-mcp`, ✅ `py-mcp-naver`, ✅ `@portone/mcp-server`, ✅ HWP 처리 도구 |
 | **생활 편의** | 주변 맛집·카페, 날씨·미세먼지, 교사 생일, 주차 정보 | Utility | | ✅ `py-mcp-naver` (맛집·주차), ✅ Weather MCP, ✅ k-skill (미세먼지·블루리본), ✅ Remindlo MCP |
 
-> **★ 12/14개 영역 시연 가능** — 기존 MCP 생태계 + 자체 스킬 덕분. 단, **Must 빌드는 mvp-scope.md 참조**. 나머지는 k-skill/MCP 연동으로 "확장 가능성"을 보여주는 수준.
+> **현재 검증된 핵심은 학부모 커뮤니케이션, 수강생 관리, 스케줄링, 알림, 문서/지식베이스, 외부 채널 연동이다.** 나머지 영역은 데이터 모델과 k-skill/MCP 인터페이스 수준으로 준비되어 있으며, Must 빌드는 `mvp-scope.md`를 기준으로 본다.
 
 ---
 
@@ -226,7 +245,7 @@ HagentOS 스킬 레지스트리 UI
 1. **스킬 레지스트리 UI** — 사용 가능한 스킬 카탈로그 탐색 (공식 + 외부 MCP + k-skill)
 2. **실제 동작 스킬** — 외부 MCP 연동 포함 5~8개 시연
 3. **에이전트 + 스킬 조합** — "이 에이전트는 이 스킬들을 사용합니다" 시각화
-4. **외부 MCP 연동 데모** — `korean-law-mcp`로 학원법 실시간 조회, Google Calendar 동기화
+4. **외부 MCP 연동 데모** — `korean-law-mcp`와 Google Calendar 연동 경로를 시연하되, env 미설정 시 degraded/fallback을 명시
 
 ---
 
@@ -311,7 +330,7 @@ HagentOS 스킬 레지스트리 UI
 | **법정 기한** | 세무 신고, 소방 점검, 안전교육 | Compliance Agent가 D-day 알림 |
 | **시설 예약** | 강의실, 체육관, 상담실 | 예약 충돌 방지 |
 
-**외부 연동**: 구글 캘린더 양방향 동기화 → 원장이 기존 캘린더 그대로 사용 가능
+**외부 연동**: 일정 생성과 Google Calendar sync 경로는 구현되어 있고, 실제 캘린더 반영은 access token이 있을 때 활성
 **k-skill**: `google-calendar-sync`, `schedule-optimizer`, `substitute-matcher`
 
 ### F7: 알림 시스템 (Notification)
@@ -319,8 +338,8 @@ HagentOS 스킬 레지스트리 UI
 | 항목 | 내용 |
 |------|------|
 | **역할** | 에이전트 결과물·긴급 상황·기한을 적시에 전달 |
-| **채널** | 앱 내 알림 + 이메일 (MVP) → 카카오 알림톡 (v2) |
-| **모바일** | 원장은 휴대폰으로 알림 수신 + 대시보드 확인 + 원클릭 승인 |
+| **채널** | 앱 내 알림 + Telegram/Kakao outbound path + grouped notifications |
+| **모바일** | 원장은 모바일 브라우저에서 알림 확인, 승인/반려, 일정 확인이 가능해야 함 |
 
 | 알림 유형 | 트리거 | 긴급도 |
 |-----------|--------|:------:|
@@ -383,9 +402,9 @@ HagentOS 스킬 레지스트리 UI
 ├──────────────────────────────────────────────────┤
 │  Data Layer                                      │
 │  ┌──────────────┐ ┌────────────────────────────┐ │
-│  │ PostgreSQL + │ │ Claude API (Sonnet 4.6)    │ │
-│  │ Drizzle ORM  │ │                            │ │
-│  │ (embedded/  │ │                            │ │
+│  │ PostgreSQL + │ │ Adapter Runtime            │ │
+│  │ Drizzle ORM  │ │ (`codex_local` default,    │ │
+│  │ (embedded/  │ │  OpenAI/Anthropic slot)    │ │
 │  │  외부 PG)   │ │                            │ │
 │  └──────────────┘ └────────────────────────────┘ │
 ├──────────────────────────────────────────────────┤
@@ -404,7 +423,7 @@ HagentOS 스킬 레지스트리 UI
 | Frontend  | React 19 + Vite + Tailwind | 승인 대시보드, 온보딩 UI (SPA)      |
 | Router    | React Router v7            | 클라이언트 라우팅                   |
 | Backend   | Express v5 (TypeScript ESM)| Paperclip 동일 스택, 에이전트 런타임 |
-| AI        | Claude API (Sonnet 4.6)    | 오케스트레이터 + 전문 에이전트         |
+| AI        | Adapter-based LLM runtime (`codex_local` default) | 오케스트레이터 + 전문 에이전트         |
 | DB        | PostgreSQL + Drizzle ORM   | embedded-postgres (로컬) / 외부 PG URL (배포) |
 | Migrations| Drizzle Kit                | TypeScript 마이그레이션, 스키마 버저닝 |
 | Scheduler | node-cron                  | heartbeat 자동 실행           |
@@ -412,24 +431,24 @@ HagentOS 스킬 레지스트리 UI
 
 ---
 
-## 인증 아키텍처 (Dual Principal)
+## 실행/인증 모드 (현재 기준)
 
-Paperclip 패턴을 따라 두 종류의 인증 주체를 분리한다.
+대회 기준 운영 모드는 `local_trusted`가 기본이다. 즉, 심사/데모에서는 복잡한 계정 시스템보다 `기관 컨텍스트 + board UI + agent runtime`을 우선한다.
 
 | 주체 | 방식 | 스코프 | 용도 |
 |------|------|--------|------|
-| **Board** (원장/운영자) | 쿠키 세션 (BetterAuth) | 기관 전체 | 대시보드 UI |
-| **Agent** (에이전트) | API 키 JWT | 단일 에이전트 | Claude Code 실행 시 |
+| **Board** (원장/운영자) | `local_trusted` 보드 접근 | 기관 전체 | 대시보드 UI, 승인, 설정 |
+| **Agent Runtime** | adapter 설정 + 기관별 instruction/memory | 단일 에이전트 또는 케이스 | run 실행, approval 생성, 후속 처리 |
+| **Channel** | webhook / outbound provider | 채널 단위 | Telegram/Kakao inbound/outbound |
 
-**AgentKey 생성 흐름**:
-1. 원장이 에이전트 상세 → 설정 탭에서 API 키 생성
-2. 키는 생성 시 1회만 표시 (해시만 DB 저장)
-3. Claude Code 실행 시 `HAGENT_API_KEY` 환경변수로 주입
-4. 에이전트가 케이스 업데이트/승인 요청 시 이 키로 인증
+**현재 shipped 기준**
+1. 로컬/심사 환경은 `local_trusted`로 시작
+2. agent는 조직의 adapter 설정과 mounted skills를 사용해 실행
+3. 공개 배포에서 필요한 인증/초대 모델은 차기 배치의 확장 영역으로 둔다
 
 **배포 모드**:
 - `local_trusted`: localhost 바인딩, 로그인 불필요 (개발용)
-- `authenticated`: 공개 배포, 첫 원장 보드 클레임, 초대 시스템 (대회 제출용)
+- `authenticated`: 공개 배포용 후보 모드. 현재 문서상 설계만 존재하고 대회 정본은 `local_trusted`
 
 ---
 
@@ -495,8 +514,8 @@ Organization (기관)
 | **시간** | 7일 (4/7~4/13), 실질 개발 3~4일 |
 | **팀** | 2명 (이승보 + 김주용) + AI 에이전트 |
 | **데이터** | Mock 데이터 (실제 학원 데이터 없음) |
-| **외부 연동** | 구글 캘린더 연동 (MVP), 카카오·NEIS 등은 v2 |
-| **비용** | Claude API 토큰 예산 관리 필요 |
+| **외부 연동** | Google Calendar/Telegram/Kakao path는 존재하나 일부 env 의존 |
+| **비용** | adapter별 토큰/비용 예산 관리 필요 |
 | **심사 기준** | 기술적합성 30%, 창의성 25%, 완성도 20%, AI활용 15%, 팀워크 10% |
 
 ---

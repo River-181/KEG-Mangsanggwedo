@@ -4,7 +4,7 @@ tags:
   - type/log
   - status/active
   - workflow/evidence-source
-date: 2026-04-12
+date: 2026-04-13
 up: "[[_04_증빙_MOC]]"
 aliases:
   - master-evidence-ledger
@@ -34,7 +34,7 @@ aliases:
 - Goal: 대회 개요 정리와 워크스페이스 구조화를 시작한다
 - What changed: 대회 개요서와 초기 워크스페이스 구조 및 MOC와 에이전트 뼈대가 만들어졌다
 - Why it mattered: 프로젝트 전체를 증빙 중심 워크스페이스로 운영하는 출발점이 되었다
-- Artifacts: [[바이브코딩공모전_공지]] | `_MOC/` | `.agent/agents/`
+- Artifacts: [[바이브코딩공모전_개요]] | `_MOC/` | `.agent/agents/`
 - AI usage strategy: Claude Code는 로컬 파일 생성과 구조화에 집중했다
 - Evidence value: 워크스페이스 초기 생성 기록
 - Report section hint: 워크플로우 | AI 활용 과정
@@ -114,7 +114,7 @@ aliases:
 - Goal: 대회 개요와 준비 로드맵의 큰 그림을 잡는다
 - What changed: 대회 개요서 초안과 플레이북 방향 및 프롬프트 트래커 초기 구조가 만들어졌다
 - Why it mattered: 이후 모든 운영 설계와 워크스페이스 구축의 출발점이 되었다
-- Artifacts: [[바이브코딩공모전_공지]] | [[vibe_contest_master_playbook_v0_1]] | KEG_AI_Prompt_Tracker.xlsx
+- Artifacts: [[바이브코딩공모전_개요]] | [[vibe_contest_master_playbook_v0_1]] | KEG_AI_Prompt_Tracker.xlsx
 - AI usage strategy: 설계와 방향 설정을 Web AI에 먼저 맡기고 로컬 구현은 후속 에이전트로 넘겼다
 - Evidence value: 대회 해석과 초기 전략의 기원 기록
 - Report section hint: 기획 | AI 활용 전략 | 도구 선택 이유
@@ -546,3 +546,101 @@ aliases:
 - Report section hint: 워크플로우 | 운영 동기화
 - Token note: ~15k tokens Sonnet
 - Follow-up: 승인 화면 스크롤 버그 수정 착수
+
+## 2026-04-13
+
+### S-EVID-027
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Evidence Sync
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 증빙 원장, daily memory, long-term memory, dashboard, progress, 0412/0413 일자 파일과 AI 사용 통계를 오늘 기준으로 동기화한다
+- What changed: today intake row가 추가되고 파생 로그/usage 집계/데일리 노트와 memory/dashboard 문서가 2026-04-13 기준으로 맞춰졌다
+- Why it mattered: AI 활용 증빙과 제출 상태 문서가 하루 늦지 않게 유지되어 리포트와 심사 대응의 근거가 정리되었다
+- Artifacts: ai-session-intake.csv | master-evidence-ledger.md | external-ai-usage.csv | ai-usage-log.md | session-log.md | ai-usage-stats.md | 2026-04-13.md
+- AI usage strategy: intake-first 원칙으로 Codex 세션을 먼저 기록한 뒤 파생 로그를 재생성하는 패턴을 유지했다
+- Evidence value: Day 8 증빙 최신화
+- Report section hint: 증빙 | 워크플로우 | AI 활용 전략
+- Token note: exact unavailable estimate
+- Follow-up: 최종 제출 직전 stats/ledger/hand-off 재확인
+
+### S-EVID-030
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Evidence Operations
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 현재 작업 세션 기준으로 증빙과 메모리와 대시보드와 통계를 다시 최신화한다
+- What changed: 오늘 추가된 Telegram fallback과 judge/public split과 현재 검증 결과와 로그 경로와 미검증 항목이 증빙 문서에 반영되었다
+- Why it mattered: 다른 세션이 바로 이어받을 수 있는 운영 상태와 제출용 증빙의 최신 정합성이 확보되었다
+- Artifacts: [[2026-04-13]] | [[daily-memory]] | [[long-term-memory]] | [[project-dashboard]] | [[ai-usage-stats]]
+- AI usage strategy: 지금 세션에서 확인한 체크 결과와 이전 handoff artifact를 함께 묶어 evidence continuity를 유지했다
+- Evidence value: Day 8 current-session handoff 기록
+- Report section hint: 증빙 | 워크플로우 | 운영 연속성
+- Token note: exact unavailable estimate
+- Follow-up: commit/push 전 마지막 regression과 live env만 다시 확인
+
+### S-PLAN-029
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Deployment Strategy
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: 심사용 URL과 공개용 URL의 배포 방식을 분리해 제출 직전 구조를 확정한다
+- What changed: judge_demo와 public_byom 두 모드로 같은 코드베이스를 운영하고 심사용은 탄자니아 영어학원 seed data와 사전 연결 모델을 포함한 고정 demo instance로 가는 방향이 결정되었다
+- Why it mattered: 심사위원에게 키 입력을 요구하지 않는 재현 가능한 데모 패키지 기준이 생겼고 공개 배포와 심사 배포의 책임이 분리되었다
+- Artifacts: [[project-dashboard]] | [[daily-memory]] | [[long-term-memory]]
+- AI usage strategy: 로컬 코드와 현재 bootstrap/runtime 구성을 먼저 읽고 그 위에 judge/public split을 얹는 방식으로 계획을 고정했다
+- Evidence value: 제출 직전 배포 아키텍처 의사결정 기록
+- Report section hint: 배포 전략 | 운영 구조 | AI 활용 전략
+- Token note: exact unavailable estimate
+- Follow-up: Docker judge package와 demo reset/bootstrap 구현으로 연결
+
+### S-PROD-026
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Product Submission Polish
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: HagentOS 실사용 제출 마감용 UI/운영 흐름을 정리하고 issue/properties, schedule, students/settings, telegram approval loop를 polish한다
+- What changed: issue/properties panel, case detail, schedule weekly/monthly interaction, students/instructors linkage, telegram inbound/approval/outbound, capabilities/skills/imported packs, dark mode 변수 치환까지 대규모 정비가 반영되었다
+- Why it mattered: 심사용 핵심 루프가 기능 나열 수준에서 실제 운영 OS 수준으로 올라갔고, 제출 직전 UX와 증빙의 정합성이 크게 개선되었다
+- Artifacts: git commit c44d5a5 | git commit e4b43f3 | [[PROGRESS_v2]] | [[project-dashboard]] | /Users/river/workspace/active/hagent-os/docs/handoff/2026-04-12-demo-rehearsal.md
+- AI usage strategy: Codex를 주 구현+검증 오케스트레이터로 사용하고, 세부 화면 검증은 브라우저/route smoke와 병행했다
+- Evidence value: Day 8 제출 마감용 제품 polish 기록
+- Report section hint: 제품 | UX 개선 | AI 활용 전략 | 증빙
+- Token note: conservative estimate based on long desktop coding session
+- Follow-up: 최종 리허설과 live env 확인으로 연결
+
+### S-PROD-028
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Product Integration Polish
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: Telegram fallback와 운영 패널 확장을 실제 제품 흐름에 연결한다
+- What changed: telegram outbound approval delivery와 adapter readiness 그리고 students/schedule에서 cases로 가는 drill-down과 cases/approvals/projects 운영 요약 패널 확장이 반영되었다
+- Why it mattered: 카카오가 안 되는 환경에서도 Telegram 기준 demo loop가 유지되고 핵심 운영 객체 연결이 더 실제 제품처럼 보이게 되었다
+- Artifacts: /Users/river/workspace/active/hagent-os/server/src/routes/approvals.ts | /Users/river/workspace/active/hagent-os/server/src/routes/adapters.ts | /Users/river/workspace/active/hagent-os/ui/src/pages/CaseDetailPage.tsx | /Users/river/workspace/active/hagent-os/ui/src/pages/ApprovalsPage.tsx | /Users/river/workspace/active/hagent-os/ui/src/pages/ProjectDetailPage.tsx
+- AI usage strategy: Codex로 구현과 adapter/API smoke를 함께 돌려 Telegram readiness와 channel-aware delivery를 정리했다
+- Evidence value: Day 8 Telegram fallback과 운영 패널 확장 기록
+- Report section hint: 제품 | 통합 | AI 활용 전략
+- Token note: conservative estimate based on implementation plus adapter verification
+- Follow-up: 실제 외부 Telegram 기기 수신과 live env를 다시 확인
+
+### S-PROD-031
+
+- DateTime: 2026-04-13 / Desktop App
+- Phase: Product Design Pilot
+- Tool/Client: Codex
+- Model: GPT-5.4
+- Goal: `Skills` 화면을 pilot로 잡아 스킬 로딩을 복구하고, Toss 토큰 규칙과 paperclip형 구조를 대조해 디자인 파일럿을 다시 정리한다
+- What changed: `/api/skills` 로딩 실패 원인을 `agentTypes` enum 불일치로 수정했고, `SkillsPage`를 dense list + flat detail 구조로 다시 정리했으며, 다크 neutral token과 상세 section 위계를 조정했다
+- Why it mattered: 제출 직전 가장 눈에 띄는 깨짐이던 `Skills` 빈 화면을 복구하고, 전역 rollout 전에 합의 가능한 디자인 기준 샘플 화면을 확보했다
+- Artifacts: /Users/river/workspace/active/hagent-os/packages/shared/src/types/index.ts | /Users/river/workspace/active/hagent-os/server/src/services/skills.ts | /Users/river/workspace/active/hagent-os/packages/db/src/schema/agents.ts | /Users/river/workspace/active/hagent-os/ui/src/pages/SkillsPage.tsx | /Users/river/workspace/active/hagent-os/ui/src/index.css | /Users/river/workspace/active/hagent-os/ui/src/components/ui/workspace-surface.tsx | /Users/river/workspace/active/hagent-os/output/playwright/skills-pilot/skills-after-2026-04-13.png
+- AI usage strategy: Codex를 로컬 디자인/구현/검증 오케스트레이터로 사용하고, 병렬 subagent는 문제 진단과 문서 기준 추출에만 제한했다
+- Evidence value: `Skills` 파일럿 디자인 기준, 로딩 복구, 디자인 토큰 정렬
+- Report section hint: 제품 | UX 개선 | AI 활용 전략 | 증빙
+- Token note: exact unavailable estimate; conservative 90k based on multi-turn design audit, code edits, route smoke, Playwright verification
+- Follow-up: pilot 승인 후 `Settings`, `Case`, `Project`, `Agent`로 좁게 확산. 승인 전 전역 rollout 금지

@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-10
+date: 2026-04-13
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - long-term-memory
@@ -47,12 +47,25 @@ HagentOS (Hagwon + Agent + OS)
 - Real-time: SSE via EventEmitter
 - 배포: **Railway** (서버+UI) + Neon.tech 또는 Railway PostgreSQL (DB)
 
+### 배포 원칙 (Day 8 확정)
+- 배포는 **하나의 코드베이스 두 모드**로 간다.
+  - `judge_demo`: 심사용 고정 데모 인스턴스
+  - `public_byom`: 사용자 모델 연결형 공개 인스턴스
+- 심사용은 `탄자니아 영어학원` seed data와 사전 연결된 모델을 포함한 완성 데모여야 한다.
+- 심사위원에게 `모델 키 입력`을 요구하지 않는다. 선택적으로만 `내 모델 연결`을 연다.
+- 심사용 인프라 기본안은 `GCP VM + Docker Compose`다.
+- 공개용은 onboarding과 org bootstrap을 유지하고 사용자가 자기 모델과 자기 데이터를 붙인다.
+
 ### 디자인 시스템
 - 북극성: 토스 앱 UI (색상 토큰 직접 추출)
 - Primary: `#0ea5b0` (teal) / Background: `#ffffff` / `#f6f7f9` / Dark base: `#17171c`
 - Grey 스케일: Toss 원본 (`#f9fafb` ~ `#191f28`)
 - 폰트: Pretendard (한국어 최적화, Toss 유사)
 - 레이아웃: 4존 — 72px rail + 240px sidebar + flex-1 main + 320px properties panel
+- Day 8 late pilot 기준:
+  - 전역 rollout 전에 `Skills` 화면을 기준 샘플로 먼저 확정한다.
+  - `paperclip`은 구조 참고, `Toss`는 token/spacing/contrast 북극성으로 사용한다.
+  - `version bump`는 `Skills` pilot 승인과 좁은 확산 전까지 보류한다.
 
 ### 에이전트 (Canonical)
 - Must: Orchestrator, Complaint Agent, Retention Agent, Scheduler Agent
@@ -76,20 +89,36 @@ HagentOS (Hagwon + Agent + OS)
 - **GitHub**: `https://github.com/River-181/hagent-os`
 - **콘테스트 워크스페이스 앱**: `03_제품/app/` (참조용)
 - 포트: Server 3200, UI 5174, DB hagent_os:5432
+- 현재 demo org canonical:
+  - 이름: `탄자니아 영어학원 데모 7`
+  - prefix: `탄자니아-영어학원-데모-7`
+  - orgId: `be70ebc8-3b55-4ff3-827a-264f06c4d2ee`
+- 현재 채널 canonical:
+  - `Kakao inbound`
+  - `Telegram inbound/outbound`
+  - Kakao auto send와 Google Calendar live sync는 env 의존
 
 ### AI 리포트 준비 현황
 - 세션 증빙: `04_증빙/01_핵심로그/master-evidence-ledger.md` (현재 `ai-session-intake.csv` 기준 최신 세션까지 반영)
 - 세션 CSV: `04_증빙/01_핵심로그/ai-session-intake.csv`
-- 데일리: `04_증빙/03_daily/2026-04-09.md`
+- 데일리: `04_증빙/03_daily/2026-04-12.md`, `04_증빙/03_daily/2026-04-13.md`
 - 섹션 1 (기획): `prd.md`, `core-bet.md`, `market-and-customer.md`에서 추출
 - 섹션 2 (AI 활용): intake CSV + evidence ledger에서 추출
 
-## 현재 우선순위 (D6 기준 — 2026-04-11 업데이트)
+## 현재 우선순위 (D8 기준 — 2026-04-13 업데이트)
 
-1. ~~**D5 (4/10)**: 앱 스켈레톤~~ ✅ — v0.4.0 + 독립 레포 v1.0
-2. **D6 (4/11)**: E2E 검증 + Railway 배포 + README + AI 리포트 초안
-3. **D7 (4/12)**: 데모 리허설 + 제출 패키징
-4. **D8 (4/13)**: ==마감 24:00 제출==
+1. ~~**D5 (4/10)**: 앱 스켈레톤~~ ✅
+2. ~~**D6 (4/11)**: 독립 레포 E2E 재구축~~ ✅
+3. ~~**D7 (4/12)**: UX/Goals/온보딩/운영 문서 정리~~ ✅
+4. **D8 (4/13)**: ==실사용 제출 마감 + 증빙/리포트/리허설 완료==
+
+### 현재 제출 직전 블로커
+- `OPENAI_API_KEY` live Codex route
+- `LAW_OC` live 법령 조회
+- `KAKAO_OUTBOUND_PROVIDER_URL` 없을 때는 bridge 기준 시연
+- `GOOGLE_CALENDAR_ACCESS_TOKEN` live sync
+- `judge_demo` 배포 패키지 구현
+- 배포 URL 확정과 최종 reset 가능한 demo bootstrap
 
 ## 증빙 운영 규칙
 
@@ -98,6 +127,7 @@ HagentOS (Hagwon + Agent + OS)
 - 하루 마감 시 `dispatch-session-intake.py`가 `master-evidence-ledger.md`, `external-ai-usage.csv`, `session-intake-dispatch-report.md`를 재생성한다.
 - `external-ai-usage.csv`는 AI provider만 집계하며, 사람 미팅은 intake와 ledger에는 남기되 외부 AI 통계에서는 제외한다.
 - exact token source가 없는 Web/App 도구는 `estimated_tokens`로 명시적으로 기록한다.
+- 2026-04-13 기준 Day 8 `Codex` 사용량은 `S-PROD-026=280k`, `S-EVID-027=12k` conservative estimate로 반영한다.
 - 제품 베팅 관련 사람 합의는 2026-04-09 22:10 승보님 미팅 기준으로 `소규모 학원`, `로컬 우선`, `데이터 자산화`, `쉬운 AI 에이전트 활용`, `무거운 SaaS 회피`를 유지한다.
 
 ## 워크스페이스 구조 / 정본 위치

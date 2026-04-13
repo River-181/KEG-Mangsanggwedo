@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-12
+date: 2026-04-13
 up: "[[.agent/system/memory/MEMORY]]"
 aliases:
   - daily-memory
@@ -13,14 +13,14 @@ aliases:
 
 이 파일은 단기 기억과 핸드오프를 위한 요약본이다.
 
-## 현재 상태 (Day 7 — 2026-04-12)
+## 현재 상태 (Day 8 — 2026-04-13)
 
 ### 앱 개발 현황
 - **레포 분리 완료**: 독립 설치형 레포 `/Users/river/workspace/active/hagent-os/`
 - **GitHub**: `River-181/hagent-os` (public)
 - **포트**: Server 3200, UI 5174
 - **DB**: `hagent_os` (brew postgres@17 port 5432)
-- **마지막 커밋**: `f936cb4` — Goals ↔ Projects 양방향 연결 (GoalDetailPage + ProjectDetail goals section)
+- **최근 확인 커밋 흐름**: `c44d5a5` → `e4b43f3` → `24ba60f` → `e7681ea` → `a326530` → `f213021` → `f8b37aa`
 - **실행 명령**: `cd /Users/river/workspace/active/hagent-os && pnpm dev`
 
 ### Day 6 완료 작업 (S-DEV-022)
@@ -78,3 +78,73 @@ aliases:
 - [ ] AI 리포트 (.docx) — `04_증빙` raw material 사용
 - [ ] 개인정보 동의서
 - [ ] 참가 각서
+
+---
+
+## Day 8 추가 메모 — 2026-04-13
+
+### 제품 정본 현황 업데이트
+- 제품 정본 레포는 계속 `/Users/river/workspace/active/hagent-os/`다.
+- Day 8 기준 마지막 핵심 커밋은 `e4b43f3` (`Polish issue properties and academy operations UI`)이며, 직전 UI 기반 정리 커밋은 `c44d5a5`다.
+- `issue/properties UI`, `schedule interaction`, `students/settings 안정화`, `telegram approval/outbound`, `skills/capabilities pack`가 Day 8 범위에 포함됐다.
+
+### Day 8 완료 작업
+- [x] `Case/Issue`를 paperclip 방향으로 단순화
+  - `done` 컬럼 복구
+  - `Comments / Sub-issues / Activity`
+  - `Properties` 패널 토글 복원
+- [x] `Schedule` 주간/월간 뷰 상호작용 1차 정리
+- [x] `Students / Instructors / Agents / Settings` route/panel 안정화 1차 반영
+- [x] `Telegram inbound -> approval -> outbound/bridge` 흐름 검증
+- [x] Day 8 증빙/메모리/대시보드/진행 현황 동기화
+- [x] `Telegram outbound` approval delivery 및 readiness 표면 추가
+- [x] `students -> cases`, `schedule -> cases` drill-down 추가
+- [x] 우측 `운영 요약` 패널을 `cases / approvals / projects`까지 확장
+- [x] `judge_demo`와 `public_byom` 분리 배포 전략 문서화
+- [x] 현재 세션 재검증
+  - `corepack pnpm --filter @hagent/ui typecheck`
+  - `corepack pnpm --filter @hagent/ui build`
+  - `corepack pnpm --filter @hagent/db build`
+  - `corepack pnpm --filter @hagent/server typecheck`
+  - `curl http://127.0.0.1:3200/api/health` → `200`
+  - `curl http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard` → `200`
+
+### Day 8 남은 블로커
+- [ ] `OPENAI_API_KEY` live 검증
+- [ ] `LAW_OC` live 법령 근거 검증
+- [ ] optional `KAKAO_OUTBOUND_PROVIDER_URL` 검증
+- [ ] `GOOGLE_CALENDAR_ACCESS_TOKEN` live sync 검증
+- [ ] deploy URL 확보
+- [ ] 4개 심사 시나리오 최종 리허설
+- [ ] `judge_demo`용 Docker/compose 구현
+
+### 현재 워킹트리 주의점
+- `hagent-os`는 아직 dirty 상태다.
+  - `server/src/routes/organizations.ts`
+  - `ui/src/hooks/useSSE.ts`
+  - `ui/src/pages/SettingsPage.tsx`
+  - `docs/handoff/*`
+  - `test-results/`
+- 다음 세션은 `commit/push 전 최종 regression`을 먼저 확인해야 한다.
+
+### Day 8 Codex 사용량 추정
+- `S-PROD-026`: `280,000` tokens
+- `S-EVID-027`: `12,000` tokens
+- `S-PROD-028`: `96,000` tokens
+- `S-PLAN-029`: `18,000` tokens
+- `S-EVID-030`: `14,000` tokens
+- `S-PROD-031`: `90,000` tokens
+- Day 8 Codex 총 추정: **510,000 tokens**
+
+### 현재 세션에서 다음 에이전트가 바로 알아야 할 것
+- `Telegram Bot`은 실제 bot metadata가 구성된 상태이고 앱에는 `telegram inbound/outbound/approval delivery` 경로가 있다.
+- 심사용 URL은 `judge_demo` 고정 데모로 가고 공개 URL은 `public_byom`으로 분리하는 것이 canonical이다.
+- 심사용 기본 경험은 `심사위원 개인 키 입력`이 아니라 `사전 연결된 모델 + seed data`를 바로 체험하는 형태다.
+- 디자인 rollout은 아직 금지다. `Skills` 화면이 현재 유일한 디자인 pilot이며 `paperclip 구조 + Toss 토큰 discipline`을 기준 샘플로 먼저 확정해야 한다.
+- `version bump`는 아직 하지 않는다. `Skills` pilot 승인과 좁은 확산(`Settings / Case / Project / Agent`) 전에는 태그나 릴리즈를 올리지 않는다.
+- 증빙/핸드오프 핵심 경로:
+  - `/Users/river/workspace/active/hagent-os/.playwright-cli/page-2026-04-12T21-42-48-976Z.png`
+  - `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-d1-verification.md`
+  - `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-full-regression.md`
+  - `/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-master-evidence.md`
+  - `/Users/river/workspace/active/hagent-os/output/playwright/skills-pilot/skills-after-2026-04-13.png`

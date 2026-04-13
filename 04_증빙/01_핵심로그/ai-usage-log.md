@@ -3,7 +3,7 @@ tags:
   - area/evidence
   - type/log
   - status/active
-date: 2026-04-12
+date: 2026-04-13
 up: "[[_04_증빙_MOC]]"
 ---
 # AI 사용 기록
@@ -15,12 +15,12 @@ up: "[[_04_증빙_MOC]]"
 
 | ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
 |---|---|---|---|---|---|---|---:|---:|---|---|
-| U-001 | S-001 | Contest Research | 대회 개요 정리와 워크스페이스 구조화를 시작한다 | CLI | Claude Code | Opus 4.6 | 0 | 0 | [[바이브코딩공모전_공지]]  /  `_MOC/`  /  `.agent/agents/` | Claude exact 통계는 별도 집계 |
+| U-001 | S-001 | Contest Research | 대회 개요 정리와 워크스페이스 구조화를 시작한다 | CLI | Claude Code | Opus 4.6 | 0 | 0 | [[바이브코딩공모전_개요]]  /  `_MOC/`  /  `.agent/agents/` | Claude exact 통계는 별도 집계 |
 | U-002 | S-002 | Workspace Setup | 증빙 시스템 개선과 포터블 환경을 정리한다 | CLI | Claude Code | Opus 4.6 | 0 | 0 | evidence-system-improvement-analysis.md  /  setup.sh  /  portable-config.md | DEC-004 전후 맥락과 연결됨 |
 | U-003 | S-003 | Workspace Setup | 멀티에이전트 조율 체계를 도입한다 | CLI | Claude Code | Opus 4.6 | 0 | 0 | [[.agent/system/ops/PLAN]]  /  [[.agent/system/ops/PROGRESS]] | DEC-006과 직접 연결 |
 | U-004 | S-CODEX-001 | Workspace Setup | 워크스페이스 전반을 평가해 약점과 개선점을 찾는다 | Desktop App | Codex | GPT-5 | 1 | 10000 | [[codex-workspace-evaluation]] | ai-usage-log U-013 기반 백필 |
 | U-005 | S-CODEX-002 | Workspace Setup | AI-native 운영감사 보고서를 작성하고 수정한다 | Desktop App | Codex | GPT-5 | 2 | 16000 | [[ai-native-workspace-audit-report]] | ai-usage-log U-016~017 기반 백필 |
-| U-006 | S-GPT-001 | Contest Research | 대회 개요와 준비 로드맵의 큰 그림을 잡는다 | Web | ChatGPT | GPT-5.4 | 4 | 50000 | [[바이브코딩공모전_공지]]  /  [[vibe_contest_master_playbook_v0_1]]  /  KEG_AI_Prompt_Tracker.xlsx | 엑셀 트래커 원형과 가장 가까운 초기 기획 세션 |
+| U-006 | S-GPT-001 | Contest Research | 대회 개요와 준비 로드맵의 큰 그림을 잡는다 | Web | ChatGPT | GPT-5.4 | 4 | 50000 | [[바이브코딩공모전_개요]]  /  [[vibe_contest_master_playbook_v0_1]]  /  KEG_AI_Prompt_Tracker.xlsx | 엑셀 트래커 원형과 가장 가까운 초기 기획 세션 |
 | U-007 | S-OPS-001 | Workspace Setup | 공용 운영 정본 V2를 실제 파일 구조로 반영한다 | Desktop App | Codex | GPT-5 | 1 | 12000 | [[workspace-contract]]  /  [[workspace-atlas]]  /  `.agent/system/` | session-log 기반 |
 | U-008 | S-OPS-002 | Workspace Cleanup | 루트 구조와 경로 정합성을 단순화한다 | Desktop App | Codex | GPT-5 | 1 | 14000 | `.agent/system/ops/`  /  `.claude/`  /  `03_제품/` | DEC-009와 직접 연결 |
 | U-009 | S-OPS-003 | Workspace Cleanup | 처음 보는 사용자 기준으로 memory/maps/evidence를 단순화한다 | Desktop App | Codex | GPT-5 | 1 | 14000 | [[long-term-memory]]  /  [[daily-memory]]  /  [[workspace-atlas]] | DEC-010과 직접 연결 |
@@ -69,5 +69,17 @@ up: "[[_04_증빙_MOC]]"
 
 | ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
 |---|---|---|---|---|---|---|---:|---:|---|---|
-| U-030 | S-EVID-024 | Evidence Operations | 오늘 AI 사용 기록을 intake와 정본 로그에 반영한다 | Desktop App | Codex | GPT-5.4 | 1 | 10000 | `ai-session-intake.csv`  /  `master-evidence-ledger.md`  /  `external-ai-usage.csv`  /  `ai-usage-log.md`  /  `session-log.md`  /  `2026-04-12.md` | 2026-04-12 today AI usage logging session |
-| U-031 | S-OPS-023 | Workspace Sync + Meeting Log | Day 7 작업 환경 이동 확인 + 회의록 추가 + 운영 문서 동기화 | Claude Code CLI | Claude | claude-sonnet-4-6 | 1 | ~15000 | [[2026-04-12]]  /  [[2026-04-12_4차-배포전-점검-미팅]]  /  [[daily-memory]]  /  [[PLAN]]  /  [[PROGRESS]] | 2026-04-12 Day 7 작업 환경 이동 + 회의록 + 문서 동기화 세션 |
+| U-030 | S-DEV-025 | Product Build UX | 승인 스크롤 수정 + Settings Danger Zone + 지식베이스 실질화 + 온보딩 전체화면 + 탄자니아 루틴/목표 3종 + Goals 재설계(클린 목록+Detail) + Goals↔Projects 양방향 연결 | Claude Code CLI | Claude | claude-sonnet-4-6 | 1 | ~380000 | [[2026-04-12_4차-배포전-점검-미팅]]  /  commit ab34705 (Goals rewrite)  /  commit f936cb4 (bidirectional link) | - |
+| U-031 | S-EVID-024 | Evidence Operations | 오늘 AI 사용 기록을 intake와 정본 로그에 반영한다 | Desktop App | Codex | GPT-5.4 | 1 | 10000 | `ai-session-intake.csv`  /  `master-evidence-ledger.md`  /  `external-ai-usage.csv`  /  `ai-usage-log.md`  /  `session-log.md`  /  `2026-04-12.md` | 2026-04-12 today AI usage logging session |
+| U-032 | S-OPS-023 | Workspace Sync + Meeting Log | Day 7 작업 환경 이동 확인 + 회의록 추가 + 운영 문서 동기화 | Claude Code CLI | Claude | claude-sonnet-4-6 | 1 | ~15000 | [[2026-04-12]]  /  [[2026-04-12_4차-배포전-점검-미팅]]  /  [[daily-memory]]  /  [[PLAN]]  /  [[PROGRESS]] | 2026-04-12 Day 7 작업 환경 이동 + 회의록 + 문서 동기화 세션 |
+
+## 2026-04-13
+
+| ID | Session_ID | Phase | 작업 | 환경 | 클라이언트 | 모델 | Prompt_Count | Estimated_Tokens | Artifact | Notes |
+|---|---|---|---|---|---|---|---:|---:|---|---|
+| U-033 | S-EVID-027 | Evidence Sync | 증빙 원장, daily memory, long-term memory, dashboard, progress, 0412/0413 일자 파일과 AI 사용 통계를 오늘 기준으로 동기화한다 | Desktop App | Codex | GPT-5.4 | 1 | 12000 | ai-session-intake.csv  /  master-evidence-ledger.md  /  external-ai-usage.csv  /  ai-usage-log.md  /  session-log.md  /  ai-usage-stats.md  /  2026-04-13.md | - |
+| U-034 | S-PROD-026 | Product Submission Polish | HagentOS 실사용 제출 마감용 UI/운영 흐름을 정리하고 issue/properties, schedule, students/settings, telegram approval loop를 polish한다 | Desktop App | Codex | GPT-5.4 | 24 | 280000 | git commit c44d5a5  /  git commit e4b43f3  /  [[PROGRESS_v2]]  /  [[project-dashboard]]  /  /Users/river/workspace/active/hagent-os/docs/handoff/2026-04-12-demo-rehearsal.md | - |
+| U-035 | S-PROD-028 | Product Integration Polish | Telegram fallback와 운영 패널 확장을 실제 제품 흐름에 연결한다 | Desktop App | Codex | GPT-5.4 | 11 | 96000 | /Users/river/workspace/active/hagent-os/server/src/routes/approvals.ts  /  /Users/river/workspace/active/hagent-os/server/src/routes/adapters.ts  /  /Users/river/workspace/active/hagent-os/ui/src/pages/CaseDetailPage.tsx  /  /Users/river/workspace/active/hagent-os/ui/src/pages/ApprovalsPage.tsx  /  /Users/river/workspace/active/hagent-os/ui/src/pages/ProjectDetailPage.tsx | Telegram approval delivery, adapter readiness, drill-down 연결 포함 |
+| U-036 | S-PLAN-029 | Deployment Strategy | 심사용 URL과 공개용 URL의 배포 방식을 분리해 제출 직전 구조를 확정한다 | Desktop App | Codex | GPT-5.4 | 4 | 18000 | [[project-dashboard]]  /  [[daily-memory]]  /  [[long-term-memory]] | `judge_demo`/`public_byom` 분리 계획 세션 |
+| U-037 | S-EVID-030 | Evidence Operations | 현재 작업 세션 기준으로 증빙과 메모리와 대시보드와 통계를 다시 최신화한다 | Desktop App | Codex | GPT-5.4 | 3 | 14000 | [[2026-04-13]]  /  [[daily-memory]]  /  [[long-term-memory]]  /  [[project-dashboard]]  /  [[ai-usage-stats]] | logs and screenshot paths included |
+| U-038 | S-PROD-031 | Product Design Pilot | `Skills` 화면을 pilot로 잡아 스킬 로딩을 복구하고, Toss 토큰 규칙과 paperclip형 구조를 대조해 디자인 파일럿을 다시 정리한다 | Desktop App | Codex | GPT-5.4 | 18 | 90000 | /Users/river/workspace/active/hagent-os/ui/src/pages/SkillsPage.tsx  /  /Users/river/workspace/active/hagent-os/ui/src/index.css  /  /Users/river/workspace/active/hagent-os/output/playwright/skills-pilot/skills-after-2026-04-13.png | Claude CLI design re-review timed out; broader rollout is still unverified |

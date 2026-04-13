@@ -1,8 +1,13 @@
 ---
-tags: [area/product, type/progress, status/active]
+tags:
+  - area/product
+  - type/progress
+  - status/active
 date: 2026-04-10
-up: "[[03_제품/PLAN]]"
-aliases: [dev-progress, 개발진행]
+up: "[[PLAN]]"
+aliases:
+  - dev-progress
+  - 개발진행
 ---
 # PROGRESS.md — HagentOS 개발 진행 상황
 
@@ -193,11 +198,11 @@ aliases: [dev-progress, 개발진행]
 ## Phase 3: 폴리시 + 배포 준비
 
 ### 남은 UI 완성
-- [ ] 키보드 단축키 (c: 새 케이스, [: 사이드바)
-- [ ] 토스트 알림 연동 (승인/에이전트 완료)
-- [ ] 빈 상태 CTA 전면 적용
-- [ ] 모바일 반응형 최종 조정
-- [ ] 에러 바운더리
+- [x] 키보드 단축키 (c: 새 케이스, [: 사이드바)
+- [x] 토스트 알림 연동 (승인/에이전트 완료)
+- [x] 빈 상태 CTA 전면 적용
+- [x] 모바일 반응형 최종 조정
+- [x] 에러 바운더리
 
 ### Phase 3 체크포인트
 - [ ] 2분 데모 시나리오 전체 통과

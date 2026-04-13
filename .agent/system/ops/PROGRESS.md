@@ -3,7 +3,7 @@ tags:
   - area/system
   - type/reference
   - status/active
-date: 2026-04-12
+date: 2026-04-13
 up: "[[.agent/system/ops/README]]"
 aliases:
   - 진행상황
@@ -12,11 +12,28 @@ aliases:
 
 > **모든 에이전트는 작업 시작 시 이 파일을 읽는다.**
 > 작업 완료 시 해당 항목을 업데이트한다.
-> 마지막 업데이트: 2026-04-12 (Day 7)
+> 마지막 업데이트: 2026-04-13 (Day 8)
 
 ---
 
-## 현재 단계: Day 7 — 배포 착수, E2E 검증, AI 리포트 초안 (D-1)
+## 현재 단계: Day 8 — 제출 직전 마감, 증빙 정합화, 심사용 배포 분리 설계
+
+### Day 8 추가 진행 업데이트 ✅
+- [x] `Telegram outbound` approval delivery 경로와 adapter readiness를 실제 앱 표면에 연결
+- [x] `students -> cases`, `schedule -> cases` drill-down 추가
+- [x] 우측 `운영 요약` 패널을 `cases / approvals / projects`까지 확장
+- [x] `judge_demo`와 `public_byom`을 분리하는 배포 전략 정리
+- [x] 증빙/메모리/대시보드/usage stats를 현재 세션 기준으로 최신화
+- [x] 현재 세션 재검증
+  - `corepack pnpm --filter @hagent/ui typecheck`
+  - `corepack pnpm --filter @hagent/ui build`
+  - `corepack pnpm --filter @hagent/db build`
+  - `corepack pnpm --filter @hagent/server typecheck`
+  - `curl http://127.0.0.1:3200/api/health` → `200`
+  - `curl http://127.0.0.1:5174/탄자니아-영어학원-데모-7/dashboard` → `200`
+- [ ] `OPENAI_API_KEY`, `LAW_OC`, `KAKAO_OUTBOUND_PROVIDER_URL`, `GOOGLE_CALENDAR_ACCESS_TOKEN` live env 재검증
+- [ ] `judge_demo`용 Docker/compose 구현
+- [ ] dirty worktree 최종 regression 후 commit/push
 
 ### Day 7 제출 안정화 업데이트 ✅
 - [x] `hagent-os` 좌측 내비를 `오늘 운영 / 학원 운영 / AI 운영 / 운영 관리` 기준으로 재정렬
@@ -350,12 +367,48 @@ aliases:
 
 ## 다음 단계: Day 7 — 배포 + AI 리포트 + 데모 (D-1)
 
-1. **승인 화면 스크롤 버그 수정** (P0)
-2. **E2E 전체 검증** (포트 3200/5174) — 브라우저에서 직접 통과
-3. **Railway 배포** → 라이브 URL 확보
-4. **README** 작성 (설치 방법 + 스크린샷 + 라이브 URL)
-5. **AI 리포트 초안** — `04_증빙/01_핵심로그/` raw material 기반
-6. **데모 스크립트 v0.1** — 2분 시연 경로
+1. **승인 화면 스크롤 버그 수정** (P0) — ✅ 완료
+2. **E2E 전체 검증** (포트 3200/5174) — 브라우저에서 직접 통과 — ⏳ 라이브 확인 대기
+3. **Railway 배포** → 라이브 URL 확보 — ✅ 완료: `https://divine-simplicity-production.up.railway.app`
+4. **README** 작성 (설치 방법 + 스크린샷 + 라이브 URL) — ✅ 완료
+5. **AI 리포트 초안** — `04_증빙/01_핵심로그/` raw material 기반 — 🔲 남음
+6. **데모 스크립트 v0.1** — 2분 시연 경로 — ✅ JUDGE_DEMO.md에 포함됨
+
+## Day 7 Claude 세션 추가 (2026-04-13 오후~저녁)
+
+### 완료
+- Phase A: `ui/src/index.css` 토큰 슬림화 (9→5 bg, 7→4 text, 4→2 border, rail/body 통일)
+- Phase B: SkillsPage pilot (탭 6→3, FAB 제거, 필터 드롭다운, Primary+⋯ overflow, 스킬 삭제 기능)
+- 디자인 문서 5종:
+  - `docs/design/ui-harness.md` — **정본** (583줄, AI 필독)
+  - `docs/design/DESIGN-STATUS.md` — 30페이지 위반 현황
+  - `docs/design/design-system-rules.md` — 압축 규칙
+  - `docs/design/agent-prompt-phase-c.md` — Phase C 병렬 에이전트 오케스트레이터
+  - `AGENTS.md` (루트) — 새 AI 진입점
+- 데모 데이터 강화 (`server/src/data/rich-demo-seed.ts` 신규):
+  - 케이스 25개 + agentDraft + caseComments 이력
+  - 학원 운영 문서 12개 (환불정책, 플레이북, FAQ, 커리큘럼 등)
+  - CEO 메모리 JSON (studentInsights, lastInsight, monthlyStats)
+- 에이전트 지침서 상세화 5종 (SOUL.md + HEARTBEAT.md):
+  - orchestrator / complaint / scheduler / retention / notification
+- Telegram 왕복 완결 (`routes/telegram.ts`): 봇이 AI 응답을 답장
+- DEMO_MODE 환경변수 (`config.ts`, `runtime.ts`): API 키 없이 mock 응답
+- seed-demo API (`POST /api/organizations/:orgId/seed-demo`): 기존 org에 재시드
+- `packages/db/src/seed.ts` (1494줄 레거시) 삭제
+- Railway 배포 완료:
+  - Dockerfile + railway.toml 신규
+  - Neon PostgreSQL 연결 + 마이그레이션
+  - UI static 서빙 + SPA catch-all
+  - URL: `https://divine-simplicity-production.up.railway.app`
+- Telegram 봇 생성: `@TANZANIA_ENGLISH_ACADEMY_bot` (토큰 Railway 환경변수 설정됨)
+- 세션 핸드오프 문서: [`hagent-os/docs/handoff/2026-04-13-claude-session-summary.md`](/Users/river/workspace/active/hagent-os/docs/handoff/2026-04-13-claude-session-summary.md)
+
+### 남은 작업 (사람 직접)
+- [ ] 라이브 URL 접속 → 탄자니아 영어학원 온보딩 (mode=demo)
+- [ ] Telegram 봇 토큰 연결 (Settings → 연결 → 웹훅 등록)
+- [ ] AI 리포트 docx 작성 + PDF 변환 (공식 양식)
+- [ ] 데모 리허설 2분 시나리오 검증
+- [ ] 개인정보 동의서 + 참가 각서 서명 (팀원 각자)
 
 ## 참고: 현재 위키 핵심 진입점
 
