@@ -118,6 +118,28 @@ deadline: 2026-04-13 19:00 KST
 - par-B AI 리포트 + Excalidraw ④⑤⑥ 추가
 - par-C 핵심 플로우 테스트 3종 (03_제품/app/tests/)
 - par-D 06_LLM위키 synthesis 갱신 (13개 노트)
+
+### iter-security-audit — 2026-04-13 20:55 KST
+- 범위: `/Users/river/workspace/active/hagent-os` `main` 기준 9개 보안 감사 영역 점검
+- P0 결과:
+  - `docs/handoff/2026-04-13-claude-session-summary.md`의 plaintext `TELEGRAM_BOT_TOKEN` redaction
+  - `.gitignore`에 `.env*` ignore 추가, `.env.example`만 예외 유지
+  - `server/src/routes/organizations.ts`에 bootstrap/export 공통 secret masking 보강
+- app commit:
+  - `f420a0bff7b28586ba2aeb13fdffa0556d1ef1a2`
+  - message: `fix(security): P0 핫픽스 — redact leaked token and mask org secrets`
+  - remote push: 실패 (`Could not resolve host: github.com`)
+- 검증:
+  - `corepack pnpm --filter @hagent/server typecheck` — pass
+  - `corepack pnpm --filter @hagent/ui typecheck` — pass
+  - `corepack pnpm audit --json` — 60s timeout
+  - `npm audit --json --audit-level=high` — `ENOLOCK`
+- 산출물:
+  - `04_증빙/02_분석자료/security-audit-2026-04-13.md`
+- 다음 우선순위:
+  - Telegram token 실제 회전
+  - org-scope authz 정리
+  - Telegram owner-control route auth 추가
 - par-E MOC/대시보드/HOME 항법 구조
 - iter 1 hagent-os 라이브 앱 코드 수정 3건 (case detail, org hydration, telegram owner control)
 
@@ -180,3 +202,5 @@ deadline: 2026-04-13 19:00 KST
 - 후속 우선순위:
   - 다른 T-* 에이전트는 먼저 live domain reachability를 외부 네트워크에서 재확인
   - deploy 쪽이면 `/Users/river/workspace/active/hagent-os/railway.toml`, `/Users/river/workspace/active/hagent-os/Dockerfile`, Railway domain binding 설정부터 확인
+
+PDF 변환 실패 — 수동 변환 필요: 05_제출/20260413_③_2026_KIT_바이브코딩_공모전_망상궤도_AI리포트.docx
