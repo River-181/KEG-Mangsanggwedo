@@ -130,6 +130,39 @@ deadline: 2026-04-13 19:00 KST
 ### 상태
 운영 가능한 기준선 확보. 제출 마감(24:00)까지 후속 개선 여지.
 
+## 2차 랄프 루프 — 2026-04-13 19:00 ~ 20:30 KST
+
+### 라이브 URL 헬스체크 (외부 네트워크)
+- `GET https://hagent-os.up.railway.app/` → **HTTP 200** (670B, Railway edge)
+- `GET /api/health` → **HTTP 200**
+- `GET /api/organizations` → **HTTP 200**
+
+### hagent-os main 브랜치 신규 커밋
+- `f4dacba` feat(ui): 배포 수준 UI 품질 정돈 — Paperclip 스타일 (T-ui-polish, 13개 파일)
+- `6886694` fix(cases): 속성 패널 상태/우선순위/에이전트 바인딩 (T-case, useEffect deps 누락)
+- `2cf3c38` fix: support org-level live model keys (T-settings)
+
+### Vault 신규 커밋
+- `cdcb431` docs(smoke): T-smoke 버그 리포트
+- `05a69a8` docs(smoke): BUG-001 재분류 — 라이브 HTTP 200 정상
+
+### 트랙 상태
+- ✅ T-smoke: 완료 (외부 egress 차단 → 클로드가 직접 curl로 보완)
+- ✅ T-ui-polish: 완료 (f4dacba)
+- ✅ T-case: 완료 (6886694)
+- ✅ T-settings-api: 완료 (2cf3c38)
+- ⏳ T-seed-log: 미커밋 (샌드박스 제약 추정)
+- ⏳ T-security: 미커밋 (샌드박스 제약 추정)
+
+### 남은 리스크 (후속 배치)
+- T-seed-log, T-security 산출물 미수거 — 24:00 전 재dispatch 또는 수동 점검
+- 케이스 `assigneeAgentId` 변경 시 패널 reflect 느림 가능 (T-case 잔여 리스크)
+- OpenAI 실연결 401/429/200 구분 UI 피드백 실라이브 검증 미수행
+- Excalidraw 04~06 PNG export 여전히 미수행 (docx 임베드 전 필요)
+
+### 상태
+심사 제출 가능 수준. 버그 핵심 3개 수정 반영 완료, 라이브 배포 정상 응답 확인.
+
 ## iter-T-smoke
 
 - 완료 시각: 2026-04-13 KST
